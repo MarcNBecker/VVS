@@ -1,4 +1,4 @@
-package de.dhbw.vvs.ressources;
+package de.dhbw.vvs.resources;
 
 import java.io.IOException;
 

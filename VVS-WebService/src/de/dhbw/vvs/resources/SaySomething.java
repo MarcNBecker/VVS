@@ -1,4 +1,4 @@
-package de.dhbw.vvs.ressources;
+package de.dhbw.vvs.resources;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -18,7 +18,7 @@ public class SaySomething extends SecureServerResource {
 	@Override
 	protected void doInit() throws ResourceException {
 		super.doInit();
-		//super.allowGet = true;
+		super.allowGet = true;
 		ConcurrentMap<String, Object> urlAttributes = getRequest().getAttributes();
 		try {
 			this.something = URLDecoder.decode(urlAttributes.get("something").toString(), "UTF-8");

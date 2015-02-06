@@ -4,7 +4,7 @@ import org.restlet.Application;
 import org.restlet.Restlet;
 import org.restlet.routing.Router;
 
-import de.dhbw.vvs.ressources.SaySomething;
+import de.dhbw.vvs.resources.SaySomething;
 
 /**
  * Main web service application
