@@ -20,10 +20,10 @@ import de.dhbw.vvs.utility.JSONify;
  */
 public abstract class SecureServerResource extends ServerResource {
 
-	protected boolean allowGet = false;
-	protected boolean allowPost = false;
-	protected boolean allowPut = false;
-	protected boolean allowDelete = false;
+	private boolean allowGet = false;
+	private boolean allowPost = false;
+	private boolean allowPut = false;
+	private boolean allowDelete = false;
 	
 	/**
 	 * This method sets the handling of the response to not negotiated and not conditional.
@@ -49,6 +49,13 @@ public abstract class SecureServerResource extends ServerResource {
 	}
 	
 	/**
+	 * Allows a GET request
+	 */
+	final protected void allowGet() {
+		this.allowGet = true;
+	}
+	
+	/**
 	 * Handles a GET request
 	 */
 	@Override
@@ -71,6 +78,13 @@ public abstract class SecureServerResource extends ServerResource {
 	 */
 	protected Object receiveGet() throws WebServiceException {
 		throw new WebServiceException(ExceptionStatus.METHOD_NOT_ALLOWED);
+	}
+	
+	/**
+	 * Allows a POST request
+	 */
+	final protected void allowPost() {
+		this.allowPost = true;
 	}
 	
 	/**
@@ -107,6 +121,13 @@ public abstract class SecureServerResource extends ServerResource {
 	}
 	
 	/**
+	 * Allows a PUT request
+	 */
+	final protected void allowPut() {
+		this.allowPut = true;
+	}
+	
+	/**
 	 * Handles a PUT request
 	 */
 	@Override
@@ -137,6 +158,13 @@ public abstract class SecureServerResource extends ServerResource {
 	 */
 	protected Object receivePut(JsonRepresentation json) throws JSONException, WebServiceException {
 		throw new WebServiceException(ExceptionStatus.METHOD_NOT_ALLOWED).toResourceException();
+	}
+	
+	/**
+	 * Allows a DELETE request
+	 */
+	final protected void allowDelete() {
+		this.allowDelete = true;
 	}
 	
 	/**

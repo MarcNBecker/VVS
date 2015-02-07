@@ -18,7 +18,7 @@ public class SaySomething extends SecureServerResource {
 	@Override
 	protected void doInit() throws ResourceException {
 		super.doInit();
-		super.allowGet = true;
+		allowGet();
 		ConcurrentMap<String, Object> urlAttributes = getRequest().getAttributes();
 		try {
 			this.something = URLDecoder.decode(urlAttributes.get("something").toString(), "UTF-8");
