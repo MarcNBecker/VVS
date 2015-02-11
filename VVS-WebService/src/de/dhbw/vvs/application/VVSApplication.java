@@ -17,7 +17,16 @@ import de.dhbw.vvs.resources.FeiertagResource;
 import de.dhbw.vvs.resources.FeiertageResource;
 import de.dhbw.vvs.resources.KursBlocklagenResource;
 import de.dhbw.vvs.resources.KursBlocklagenSemesterResource;
+import de.dhbw.vvs.resources.KursDashboardResource;
 import de.dhbw.vvs.resources.KursResource;
+import de.dhbw.vvs.resources.KursSemesterVorlesungDozentResource;
+import de.dhbw.vvs.resources.KursSemesterVorlesungKlausurResource;
+import de.dhbw.vvs.resources.KursSemesterVorlesungResource;
+import de.dhbw.vvs.resources.KursSemesterVorlesungTerminResource;
+import de.dhbw.vvs.resources.KursSemesterVorlesungTermineResource;
+import de.dhbw.vvs.resources.KursSemesterVorlesungenResource;
+import de.dhbw.vvs.resources.KursVorlesungenOffenResource;
+import de.dhbw.vvs.resources.KursVorlesungenResource;
 import de.dhbw.vvs.resources.KurseResource;
 import de.dhbw.vvs.resources.ModulplaeneResource;
 import de.dhbw.vvs.resources.ModulplanFachResource;
@@ -25,6 +34,7 @@ import de.dhbw.vvs.resources.ModulplanFaecherResource;
 import de.dhbw.vvs.resources.ModulplanModulResource;
 import de.dhbw.vvs.resources.ModulplanModuleResource;
 import de.dhbw.vvs.resources.ModulplanResource;
+import de.dhbw.vvs.resources.StudiengangsleiterDashboardResource;
 import de.dhbw.vvs.resources.StudiengangsleiterKollektionResource;
 import de.dhbw.vvs.resources.StudiengangsleiterResource;
 
@@ -53,7 +63,7 @@ public class VVSApplication extends Application {
 		router.attach(VERSION_ONE + "/dozenten/{dozentID}/anhaenge/{anhangID}", DozentAnhangResource.class); //GET, DELETE
 		router.attach(VERSION_ONE + "/dozenten/{dozentID}/kommentare", DozentKommentareResource.class); //GET, POST
 		router.attach(VERSION_ONE + "/dozenten/{dozentID}/kommentare/{kommentarID}", DozentKommentarResource.class); //DELETE
-		
+
 		//Kurse
 		router.attach(VERSION_ONE + "/kurse", KurseResource.class); //GET, POST
 		router.attach(VERSION_ONE + "/kurse/{kursID}", KursResource.class); //GET, PUT, DELETE
