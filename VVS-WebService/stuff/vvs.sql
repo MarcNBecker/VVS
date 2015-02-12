@@ -142,15 +142,6 @@ CREATE TABLE `vvs`.`Blocklage` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- -----------------------------------------------------
--- Table `vvs`.`Status`
--- -----------------------------------------------------
-CREATE TABLE `vvs`.`Status` (
-  `ID` INT unsigned NOT NULL AUTO_INCREMENT,
-  `Name` VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
--- -----------------------------------------------------
 -- Table `vvs`.`Dozent`
 -- -----------------------------------------------------
 CREATE TABLE `vvs`.`Dozent` (
@@ -169,13 +160,7 @@ CREATE TABLE `vvs`.`Dozent` (
   `Arbeitgeber` VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL,
   `Geschlecht` BOOLEAN NOT NULL,
   `Status` INT unsigned NOT NULL,
-  PRIMARY KEY (`ID`),
-  INDEX `INDEX_Dozent_Status` (`Status` ASC),
-  CONSTRAINT `FK_Dozent_Status`
-    FOREIGN KEY (`Status`)
-    REFERENCES `vvs`.`Status` (`ID`)
-    ON DELETE RESTRICT
-    ON UPDATE RESTRICT
+  PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- -----------------------------------------------------

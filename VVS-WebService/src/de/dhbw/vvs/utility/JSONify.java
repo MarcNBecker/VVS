@@ -3,17 +3,24 @@ package de.dhbw.vvs.utility;
 import java.lang.reflect.Type;
 
 import org.restlet.resource.ResourceException;
-import de.dhbw.vvs.application.ExceptionStatus;
-import de.dhbw.vvs.application.WebServiceException;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
+
+import de.dhbw.vvs.application.ExceptionStatus;
+import de.dhbw.vvs.application.WebServiceException;
+import de.dhbw.vvs.model.Geschlecht;
+import de.dhbw.vvs.model.Status;
+import de.dhbw.vvs.model.WebServiceEnum;
 
 /**
  * This class is used to JSONify any objects
@@ -46,6 +53,24 @@ public class JSONify {
 				return jO;
 			}			
 		});
+		gsonBuilder.registerTypeHierarchyAdapter(WebServiceEnum.class, new JsonSerializer<WebServiceEnum>() {
+			@Override
+			public JsonElement serialize(WebServiceEnum src, Type typeOfSrc, JsonSerializationContext context) {
+				return new JsonPrimitive(src.getValue());
+			}			
+		});
+        gsonBuilder.registerTypeHierarchyAdapter(WebServiceEnum.class, new JsonDeserializer<WebServiceEnum>() {
+            @Override
+            public WebServiceEnum deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+            	if(typeOfT.equals(Geschlecht.class)) {
+            		return Geschlecht.getFromOrdinal(json.getAsInt());
+            	}            	
+            	if(typeOfT.equals(Status.class)) {
+            		return Status.getFromOrdinal(json.getAsInt());
+            	}
+            	return null;
+            }
+        });
 		gson = gsonBuilder.create();	
 	}
 	
