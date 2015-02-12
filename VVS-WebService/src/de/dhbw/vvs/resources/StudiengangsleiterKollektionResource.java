@@ -5,6 +5,7 @@ import org.restlet.ext.json.JsonRepresentation;
 import org.restlet.resource.ResourceException;
 
 import de.dhbw.vvs.application.WebServiceException;
+import de.dhbw.vvs.model.Studiengangsleiter;
 
 public class StudiengangsleiterKollektionResource extends SecureServerResource {
 	
@@ -17,14 +18,16 @@ public class StudiengangsleiterKollektionResource extends SecureServerResource {
 	
 	@Override
 	protected Object receiveGet() throws WebServiceException {
-		// TODO Auto-generated method stub
-		return super.receiveGet();
+		return Studiengangsleiter.getAll();
 	}
 	
+	/**
+	 * Input JSON: {name:"Jörg Baumgart"}
+	 */
 	@Override
 	protected Object receivePost(JsonRepresentation json) throws JSONException, WebServiceException {
-		// TODO Auto-generated method stub
-		return super.receivePost(json);
+		String name = json.getJsonObject().getString("name");
+		return Studiengangsleiter.create(name);
 	}
 	
 }

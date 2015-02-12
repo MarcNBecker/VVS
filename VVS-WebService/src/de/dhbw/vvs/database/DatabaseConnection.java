@@ -78,8 +78,10 @@ public class DatabaseConnection {
 		ResultSet resSet = null;
 		try {
 			pStat = connection.prepareStatement(statement);
-			for (int i = 0; i < fieldValues.size(); i++) {
-				pStat.setString(i + 1, fieldValues.get(i).toString().trim());
+			if(fieldValues != null) {
+				for (int i = 0; i < fieldValues.size(); i++) {
+					pStat.setString(i + 1, fieldValues.get(i).toString().trim());
+				}
 			}
 			resSet = pStat.executeQuery();
 			ArrayList<TypeHashMap<String, Object>> resultSet = new ArrayList<TypeHashMap<String, Object>>();
@@ -112,11 +114,11 @@ public class DatabaseConnection {
 	 * 
 	 * @param statement the sql statement to be executed
 	 * @param fieldValues the values for the prepared statement
-	 * @return the number of affected rows
+	 * @return the number of affected rows or the generated key
 	 * @throws WebServiceException is thrown if the query is not correct or if it could not be executed
 	 */
-	public synchronized long doQuery(String statement, ArrayList<Object> fieldValues) throws WebServiceException {
-		if (statement == null || statement == "") {
+	public synchronized int doQuery(String statement, ArrayList<Object> fieldValues) throws WebServiceException {
+		if (statement == null || statement == "" || fieldValues == null || fieldValues.isEmpty()) {
 			throw new WebServiceException(ExceptionStatus.DB_INVALID_STATEMENT);
 		}
 		PreparedStatement pStat = null;
@@ -133,7 +135,7 @@ public class DatabaseConnection {
 			int affectedRows = pStat.executeUpdate();
 			genKeys = pStat.getGeneratedKeys();
 			if (genKeys.last()) {
-				return genKeys.getLong(1);
+				return genKeys.getInt(1);
 			} else {
 				return affectedRows;
 			}
@@ -164,8 +166,8 @@ public class DatabaseConnection {
 	 * @return the total number of affected rows
 	 * @throws WebServiceException is thrown if the query is not correct or if it could not be executed
 	 */
-	public synchronized long doMultiQuery(String statement, ArrayList<ArrayList<Object>> fieldValuesList) throws WebServiceException {
-		if (statement == null || statement == "") {
+	public synchronized int doMultiQuery(String statement, ArrayList<ArrayList<Object>> fieldValuesList) throws WebServiceException {
+		if (statement == null || statement == "" || fieldValuesList == null || fieldValuesList.isEmpty()) {
 			throw new WebServiceException(ExceptionStatus.DB_INVALID_STATEMENT);
 		}
 		if (fieldValuesList == null || fieldValuesList.size() == 0) {

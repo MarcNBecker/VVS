@@ -44,9 +44,8 @@ public class KursSemesterVorlesungTerminResource extends SecureServerResource {
 	}
 	
 	@Override
-	protected Object receiveDelete() throws WebServiceException {
+	protected void receiveDelete() throws WebServiceException {
 		// TODO Auto-generated method stub
-		return super.receiveDelete();
 	}
 	
 	public int getKursID() {

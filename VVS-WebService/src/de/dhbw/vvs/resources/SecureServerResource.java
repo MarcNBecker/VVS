@@ -6,6 +6,7 @@ import org.json.JSONException;
 import org.restlet.data.MediaType;
 import org.restlet.data.Status;
 import org.restlet.ext.json.JsonRepresentation;
+import org.restlet.representation.EmptyRepresentation;
 import org.restlet.representation.Representation;
 import org.restlet.resource.ResourceException;
 import org.restlet.resource.ServerResource;
@@ -65,6 +66,7 @@ public abstract class SecureServerResource extends ServerResource {
 		}
 		try {
 			Object result = receiveGet();
+			getResponse().setStatus(Status.SUCCESS_OK);
 			return new JsonRepresentation(JSONify.serialize(result));
 		} catch (WebServiceException e) {
 			throw e.toResourceException();
@@ -176,8 +178,9 @@ public abstract class SecureServerResource extends ServerResource {
 			throw new WebServiceException(ExceptionStatus.METHOD_NOT_ALLOWED).toResourceException();
 		}
 		try {
-			Object result = receiveDelete();
-			return new JsonRepresentation(JSONify.serialize(result));
+			receiveDelete();
+			getResponse().setStatus(Status.SUCCESS_NO_CONTENT);
+			return new EmptyRepresentation();
 		} catch (WebServiceException e) {
 			throw e.toResourceException();
 		}
@@ -185,10 +188,9 @@ public abstract class SecureServerResource extends ServerResource {
 	
 	/**
 	 * Is called when a DELETE is received, this can be overwritten
-	 * @return an Object to be serialized to JSON
 	 * @throws WebServiceException
 	 */
-	protected Object receiveDelete() throws WebServiceException {
+	protected void receiveDelete() throws WebServiceException {
 		throw new WebServiceException(ExceptionStatus.METHOD_NOT_ALLOWED).toResourceException();
 	}
 	
