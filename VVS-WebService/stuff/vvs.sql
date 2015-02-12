@@ -9,7 +9,7 @@ CREATE TABLE `vvs`.`Studiengangsleiter` (
   `ID` INT unsigned NOT NULL AUTO_INCREMENT,
   `Name` VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`ID`) 
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- -----------------------------------------------------
 -- Table `vvs`.`Modulplan`
@@ -19,7 +19,7 @@ CREATE TABLE `vvs`.`Modulplan` (
   `Studiengang` VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL,
   `Vertiefungsrichtung` VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`ID`) 
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- -----------------------------------------------------
 -- Table `vvs`.`Modul`
@@ -29,7 +29,7 @@ CREATE TABLE `vvs`.`Modul` (
   `Name` VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL,
   `Kurzbeschreibung` VARCHAR(255) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- -----------------------------------------------------
 -- Table `vvs`.`ModulInstanz`
@@ -40,21 +40,21 @@ CREATE TABLE `vvs`.`ModulInstanz` (
   `Modulplan` INT unsigned NOT NULL,
   `Credits` INT unsigned NOT NULL,
   PRIMARY KEY (`ID`),
-  INDEX `INDEX_Modul` (`Modul` ASC),
-  INDEX `INDEX_Modulplan` (`Modulplan` ASC),
+  INDEX `INDEX_ModulInstanz_Modul` (`Modul` ASC),
+  INDEX `INDEX_ModulInstanz_Modulplan` (`Modulplan` ASC),
   CONSTRAINT `UNIQUE_ModulInstanz` 
   	UNIQUE (`Modul`, `Modulplan`),
-  CONSTRAINT `FK_Modul`
+  CONSTRAINT `FK_ModulInstanz_Modul`
     FOREIGN KEY (`Modul`)
     REFERENCES `vvs`.`Modul` (`ID`)
     ON DELETE CASCADE
     ON UPDATE RESTRICT,
-  CONSTRAINT `FK_Modulplan`
+  CONSTRAINT `FK_ModulInstanz_Modulplan`
     FOREIGN KEY (`Modulplan`)
     REFERENCES `vvs`.`Modulplan` (`ID`)
     ON DELETE CASCADE
     ON UPDATE RESTRICT
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- -----------------------------------------------------
 -- Table `vvs`.`Fach`
@@ -64,7 +64,7 @@ CREATE TABLE `vvs`.`Fach` (
   `Name` VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL,
   `Kurzbeschreibung` VARCHAR(255) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 
 -- -----------------------------------------------------
@@ -77,21 +77,21 @@ CREATE TABLE `vvs`.`FachInstanz` (
   `Semester` INT unsigned NOT NULL,
   `Stunden` INT unsigned NOT NULL,
   PRIMARY KEY (`ID`),
-  INDEX `INDEX_Fach` (`Fach` ASC),
-  INDEX `INDEX_ModulInstanz` (`ModulInstanz` ASC),  
+  INDEX `INDEX_FachInstanz_Fach` (`Fach` ASC),
+  INDEX `INDEX_FachInstanz_ModulInstanz` (`ModulInstanz` ASC),  
   CONSTRAINT `UNIQUE_FachInstanz` 
   	UNIQUE (`Fach`, `ModulInstanz`),
-  CONSTRAINT `FK_Fach`
+  CONSTRAINT `FK_FachInstanz_Fach`
     FOREIGN KEY (`Fach`)
     REFERENCES `vvs`.`Fach` (`ID`)
     ON DELETE CASCADE
     ON UPDATE RESTRICT,
-  CONSTRAINT `FK_ModulInstanz`
+  CONSTRAINT `FK_FachInstanz_ModulInstanz`
     FOREIGN KEY (`ModulInstanz`)
     REFERENCES `vvs`.`ModulInstanz` (`ID`)
     ON DELETE CASCADE
     ON UPDATE RESTRICT
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- -----------------------------------------------------
 -- Table `vvs`.`Kurs`
@@ -109,19 +109,19 @@ CREATE TABLE `vvs`.`Kurs` (
   `Studiengangsleiter` INT unsigned NOT NULL,
   `SekretariatName` VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`ID`),
-  INDEX `INDEX_Modulplan` (`Modulplan` ASC),
-  INDEX `INDEX_Studiengangsleiter` (`Studiengangsleiter` ASC),
-  CONSTRAINT `FK_Modulplan`
+  INDEX `INDEX_Kurs_Modulplan` (`Modulplan` ASC),
+  INDEX `INDEX_Kurs_Studiengangsleiter` (`Studiengangsleiter` ASC),
+  CONSTRAINT `FK_Kurs_Modulplan`
     FOREIGN KEY (`Modulplan`)
     REFERENCES `vvs`.`Modulplan` (`ID`)
     ON DELETE RESTRICT
     ON UPDATE RESTRICT,
-  CONSTRAINT `FK_Studiengangsleiter`
+  CONSTRAINT `FK_Kurs_Studiengangsleiter`
     FOREIGN KEY (`Studiengangsleiter`)
     REFERENCES `vvs`.`Studiengangsleiter` (`ID`)
     ON DELETE RESTRICT
     ON UPDATE RESTRICT
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- -----------------------------------------------------
 -- Table `vvs`.`Blocklage`
@@ -133,13 +133,13 @@ CREATE TABLE `vvs`.`Blocklage` (
   `EndDatum` DATE NOT NULL,
   `Raum` VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`Kurs`, `Semester`),
-  INDEX `INDEX_Kurs` (`Kurs` ASC),
-  CONSTRAINT `FK_Kurs`
+  INDEX `INDEX_Blocklage_Kurs` (`Kurs` ASC),
+  CONSTRAINT `FK_Blocklage_Kurs`
     FOREIGN KEY (`Kurs`)
     REFERENCES `vvs`.`Kurs` (`ID`)
     ON DELETE CASCADE
     ON UPDATE RESTRICT
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- -----------------------------------------------------
 -- Table `vvs`.`Status`
@@ -148,7 +148,7 @@ CREATE TABLE `vvs`.`Status` (
   `ID` INT unsigned NOT NULL AUTO_INCREMENT,
   `Name` VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- -----------------------------------------------------
 -- Table `vvs`.`Dozent`
@@ -170,13 +170,13 @@ CREATE TABLE `vvs`.`Dozent` (
   `Geschlecht` BOOLEAN NOT NULL,
   `Status` INT unsigned NOT NULL,
   PRIMARY KEY (`ID`),
-  INDEX `INDEX_Status` (`Status` ASC),
-  CONSTRAINT `FK_Status`
+  INDEX `INDEX_Dozent_Status` (`Status` ASC),
+  CONSTRAINT `FK_Dozent_Status`
     FOREIGN KEY (`Status`)
-    REFERENCES `vvs`.`Status` (`Status`)
+    REFERENCES `vvs`.`Status` (`ID`)
     ON DELETE RESTRICT
     ON UPDATE RESTRICT
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- -----------------------------------------------------
 -- Table `vvs`.`Kommentar`
@@ -185,22 +185,22 @@ CREATE TABLE `vvs`.`Kommentar` (
   `ID` INT unsigned NOT NULL AUTO_INCREMENT,
   `Dozent` INT unsigned NOT NULL,
   `Text` TEXT COLLATE utf8_unicode_ci NOT NULL,
-  `Verfasser` INT unsigned NOT NULL,
+  `Verfasser` INT unsigned NULL,
   `Timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`ID`),
-  INDEX `INDEX_Dozent` (`Dozent` ASC),
-  INDEX `INDEX_Verfasser` (`Verfasser` ASC),
-  CONSTRAINT `FK_Dozent`
+  INDEX `INDEX_Kommentar_Dozent` (`Dozent` ASC),
+  INDEX `INDEX_Kommentar_Verfasser` (`Verfasser` ASC),
+  CONSTRAINT `FK_Kommentar_Dozent`
     FOREIGN KEY (`Dozent`)
     REFERENCES `vvs`.`Dozent` (`ID`)
     ON DELETE CASCADE
     ON UPDATE RESTRICT,
-  CONSTRAINT `FK_Verfasser`
+  CONSTRAINT `FK_Kommentar_Verfasser`
     FOREIGN KEY (`Verfasser`)
     REFERENCES `vvs`.`Studiengangsleiter` (`ID`)
     ON DELETE SET NULL
     ON UPDATE RESTRICT
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- -----------------------------------------------------
 -- Table `vvs`.`Anhang`
@@ -210,13 +210,13 @@ CREATE TABLE `vvs`.`Anhang` (
   `Dozent` INT unsigned NOT NULL,
   `Daten` BLOB NOT NULL,
   PRIMARY KEY (`ID`),
-  INDEX `INDEX_Dozent` (`Dozent` ASC),
-  CONSTRAINT `FK_Dozent`
+  INDEX `INDEX_Anhang_Dozent` (`Dozent` ASC),
+  CONSTRAINT `FK_Anhang_Dozent`
     FOREIGN KEY (`Dozent`)
     REFERENCES `vvs`.`Dozent` (`ID`)
     ON DELETE CASCADE
     ON UPDATE RESTRICT
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- -----------------------------------------------------
 -- Table `vvs`.`DozentFach`
@@ -225,19 +225,19 @@ CREATE TABLE `vvs`.`DozentFach` (
   `Dozent` INT unsigned NOT NULL,
   `Fach` INT unsigned NOT NULL,
   PRIMARY KEY (`Dozent`, `Fach`),
-  INDEX `INDEX_Dozent` (`Dozent` ASC),
-  INDEX `INDEX_Fach` (`Fach` ASC),
-  CONSTRAINT `FK_Dozent`
+  INDEX `INDEX_DozentFach_Dozent` (`Dozent` ASC),
+  INDEX `INDEX_DozentFach_Fach` (`Fach` ASC),
+  CONSTRAINT `FK_DozentFach_Dozent`
     FOREIGN KEY (`Dozent`)
     REFERENCES `vvs`.`Dozent` (`ID`)
     ON DELETE CASCADE
     ON UPDATE RESTRICT,
-  CONSTRAINT `FK_Fach`
+  CONSTRAINT `FK_DozentFach_Fach`
     FOREIGN KEY (`Fach`)
     REFERENCES `vvs`.`Fach` (`ID`)
     ON DELETE CASCADE
     ON UPDATE RESTRICT
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- -----------------------------------------------------
 -- Table `vvs`.`Vorlesung`
@@ -248,27 +248,27 @@ CREATE TABLE `vvs`.`Vorlesung` (
   `FachInstanz` INT unsigned NOT NULL,
   `Dozent` INT unsigned NOT NULL,
   PRIMARY KEY (`ID`),
-  INDEX `INDEX_Kurs` (`Kurs` ASC),
-  INDEX `INDEX_FachInstanz` (`FachInstanz` ASC),
-  INDEX `INDEX_Dozent` (`Dozent` ASC),  
+  INDEX `INDEX_Vorlesung_Kurs` (`Kurs` ASC),
+  INDEX `INDEX_Vorlesung_FachInstanz` (`FachInstanz` ASC),
+  INDEX `INDEX_Vorlesung_Dozent` (`Dozent` ASC),  
   CONSTRAINT `UNIQUE_Vorlesung` 
   	UNIQUE (`Kurs`, `FachInstanz`),
-  CONSTRAINT `FK_Kurs`
+  CONSTRAINT `FK_Vorlesung_Kurs`
     FOREIGN KEY (`Kurs`)
     REFERENCES `vvs`.`Kurs` (`ID`)
     ON DELETE RESTRICT
     ON UPDATE RESTRICT,
-  CONSTRAINT `FK_FachInstanz`
+  CONSTRAINT `FK_Vorlesung_FachInstanz`
     FOREIGN KEY (`FachInstanz`)
     REFERENCES `vvs`.`FachInstanz` (`ID`)
     ON DELETE RESTRICT
     ON UPDATE RESTRICT,
-  CONSTRAINT `FK_Dozent`
+  CONSTRAINT `FK_Vorlesung_Dozent`
     FOREIGN KEY (`Dozent`)
     REFERENCES `vvs`.`Dozent` (`ID`)
     ON DELETE RESTRICT
     ON UPDATE RESTRICT
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- -----------------------------------------------------
 -- Table `vvs`.`Termin`
@@ -283,13 +283,13 @@ CREATE TABLE `vvs`.`Termin` (
   `Raum` VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL,
   `Klausur` BOOLEAN NOT NULL,
   PRIMARY KEY (`ID`),
-  INDEX `INDEX_Vorlesung` (`Vorlesung` ASC),
-  CONSTRAINT `FK_Vorlesung`
+  INDEX `INDEX_Termin_Vorlesung` (`Vorlesung` ASC),
+  CONSTRAINT `FK_Termin_Vorlesung`
     FOREIGN KEY (`Vorlesung`)
     REFERENCES `vvs`.`Vorlesung` (`ID`)
     ON DELETE CASCADE
     ON UPDATE RESTRICT
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- -----------------------------------------------------
 -- Table `vvs`.`Feiertag`
@@ -298,4 +298,4 @@ CREATE TABLE `vvs`.`Feiertag` (
   `Datum` DATE NOT NULL,
   `Name` VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`Datum`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
