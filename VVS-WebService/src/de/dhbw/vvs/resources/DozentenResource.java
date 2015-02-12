@@ -5,6 +5,7 @@ import org.restlet.ext.json.JsonRepresentation;
 import org.restlet.resource.ResourceException;
 
 import de.dhbw.vvs.application.WebServiceException;
+import de.dhbw.vvs.model.Dozent;
 
 public class DozentenResource extends SecureServerResource {
 	
@@ -17,8 +18,7 @@ public class DozentenResource extends SecureServerResource {
 	
 	@Override
 	protected Object receiveGet() throws WebServiceException {
-		// TODO Auto-generated method stub
-		return super.receiveGet();
+		return new Dozent(1);
 	}
 	
 	@Override
