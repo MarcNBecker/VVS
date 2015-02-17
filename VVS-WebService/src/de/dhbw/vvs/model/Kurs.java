@@ -152,7 +152,7 @@ public class Kurs {
 		if (modulplanID <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
 		} else {
-			//TODO check existance
+			new Modulplan(modulplanID).getDirectAttributes(); //check existance
 		}
 		if (studentenAnzahl < 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_NUMBER);

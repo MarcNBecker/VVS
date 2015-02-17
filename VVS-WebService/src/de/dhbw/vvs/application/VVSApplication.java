@@ -12,6 +12,7 @@ import de.dhbw.vvs.resources.DozentKommentarResource;
 import de.dhbw.vvs.resources.DozentKommentareResource;
 import de.dhbw.vvs.resources.DozentResource;
 import de.dhbw.vvs.resources.DozentenResource;
+import de.dhbw.vvs.resources.FaecherResource;
 import de.dhbw.vvs.resources.FeiertagResource;
 import de.dhbw.vvs.resources.FeiertageResource;
 import de.dhbw.vvs.resources.KursBlocklagenResource;
@@ -27,6 +28,7 @@ import de.dhbw.vvs.resources.KursSemesterVorlesungenResource;
 import de.dhbw.vvs.resources.KursVorlesungenOffenResource;
 import de.dhbw.vvs.resources.KursVorlesungenResource;
 import de.dhbw.vvs.resources.KurseResource;
+import de.dhbw.vvs.resources.ModuleResource;
 import de.dhbw.vvs.resources.ModulplaeneResource;
 import de.dhbw.vvs.resources.ModulplanFachResource;
 import de.dhbw.vvs.resources.ModulplanFaecherResource;
@@ -77,11 +79,13 @@ public class VVSApplication extends Application {
 		router.attach(VERSION_ONE + "/feiertage/{jahr}/{datum}", FeiertagResource.class); //PUT, DELETE
 		
 		//Modulplan
+		router.attach(VERSION_ONE + "/faecher", FaecherResource.class); //GET
+		router.attach(VERSION_ONE + "/module", ModuleResource.class); //GET
 		router.attach(VERSION_ONE + "/modulplaene", ModulplaeneResource.class); //GET, POST
 		router.attach(VERSION_ONE + "/modulplaene/{modulplanID}", ModulplanResource.class); //GET, PUT, DELETE
-		router.attach(VERSION_ONE + "/modulplaene/{modulplanID}/module", ModulplanModuleResource.class); //POST
+		router.attach(VERSION_ONE + "/modulplaene/{modulplanID}/module", ModulplanModuleResource.class); //GET, POST
 		router.attach(VERSION_ONE + "/modulplaene/{modulplanID}/module/{modulID}", ModulplanModulResource.class); //PUT, DELETE
-		router.attach(VERSION_ONE + "/modulplaene/{modulplanID}/module/{modulID}/faecher", ModulplanFaecherResource.class); //POST
+		router.attach(VERSION_ONE + "/modulplaene/{modulplanID}/module/{modulID}/faecher", ModulplanFaecherResource.class); //GET, POST
 		router.attach(VERSION_ONE + "/modulplaene/{modulplanID}/module/{modulID}/faecher/{fachID}", ModulplanFachResource.class); //PUT, DELETE
 		
 		//PLANNING FUNCTIONALITY

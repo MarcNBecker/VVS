@@ -5,6 +5,8 @@ import org.restlet.ext.json.JsonRepresentation;
 import org.restlet.resource.ResourceException;
 
 import de.dhbw.vvs.application.WebServiceException;
+import de.dhbw.vvs.model.Modulplan;
+import de.dhbw.vvs.utility.JSONify;
 
 public class ModulplaeneResource extends SecureServerResource {
 	
@@ -17,14 +19,13 @@ public class ModulplaeneResource extends SecureServerResource {
 	
 	@Override
 	protected Object receiveGet() throws WebServiceException {
-		// TODO Auto-generated method stub
-		return super.receiveGet();
+		return Modulplan.getAll();
 	}
 	
 	@Override
 	protected Object receivePost(JsonRepresentation json) throws JSONException, WebServiceException {
-		// TODO Auto-generated method stub
-		return super.receivePost(json);
+		Modulplan modulplan = JSONify.deserialize(json.toString(), Modulplan.class);
+		return modulplan.create();
 	}
 	
 }

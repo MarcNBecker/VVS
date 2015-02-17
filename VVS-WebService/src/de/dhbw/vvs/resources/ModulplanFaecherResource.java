@@ -11,6 +11,9 @@ import org.restlet.resource.ResourceException;
 
 import de.dhbw.vvs.application.ExceptionStatus;
 import de.dhbw.vvs.application.WebServiceException;
+import de.dhbw.vvs.model.FachInstanz;
+import de.dhbw.vvs.model.ModulInstanz;
+import de.dhbw.vvs.utility.JSONify;
 
 public class ModulplanFaecherResource extends SecureServerResource {
 	
@@ -20,6 +23,7 @@ public class ModulplanFaecherResource extends SecureServerResource {
 	@Override
 	protected void doInit() throws ResourceException {
 		super.doInit();
+		super.allowGet();
 		super.allowPost();
 		ConcurrentMap<String, Object> urlAttributes = getRequest().getAttributes();
 		try {
@@ -33,9 +37,16 @@ public class ModulplanFaecherResource extends SecureServerResource {
 	}
 
 	@Override
+	protected Object receiveGet() throws WebServiceException {
+		return ModulInstanz.getSingle(getModulplanID(), getModulID()).getFachList();
+	}
+	
+	@Override
 	protected Object receivePost(JsonRepresentation json) throws JSONException, WebServiceException {
-		// TODO Auto-generated method stub
-		return super.receivePost(json);
+		FachInstanz fachInstanz = JSONify.deserialize(json.toString(), FachInstanz.class);
+		fachInstanz.setModulInstanzID(ModulInstanz.getSingle(getModulplanID(), getModulID()).getID());
+		fachInstanz.getFach().setID(0);
+		return fachInstanz.create();
 	}
 	
 	public int getModulplanID() {

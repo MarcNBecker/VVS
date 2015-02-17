@@ -11,6 +11,9 @@ import org.restlet.resource.ResourceException;
 
 import de.dhbw.vvs.application.ExceptionStatus;
 import de.dhbw.vvs.application.WebServiceException;
+import de.dhbw.vvs.model.FachInstanz;
+import de.dhbw.vvs.model.ModulInstanz;
+import de.dhbw.vvs.utility.JSONify;
 
 public class ModulplanFachResource extends SecureServerResource {
 	
@@ -21,7 +24,8 @@ public class ModulplanFachResource extends SecureServerResource {
 	@Override
 	protected void doInit() throws ResourceException {
 		super.doInit();
-		super.allowPost();
+		super.allowPut();
+		super.allowDelete();
 		ConcurrentMap<String, Object> urlAttributes = getRequest().getAttributes();
 		try {
 			 this.modulplanID = Integer.parseInt(URLDecoder.decode(urlAttributes.get("modulplanID").toString(), "UTF-8"));
@@ -35,9 +39,16 @@ public class ModulplanFachResource extends SecureServerResource {
 	}
 
 	@Override
-	protected Object receivePost(JsonRepresentation json) throws JSONException, WebServiceException {
-		// TODO Auto-generated method stub
-		return super.receivePost(json);
+	protected Object receivePut(JsonRepresentation json) throws JSONException, WebServiceException {
+		FachInstanz fachInstanz = JSONify.deserialize(json.toString(), FachInstanz.class);
+		fachInstanz.setModulInstanzID(ModulInstanz.getSingle(getModulplanID(), getModulID()).getID());
+		fachInstanz.getFach().setID(getFachID());
+		return fachInstanz.create();
+	}
+	
+	@Override
+	protected void receiveDelete() throws WebServiceException {
+		FachInstanz.getSingle(ModulInstanz.getSingle(getModulplanID(), getModulID()), getFachID()).delete();
 	}
 	
 	public int getModulplanID() {

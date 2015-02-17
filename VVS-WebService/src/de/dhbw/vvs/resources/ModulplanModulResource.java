@@ -11,6 +11,8 @@ import org.restlet.resource.ResourceException;
 
 import de.dhbw.vvs.application.ExceptionStatus;
 import de.dhbw.vvs.application.WebServiceException;
+import de.dhbw.vvs.model.ModulInstanz;
+import de.dhbw.vvs.utility.JSONify;
 
 public class ModulplanModulResource extends SecureServerResource {
 	
@@ -35,13 +37,15 @@ public class ModulplanModulResource extends SecureServerResource {
 	
 	@Override
 	protected Object receivePut(JsonRepresentation json) throws JSONException, WebServiceException {
-		// TODO Auto-generated method stub
-		return super.receivePut(json);
+		ModulInstanz modulInstanz = JSONify.deserialize(json.toString(), ModulInstanz.class);
+		modulInstanz.setModulplanID(getModulplanID());
+		modulInstanz.getModul().setID(getModulID());
+		return modulInstanz.create();
 	}
 	
 	@Override
 	protected void receiveDelete() throws WebServiceException {
-		// TODO Auto-generated method stub
+		ModulInstanz.getSingle(getModulplanID(), getModulID()).delete();
 	}
 	
 	public int getModulplanID() {

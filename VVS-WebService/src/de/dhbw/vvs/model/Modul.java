@@ -8,58 +8,40 @@ import de.dhbw.vvs.database.ConnectionPool;
 import de.dhbw.vvs.database.DatabaseConnection;
 import de.dhbw.vvs.utility.TypeHashMap;
 
-public class Fach {
+public class Modul {
 
 	private int id;
 	private String name; 
 	private String kurzbeschreibung;
 	
-	public static ArrayList<Fach> getAll() throws WebServiceException {
+	public static ArrayList<Modul> getAll() throws WebServiceException {
 		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
-		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT id, name, kurzbeschreibung FROM fach ORDER BY name ASC", null);
-		ArrayList<Fach> fachList = new ArrayList<Fach>();
+		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT id, name, kurzbeschreibung FROM modul ORDER BY name ASC", null);
+		ArrayList<Modul> modulList = new ArrayList<Modul>();
 		for(TypeHashMap<String, Object> result : resultList) {
-			Fach f = new Fach(result.getInt("id"));
-			f.name = result.getString("name");
-			f.kurzbeschreibung = result.getString("kurzbeschreibung");
-			fachList.add(f);
+			Modul m = new Modul(result.getInt("id"));
+			m.name = result.getString("name");
+			m.kurzbeschreibung = result.getString("kurzbeschreibung");
+			modulList.add(m);
 		}
-		return fachList;
+		return modulList;
 	}
 	
-	public static ArrayList<Fach> getAllForDozent(Dozent dozent) throws WebServiceException {
-		if (dozent.getID() <= 0) {
-			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
-		}
-		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
-		ArrayList<Object> fieldValues = new ArrayList<Object>();
-		fieldValues.add(dozent.getID());
-		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT fach.id, fach.name, fach.kurzbeschreibung FROM dozentfach INNER JOIN fach ON dozentfach.fach = fach.id WHERE dozentfach.dozent = ? ORDER BY fach.name ASC", fieldValues);
-		ArrayList<Fach> fachList = new ArrayList<Fach>();
-		for(TypeHashMap<String, Object> result : resultList) {
-			Fach f = new Fach(result.getInt("id"));
-			f.name = result.getString("name");
-			f.kurzbeschreibung = result.getString("kurzbeschreibung");
-			fachList.add(f);
-		}
-		return fachList;
-	}
-	
-	public Fach(int id) throws WebServiceException {
+	public Modul(int id) throws WebServiceException {
 		if (id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
 		}
 		this.id = id;
 	}
 	
-	public Fach getDirectAttributes() throws WebServiceException {
+	public Modul getDirectAttributes() throws WebServiceException {
 		if (id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
 		}
 		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
 		ArrayList<Object> fieldValues = new ArrayList<Object>();
 		fieldValues.add(id);
-		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT name, kurzbeschreibung FROM fach WHERE id = ?", fieldValues);
+		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT name, kurzbeschreibung FROM modul WHERE id = ?", fieldValues);
 		if(resultList.isEmpty()) {
 			throw new WebServiceException(ExceptionStatus.OBJECT_NOT_FOUND);
 		}
@@ -69,7 +51,7 @@ public class Fach {
 		return this;
 	}
 	
-	public Fach create() throws WebServiceException {
+	public Modul create() throws WebServiceException {
 		if (id != 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
 		}
@@ -78,7 +60,7 @@ public class Fach {
 		ArrayList<Object> fieldValues = new ArrayList<Object>();
 		fieldValues.add(name);
 		fieldValues.add(kurzbeschreibung);
-		this.id = db.doQuery("INSERT INTO fach (name, kurzbeschreibung) VALUES (?, ?)", fieldValues);
+		this.id = db.doQuery("INSERT INTO modul (name, kurzbeschreibung) VALUES (?, ?)", fieldValues);
 		return this;
 	}
 	
@@ -89,7 +71,7 @@ public class Fach {
 		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
 		ArrayList<Object> fieldValues = new ArrayList<Object>();
 		fieldValues.add(id);
-		db.doQuery("DELETE FROM fach WHERE id = ?", fieldValues);
+		db.doQuery("DELETE FROM modul WHERE id = ?", fieldValues);
 	}
 	
 	private void checkDirectAttributes() throws WebServiceException {
@@ -105,7 +87,7 @@ public class Fach {
 		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
 		ArrayList<Object> fieldValues = new ArrayList<Object>();
 		fieldValues.add(id);
-		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT COUNT(*) AS c FROM fachinstanz WHERE fach = ?", fieldValues);
+		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT COUNT(*) AS c FROM modulinstanz WHERE modul = ?", fieldValues);
 		if(resultList.isEmpty()) {
 			return 0;
 		}
