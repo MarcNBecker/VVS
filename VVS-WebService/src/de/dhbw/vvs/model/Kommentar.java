@@ -45,28 +45,8 @@ public class Kommentar {
 		this.id = id;
 	}
 	
-	/* UNUSED
-	public Kommentar getDirectAttributes() throws WebServiceException {
-		if (id <= 0) {
-			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
-		}
-		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
-		ArrayList<Object> fieldValues = new ArrayList<Object>();
-		fieldValues.add(id);
-		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT dozent, text, verfasser, timestamp FROM kommentar WHERE id = ?", fieldValues);
-		if(resultList.isEmpty()) {
-			throw new WebServiceException(ExceptionStatus.OBJECT_NOT_FOUND);
-		}
-		TypeHashMap<String, Object> result = resultList.get(0);
-		dozentID = result.getInt("dozent");
-		text = result.getString("text");
-		verfasserID = result.getInt("verfasser");
-		timestamp = (Timestamp) result.get("timestamp");
-		return this;
-	} */
-	
 	Kommentar create() throws WebServiceException {
-		if (id <= 0) {
+		if (id != 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
 		}
 		checkDirectAttributes();

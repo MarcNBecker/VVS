@@ -3,6 +3,9 @@ package de.dhbw.vvs.utility;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
@@ -14,6 +17,10 @@ import de.dhbw.vvs.application.WebServiceException;
  * A utility class
  */
 public class Utility {
+	
+	public static final String DATE_STRING = "yyyy-MM-dd";
+	private static final DateFormat DATE_FORMAT = new SimpleDateFormat(DATE_STRING);
+	
 	
 	/**
 	 * Generates a highly cryptographical 128 char long hexadecimal token
@@ -70,6 +77,10 @@ public class Utility {
 		} catch (NumberFormatException e) {
 			return false;
 		}
+	}
+	
+	public static String dateString(Date d) {
+		return DATE_FORMAT.format(d);
 	}
 	
 }

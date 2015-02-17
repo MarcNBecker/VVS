@@ -71,7 +71,7 @@ public class JSONify {
             	return null;
             }
         });
-        gsonBuilder.setDateFormat("hh:mm:ss dd.MM.yyyy");
+        gsonBuilder.setDateFormat(Utility.DATE_STRING);
 		gson = gsonBuilder.create();	
 	}
 	

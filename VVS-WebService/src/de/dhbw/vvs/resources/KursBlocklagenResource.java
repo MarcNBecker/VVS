@@ -9,6 +9,7 @@ import org.restlet.resource.ResourceException;
 
 import de.dhbw.vvs.application.ExceptionStatus;
 import de.dhbw.vvs.application.WebServiceException;
+import de.dhbw.vvs.model.Kurs;
 
 public class KursBlocklagenResource extends SecureServerResource {
 	
@@ -30,8 +31,7 @@ public class KursBlocklagenResource extends SecureServerResource {
 	
 	@Override
 	protected Object receiveGet() throws WebServiceException {
-		// TODO Auto-generated method stub
-		return super.receiveGet();
+		return new Kurs(getKursID()).getBlocklageList();
 	}
 	
 	public int getKursID() {
