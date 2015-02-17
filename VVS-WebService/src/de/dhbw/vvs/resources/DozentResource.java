@@ -11,6 +11,8 @@ import org.restlet.resource.ResourceException;
 
 import de.dhbw.vvs.application.ExceptionStatus;
 import de.dhbw.vvs.application.WebServiceException;
+import de.dhbw.vvs.model.Dozent;
+import de.dhbw.vvs.utility.JSONify;
 
 public class DozentResource extends SecureServerResource {
 	
@@ -34,19 +36,22 @@ public class DozentResource extends SecureServerResource {
 	
 	@Override
 	protected Object receiveGet() throws WebServiceException {
-		// TODO Auto-generated method stub
-		return super.receiveGet();
+		return new Dozent(getDozentID()).getDirectAttributes();
 	}
 	
+	/**
+	 * Input JSON: {titel: "Prof.", name: "Baumgart", vorname:"Jörg", ...} //vgl. Dozent Klasse
+	 */
 	@Override
 	protected Object receivePut(JsonRepresentation json) throws JSONException, WebServiceException {
-		// TODO Auto-generated method stub
-		return super.receivePut(json);
+		Dozent dozent = JSONify.deserialize(json.toString(), Dozent.class);
+		dozent.setID(getDozentID());
+		return dozent.update();
 	}
 	
 	@Override
 	protected void receiveDelete() throws WebServiceException {
-		// TODO Auto-generated method stub
+		new Dozent(getDozentID()).delete();
 	}
 	
 	public int getDozentID() {

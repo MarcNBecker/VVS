@@ -10,52 +10,61 @@ import de.dhbw.vvs.utility.TypeHashMap;
 
 public class Studiengangsleiter {
 	
-	private final int id;
-	private final String name;
-	
-	public static Studiengangsleiter create(String name) throws WebServiceException {
-		if (name == null || (name = name.trim()).isEmpty()) {
-			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_STRING);
-		}
-		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
-		ArrayList<Object> fieldValues = new ArrayList<Object>();
-		fieldValues.add(name);
-		int studiengangsleiterID = db.doQuery("INSERT INTO studiengangsleiter (name) VALUES (?)", fieldValues);
-		return new Studiengangsleiter(studiengangsleiterID, name);
-	}
+	private int id;
+	private String name;
 	
 	public static ArrayList<Studiengangsleiter> getAll() throws WebServiceException {
 		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
 		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT id, name FROM studiengangsleiter ORDER BY name ASC", null);
 		ArrayList<Studiengangsleiter> studiengangsleiterList = new ArrayList<Studiengangsleiter>();
 		for(TypeHashMap<String, Object> result : resultList) {
-			studiengangsleiterList.add(new Studiengangsleiter(result.getInt("id"), result.getString("name")));
+			Studiengangsleiter s = new Studiengangsleiter(result.getInt("id"));
+			s.name = result.getString("name");
+			studiengangsleiterList.add(s);
 		}
 		return studiengangsleiterList;
 	}
 	
-	public static Studiengangsleiter get(int id) throws WebServiceException {
+	public Studiengangsleiter(int id) throws WebServiceException {
+		if (id <= 0) {
+			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
+		}
+		this.id = id;
+	}
+	
+	public Studiengangsleiter getDirectAttributes() throws WebServiceException {
 		if (id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
 		}
 		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
 		ArrayList<Object> fieldValues = new ArrayList<Object>();
 		fieldValues.add(id);
-		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT id, name FROM studiengangsleiter WHERE id = ?", fieldValues);
+		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT name FROM studiengangsleiter WHERE id = ?", fieldValues);
 		if(resultList.isEmpty()) {
 			throw new WebServiceException(ExceptionStatus.OBJECT_NOT_FOUND);
 		}
 		TypeHashMap<String, Object> result = resultList.get(0);
-		return new Studiengangsleiter(result.getInt("id"), result.getString("name"));
+		name = result.getString("name");
+		return this;
 	}
 	
-	public static Studiengangsleiter update(int id, String name) throws WebServiceException {
+	public Studiengangsleiter create() throws WebServiceException {
+		if (id != 0) {
+			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
+		}
+		checkDirectAttributes();
+		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
+		ArrayList<Object> fieldValues = new ArrayList<Object>();
+		fieldValues.add(name);
+		this.id = db.doQuery("INSERT INTO studiengangsleiter (name) VALUES (?)", fieldValues);
+		return this;
+	}
+	
+	public Studiengangsleiter update() throws WebServiceException {
 		if (id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
 		}
-		if (name == null || (name = name.trim()).isEmpty()) {
-			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_STRING);
-		}
+		checkDirectAttributes();
 		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
 		ArrayList<Object> fieldValues = new ArrayList<Object>();
 		fieldValues.add(name);
@@ -64,11 +73,11 @@ public class Studiengangsleiter {
 		if(affectedRows == 0) {
 			throw new WebServiceException(ExceptionStatus.OBJECT_NOT_FOUND);
 		} else {
-			return new Studiengangsleiter(id, name);	
+			return this;
 		}
 	}
 	
-	public static void delete(int id) throws WebServiceException {
+	public void delete() throws WebServiceException {
 		if (id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
 		}
@@ -78,17 +87,14 @@ public class Studiengangsleiter {
 		db.doQuery("DELETE FROM studiengangsleiter WHERE id = ?", fieldValues);
 	}
 	
-	public Studiengangsleiter(int id, String name) {
+	public void checkDirectAttributes() throws WebServiceException {
+		if (name == null || (name = name.trim()).isEmpty()) {
+			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_STRING);
+		}
+	}
+	
+	public void setID(int id) {
 		this.id = id;
-		this.name = name;
 	}
-	
-	public int getId() {
-		return id;
-	}
-	public String getName() {
-		return name;
-	}
-	
 	
 }

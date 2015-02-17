@@ -33,13 +33,12 @@ public class DozentAnhangResource extends SecureServerResource {
 	
 	@Override
 	protected Object receiveGet() throws WebServiceException {
-		// TODO Auto-generated method stub
 		return super.receiveGet();
 	}
 	
 	@Override
 	protected void receiveDelete() throws WebServiceException {
-		// TODO Auto-generated method stub
+		super.receiveDelete();
 	}
 	
 	public int getDozentID() {

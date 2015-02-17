@@ -6,6 +6,7 @@ import org.restlet.resource.ResourceException;
 
 import de.dhbw.vvs.application.WebServiceException;
 import de.dhbw.vvs.model.Studiengangsleiter;
+import de.dhbw.vvs.utility.JSONify;
 
 public class StudiengangsleiterKollektionResource extends SecureServerResource {
 	
@@ -26,8 +27,8 @@ public class StudiengangsleiterKollektionResource extends SecureServerResource {
 	 */
 	@Override
 	protected Object receivePost(JsonRepresentation json) throws JSONException, WebServiceException {
-		String name = json.getJsonObject().getString("name");
-		return Studiengangsleiter.create(name);
+		Studiengangsleiter studiengangsleiter = JSONify.deserialize(json.toString(), Studiengangsleiter.class);
+		return studiengangsleiter.create();
 	}
 	
 }

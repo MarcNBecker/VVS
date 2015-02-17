@@ -12,6 +12,7 @@ import org.restlet.resource.ResourceException;
 import de.dhbw.vvs.application.ExceptionStatus;
 import de.dhbw.vvs.application.WebServiceException;
 import de.dhbw.vvs.model.Studiengangsleiter;
+import de.dhbw.vvs.utility.JSONify;
 
 public class StudiengangsleiterResource extends SecureServerResource {
 	
@@ -35,21 +36,22 @@ public class StudiengangsleiterResource extends SecureServerResource {
 	
 	@Override
 	protected Object receiveGet() throws WebServiceException {
-		return Studiengangsleiter.get(getStudiengangsleiterID());
+		return new Studiengangsleiter(studiengangsleiterID).getDirectAttributes();
 	}
 	
 	/**
-	 * Input JSON {name:"Jörgi Baumgart"}
+	 * Input JSON {name:"Jörg Baumgart"}
 	 */
 	@Override
 	protected Object receivePut(JsonRepresentation json) throws JSONException, WebServiceException {
-		String name = json.getJsonObject().getString("name");
-		return Studiengangsleiter.update(getStudiengangsleiterID(), name);
+		Studiengangsleiter studiengangsleiter = JSONify.deserialize(json.toString(), Studiengangsleiter.class);
+		studiengangsleiter.setID(getStudiengangsleiterID());
+		return studiengangsleiter.update();
 	}
 	
 	@Override
 	protected void receiveDelete() throws WebServiceException {
-		Studiengangsleiter.delete(getStudiengangsleiterID());
+		new Studiengangsleiter(getStudiengangsleiterID()).delete();
 	}
 	
 	public int getStudiengangsleiterID() {

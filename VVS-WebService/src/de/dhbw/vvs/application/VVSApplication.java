@@ -11,7 +11,6 @@ import de.dhbw.vvs.resources.DozentFaecherResource;
 import de.dhbw.vvs.resources.DozentKommentarResource;
 import de.dhbw.vvs.resources.DozentKommentareResource;
 import de.dhbw.vvs.resources.DozentResource;
-import de.dhbw.vvs.resources.DozentenStatusResource;
 import de.dhbw.vvs.resources.DozentenResource;
 import de.dhbw.vvs.resources.FeiertagResource;
 import de.dhbw.vvs.resources.FeiertageResource;
@@ -55,10 +54,9 @@ public class VVSApplication extends Application {
 		//MAIN DATA
 		//Dozenten
 		router.attach(VERSION_ONE + "/dozenten", DozentenResource.class); //GET, POST
-		router.attach(VERSION_ONE + "/dozenten/status", DozentenStatusResource.class); //GET
 		router.attach(VERSION_ONE + "/dozenten/{dozentID}", DozentResource.class); //GET, PUT, DELETE
-		router.attach(VERSION_ONE + "/dozenten/{dozentID}/faecher", DozentFaecherResource.class); //GET, POST
-		router.attach(VERSION_ONE + "/dozenten/{dozentID}/faecher/{fachID}", DozentFachResource.class); //DELETE
+		router.attach(VERSION_ONE + "/dozenten/{dozentID}/faecher", DozentFaecherResource.class); //GET
+		router.attach(VERSION_ONE + "/dozenten/{dozentID}/faecher/{fachID}", DozentFachResource.class); //PUT, DELETE
 		router.attach(VERSION_ONE + "/dozenten/{dozentID}/anhaenge", DozentAnhaengeResource.class); //GET, POST
 		router.attach(VERSION_ONE + "/dozenten/{dozentID}/anhaenge/{anhangID}", DozentAnhangResource.class); //GET, DELETE
 		router.attach(VERSION_ONE + "/dozenten/{dozentID}/kommentare", DozentKommentareResource.class); //GET, POST

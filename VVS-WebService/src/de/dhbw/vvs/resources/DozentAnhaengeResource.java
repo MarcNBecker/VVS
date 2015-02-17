@@ -33,13 +33,11 @@ public class DozentAnhaengeResource extends SecureServerResource {
 	
 	@Override
 	protected Object receiveGet() throws WebServiceException {
-		// TODO Auto-generated method stub
 		return super.receiveGet();
 	}
 	
 	@Override
 	protected Object receivePost(JsonRepresentation json) throws JSONException, WebServiceException {
-		// TODO Auto-generated method stub
 		return super.receivePost(json);
 	}
 	
