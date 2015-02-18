@@ -44,7 +44,7 @@ public class DozentKommentareResource extends SecureServerResource {
 	 */
 	@Override
 	protected Object receivePost(JsonRepresentation json) throws JSONException, WebServiceException {
-		Kommentar k = JSONify.deserialize(json.toString(), Kommentar.class);
+		Kommentar k = JSONify.deserialize(json.getJsonObject().toString(), Kommentar.class);
 		return new Dozent(getDozentID()).addKommentar(k);
 	}
 	

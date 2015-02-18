@@ -37,7 +37,7 @@ public class ModulplanModulResource extends SecureServerResource {
 	
 	@Override
 	protected Object receivePut(JsonRepresentation json) throws JSONException, WebServiceException {
-		ModulInstanz modulInstanz = JSONify.deserialize(json.toString(), ModulInstanz.class);
+		ModulInstanz modulInstanz = JSONify.deserialize(json.getJsonObject().toString(), ModulInstanz.class);
 		modulInstanz.setModulplanID(getModulplanID());
 		modulInstanz.getModul().setID(getModulID());
 		return modulInstanz.create();

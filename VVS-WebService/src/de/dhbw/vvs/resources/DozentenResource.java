@@ -24,7 +24,7 @@ public class DozentenResource extends SecureServerResource {
 	
 	@Override
 	protected Object receivePost(JsonRepresentation json) throws JSONException, WebServiceException {
-		Dozent dozent = JSONify.deserialize(json.toString(), Dozent.class);
+		Dozent dozent = JSONify.deserialize(json.getJsonObject().toString(), Dozent.class);
 		return dozent.create();
 	}
 	

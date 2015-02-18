@@ -43,7 +43,7 @@ public class ModulplanFaecherResource extends SecureServerResource {
 	
 	@Override
 	protected Object receivePost(JsonRepresentation json) throws JSONException, WebServiceException {
-		FachInstanz fachInstanz = JSONify.deserialize(json.toString(), FachInstanz.class);
+		FachInstanz fachInstanz = JSONify.deserialize(json.getJsonObject().toString(), FachInstanz.class);
 		fachInstanz.setModulInstanzID(ModulInstanz.getSingle(getModulplanID(), getModulID()).getID());
 		fachInstanz.getFach().setID(0);
 		return fachInstanz.create();

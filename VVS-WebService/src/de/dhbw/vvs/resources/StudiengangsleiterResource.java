@@ -44,7 +44,7 @@ public class StudiengangsleiterResource extends SecureServerResource {
 	 */
 	@Override
 	protected Object receivePut(JsonRepresentation json) throws JSONException, WebServiceException {
-		Studiengangsleiter studiengangsleiter = JSONify.deserialize(json.toString(), Studiengangsleiter.class);
+		Studiengangsleiter studiengangsleiter = JSONify.deserialize(json.getJsonObject().toString(), Studiengangsleiter.class);
 		studiengangsleiter.setID(getStudiengangsleiterID());
 		return studiengangsleiter.update();
 	}

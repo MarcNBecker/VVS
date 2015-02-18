@@ -24,7 +24,7 @@ public class KurseResource extends SecureServerResource {
 	
 	@Override
 	protected Object receivePost(JsonRepresentation json) throws JSONException, WebServiceException {
-		Kurs kurs = JSONify.deserialize(json.toString(), Kurs.class);
+		Kurs kurs = JSONify.deserialize(json.getJsonObject().toString(), Kurs.class);
 		return kurs.create();
 	}
 	

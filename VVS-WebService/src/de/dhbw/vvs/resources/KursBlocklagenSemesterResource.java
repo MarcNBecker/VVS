@@ -37,7 +37,7 @@ public class KursBlocklagenSemesterResource extends SecureServerResource {
 	
 	@Override
 	protected Object receivePut(JsonRepresentation json) throws JSONException, WebServiceException {
-		Blocklage blocklage = JSONify.deserialize(json.toString(), Blocklage.class);
+		Blocklage blocklage = JSONify.deserialize(json.getJsonObject().toString(), Blocklage.class);
 		blocklage.setSemester(getSemester());
 		return new Kurs(getKursID()).updateBlocklage(blocklage);
 	}
