@@ -4,8 +4,9 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.sql.Date;
 
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
@@ -37,7 +38,7 @@ public class Utility {
 	 * @return the hashed string
 	 * @throws WebServiceException if the hashing process fails
 	 */
-	public static String sha256(String s) throws WebServiceException{
+	public static String sha256(String s) throws WebServiceException {
 		try {
 			MessageDigest digest = MessageDigest.getInstance("SHA-256");
 			byte[] hashedString = digest.digest(s.getBytes("UTF-8"));
@@ -81,6 +82,14 @@ public class Utility {
 	
 	public static String dateString(Date d) {
 		return DATE_FORMAT.format(d);
+	}
+	
+	public static Date stringDate(String s) throws WebServiceException {
+		try {
+			return new Date(DATE_FORMAT.parse(s).getTime());
+		} catch (ParseException e) {
+			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_DATE);
+		}
 	}
 	
 }
