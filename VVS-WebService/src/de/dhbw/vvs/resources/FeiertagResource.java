@@ -30,7 +30,7 @@ public class FeiertagResource extends SecureServerResource {
 		ConcurrentMap<String, Object> urlAttributes = getRequest().getAttributes();
 		try {
 			 this.jahr = Integer.parseInt(URLDecoder.decode(urlAttributes.get("jahr").toString(), "UTF-8"));
-			 this.datum = Utility.stringDate(URLDecoder.decode(urlAttributes.get("jahr").toString(), "UTF-8"));
+			 this.datum = Utility.stringDate(URLDecoder.decode(urlAttributes.get("datum").toString(), "UTF-8"));
 		} catch (NumberFormatException | NullPointerException e) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT).toResourceException();
 		} catch (UnsupportedEncodingException e) {

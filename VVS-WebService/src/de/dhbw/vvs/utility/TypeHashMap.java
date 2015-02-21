@@ -58,6 +58,13 @@ public class TypeHashMap <K, V> extends java.util.HashMap<K, V> {
 		if (value instanceof Integer) {
 			return ((Integer) value).intValue();
 		}
+		if (value instanceof Boolean) {
+			if((Boolean) value.equals(Boolean.TRUE)) {
+				return 1;
+			} else {
+				return 0;
+			}
+		}
 		throw new WebServiceException(ExceptionStatus.CASTING_INT_FAILED);
 	}
 	

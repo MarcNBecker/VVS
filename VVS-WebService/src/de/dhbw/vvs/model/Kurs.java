@@ -58,7 +58,7 @@ public class Kurs {
 		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
 		ArrayList<Object> fieldValues = new ArrayList<Object>();
 		fieldValues.add(id);
-		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT kursname, kursMail, modulplan, studentenAnzahl, kurssprecherVorname, kurssprecherName, kurssprecherMail, kurssprecherTelefon, studiengangsleiter, sekretariatName FROM dozent WHERE id = ?", fieldValues);
+		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT kursname, kursMail, modulplan, studentenAnzahl, kurssprecherVorname, kurssprecherName, kurssprecherMail, kurssprecherTelefon, studiengangsleiter, sekretariatName FROM kurs WHERE id = ?", fieldValues);
 		if(resultList.isEmpty()) {
 			throw new WebServiceException(ExceptionStatus.OBJECT_NOT_FOUND);
 		}
