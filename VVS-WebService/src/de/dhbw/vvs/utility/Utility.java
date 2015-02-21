@@ -71,6 +71,11 @@ public class Utility {
 		}
 	}
 	
+	/**
+	 * Checks if a string only contains numbers
+	 * @param s the string to be checked
+	 * @return true if the string only contains numbers
+	 */
 	public static boolean checkNumeric(String s) {
 		try {
 			Integer.parseInt(s);
@@ -80,10 +85,21 @@ public class Utility {
 		}
 	}
 	
+	/**
+	 * Converts a date object to a string representation as specified in DATE_STRING
+	 * @param d the date object
+	 * @return the string representation
+	 */
 	public static String dateString(Date d) {
 		return DATE_FORMAT.format(d);
 	}
 	
+	/**
+	 * Returns a date object constructed based on a string date representation as specified in DATE_STRING
+	 * @param s the string containing a date according to DATE_STRING
+	 * @return the date object
+	 * @throws WebServiceException if the parsing fails
+	 */
 	public static Date stringDate(String s) throws WebServiceException {
 		try {
 			return new Date(DATE_FORMAT.parse(s).getTime());
