@@ -47,7 +47,7 @@ public class FachInstanz {
 		ArrayList<Object> fieldValues = new ArrayList<Object>();
 		fieldValues.add(modulInstanz.getID());
 		fieldValues.add(fachID);
-		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT id, semester, stunden FROM modulinstanz WHERE modulInstanz = ? AND fach = ?", fieldValues);
+		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT id, semester, stunden FROM fachinstanz WHERE modulInstanz = ? AND fach = ?", fieldValues);
 		if(resultList.isEmpty()) {
 			throw new WebServiceException(ExceptionStatus.OBJECT_NOT_FOUND);
 		}
@@ -64,6 +64,7 @@ public class FachInstanz {
 		if(id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
 		}
+		this.id = id;
 	}
 	
 	public FachInstanz getDirectAttributes() throws WebServiceException {
@@ -73,7 +74,7 @@ public class FachInstanz {
 		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
 		ArrayList<Object> fieldValues = new ArrayList<Object>();
 		fieldValues.add(id);
-		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT fach, modulInstanz, semster, stunden FROM fachinstanz WHERE id = ?", fieldValues);
+		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT fach, modulInstanz, semester, stunden FROM fachinstanz WHERE id = ?", fieldValues);
 		if(resultList.isEmpty()) {
 			throw new WebServiceException(ExceptionStatus.OBJECT_NOT_FOUND);
 		}

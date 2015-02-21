@@ -61,6 +61,7 @@ public class ModulInstanz {
 		if(id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
 		}
+		this.id = id;
 	}
 	
 	public ModulInstanz getDirectAttributes() throws WebServiceException {
