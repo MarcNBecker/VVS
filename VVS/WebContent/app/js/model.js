@@ -129,7 +129,7 @@ var model = new function() {
 
 		var self = this;
 		var allowedMethods = ["GET", "POST", "PUT", "DELETE"];
-		var rootURI = "http://localhost:8080/VVS-WebService/api/v1";
+		var rootURI = "http://localhost:8080/VVS/api/v1";
 		
 		var dozentenURI = "/dozenten";
 		var dozentURI = "/dozenten/{dozentID}";
