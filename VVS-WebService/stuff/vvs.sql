@@ -104,7 +104,7 @@ CREATE TABLE `vvs`.`Kurs` (
   `StudentenAnzahl` INT unsigned NOT NULL,
   `KurssprecherVorname` VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL,
   `KurssprecherName` VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL,
-  `kurssprecherMail` VARCHAR(255) COLLATE utf8_unicode_ci NOT NULL,
+  `KurssprecherMail` VARCHAR(255) COLLATE utf8_unicode_ci NOT NULL,
   `KurssprecherTelefon` VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL,
   `Studiengangsleiter` INT unsigned NOT NULL,
   `SekretariatName` VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL,

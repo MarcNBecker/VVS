@@ -3,6 +3,10 @@ package de.dhbw.vvs.utility;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.sql.Date;
 
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
@@ -14,6 +18,10 @@ import de.dhbw.vvs.application.WebServiceException;
  * A utility class
  */
 public class Utility {
+	
+	public static final String DATE_STRING = "yyyy-MM-dd";
+	private static final DateFormat DATE_FORMAT = new SimpleDateFormat(DATE_STRING);
+	
 	
 	/**
 	 * Generates a highly cryptographical 128 char long hexadecimal token
@@ -30,7 +38,7 @@ public class Utility {
 	 * @return the hashed string
 	 * @throws WebServiceException if the hashing process fails
 	 */
-	public static String sha256(String s) throws WebServiceException{
+	public static String sha256(String s) throws WebServiceException {
 		try {
 			MessageDigest digest = MessageDigest.getInstance("SHA-256");
 			byte[] hashedString = digest.digest(s.getBytes("UTF-8"));
@@ -60,6 +68,43 @@ public class Utility {
 			return phoneUtil.isValidNumber(phoneUtil.parse(phoneNumber, null));	
 		} catch (NumberParseException e) {
 			return false;
+		}
+	}
+	
+	/**
+	 * Checks if a string only contains numbers
+	 * @param s the string to be checked
+	 * @return true if the string only contains numbers
+	 */
+	public static boolean checkNumeric(String s) {
+		try {
+			Integer.parseInt(s);
+			return true;
+		} catch (NumberFormatException e) {
+			return false;
+		}
+	}
+	
+	/**
+	 * Converts a date object to a string representation as specified in DATE_STRING
+	 * @param d the date object
+	 * @return the string representation
+	 */
+	public static String dateString(Date d) {
+		return DATE_FORMAT.format(d);
+	}
+	
+	/**
+	 * Returns a date object constructed based on a string date representation as specified in DATE_STRING
+	 * @param s the string containing a date according to DATE_STRING
+	 * @return the date object
+	 * @throws WebServiceException if the parsing fails
+	 */
+	public static Date stringDate(String s) throws WebServiceException {
+		try {
+			return new Date(DATE_FORMAT.parse(s).getTime());
+		} catch (ParseException e) {
+			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_DATE);
 		}
 	}
 	

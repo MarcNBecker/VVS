@@ -11,6 +11,9 @@ import org.restlet.resource.ResourceException;
 
 import de.dhbw.vvs.application.ExceptionStatus;
 import de.dhbw.vvs.application.WebServiceException;
+import de.dhbw.vvs.model.ModulInstanz;
+import de.dhbw.vvs.model.Modulplan;
+import de.dhbw.vvs.utility.JSONify;
 
 public class ModulplanModuleResource extends SecureServerResource {
 	
@@ -19,6 +22,7 @@ public class ModulplanModuleResource extends SecureServerResource {
 	@Override
 	protected void doInit() throws ResourceException {
 		super.doInit();
+		super.allowGet();
 		super.allowPost();
 		ConcurrentMap<String, Object> urlAttributes = getRequest().getAttributes();
 		try {
@@ -31,9 +35,16 @@ public class ModulplanModuleResource extends SecureServerResource {
 	}
 	
 	@Override
+	protected Object receiveGet() throws WebServiceException {
+		return new Modulplan(getModulplanID()).getModulList();
+	}
+	
+	@Override
 	protected Object receivePost(JsonRepresentation json) throws JSONException, WebServiceException {
-		// TODO Auto-generated method stub
-		return super.receivePost(json);
+		ModulInstanz modulInstanz = JSONify.deserialize(json.getJsonObject().toString(), ModulInstanz.class);
+		modulInstanz.setModulplanID(getModulplanID());
+		modulInstanz.getModul().setID(0);
+		return modulInstanz.create();
 	}
 	
 	public int getModulplanID() {

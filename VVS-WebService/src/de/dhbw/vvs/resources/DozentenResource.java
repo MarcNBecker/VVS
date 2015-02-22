@@ -5,6 +5,8 @@ import org.restlet.ext.json.JsonRepresentation;
 import org.restlet.resource.ResourceException;
 
 import de.dhbw.vvs.application.WebServiceException;
+import de.dhbw.vvs.model.Dozent;
+import de.dhbw.vvs.utility.JSONify;
 
 public class DozentenResource extends SecureServerResource {
 	
@@ -17,14 +19,13 @@ public class DozentenResource extends SecureServerResource {
 	
 	@Override
 	protected Object receiveGet() throws WebServiceException {
-		// TODO Auto-generated method stub
-		return super.receiveGet();
+		return Dozent.getAll();
 	}
 	
 	@Override
 	protected Object receivePost(JsonRepresentation json) throws JSONException, WebServiceException {
-		// TODO Auto-generated method stub
-		return super.receivePost(json);
+		Dozent dozent = JSONify.deserialize(json.getJsonObject().toString(), Dozent.class);
+		return dozent.create();
 	}
 	
 }

@@ -71,6 +71,7 @@ public class JSONify {
             	return null;
             }
         });
+        gsonBuilder.setDateFormat(Utility.DATE_STRING);
 		gson = gsonBuilder.create();	
 	}
 	

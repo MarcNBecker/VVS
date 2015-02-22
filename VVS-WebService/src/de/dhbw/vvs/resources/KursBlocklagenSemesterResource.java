@@ -11,6 +11,9 @@ import org.restlet.resource.ResourceException;
 
 import de.dhbw.vvs.application.ExceptionStatus;
 import de.dhbw.vvs.application.WebServiceException;
+import de.dhbw.vvs.model.Blocklage;
+import de.dhbw.vvs.model.Kurs;
+import de.dhbw.vvs.utility.JSONify;
 
 public class KursBlocklagenSemesterResource extends SecureServerResource {
 	
@@ -34,8 +37,9 @@ public class KursBlocklagenSemesterResource extends SecureServerResource {
 	
 	@Override
 	protected Object receivePut(JsonRepresentation json) throws JSONException, WebServiceException {
-		// TODO Auto-generated method stub
-		return super.receivePut(json);
+		Blocklage blocklage = JSONify.deserialize(json.getJsonObject().toString(), Blocklage.class);
+		blocklage.setSemester(getSemester());
+		return new Kurs(getKursID()).updateBlocklage(blocklage);
 	}
 	
 	public int getKursID() {

@@ -11,6 +11,9 @@ import org.restlet.resource.ResourceException;
 
 import de.dhbw.vvs.application.ExceptionStatus;
 import de.dhbw.vvs.application.WebServiceException;
+import de.dhbw.vvs.model.Dozent;
+import de.dhbw.vvs.model.Kommentar;
+import de.dhbw.vvs.utility.JSONify;
 
 public class DozentKommentareResource extends SecureServerResource {
 	
@@ -33,14 +36,16 @@ public class DozentKommentareResource extends SecureServerResource {
 	
 	@Override
 	protected Object receiveGet() throws WebServiceException {
-		// TODO Auto-generated method stub
-		return super.receiveGet();
+		return new Dozent(getDozentID()).getKommentarList();
 	}
 	
+	/**
+	 * Input JSON: {text: "Kommentar", verfasser: 1}
+	 */
 	@Override
 	protected Object receivePost(JsonRepresentation json) throws JSONException, WebServiceException {
-		// TODO Auto-generated method stub
-		return super.receivePost(json);
+		Kommentar k = JSONify.deserialize(json.getJsonObject().toString(), Kommentar.class);
+		return new Dozent(getDozentID()).addKommentar(k);
 	}
 	
 	public int getDozentID() {

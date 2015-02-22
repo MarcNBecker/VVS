@@ -9,6 +9,8 @@ import org.restlet.resource.ResourceException;
 
 import de.dhbw.vvs.application.ExceptionStatus;
 import de.dhbw.vvs.application.WebServiceException;
+import de.dhbw.vvs.model.Dozent;
+import de.dhbw.vvs.model.Kommentar;
 
 public class DozentKommentarResource extends SecureServerResource {
 	
@@ -32,7 +34,7 @@ public class DozentKommentarResource extends SecureServerResource {
 	
 	@Override
 	protected void receiveDelete() throws WebServiceException {
-		// TODO Auto-generated method stub
+		new Dozent(getDozentID()).deleteKommentar(new Kommentar(getKommentarID()));
 	}
 	
 	public int getDozentID() {
