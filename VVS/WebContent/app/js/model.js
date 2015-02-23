@@ -1,5 +1,83 @@
 var model = new function() {
 	/*
+	 * Helper functions
+	 */
+	this.helper = new function() {
+		var FachInstanzComplete = function() { //Use this only with ModulplanComplete and ModulInstanzComplete
+			this.id = 0;
+			this.fach = new model.templates.Fach();
+			this.semester = 0;
+			this.stunden = 0;
+		};
+		
+		var ModulInstanzComplete = function() { //Use this only with ModulplanComplete to store FachInstanzen with a ModulInstanz
+			this.id = 0;
+			this.modul = new model.templates.Modul();
+			this.credits = 0;
+			this.fachInstanzList = [];
+		};
+		
+		var ModulplanComplete = function() {
+			this.id = 0;
+			this.studiengang = "";
+			this.vertiefungsrichtung = "";
+			this.modulInstanzList = [];
+		};
+		
+		this.getModulplanComplete = function(m, c) {
+			//Read basic modulplan information 
+			model.webService.getModulplan(m, function(api1) {
+				if(!api1.isError) {
+					var modulplan = new ModulplanComplete();
+					modulplan.id = api1.response.id;
+					modulplan.studiengang = api1.response.studiengang;
+					modulplan.vertiefungsrichtung = api1.response.vertiefungsrichtung;
+					//Read ModulInstanzen
+					model.webService.getAllModulInstanzen(m, function(api2) {
+						if(!api2.isError) {
+							for(var i=0; i<api2.response.length; i++) {
+								var currentModulInstanz = api2.response[i];
+								var completeModulInstanz = new ModulInstanzComplete();
+								completeModulInstanz.id = currentModulInstanz.id;
+								completeModulInstanz.modul = currentModulInstanz.modul;
+								completeModulInstanz.credits = currentModulInstanz.credits;
+								//Read FachInstanzen
+								model.webService.getAllFachInstanzen(currentModulInstanz, function(api3) {
+									if(!api3.isError) {
+										for(var n=0; n<api3.response.length; n++) {
+											var currentFachInstanz = api3.response[n];
+											var completeFachInstanz = new FachInstanzComplete();
+											completeFachInstanz.id = currentFachInstanz.id;
+											completeFachInstanz.fach = currentFachInstanz.fach;
+											completeFachInstanz.semester = currentFachInstanz.semester;
+											completeFachInstanz.stunden = currentFachInstanz.stunden;
+											//TODO Füge FachInstanz dem ModulInstanz Array hinzu?
+											completeModulInstanz.fachInstanzList.push(completeFachInstanz);
+										}
+									} else {
+										c(null);
+										return;
+									}
+								});
+								//TODO Füge ModulInstanz dem Modulplan Array hinzu?
+								modulplan.modulInstanzList.push(completeModulInstanz);
+							}
+						} else {
+							c(null);
+							return;
+						}
+					});
+					//TODO Wo rufe ich den Callback auf?
+					c(modulplan);
+				} else {
+					c(null);
+					return;
+				}
+			});
+		};
+		
+	};
+	/*
 	 * Template objects
 	 */
 	this.templates = new function() {
