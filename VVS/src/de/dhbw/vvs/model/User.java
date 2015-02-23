@@ -81,6 +81,19 @@ public class User {
 		db.doQuery("DELETE FROM user WHERE name = ?", fieldValues);
 	}
 	
+	public void checkExistance() throws WebServiceException {
+		if (name == null || (name = name.trim()).isEmpty()) {
+			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_STRING);
+		}
+		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
+		ArrayList<Object> fieldValues = new ArrayList<Object>();
+		fieldValues.add(name);
+		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT name FROM user WHERE name = ?", fieldValues);
+		if(resultList.isEmpty()) {
+			throw new WebServiceException(ExceptionStatus.OBJECT_NOT_FOUND);
+		}
+	}
+	
 	public void checkDirectAttributes() throws WebServiceException {
 		if (name == null || (name = name.trim()).isEmpty()) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_STRING);

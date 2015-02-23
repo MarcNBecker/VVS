@@ -186,7 +186,7 @@ CREATE TABLE `vvs`.`Kommentar` (
   `ID` INT unsigned NOT NULL AUTO_INCREMENT,
   `Dozent` INT unsigned NOT NULL,
   `Text` TEXT COLLATE utf8_unicode_ci NOT NULL,
-  `Verfasser` INT unsigned NULL,
+  `Verfasser` VARCHAR(100) COLLATE utf8_unicode_ci NULL,
   `Timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`ID`),
   INDEX `INDEX_Kommentar_Dozent` (`Dozent` ASC),
@@ -198,7 +198,7 @@ CREATE TABLE `vvs`.`Kommentar` (
     ON UPDATE RESTRICT,
   CONSTRAINT `FK_Kommentar_Verfasser`
     FOREIGN KEY (`Verfasser`)
-    REFERENCES `vvs`.`Studiengangsleiter` (`ID`)
+    REFERENCES `vvs`.`User` (`Name`)
     ON DELETE SET NULL
     ON UPDATE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;

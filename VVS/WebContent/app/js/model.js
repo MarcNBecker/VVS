@@ -170,7 +170,7 @@ var model = new function() {
 			this.id = 0;
 			this.dozentID = 0;
 			this.text = "";
-			this.verfasserID = 0; //Studiengangsleiter
+			this.verfasser = ""; //User
 			this.timestamp = null; //yyyy-MM-dd
 		};
 
