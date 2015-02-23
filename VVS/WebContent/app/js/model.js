@@ -1,5 +1,97 @@
 var model = new function() {
 	/*
+	 * Helper functions
+	 */
+	this.helper = new function() {
+		var FachInstanzComplete = function() { //Use this only with ModulplanComplete and ModulInstanzComplete
+			this.id = 0;
+			this.fach = new model.templates.Fach();
+			this.semester = 0;
+			this.stunden = 0;
+		};
+		
+		var ModulInstanzComplete = function() { //Use this only with ModulplanComplete to store FachInstanzen with a ModulInstanz
+			this.id = 0;
+			this.modul = new model.templates.Modul();
+			this.credits = 0;
+			this.fachInstanzList = [];
+		};
+		
+		var ModulplanComplete = function() {
+			this.id = 0;
+			this.studiengang = "";
+			this.vertiefungsrichtung = "";
+			this.modulInstanzList = [];
+		};
+		
+		this.getModulplanComplete = function(m, c) {
+			//Read basic modulplan information
+			model.webService.getModulplan(m, function(api1) {
+				//Modulplan exists
+				if(!api1.isError) {
+					var modulplan = new ModulplanComplete();
+					modulplan.id = api1.response.id;
+					modulplan.studiengang = api1.response.studiengang;
+					modulplan.vertiefungsrichtung = api1.response.vertiefungsrichtung;
+					//Read ModulInstanzList
+					model.webService.getAllModulInstanzen(m, function(api2) {
+						//ModulInstanzList can be read
+						if(!api2.isError) {
+							//List is empty return Modulplan
+							if(api2.response.length === 0) {
+								c(modulplan);
+								return;
+							}
+							var deepRuns = 0;
+							//Parse list of ModulInstanz
+							for(var i=0; i<api2.response.length; i++) {
+								var currentModulInstanz = api2.response[i];
+								var completeModulInstanz = new ModulInstanzComplete();
+								completeModulInstanz.id = currentModulInstanz.id;
+								completeModulInstanz.modul = currentModulInstanz.modul;
+								completeModulInstanz.credits = currentModulInstanz.credits;
+								//Add ModulInstanz to Modulplan
+								modulplan.modulInstanzList.push(completeModulInstanz);
+								//Read FachInstanzen
+								model.webService.getAllFachInstanzen(currentModulInstanz, function(api3) {
+									//FachInstanzList can be read
+									if(!api3.isError) {
+										for(var ii=0; ii<api3.response.length; ii++) {
+											var currentFachInstanz = api3.response[ii];
+											var completeFachInstanz = new FachInstanzComplete();
+											completeFachInstanz.id = currentFachInstanz.id;
+											completeFachInstanz.fach = currentFachInstanz.fach;
+											completeFachInstanz.semester = currentFachInstanz.semester;
+											completeFachInstanz.stunden = currentFachInstanz.stunden;
+											//Search correct completeModulInstanz; can't rely on outer scope
+											for(var iii=0; iii<modulplan.modulInstanzList.length; iii++) {
+												if(modulplan.modulInstanzList[iii].id === currentFachInstanz.modulInstanzID) {
+													modulplan.modulInstanzList[iii].fachInstanzList.push(completeFachInstanz);			
+													break;
+												}
+											}
+										}
+									}
+									//Every ModulInstanz triggers a FachInstanzList call (deepRun)
+									deepRuns++;
+									//Last call is triggered, then go to callback
+									if(api2.response.length === deepRuns) {
+										c(modulplan);
+									}
+								});
+							}
+						} else { //Reading ModulInstanzList failed, return Modulplan
+							c(modulplan);
+						}
+					});
+				} else { //Reading Modulplan failed, return null
+					c(null);
+				}
+			});
+		};
+		
+	};
+	/*
 	 * Template objects
 	 */
 	this.templates = new function() {

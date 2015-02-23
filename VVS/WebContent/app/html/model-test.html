@@ -7,6 +7,7 @@
 		function c(api) {
 			alert(JSON.stringify(api));
 		}
+		
 		var studiengangsleiterNew = new model.templates.Studiengangsleiter();
 		studiengangsleiterNew.name = "Baumgart";
 		
@@ -225,6 +226,9 @@
 <input type="button" onclick="model.webService.createFachInstanzWithFach(modulInstanz, fachInstanzWithFach, c)" value="Create FachInstanz With Fach" />
 <input type="button" onclick="model.webService.createFachInstanz(modulInstanz, fachInstanzNew, c)" value="Create FachInstanz" />
 <input type="button" onclick="model.webService.deleteFachInstanz(modulInstanz, fachInstanz, c)" value="Delete FachInstanz" /><br />
+
+<!-- Modulplan Helper -->
+<input type="button" onclick="model.helper.getModulplanComplete(modulplan, c)" value="Get Complete Modulplan" /><br />
 
 </body>
 </html>
