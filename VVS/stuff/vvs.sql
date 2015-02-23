@@ -8,7 +8,23 @@ CREATE DATABASE `vvs` DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 CREATE TABLE `vvs`.`Studiengangsleiter` (
   `ID` INT unsigned NOT NULL AUTO_INCREMENT,
   `Name` VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`ID`) 
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- -----------------------------------------------------
+-- Table `vvs`.`User`
+-- -----------------------------------------------------
+CREATE TABLE `vvs`.`User` (
+  `Name` VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL,
+  `Passwort` VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL,
+  `Repraesentiert` INT unsigned NOT NULL,
+  PRIMARY KEY (`Name`),
+  INDEX `INDEX_User_Repraesentiert` (`Repraesentiert` ASC),
+  CONSTRAINT `FK_User_Repraesentiert`
+    FOREIGN KEY (`Repraesentiert`)
+    REFERENCES `vvs`.`Studiengangsleiter` (`ID`)
+    ON DELETE RESTRICT
+    ON UPDATE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- -----------------------------------------------------

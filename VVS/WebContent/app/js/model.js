@@ -212,6 +212,12 @@ var model = new function() {
 			this.name = "";
 		};
 		
+		this.User = function() {
+			this.name = "";
+			this.passwort = "";
+			this.repraesentiert = 0; //An ID of a Studiengangsleiter
+		};
+		
 	};
 	
 	/*
@@ -237,6 +243,9 @@ var model = new function() {
 		
 		var studiengangsleiterAllURI = "/studiengangsleiter";
 		var studiengangsleiterURI = "/studiengangsleiter/{studiengangsleiterID}";
+		
+		var userAllURI = "/user";
+		var userURI = "/user/{name}";
 		
 		var feiertageURI = "/feiertage/{jahr}";
 		var feiertagURI = "/feiertage/{jahr}/{datum}";
@@ -340,6 +349,22 @@ var model = new function() {
 		
 		this.deleteStudiengangsleiter = function(s, c) {
 			self.doRequest(studiengangsleiterURI.replace("{studiengangsleiterID}", s.id), "DELETE", null, c);
+		};
+		
+		this.createUser = function(u, c) {
+			self.doRequest(userAllURI, "POST", u, c);
+		};
+		
+		this.authenticateUser = function(u, c) {
+			self.doRequest(userURI.replace("{name}", u.name), "POST", u, c);
+		};
+		
+		this.updateUser = function(u, c) {
+			self.doRequest(userURI.replace("{name}", u.name), "PUT", u, c);	
+		};
+		
+		this.deleteUser = function(u, c) {
+			self.doRequest(userURI.replace("{name}", u.name), "DELETE", null, c);	
 		};
 		
 		this.getAllFeiertage = function(jahr, c) {
