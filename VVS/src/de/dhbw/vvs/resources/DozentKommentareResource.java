@@ -40,7 +40,7 @@ public class DozentKommentareResource extends SecureServerResource {
 	}
 	
 	/**
-	 * Input JSON: {text: "Kommentar", verfasser: 1}
+	 * Input JSON: {text: "Kommentar", verfasser: "baumgart"}
 	 */
 	@Override
 	protected Object receivePost(JsonRepresentation json) throws JSONException, WebServiceException {

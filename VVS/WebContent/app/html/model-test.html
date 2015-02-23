@@ -8,13 +8,6 @@
 			alert(JSON.stringify(api));
 		}
 		
-		var studiengangsleiterNew = new model.templates.Studiengangsleiter();
-		studiengangsleiterNew.name = "Baumgart";
-		
-		var studiengangsleiter = new model.templates.Studiengangsleiter();
-		studiengangsleiter.id = 1;
-		studiengangsleiter.name = "Joerg Baumgart";
-		
 		var dozentNew = new model.templates.Dozent();
 		dozentNew.titel = "Herr";
 		dozentNew.name = "Baumgart";
@@ -51,13 +44,30 @@
 		var kommentarNew = new model.templates.Kommentar();
 		kommentarNew.dozentID = 1;
 		kommentarNew.text = "Hallo Dozent";
-		kommentarNew.verfasserID = 1;
+		kommentarNew.verfasser = "baumgart";
 		
 		var kommentar = new model.templates.Kommentar();
 		kommentar.id = 1;
 		kommentar.dozentID = 1;
 		kommentar.text = "Hallo Dozent";
-		kommentar.verfasserID = 1;
+		kommentar.verfasser = "baumgart";
+		
+		var studiengangsleiterNew = new model.templates.Studiengangsleiter();
+		studiengangsleiterNew.name = "Baumgart";
+		
+		var studiengangsleiter = new model.templates.Studiengangsleiter();
+		studiengangsleiter.id = 1;
+		studiengangsleiter.name = "Joerg Baumgart";
+		
+		var userNew = new model.templates.User();
+		userNew.name = "baumgart";
+		userNew.passwort = "123456";
+		userNew.repraesentiert = 1;
+		
+		var user = new model.templates.User();
+		user.name = "baumgart";
+		user.passwort = "passwort";
+		user.repraesentiert = 1;
 		
 		var kursNew = new model.templates.Kurs();
 		kursNew.kursname = "WWI12SEA";
@@ -187,6 +197,12 @@
 <input type="button" onclick="model.webService.getStudiengangsleiter(studiengangsleiter, c)" value="Get Studiengangsleiter" />
 <input type="button" onclick="model.webService.updateStudiengangsleiter(studiengangsleiter, c)" value="Update Studiengangsleiter" />
 <input type="button" onclick="model.webService.deleteStudiengangsleiter(studiengangsleiter, c)" value="Delete Studiengangsleiter" /><br />
+
+<!-- User -->
+<input type="button" onclick="model.webService.createUser(userNew, c)" value="Create User" />
+<input type="button" onclick="model.webService.authenticateUser(userNew, c)" value="Authenticate User" />
+<input type="button" onclick="model.webService.updateUser(user, c)" value="Update User" />
+<input type="button" onclick="model.webService.deleteUser(user, c)" value="Delete User" /><br />
 
 <!-- Kurs -->
 <input type="button" onclick="model.webService.getAllKurse(c)" value="Get All Kurse" />

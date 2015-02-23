@@ -14,7 +14,7 @@ public class Kommentar {
 	private int id;
 	private int dozentID;
 	private String text;
-	private int verfasserID;
+	private String verfasser;
 	@SuppressWarnings("unused")
 	private Timestamp timestamp;
 	
@@ -31,7 +31,13 @@ public class Kommentar {
 			Kommentar k = new Kommentar(result.getInt("id"));
 			k.dozentID = result.getInt("dozent");
 			k.text = result.getString("text");
-			k.verfasserID = result.getInt("verfasser");
+			//verfasser can become null, when the user is deleted who posted the Kommentar
+			Object verfasser = result.get("verfasser");
+			if(verfasser != null) {
+				k.verfasser = (String) verfasser;	
+			} else {
+				k.verfasser = "";
+			}
 			k.timestamp = (Timestamp) result.get("timestamp");
 			kommentarList.add(k);
 		}
@@ -54,7 +60,7 @@ public class Kommentar {
 		ArrayList<Object> fieldValues = new ArrayList<Object>();
 		fieldValues.add(dozentID);
 		fieldValues.add(text);
-		fieldValues.add(verfasserID);
+		fieldValues.add(verfasser);
 		this.id = db.doQuery("INSERT INTO kommentar (dozent, text, verfasser) VALUES (?, ?, ?)", fieldValues);
 		this.timestamp = new Timestamp(System.currentTimeMillis());
 		return this;
@@ -83,10 +89,10 @@ public class Kommentar {
 		if (text == null || (text = text.trim()).isEmpty()) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_STRING);
 		}
-		if (verfasserID <= 0) {
+		if (verfasser == null || (verfasser = verfasser.trim()).isEmpty()) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
 		} else {
-			new Studiengangsleiter(verfasserID).getDirectAttributes(); //check existance
+			new User(verfasser).checkExistance(); //check existance
 		}
 	}
 	

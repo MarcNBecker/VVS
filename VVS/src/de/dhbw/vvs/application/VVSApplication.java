@@ -38,6 +38,8 @@ import de.dhbw.vvs.resources.ModulplanResource;
 import de.dhbw.vvs.resources.StudiengangsleiterDashboardResource;
 import de.dhbw.vvs.resources.StudiengangsleiterKollektionResource;
 import de.dhbw.vvs.resources.StudiengangsleiterResource;
+import de.dhbw.vvs.resources.UserKollektionResource;
+import de.dhbw.vvs.resources.UserResource;
 
 /**
  * Main web service application
@@ -73,6 +75,9 @@ public class VVSApplication extends Application {
 		//Studiengangsleiter
 		router.attach(VERSION_ONE + "/studiengangsleiter", StudiengangsleiterKollektionResource.class); //GET, POST
 		router.attach(VERSION_ONE + "/studiengangsleiter/{studiengangsleiterID}", StudiengangsleiterResource.class); //GET, PUT, DELETE
+		
+		router.attach(VERSION_ONE + "/user", UserKollektionResource.class); //POST
+		router.attach(VERSION_ONE + "/user/{name}", UserResource.class); //POST, PUT, DELETE
 		
 		//Feiertage
 		router.attach(VERSION_ONE + "/feiertage/{jahr}", FeiertageResource.class); //GET

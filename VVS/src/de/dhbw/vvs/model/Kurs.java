@@ -169,7 +169,7 @@ public class Kurs {
 		if (kurssprecherTelefon == null || (kurssprecherTelefon = kurssprecherTelefon.trim()).isEmpty() || !Utility.checkPhone(kurssprecherTelefon)) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_PHONE);
 		}
-		if (modulplanID <= 0) {
+		if (studiengangsleiterID <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
 		} else {
 			new Studiengangsleiter(studiengangsleiterID).getDirectAttributes(); //check existance
