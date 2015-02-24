@@ -11,9 +11,15 @@
 					<paper-input-decorator id="titel" label="Titel" labelVisible floatingLabel style="display:inline-block; width:49%">
 						<input is="core-input" value={{dozent.titel}}>
 					</paper-input-decorator>
-					<paper-input-decorator id="anrede" label="Anrede" labelVisible floatingLabel style="display:inline-block; width:49%">
-						<input is="core-input" value={{dozent.anrede}} required>
-					</paper-input-decorator>
+					<paper-dropdown-menu for label="Anrede" labelVisible floatingLabel required style="width:49%">
+						<paper-dropdown class="dropdown">
+							<core-menu class="menu" selected={{dozent.geschlecht}}>
+								<template  repeat="{{item in geschlecht}}">
+									<paper-item>{{item.bezeichnung}}</paper-item>
+								</template>
+							</core-menu>
+						</paper-dropdown>
+					</paper-dropdown-menu>
 					<paper-input-decorator id="name" label="Name" labelVisible floatingLabel style="display:inline-block; width:49%">
 						<input is="core-input" value={{dozent.name}} required>
 					</paper-input-decorator>
@@ -36,7 +42,7 @@
 						<input is="core-input" value={{dozent.telefonPrivat}} required>
 					</paper-input-decorator>
 					<paper-input-decorator id="telefonGeschaeftlich" label="Telefon (gesch&auml;ftlich)" labelVisible floatingLabel style="display:inline-block; width:49%">
-						<input is="core-input" value={{dozent.telegonGeschaeftlich}}>
+						<input is="core-input" value={{dozent.telefonGeschaeftlich}}>
 					</paper-input-decorator>
 					<paper-input-decorator id="telefonMobil" label="Telefon (mobil)" labelVisible floatingLabel style="display:inline-block; width:49%">
 						<input is="core-input" value={{dozent.telefonMobil}}>
@@ -44,25 +50,25 @@
 					<paper-input-decorator id="fax" label="Fax" labelVisible floatingLabel style="display:inline-block; width:49%">
 						<input is="core-input"  value={{dozent.fax}}>
 					</paper-input-decorator>
-					<paper-input-decorator id="arbeitgeber" label="Arbeitgeber" labelVisibl floatingLabel style="width:49%">
+					<paper-input-decorator id="arbeitgeber" label="Arbeitgeber" labelVisible floatingLabel style="width:49%">
 						<input is="core-input" value={{dozent.arbeitgeber}}>
 					</paper-input-decorator>
-					<paper-dropdown-menu label="Status" floatingLabel style="width:49%">
+					<paper-dropdown-menu label="Status" labelVisible floatingLabel required style="width:49%">
 						<paper-dropdown class="dropdown">
 							<core-menu class="menu" selected={{dozent.status}}>
-								<paper-item>Neu</paper-item>
-								<paper-item>Aktiv</paper-item>
-								<paper-item>Inaktiv</paper-item>
+								<template  repeat="{{item in status}}">
+									<paper-item>{{item.bezeichnung}}</paper-item>
+								</template>
 							</core-menu>
 						</paper-dropdown>
 					</paper-dropdown-menu>
 					<hr>
 					<div id="historie">
 						<paper-input-decorator id="angelegt" label="angelegt am" labelVisible floatingLabel style="display:inline-block; width:49%">
-							<input is="core-input" disabled>
+							<input is="core-input" value="{{dozent.angelegt}}" disabled>
 						</paper-input-decorator>
 						<paper-input-decorator id="bearbeitet" label="bearbeitet am" labelVisible floatingLabel style="display:inline-block; width:49%">
-							<input is="core-input" disabled>
+							<input is="core-input" value="{{dozent.geaendert}}" disabled>
 						</paper-input-decorator>
 					</div>
 				</form>
@@ -72,19 +78,21 @@
 					<h3>Kompetenzf&auml;cher</h3>
 					<hr>
 					<div id="kompetenzfaecher">
-						<p>Grundlagen BWL</p>
-						<p>TKR</p>
+						<template  repeat="{{item in dozentenfaecher}}">
+							<paper-item>{{item.name}}</paper-item>
+						</template>
 					</div>
 					<hr>
 					<paper-dropdown-menu label="Kompetenzfach">
 						<paper-dropdown class="dropdown">
-							<core-menu class="menu">
-								<paper-item>FiBu</paper-item>
-								<paper-item>Java</paper-item>
+							<core-menu id="fach" class="menu">
+								<template  repeat="{{item in faecher}}">
+									<paper-item>{{item.name}}</paper-item>
+								</template>
 							</core-menu>
 						</paper-dropdown>
 					</paper-dropdown-menu>
-					<paper-button raised>+</paper-button>
+					<paper-button on-click={{addFach}} raised>+</paper-button>
 				</div>
 				<br />
 				<br />
@@ -100,15 +108,58 @@
 	<script type="text/javascript">
 		Polymer('my-dozent', {
 			dozent: new model.templates.Dozent(),
+			geschlecht: [],
+			status: [],
+			dozentenfaecher: [],
+			faecher: [],
     		ready: function() {
     			var self = this;
+    			self.geschlecht = [
+    			  {bezeichnung:'Herr', geschlecht:'m'},
+    			  {bezeichnung:'Frau', geschlecht:'f'}
+				];
+    			self.status = [
+    			  {bezeichnung:'Neu'},
+    			  {bezeichnung:'Aktiv'},
+    			  {bezeichnung:'Inaktiv'}
+    			];
     			var zeigeDozent = new model.templates.Dozent();
     			zeigeDozent.id = 1;
 				model.webService.getDozent(zeigeDozent, function(api) {
 					self.dozent = api.response;
+					self.$.titel.focusAction();
+					self.$.name.focusAction();
 					self.$.vorname.focusAction();
+					self.$.strasse.focusAction();
+					self.$.postleitzahl.focusAction();
+					self.$.wohnort.focusAction();
+					self.$.mail.focusAction();
+					self.$.telefonPrivat.focusAction();
+					self.$.telefonGeschaeftlich.focusAction();
+					self.$.telefonMobil.focusAction();
+					self.$.fax.focusAction();
+					self.$.arbeitgeber.focusAction();
+					self.$.angelegt.focusAction();
+					self.$.bearbeitet.focusAction();
 				});
-    		}
+				model.webService.getAllDozentFaecher(zeigeDozent, function(api) {
+					self.dozentenfaecher = api.response;
+				});
+				model.webService.getAllFaecher(function(api) {
+					self.faecher = api.response;
+				});			
+    		},
+		addFach: function()
+		{
+			var self = this;
+			var fach = this.$.fach.de.item;
+			alert(fach);
+		},
+		//var dropdown = document.querySelector('paper-dropdown');
+		//dropdown.addEventListener('core-select', function() {
+		//    console.log("Selected: " + dropdown.item);
+		//});
  		});
+		
 	 </script>
 </polymer-element>
