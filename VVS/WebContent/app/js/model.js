@@ -119,19 +119,21 @@ var model = new function() {
 			this.fax = ""; //Valid phone
 			this.arbeitgeber = "";
 			this.status = 0; //StatusEnum
+			this.angelegt = null; //yyyy-MM-dd
+			this.geaendert = null; //yyyy-MM-dd
 		};
 		
 		this.Dozent.prototype.StatusEnum = {
 				neu: {
-					ordinal : 1,
+					ordinal : 0,
 					string : "Neu"
 				},
 				aktiv: {
-					ordinal: 2,
+					ordinal: 1,
 					string: "Aktiv"
 				},
 				inaktiv: {
-					ordinal: 3,
+					ordinal: 2,
 					string: "Inaktiv"
 				}
 		};
@@ -139,11 +141,11 @@ var model = new function() {
 		this.Dozent.prototype.GeschlechtEnum = {
 				m: {
 					ordinal : 0,
-					string: "M"
+					string: "Herr"
 				},
 				f: {
 					ordinal: 1,
-					string: "F"
+					string: "Frau"
 				}
 		};
 		

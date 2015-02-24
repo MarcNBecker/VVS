@@ -1,5 +1,6 @@
 package de.dhbw.vvs.model;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import de.dhbw.vvs.application.ExceptionStatus;
@@ -28,6 +29,8 @@ public class Dozent {
 	private String fax;
 	private String arbeitgeber;
 	private Status status;
+	private Timestamp angelegt;
+	private Timestamp geaendert;
 	
 	public static ArrayList<Dozent> getAll() throws WebServiceException {
 		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
@@ -57,7 +60,7 @@ public class Dozent {
 		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
 		ArrayList<Object> fieldValues = new ArrayList<Object>();
 		fieldValues.add(id);
-		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT titel, name, vorname, geschlecht, strasse, wohnort, postleitzahl, mail, telefonPrivat, telefonMobil, telefonGeschaeftlich, fax, arbeitgeber, status FROM dozent WHERE id = ?", fieldValues);
+		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT titel, name, vorname, geschlecht, strasse, wohnort, postleitzahl, mail, telefonPrivat, telefonMobil, telefonGeschaeftlich, fax, arbeitgeber, status, angelegt, geaendert FROM dozent WHERE id = ?", fieldValues);
 		if(resultList.isEmpty()) {
 			throw new WebServiceException(ExceptionStatus.OBJECT_NOT_FOUND);
 		}
@@ -76,6 +79,8 @@ public class Dozent {
 		fax = result.getString("fax");
 		arbeitgeber = result.getString("arbeitgeber");
 		status = Status.getFromOrdinal(result.getInt("status"));
+		angelegt = (Timestamp) result.get("angelegt");
+		geaendert = (Timestamp) result.get("geaendert");
 		return this;
 	}
 	
@@ -109,7 +114,7 @@ public class Dozent {
 		fieldValues.add(arbeitgeber);
 		fieldValues.add(status);
 		this.id = db.doQuery("INSERT INTO dozent (titel, name, vorname, geschlecht, strasse, wohnort, postleitzahl, mail, telefonPrivat, telefonMobil, telefonGeschaeftlich, fax, arbeitgeber, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", fieldValues);
-		return this;
+		return this.getDirectAttributes(); //Get Timestamps
 	}
 	
 	public Dozent update() throws WebServiceException {
@@ -138,7 +143,7 @@ public class Dozent {
 		if(affectedRows == 0) {
 			throw new WebServiceException(ExceptionStatus.OBJECT_NOT_FOUND);
 		} else {
-			return this;	
+			return this.getDirectAttributes(); //Get Timestamps
 		}
 	}
 	

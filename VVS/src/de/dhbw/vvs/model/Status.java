@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 public enum Status implements WebServiceEnum {
 	
-	Neu(1), Aktiv(2), Inaktiv(3);
+	Neu(0), Aktiv(1), Inaktiv(2);
 	
 	private static HashMap<Integer, Status> mapping = new HashMap<Integer, Status>();
 
