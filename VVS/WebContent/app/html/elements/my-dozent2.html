@@ -1,0 +1,97 @@
+<link rel="import" href="../../polymer/polymer/polymer.html">
+<link rel="import" href="../../polymer/paper-elements/paper-elements.html">
+<link rel="import" href="../../polymer/core-elements/core-elements.html">
+<polymer-element name="my-dozent2" noscript>
+	<template>
+		<link rel="stylesheet" type="text/css" href="../formate.css">
+		<div>
+			<div id="dozentendaten" style="padding:10px; width:50%; border:1px black solid; float:left">
+				<form>
+					<paper-input-decorator id="titel" label="Titel" labelVisible floatingLabel style="display:inline-block; width:49%">
+						<input is="core-input">
+					</paper-input-decorator>
+					<paper-input-decorator id="anrede" label="Anrede" labelVisible floatingLabel style="display:inline-block; width:49%">
+						<input is="core-input" required>
+					</paper-input-decorator>
+					<paper-input-decorator id="name" label="Name" labelVisible floatingLabel style="display:inline-block; width:49%">
+						<input is="core-input" required>
+					</paper-input-decorator>
+					<paper-input-decorator id="vorname" label="Vorname" labelVisible floatingLabel style="display:inline-block; width:49%">
+						<input is="core-input" required>
+					</paper-input-decorator>
+					<paper-input-decorator id="strasse" label="Stra&szlig;e" labelVisible floatingLabel style="width:49%">
+						<input is="core-dropdown" required>
+					</paper-input-decorator>
+					<paper-input-decorator id="plz" label="PLZ" labelVisible floatingLabel style="display:inline-block; width:49%">
+						<input is="core-input" required>
+					</paper-input-decorator>
+					<paper-input-decorator id="wohnort" label="Wohnort" labelVisible floatingLabel style="display:inline-block; width:49%">
+						<input is="core-input" required>
+					</paper-input-decorator>
+					<paper-input-decorator id="email" label="E-Mail" labelVisible floatingLabel style=" width:49%">
+						<input is="core-input" required>
+					</paper-input-decorator>
+					<paper-input-decorator id="telefon_privat" label="Telefon (privat)" labelVisible floatingLabel style="display:inline-block; width:49%">
+						<input is="core-input" required>
+					</paper-input-decorator>
+					<paper-input-decorator id="telefon_geschäftlich" label="Telefon (gesch&auml;ftlich)" labelVisible floatingLabel style="display:inline-block; width:49%">
+						<input is="core-input">
+					</paper-input-decorator>
+					<paper-input-decorator id="telefon_mobil" label="Telefon (mobil)" labelVisible floatingLabel style="display:inline-block; width:49%">
+						<input is="core-input">
+					</paper-input-decorator>
+					<paper-input-decorator id="fax" label="Fax" labelVisible floatingLabel style="display:inline-block; width:49%">
+						<input is="core-input">
+					</paper-input-decorator>
+					<paper-input-decorator id="arbeitgeber" label="Arbeitgeber" labelVisibl floatingLabel style="width:49%">
+						<input is="core-input">
+					</paper-input-decorator>
+					<paper-dropdown-menu label="Status" floatingLabel style="width:49%">
+						<paper-dropdown class="dropdown">
+							<core-menu class="menu">
+								<paper-item>aktiv</paper-item>
+								<paper-item>passiv</paper-item>
+							</core-menu>
+						</paper-dropdown>
+					</paper-dropdown-menu>
+<!-- 					<hr>
+					<div id="historie">
+						<paper-input-decorator id="angelegt" label="angelegt am" labelVisible floatingLabel style="display:inline-block; width:49%">
+							<input is="core-input" disabled>
+						</paper-input-decorator>
+						<paper-input-decorator id="bearbeitet" label="bearbeitet am" labelVisible floatingLabel style="display:inline-block; width:49%">
+							<input is="core-input" disabled>
+						</paper-input-decorator>
+					</div> -->
+				</form>
+			</div>
+			<div style="float:right; width:45%">
+				<div style="padding:10px; border: 1px black solid">
+					<h3>Kompetenzf&auml;cher</h3>
+					<hr>
+					<div id="kompetenzfaecher">
+						<p>Grundlagen BWL</p>
+						<p>TKR</p>
+					</div>
+					<hr>
+					<paper-dropdown-menu label="Kompetenzfach">
+						<paper-dropdown class="dropdown">
+							<core-menu class="menu">
+								<paper-item>FiBu</paper-item>
+								<paper-item>Java</paper-item>
+							</core-menu>
+						</paper-dropdown>
+					</paper-dropdown-menu>
+					<paper-button raised>+</paper-button>
+				</div>
+				<br />
+				<br />
+			</div>
+		</div>
+		<span id="buttons" style="padding-left:40px">
+		<paper-button raised>Speichern</paper-button>
+<!-- 		<paper-button raised>L&ouml;schen</paper-button> -->
+		<paper-button raised>Abbrechen</paper-button>
+		</span>
+	</template>
+</polymer-element>
