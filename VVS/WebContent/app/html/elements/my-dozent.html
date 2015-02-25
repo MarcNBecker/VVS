@@ -15,7 +15,7 @@
 						<paper-dropdown class="dropdown">
 							<core-menu class="menu" selected={{dozent.geschlecht}}>
 								<template  repeat="{{item in geschlecht}}">
-									<paper-item>{{item.bezeichnung}}</paper-item>
+									<paper-item>{{item}}</paper-item>
 								</template>
 							</core-menu>
 						</paper-dropdown>
@@ -57,7 +57,7 @@
 						<paper-dropdown class="dropdown">
 							<core-menu class="menu" selected={{dozent.status}}>
 								<template  repeat="{{item in status}}">
-									<paper-item>{{item.bezeichnung}}</paper-item>
+									<paper-item>{{item}}</paper-item>
 								</template>
 							</core-menu>
 						</paper-dropdown>
@@ -84,7 +84,7 @@
 					</div>
 					<hr>
 					<paper-dropdown-menu label="Kompetenzfach">
-						<paper-dropdown class="dropdown">
+						<paper-dropdown id="drop" class="dropdown">
 							<core-menu id="fach" class="menu">
 								<template  repeat="{{item in faecher}}">
 									<paper-item>{{item.name}}</paper-item>
@@ -99,9 +99,9 @@
 			</div>
 		</div>
 		<span id="buttons" style="padding-left:40px">
-		<paper-button raised>Speichern</paper-button>
-		<paper-button raised>L&ouml;schen</paper-button>
-		<paper-button raised>Abbrechen</paper-button>
+		<paper-button on-click={{speichern}} raised>Speichern</paper-button>
+		<paper-button on-click={{loeschen}} raised>L&ouml;schen</paper-button>
+		<paper-button on-click={{abbrechen]] raised>Abbrechen</paper-button>
 		</span>
 	</template>
 	<script type="text/javascript" src="../../js/model.js"></script>
@@ -112,53 +112,94 @@
 			status: [],
 			dozentenfaecher: [],
 			faecher: [],
-    		ready: function() {
+    		ready: function()
+    		{
     			var self = this;
-    			self.geschlecht = [
-    			  {bezeichnung:'Herr', geschlecht:'m'},
-    			  {bezeichnung:'Frau', geschlecht:'f'}
-				];
-    			self.status = [
-    			  {bezeichnung:'Neu'},
-    			  {bezeichnung:'Aktiv'},
-    			  {bezeichnung:'Inaktiv'}
-    			];
+    			var dropdown = self.$.drop;
+    			dropdown.addEventListener('core-select', function(e) {
+    			    if (e.detail.isSelected)
+    				{
+    					self.fach.name = e.detail.item.innerText;
+    				}
+    			});
     			var zeigeDozent = new model.templates.Dozent();
-    			zeigeDozent.id = 1;
+    			zeigeDozent.id = 1;  // muss noch durch Data Binding ersetzt werden
+    			self.status = zeigeDozent.StatusEnum.all;
+    			self.geschlecht = zeigeDozent.GeschlechtEnum.all;
 				model.webService.getDozent(zeigeDozent, function(api) {
-					self.dozent = api.response;
-					self.$.titel.focusAction();
-					self.$.name.focusAction();
-					self.$.vorname.focusAction();
-					self.$.strasse.focusAction();
-					self.$.postleitzahl.focusAction();
-					self.$.wohnort.focusAction();
-					self.$.mail.focusAction();
-					self.$.telefonPrivat.focusAction();
-					self.$.telefonGeschaeftlich.focusAction();
-					self.$.telefonMobil.focusAction();
-					self.$.fax.focusAction();
-					self.$.arbeitgeber.focusAction();
-					self.$.angelegt.focusAction();
-					self.$.bearbeitet.focusAction();
+					if (!api.error)
+					{
+						self.dozent = api.response;
+						self.$.titel.focusAction();
+						self.$.name.focusAction();
+						self.$.vorname.focusAction();
+						self.$.strasse.focusAction();
+						self.$.postleitzahl.focusAction();
+						self.$.wohnort.focusAction();
+						self.$.mail.focusAction();
+						self.$.telefonPrivat.focusAction();
+						self.$.telefonGeschaeftlich.focusAction();
+						self.$.telefonMobil.focusAction();
+						self.$.fax.focusAction();
+						self.$.arbeitgeber.focusAction();
+						self.$.angelegt.focusAction();
+						self.$.bearbeitet.focusAction();
+					}
+					else
+					{
+						console.log(JSON.stringify(api));
+					}
 				});
 				model.webService.getAllDozentFaecher(zeigeDozent, function(api) {
-					self.dozentenfaecher = api.response;
+					if (!api.error)
+					{
+						self.dozentenfaecher = api.response;
+					}
+					else
+					{
+						console.log(JSON.stringify(api));
+					}
 				});
 				model.webService.getAllFaecher(function(api) {
-					self.faecher = api.response;
+					if (!api.error)
+						{
+						self.faecher = api.response;
+					}
+					else
+					{
+						console.log(JSON.stringify(api));
+					}
 				});			
     		},
-		addFach: function()
-		{
-			var self = this;
-			var fach = this.$.fach.de.item;
-			alert(fach);
-		},
-		//var dropdown = document.querySelector('paper-dropdown');
-		//dropdown.addEventListener('core-select', function() {
-		//    console.log("Selected: " + dropdown.item);
-		//});
+			addFach: function()
+			{
+				var self = this;
+				var zeigeDozent = new model.templates.Dozent();
+				zeigeDozent.id = 1; // muss noch durch Data Binding ersetzt werden
+				model.webService.setDozentFach(zeigeDozent, self.faecher[self.$.fach.selected], function(api) {
+					console.log(JSON.stringify(api));
+				});
+			},
+	    	speichern: function()
+	    	{
+	    		var self = this;
+	    		var newDozent = new model.templates.Dozent();
+	    		newDozent = self.dozent;
+	    		alert(self.$.titel.input.value);
+	    		newDozent.titel = self.$.titel.input.value;
+	    		alert(JSON.stringify(newDozent));
+	    		model.webService.updateDozent(newDozent, function(api) {
+	    			console.log(JSON.stringify(api));
+	    		});
+	    	},
+			loeschen: function()
+			{
+			
+			},
+	    	abbrechen: function()
+	    	{
+	    	
+	    	}
  		});
 		
 	 </script>
