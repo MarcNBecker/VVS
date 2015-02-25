@@ -20,7 +20,6 @@ import de.dhbw.vvs.resources.KursBlocklagenSemesterResource;
 import de.dhbw.vvs.resources.KursDashboardResource;
 import de.dhbw.vvs.resources.KursResource;
 import de.dhbw.vvs.resources.KursSemesterVorlesungDozentResource;
-import de.dhbw.vvs.resources.KursSemesterVorlesungKlausurResource;
 import de.dhbw.vvs.resources.KursSemesterVorlesungResource;
 import de.dhbw.vvs.resources.KursSemesterVorlesungTerminResource;
 import de.dhbw.vvs.resources.KursSemesterVorlesungTermineResource;
@@ -105,8 +104,7 @@ public class VVSApplication extends Application {
 		//Semester
 		router.attach(VERSION_ONE + "/kurse/{kursID}/{semester}/vorlesungen", KursSemesterVorlesungenResource.class); //GET, POST
 		router.attach(VERSION_ONE + "/kurse/{kursID}/{semester}/vorlesungen/{vorlesungsID}", KursSemesterVorlesungResource.class); //GET, PUT, DELETE
-		router.attach(VERSION_ONE + "/kurse/{kursID}/{semester}/vorlesungen/{vorlesungsID}/klausur", KursSemesterVorlesungKlausurResource.class); //GET, PUT, DELETE
-		router.attach(VERSION_ONE + "/kurse/{kursID}/{semester}/vorlesungen/{vorlesungsID}/dozent", KursSemesterVorlesungDozentResource.class); //GET, PUT, DELETE
+		router.attach(VERSION_ONE + "/kurse/{kursID}/{semester}/vorlesungen/{vorlesungsID}/dozent", KursSemesterVorlesungDozentResource.class); //GET
 		router.attach(VERSION_ONE + "/kurse/{kursID}/{semester}/vorlesungen/{vorlesungsID}/termine", KursSemesterVorlesungTermineResource.class); //GET, POST
 		router.attach(VERSION_ONE + "/kurse/{kursID}/{semester}/vorlesungen/{vorlesungsID}/termine/{terminID}", KursSemesterVorlesungTerminResource.class); //PUT, DELETE
 		

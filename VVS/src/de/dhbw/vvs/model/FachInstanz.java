@@ -141,6 +141,10 @@ public class FachInstanz {
 		this.modulInstanzID = modulInstanzID;
 	}
 	
+	public int getID() {
+		return id;
+	}
+	
 	/**
 	 * It is only allowed to call this method, when fach.setID() follows this call
 	 */
