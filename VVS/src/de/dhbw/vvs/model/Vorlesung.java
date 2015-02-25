@@ -25,7 +25,7 @@ public class Vorlesung {
 		ArrayList<Object> fieldValues = new ArrayList<Object>();
 		fieldValues.add(kurs.getID());
 		fieldValues.add(semester);
-		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT id, kurs, fachInstanz, dozent, semester FROM vorlesung WHERE kurs = ?, semester = ? ORDER BY fachInstanz ASC", fieldValues);
+		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT id, kurs, fachInstanz, dozent, semester FROM vorlesung WHERE kurs = ? AND semester = ? ORDER BY fachInstanz ASC", fieldValues);
 		ArrayList<Vorlesung> vorlesungList = new ArrayList<Vorlesung>();
 		for(TypeHashMap<String, Object> result : resultList) {
 			Vorlesung v = new Vorlesung(result.getInt("id"));

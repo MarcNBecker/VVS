@@ -212,10 +212,29 @@ var model = new function() {
 			this.name = "";
 		};
 		
+		this.Termin = function() {
+			this.id = 0;
+			this.vorlesungID = 0;
+			this.datum = null; //yyyy-MM-dd
+			this.startUhrzeit = null; //HH:MM:SS
+			this.endUhrzeit = null; //HH:MM:SS
+			this.pause = 0;
+			this.raum = "";
+			this.klausur = false;
+		};
+		
 		this.User = function() {
 			this.name = "";
 			this.passwort = "";
 			this.repraesentiert = 0; //An ID of a Studiengangsleiter
+		};
+		
+		this.Vorlesung = function() {
+			this.id = 0;
+			this.kursID = 0;
+			this.fachInstanz = new model.templates.FachInstanz();
+			this.dozentID = 0;
+			this.semester = 0;
 		};
 		
 	};
@@ -258,6 +277,12 @@ var model = new function() {
 		var modulInstanzURI = "/modulplaene/{modulplanID}/module/{modulID}";
 		var fachInstanzenURI = "/modulplaene/{modulplanID}/module/{modulID}/faecher";
 		var fachInstanzURI = "/modulplaene/{modulplanID}/module/{modulID}/faecher/{fachID}";
+		
+		var vorlesungenURI = "/kurse/{kursID}/{semester}/vorlesungen";
+		var vorlesungURI = "/kurse/{kursID}/{semester}/vorlesungen/{vorlesungsID}";
+		var vorlesungDozentURI = "/kurse/{kursID}/{semester}/vorlesungen/{vorlesungsID}/dozent";
+		var vorlesungTermineURI = "/kurse/{kursID}/{semester}/vorlesungen/{vorlesungsID}/termine";
+		var vorlesungTerminURI = "/kurse/{kursID}/{semester}/vorlesungen/{vorlesungsID}/termine/{terminID}";
 		
 		this.getAllDozenten = function(c) {
 			self.doRequest(dozentenURI, "GET", null, c);
@@ -437,6 +462,50 @@ var model = new function() {
 		
 		this.deleteFachInstanz = function(mi, fi, c) {
 			self.doRequest(fachInstanzURI.replace("{modulplanID}", mi.modulplanID).replace("{modulID}", mi.modul.id).replace("{fachID}", fi.fach.id), "DELETE", null, c);	
+		};
+		
+		this.getAllVorlesungen = function(k, s, c) {
+			self.doRequest(vorlesungenURI.replace("{kursID}", k.id).replace("{semester}", s), "GET", null, c);
+		};
+		
+		this.createVorlesung = function(v, c) {
+			self.doRequest(vorlesungenURI.replace("{kursID}", v.kursID).replace("{semester}", v.semester), "POST", v, c);
+		};
+		
+		this.getVorlesung = function(v, c) {
+			self.doRequest(vorlesungURI.replace("{kursID}", v.kursID).replace("{semester}", v.semester).replace("{vorlesungsID}", v.id), "GET", null, c);
+		};
+		
+		this.updateVorlesung = function(v, c) {
+			self.doRequest(vorlesungURI.replace("{kursID}", v.kursID).replace("{semester}", v.semester).replace("{vorlesungsID}", v.id), "PUT", v, c);
+		};
+		
+		this.deleteVorlesung = function(v, c) {
+			self.doRequest(vorlesungURI.replace("{kursID}", v.kursID).replace("{semester}", v.semester).replace("{vorlesungsID}", v.id), "DELETE", null, c);
+		};
+		
+		this.getVorlesungDozent = function(v, c) {
+			self.doRequest(vorlesungDozentURI.replace("{kursID}", v.kursID).replace("{semester}", v.semester).replace("{vorlesungsID}", v.id), "GET", null, c);	
+		};
+		
+		this.getAllVorlesungTermine = function(v, c) {
+			self.doRequest(vorlesungTermineURI.replace("{kursID}", v.kursID).replace("{semester}", v.semester).replace("{vorlesungsID}", v.id), "GET", null, c);		
+		};
+		
+		this.createVorlesungTermin = function(v, t, c) {
+			self.doRequest(vorlesungTermineURI.replace("{kursID}", v.kursID).replace("{semester}", v.semester).replace("{vorlesungsID}", v.id), "POST", t, c);		
+		};
+		
+		this.getVorlesungTermin = function(v, t, c) {
+			self.doRequest(vorlesungTerminURI.replace("{kursID}", v.kursID).replace("{semester}", v.semester).replace("{vorlesungsID}", v.id).replace("{terminID}", t.id), "GET", null, c);		
+		};
+		
+		this.updateVorlesungTermin = function(v, t, c) {
+			self.doRequest(vorlesungTerminURI.replace("{kursID}", v.kursID).replace("{semester}", v.semester).replace("{vorlesungsID}", v.id).replace("{terminID}", t.id), "PUT", t, c);		
+		};
+		
+		this.deleteVorlesungTermin = function(v, t, c) {
+			self.doRequest(vorlesungTerminURI.replace("{kursID}", v.kursID).replace("{semester}", v.semester).replace("{vorlesungsID}", v.id).replace("{terminID}", t.id), "DELETE", null, c);		
 		};
 		
 		this.doRequest = function(uri, method, data, callback) {

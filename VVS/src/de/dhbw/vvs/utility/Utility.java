@@ -21,10 +21,9 @@ import de.dhbw.vvs.application.WebServiceException;
 public class Utility {
 	
 	public static final String DATE_STRING = "yyyy-MM-dd";
-	public static final String TIME_STRING = "HH:MM:SS";
+	public static final String TIME_STRING = "HH:mm:ss";
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat(DATE_STRING);
 	private static final DateFormat TIME_FORMAT = new SimpleDateFormat(TIME_STRING);
-	
 	
 	/**
 	 * Generates a highly cryptographical 128 char long hexadecimal token
@@ -115,6 +114,20 @@ public class Utility {
 	public static Date stringDate(String s) throws WebServiceException {
 		try {
 			return new Date(DATE_FORMAT.parse(s).getTime());
+		} catch (ParseException e) {
+			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_DATE);
+		}
+	}
+	
+	/**
+	 * Returns a time object constructed based on a string time representation as specified in TIME_STRING
+	 * @param s the string containing a time according to TIME_STRING
+	 * @return the time object
+	 * @throws WebServiceException if the parsing fails
+	 */
+	public static Time stringTime(String s) throws WebServiceException {
+		try {
+			return new Time(TIME_FORMAT.parse(s).getTime());
 		} catch (ParseException e) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_DATE);
 		}

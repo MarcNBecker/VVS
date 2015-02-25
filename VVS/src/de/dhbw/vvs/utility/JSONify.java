@@ -1,6 +1,7 @@
 package de.dhbw.vvs.utility;
 
 import java.lang.reflect.Type;
+import java.sql.Time;
 
 import org.restlet.resource.ResourceException;
 
@@ -59,6 +60,12 @@ public class JSONify {
 				return new JsonPrimitive(src.getValue());
 			}			
 		});
+		gsonBuilder.registerTypeHierarchyAdapter(Time.class, new JsonSerializer<Time>() {
+			@Override
+			public JsonElement serialize(Time src, Type typeOfSrc, JsonSerializationContext context) {
+				return new JsonPrimitive(Utility.timeString(src));
+			}			
+		});
         gsonBuilder.registerTypeHierarchyAdapter(WebServiceEnum.class, new JsonDeserializer<WebServiceEnum>() {
             @Override
             public WebServiceEnum deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
@@ -69,6 +76,16 @@ public class JSONify {
             		return Status.getFromOrdinal(json.getAsInt());
             	}
             	return null;
+            }
+        });
+        gsonBuilder.registerTypeHierarchyAdapter(Time.class, new JsonDeserializer<Time>() {
+            @Override
+            public Time deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+            	try {
+            		return Utility.stringTime(json.getAsString());
+            	} catch (WebServiceException e) {
+            		return null;
+            	}
             }
         });
         gsonBuilder.setDateFormat(Utility.DATE_STRING);

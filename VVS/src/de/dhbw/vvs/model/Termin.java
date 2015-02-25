@@ -16,9 +16,9 @@ public class Termin {
 	private int id;
 	private int vorlesungID;
 	private Date datum;
-	private Time startUhrzeit; //TODO serializing?
-	private Time endUhrzeit; //TODO serializing?
-	private int pause; //TODO fest berechenbar?
+	private Time startUhrzeit;
+	private Time endUhrzeit;
+	private int pause;
 	private String raum;
 	private boolean klausur;
 	
@@ -83,8 +83,13 @@ public class Termin {
 		fieldValues.add(Utility.dateString(datum));
 		fieldValues.add(Utility.timeString(startUhrzeit));
 		fieldValues.add(Utility.timeString(endUhrzeit));
+		fieldValues.add(pause);
 		fieldValues.add(raum);
-		fieldValues.add(klausur); //TODO check?
+		if (klausur) {
+			fieldValues.add("1");
+		} else {
+			fieldValues.add("0");
+		}
 		this.id = db.doQuery("INSERT INTO termin (vorlesung, datum, startUhrzeit, endUhrzeit, pause, raum, klausur) VALUES (?, ?, ?, ?, ?, ?, ?)", fieldValues);
 		return this;
 	}
@@ -100,8 +105,13 @@ public class Termin {
 		fieldValues.add(Utility.dateString(datum));
 		fieldValues.add(Utility.timeString(startUhrzeit));
 		fieldValues.add(Utility.timeString(endUhrzeit));
-		fieldValues.add(raum);
-		fieldValues.add(klausur); //TODO check?
+		fieldValues.add(pause);
+		fieldValues.add(raum);		
+		if (klausur) {
+			fieldValues.add("1");
+		} else {
+			fieldValues.add("0");
+		}
 		fieldValues.add(id);
 		int affectedRows = db.doQuery("UPDATE termin SET vorlesung = ?, datum = ?, startUhrzeit = ?, endUhrzeit = ?, pause = ?, raum = ?, klausur = ? WHERE id = ?", fieldValues);
 		if(affectedRows == 0) {
@@ -149,7 +159,9 @@ public class Termin {
 			fieldValues.add(vorlesungID);
 			ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT id FROM termin WHERE vorlesung = ? AND klausur = 1", fieldValues);
 			if(!resultList.isEmpty()) {
-				throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT);
+				if(resultList.get(0).getInt("id") != id) {
+					throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT);	
+				}
 			}
 			
 		}
