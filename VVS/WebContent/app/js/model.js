@@ -135,7 +135,8 @@ var model = new function() {
 				inaktiv: {
 					ordinal: 2,
 					string: "Inaktiv"
-				}
+				},
+				all: ["Neu", "Aktiv", "Inaktiv"]
 		};
 
 		this.Dozent.prototype.GeschlechtEnum = {
@@ -146,7 +147,8 @@ var model = new function() {
 				f: {
 					ordinal: 1,
 					string: "Frau"
-				}
+				},
+				all: ["Herr", "Frau"]
 		};
 		
 		this.Fach = function() {
