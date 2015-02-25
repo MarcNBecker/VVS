@@ -135,6 +135,10 @@ public class Vorlesung {
 		}
 	}
 	
+	public int getID() {
+		return id;
+	}
+	
 	public void setKursID(int kursID) {
 		this.kursID = kursID;
 	}

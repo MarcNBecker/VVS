@@ -7,6 +7,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.sql.Date;
+import java.sql.Time;
 
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
@@ -20,7 +21,9 @@ import de.dhbw.vvs.application.WebServiceException;
 public class Utility {
 	
 	public static final String DATE_STRING = "yyyy-MM-dd";
+	public static final String TIME_STRING = "HH:MM:SS";
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat(DATE_STRING);
+	private static final DateFormat TIME_FORMAT = new SimpleDateFormat(TIME_STRING);
 	
 	
 	/**
@@ -92,6 +95,15 @@ public class Utility {
 	 */
 	public static String dateString(Date d) {
 		return DATE_FORMAT.format(d);
+	}
+	
+	/**
+	 * Converts a date object to a string representation as specified in TIME_STRING
+	 * @param d the date object
+	 * @return the string representation
+	 */
+	public static String timeString(Time t) {
+		return TIME_FORMAT.format(t);
 	}
 	
 	/**

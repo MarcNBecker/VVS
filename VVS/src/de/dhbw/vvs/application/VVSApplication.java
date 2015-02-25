@@ -106,7 +106,7 @@ public class VVSApplication extends Application {
 		router.attach(VERSION_ONE + "/kurse/{kursID}/{semester}/vorlesungen/{vorlesungsID}", KursSemesterVorlesungResource.class); //GET, PUT, DELETE
 		router.attach(VERSION_ONE + "/kurse/{kursID}/{semester}/vorlesungen/{vorlesungsID}/dozent", KursSemesterVorlesungDozentResource.class); //GET
 		router.attach(VERSION_ONE + "/kurse/{kursID}/{semester}/vorlesungen/{vorlesungsID}/termine", KursSemesterVorlesungTermineResource.class); //GET, POST
-		router.attach(VERSION_ONE + "/kurse/{kursID}/{semester}/vorlesungen/{vorlesungsID}/termine/{terminID}", KursSemesterVorlesungTerminResource.class); //PUT, DELETE
+		router.attach(VERSION_ONE + "/kurse/{kursID}/{semester}/vorlesungen/{vorlesungsID}/termine/{terminID}", KursSemesterVorlesungTerminResource.class); //GET, PUT, DELETE
 		
 		return router;
 	}
