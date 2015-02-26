@@ -78,7 +78,7 @@
 					<h3>Kompetenzf&auml;cher</h3>
 					<hr>
 					<div id="kompetenzfaecher">
-						<template  repeat="{{item in dozentenfaecher}}">
+						<template  repeat="{{item in dozentenFaecher}}">
 							<span>
 							<paper-item style="display:inline-block">{{item.name}}</paper-item>
 							<paper-icon-button icon="clear" on-click={{deleteFach}}></paper-icon-button>
@@ -116,17 +116,18 @@
 	<script type="text/javascript">
 		Polymer('my-dozent', {
 			dozent: new model.templates.Dozent(),
-			fach: new model.templates.Fach(),
+			zeigeDozent: new model.templates.Dozent(),
 			geschlecht: [],
 			status: [],
-			dozentenfaecher: [],
+			dozentenFaecher: [],
 			faecher: [],
+			alleFaecher: [],
+			geloeschteFaecher: [],
     		ready: function()
     		{
     			var self = this;
-    			var zeigeDozent = new model.templates.Dozent();
-    			zeigeDozent.id = 1;  // muss noch durch Data Binding ersetzt werden
-    			if (zeigeDozent.id === 0)
+    			self.zeigeDozent.id = 1; // muss noch durch Data Binding ersetzt werden
+    			if (self.zeigeDozent.id === 0)
     			{
     				self.$.buttons_anzeigen.style.display = "none";
     				self.$.historie.style.display = "none";
@@ -144,7 +145,7 @@
     			else
     			{
     				self.$.buttons_anlegen.style.display = "none";
-    				model.webService.getDozent(zeigeDozent, function(api) {
+    				model.webService.getDozent(self.zeigeDozent, function(api) {
     					if (!api.error)
     					{
     						self.dozent = api.response;
@@ -165,133 +166,58 @@
     					}
     					else
     					{
-    						console.log(JSON.stringify(api));
+    						console.log(JSON.stringify(api));     
     					}
     				});
-    				model.webService.getAllDozentFaecher(zeigeDozent, function(api) {
+    				model.webService.getAllDozentFaecher(self.zeigeDozent, function(api) {
     					if (!api.error)
     					{
-    						self.dozentenfaecher = api.response;
+    						self.dozentenFaecher = api.response;
+    						model.webService.getAllFaecher(function(api) {
+    	    					if (!api.error)
+    	    					{
+    	    						self.faecher = api.response;
+    	    						self.alleFaecher = self.faecher.slice();
+    	    						var i;
+    	    						for (i = 0; i < self.dozentenFaecher.length; i++)
+    	    						{
+    	        						var ii;
+    	    							for (ii = 0; ii < self.faecher.length; ii++)
+    	    							{
+    	    								if (self.dozentenFaecher[i].id === self.faecher[ii].id)
+    	    								{
+    	    									self.faecher.splice(ii, 1);
+    	    									break;
+    	    								}
+    	    							}
+    	    						}
+    	    					}
+    	    					else
+    	    					{
+    	    						console.log(JSON.stringify(api));
+    	    					}
+    	    				});	
     					}
     					else
     					{
     						console.log(JSON.stringify(api));
     					}
     				});
-    				model.webService.getAllFaecher(function(api) {
-    					if (!api.error)
-    					{
-    						self.faecher = api.response;
-    						var i;
-    						for (i = 0; i < self.dozentenfaecher.length; i++)
-    						{
-        						var ii;
-    							for (ii = 0; ii < self.faecher.length; ii++)
-    							{
-    								if (self.dozentenfaecher[i].id === self.faecher[ii].id)
-    								{
-    									self.faecher.splice(ii, 1);
-    								}
-    							}
-    						}
-    					}
-    					else
-    					{
-    						console.log(JSON.stringify(api));
-    					}
-    				});	
     			}
-    			self.status = zeigeDozent.StatusEnum.all;
-    			self.geschlecht = zeigeDozent.GeschlechtEnum.all;		
+    			self.status = self.zeigeDozent.StatusEnum.all;
+    			self.geschlecht = self.zeigeDozent.GeschlechtEnum.all;		
     		},
     		anlegen: function()
     		{
     			var self = this;
     			model.webService.createDozent(self.dozent, function(api) {
-   				if (!api.error)
-				{
-					console.log(JSON.stringify(api));
-					var i;
-					for (i = 0; i < faecher.length; i++)
-					{
-						self.fach = faecher[i];
-						model.webService.setDozentFach(self.dozent, self.fach, function(api) {
-							console.log(JSON.stringify(api));
-						});
-					}
-				}
-				else
-				{
-					console.log(JSON.stringify(api));
-				}
-	    		});
-    			
-    		},
-			addFach: function()
-			{
-				var self = this;
-				var zeigeDozent = new model.templates.Dozent();
-				zeigeDozent.id = 1; // muss noch durch Data Binding ersetzt werden
-				model.webService.setDozentFach(zeigeDozent, self.faecher[self.$.fach.selected], function(api) {
-					if (!api.error)
-					{
-						console.log(JSON.stringify(api));
-						self.dozentenfaecher.push(self.faecher[self.$.fach.selected]);
-					}
-					else
-					{
-						console.log(JSON.stringify(api));
-					}
-				});
-			},
-			deleteFach: function(e)
-			{
-				var self = this;
-				var zeigeDozent = new model.templates.Dozent();
-				zeigeDozent.id = 1; // muss noch durch Data Binding ersetzt werden
-				var fach = e.target.templateInstance.model.item;
-				model.webService.deleteDozentFach(zeigeDozent, fach, function(api) {
-					if (!api.error)
+	   				if (!api.error)
 					{
 						console.log(JSON.stringify(api));
 						var i;
-						for (i = 0; i < self.dozentenfaecher.length; i++)
+						for (i = 0; i < self.dozentenFaecher.length; i++)
 						{
-							if (self.dozentenfaecher[i].id === fach.id)
-							{
-								self.dozentenfaecher.splice(i, 1);
-							}
-						}
-					}
-					else
-					{
-						console.log(JSON.stringify(api));
-					}
-				});
-			},
-	    	speichern: function()
-	    	{
-	    		var self = this;
-	    		var newDozent = new model.templates.Dozent();
-	    		newDozent = self.dozent;
-	    		model.webService.updateDozent(newDozent, function(api) {
-	    			console.log(JSON.stringify(api));
-	    		});
-	    	},
-			loeschen: function()
-			{
-				var self = this;
-	    		var newDozent = new model.templates.Dozent();
-	    		newDozent = self.dozent;
-	    		model.webService.deleteDozent(newDozent, function(api) {
-	    			if (!api.error)
-					{
-						console.log(JSON.stringify(api));
-						var i;
-						for (i = 0; i < faecher.length; i++)
-						{
-							self.fach = faecher[i];
-							model.webService.seteDozentFach(self.dozent, self.fach, function(api) {
+							model.webService.setDozentFach(self.dozent, self.dozentenFaecher[i], function(api) {
 								console.log(JSON.stringify(api));
 							});
 						}
@@ -300,6 +226,93 @@
 					{
 						console.log(JSON.stringify(api));
 					}
+	    		});
+    			
+    		},
+			addFach: function()
+			{
+				var self = this;
+				if (self.$.fach.selected !== null)
+				{
+					self.dozentenFaecher.push(self.faecher[self.$.fach.selected]);
+					self.faecher = self.alleFaecher.slice();
+					var i;
+					for (i = 0; i < self.dozentenFaecher.length; i++)
+					{
+						var ii;
+						for (ii = 0; ii < self.faecher.length; ii++)
+						{
+							if (self.dozentenFaecher[i].id === self.faecher[ii].id)
+							{
+								self.faecher.splice(ii, 1);
+								break;
+							}
+						}
+					}			
+				}
+			},
+			deleteFach: function(e)
+			{
+				var self = this;
+				var fach = e.target.templateInstance.model.item;
+				self.geloeschteFaecher.push(fach);
+				var i;
+				for (i = 0; i < self.dozentenFaecher.length; i++)
+				{
+					if (self.dozentenFaecher[i].id === fach.id)
+					{
+						self.dozentenFaecher.splice(i, 1 );
+					}
+				}
+				self.faecher = self.alleFaecher.slice();
+				var i;
+				for (i = 0; i < self.dozentenFaecher.length; i++)
+				{
+					var ii;
+					for (ii = 0; ii < self.faecher.length; ii++)
+					{
+						if (self.dozentenFaecher[i].id === self.faecher[ii].id)
+						{
+							self.faecher.splice(ii, 1);
+							break;
+						}
+					}
+				}
+			},
+	    	speichern: function()
+	    	{
+	    		var self = this;
+	    		model.webService.updateDozent(self.dozent, function(api) {
+	    			if (!api.error)
+					{
+						console.log(JSON.stringify(api));
+						var i;
+						for (i = 0; i < self.geloeschteFaecher.length; i++)
+						{
+							alert(self.geloeschteFaecher[i]);
+							model.webService.deleteDozentFach(self.dozent, self.geloeschteFaecher[i], function(api) {
+								console.log(JSON.stringify(api));
+							});
+							self.geloeschteFaecher = [];
+						}
+						for (i = 0; i < self.dozentenFaecher.length; i++)
+						{
+							model.webService.setDozentFach(self.dozent, self.dozentenFaecher[i], function(api) {
+								console.log(JSON.stringify(api));
+							});
+						}
+					}
+					else
+					{
+						console.log(JSON.stringify(api));
+					}
+	    		});
+	    	},
+			loeschen: function()
+			{
+				var self = this;
+	    		model.webService.deleteDozent(self.dozent, function(api) {
+					console.log(JSON.stringify(api));
 	    		});
 			},
 	    	abbrechen: function()
