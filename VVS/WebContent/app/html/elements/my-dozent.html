@@ -185,16 +185,18 @@
 	    		var self = this;
 	    		var newDozent = new model.templates.Dozent();
 	    		newDozent = self.dozent;
-	    		alert(self.$.titel.input.value);
-	    		newDozent.titel = self.$.titel.input.value;
-	    		alert(JSON.stringify(newDozent));
 	    		model.webService.updateDozent(newDozent, function(api) {
 	    			console.log(JSON.stringify(api));
 	    		});
 	    	},
 			loeschen: function()
 			{
-			
+				var self = this;
+	    		var newDozent = new model.templates.Dozent();
+	    		newDozent = self.dozent;
+	    		model.webService.deleteDozent(newDozent, function(api) {
+	    			console.log(JSON.stringify(api));
+	    		});
 			},
 	    	abbrechen: function()
 	    	{
