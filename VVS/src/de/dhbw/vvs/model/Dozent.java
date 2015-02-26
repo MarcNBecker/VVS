@@ -159,7 +159,7 @@ public class Dozent {
 		ArrayList<Object> fieldValues = new ArrayList<Object>();
 		fieldValues.add(id);
 		fieldValues.add(fach.getID());
-		db.doQuery("INSERT INTO dozentfach (dozent, fach) VALUES (?, ?)", fieldValues);
+		db.doQuery("INSERT INTO dozentfach (dozent, fach) VALUES (?, ?) ON DUPLICATE KEY UPDATE dozent = dozent, fach = fach", fieldValues);
 		return fach;
 	}
 	
