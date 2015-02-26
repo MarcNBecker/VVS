@@ -1,0 +1,372 @@
+
+
+<link rel="import" href="../components/polymer/polymer.html">
+<link rel="import" href="../components/paper-elements/paper-elements.html">
+<link rel="import" href="../components/core-elements/core-elements.html">
+
+
+<polymer-element id="dozentenplanung" name="dozenten-planung">
+	<template>
+	<style>
+		.mylist1 {
+			height: 50px;
+		}
+		.mylist2 {
+			height: 50px;
+		}
+		.selected {
+			background: silver;
+		}
+		.item {
+			box-sizing: border-box;
+			height: 25px;
+			<!--border-bottom: 1px solid #ddd;-->
+			padding: 4px;
+			cursor: default;
+			background-color: white;
+			overflow: hidden;
+		}
+		paper-checkbox::shadow #ink[checked] {
+			color: #D32B18;
+		}
+			
+			paper-checkbox::shadow #checkbox.checked {
+				background-color: #D32B18;
+				border-color: #D32B18;
+			}
+    </style>
+	
+	
+		<link rel="stylesheet" type="text/css" href="../formate.css">
+		<h2>Dozentenplanung</h2>
+	<div id="content">
+	
+	<div id="verticalLayout" layout vertical >
+	<div id="horizontalLayout" layout horizontal>
+		<div id="tableUsedDozenten" style="float: left; width: 40%; margin-top: 19px;">
+		<p><b>Bisherige Dozenten</b></p>
+			<div style="border-top-style: solid; border-left-style: solid; border-bottom-style: solid; border-right-style: solid; width: 90%; height: 40px; float: left; background-color: #D32B18;">
+				<h4 style="color: white; margin: 5px 0px 0px 5px;">Name</h4>
+			</div>
+			<div style="clear:both;"></div>
+			<core-list id="usedDozenten" data="{{myDataUsedDozenten}}"  class="mylist1" style="height: 50px;">
+				<template>
+					<div id={{model.id}} layout horizontal >
+						<div style="border-left-style: solid; border-bottom-style: solid; width:5%; float: left; text-align: center;">
+							<paper-checkbox id={{model.checkboxId}} checked="{{model.checked}}" on-click={{checkboxChecked}} style="margin: 2px 5px;" ></paper-checkbox>
+						</div>
+						<div style="border-left-style: solid; border-bottom-style: solid; border-right-style: solid; width: 84.5%; float: left;">
+							<p style="margin: 1px 5px;">{{model.dozentenName}}</p>
+						</div>
+					</div>
+				</template>
+			</core-list>
+			
+	</div>
+		<div id="tableNewDozenten" style="float: left; width: 40%;">
+			<div>
+				<div style="float: left;  margin-top: 35px;"><b>Dozenten suchen</b></div>
+				<div style="float: left; margin-left: 10px;">
+				<paper-input-decorator id="labelDozentenSuchen" label="Dozenten suchen" labelVisible floatingLabel>
+					<input id="dozentenSuchen" is="core-input" value={{suchenDozentName}} on-keyup={{suchenEingabe}}>
+				</paper-input-decorator>
+				</div>
+			</div>
+
+			<div style="border-top-style: solid; border-left-style: solid; border-bottom-style: solid; width: 90%; height: 40px; float: left; background-color: #D32B18;">
+				<h4 style="color: white; margin: 5px 0px 0px 5px;">Name</h4>
+			</div>
+			<div style="border-top-style: solid; border-left-style: solid; border-bottom-style: solid; border-right-style: solid; width: 8%; height: 40px; float: left; background-color: #D32B18;">
+				<h4 style="color: white; margin: 5px 0px 0px 5px;"></h4>
+			</div>
+			<div style="clear:both;"></div>
+			<core-list id="newDozenten" data="{{myDataNewDozenten}}" class="mylist2" style="height: 50px;">
+				<template>
+					<div id={{model.id}} layout horizontal>
+						<div style="border-left-style: solid; border-bottom-style: solid; width:5%; float: left; text-align: center;">
+							<paper-checkbox id={{model.checkboxId}} checked="{{model.checked}}" on-click={{checkboxChecked}} style="margin: 2px 5px;" ></paper-checkbox>
+						</div>
+						<div style="border-left-style: solid; border-bottom-style: solid; width: 84.5%; float: left;">
+							<p style="margin: 1px 5px;">{{model.dozentenName}}</p>
+						</div>
+						<div style="border-left-style: solid; border-bottom-style: solid; border-right-style: solid; width: 7.9%; float: left; text-align: center;">
+							<core-icon id={{model.id2}} style="height: 17px; width: 17px; margin-right: 5px;" icon={{model.iconName}}></core-icon>
+						</div>
+					</div>
+				</template>
+			</core-list>
+		<div style="clear: both;"></div>
+
+	</div>
+	</div><!--HorizontalLayout-->
+	</div><!--VerticalLayout-->
+		<div id="btn1" style="text-align: center; width: 80%;">
+			<paper-button on-click={{speichern}} raised>speichern</paper-button>
+			<paper-button on-click={{abbrechen}} raised>abbrechen</paper-button>
+		</div>	
+	
+
+</div>
+
+	
+
+	</template>
+	
+	
+	<script>
+
+
+Polymer({
+	newDozentenData: [],
+	usedDozentenData: [],
+	myDataNewDozenten: [],
+	myDataUsedDozenten: [],
+	countListUsed: 0,
+	countListNew: 0,
+	suchenDozentName: "",
+	boolSuchenDozentIsEmpty: true,
+
+
+	
+
+	
+	
+	ready: function (){
+	var that = this;
+	this.init();
+	},
+	
+
+	
+
+	
+	
+
+	init: function init(){
+		//In dieser Methode muss die Selektion auf die Datenbank stattfinden
+		//insgesamt müssen drei Selektionen erfolgen
+		//Eine, um alle bereits durch den ausführenden User genutzten Dozenten zur Vorlesung
+		//zu selektieren
+		//Eine, um alle Dozenten zu selektieren
+		//Eine, um nur die Dozenten zu selektieren, die das Fach unterrichten
+		
+		//Die Daten der ersten Selektion müssen in das Array usedDozentenData geschrieben werden
+		//Die Ergebnisse der zweiten Selektion werden in das Array newDozentenData geschrieben
+		//der Wert für Fach wird hierbei bei allen Dozenten zunächst mit 0 initialisiert
+		//Anschließend werden die Daten der dritten Selektion dazu genutzt, um bei den Dozenten in
+		//dem Array newDozentenData den Wert von Fach auf 1 zu setzen
+		
+		
+
+
+		
+		//Soll die Daten zu den bereits genutzten Dozenten dieses Faches enthalten
+		this.usedDozentenData = [
+			{id: '1', name: 'Horst Schmidt'},
+			{id: '2', name: 'Theo Holz'},
+			{id: '2', name: 'Theo Holz'},
+			{id: '2', name: 'Theo Holz'}
+		];
+		
+		//Soll die Daten aller Dozenten enthalten und ein Kennzeichen, welches angibt,
+		//ob die Dozenten dieses Fach bei sich eingetragen haben
+		//Kennzeichen fach 	--> 0, wenn Fach nicht unterrichtet
+		//					--> 1, wenn Fach unterrichtet
+		this.newDozentenData = [
+			{id: '3', name: 'Jörg Baumgart', fach: '0'},
+			{id: '4', name: 'Julian Reichwald', fach: '1'},
+			{id: '4', name: 'Julian Reichwald', fach: '1'},
+			{id: '4', name: 'Julian Reichwald', fach: '1'}
+		];
+		
+		
+		//übertragen der Arraywerte in die entsprechenden Listen
+		
+		for (i = 0; i< this.usedDozentenData.length; i++){
+			this.countListUsed ++;
+			var newID = "dozent" + this.countListUsed;
+			var checkboxId ="checkboxUsedDozent" + this.countListUsed; 
+			
+			//Bisherige Höhe der Liste ermitteln und um 25px erweitern
+			var test = this.$.content.querySelector('.mylist1').offsetHeight + 25;
+			this.$.content.querySelector('.mylist1').style.height = test + "px";
+			
+			//Neuen Eintrag in der Liste erzeugen
+			this.myDataUsedDozenten.splice(0, 0, {
+				id: newID,
+				checkboxId : checkboxId,
+				dozentenName: this.usedDozentenData[i].name,
+				dozentenId: this.usedDozentenData[i].id,
+				checked: false,
+			});
+		}
+		
+		this.initNewDozenten();
+	},
+	
+	//Dient der Initialisierung der Liste mit allen Dozenten
+	initNewDozenten: function initNewDozenten(){
+		this.countListNew = 0;
+		for (i = 0; i<this.newDozentenData.length; i++){
+			this.countListNew ++;
+			var newID = "dozent" + this.countListNew;
+			var newID2 = "icon" + this.countListNew;
+			var iconName;
+			var checkboxId = "checkboxNewDozent" + this.countListNew;
+			
+			//Auswahl des angezeigten Icons
+			//Wird das Fach unterrichtet, so wird ein Hacken als Icon angezeigt
+			//Ansonsten nichts
+			if(this.newDozentenData[i].fach == "0"){
+				iconName = "";
+			}else{
+				iconName ="check"
+			}
+			
+			//Ermitteln der bisherigen Höhe der Liste und Erweiterung um 25px
+			var test = this.$.content.querySelector('.mylist2').offsetHeight + 25;
+			this.$.content.querySelector('.mylist2').style.height = test + "px";
+			//Hinzufügen des Eintrags in die Liste
+			this.myDataNewDozenten.splice(0,0,{
+				id: newID,
+				id2: newID2,
+				checkboxId: checkboxId,
+				dozentenName: this.newDozentenData[i].name,
+				dozentenId: this.newDozentenData[i].id,
+				iconName: iconName,
+				checked: false,
+			
+			});
+		
+		
+		}
+	
+	},
+	checkboxChecked: function checkboxChanged(event, detail, sender){
+
+		//if(event.type = "click"){
+		//Da immer nur ein Dozent ausgewählt werden kann, muss geprueft werden,
+		//ob bereits eine andere Checkbox selektiert wurde
+		//Zum Zeitpunkt der Funktion ist der checked Wert durch die auslösende Checkbox
+		//noch false
+		//sender.id gibt die ID der auslösenden Checkbox
+		
+		//Suchen in der Liste aller Dozenten nach einer Checkbox mit dem wert true
+		for(i=0; i<this.myDataNewDozenten.length; i++){
+			//Sollte ein Wert True sein, so muss geprüft werden, ob es sich um die auslösende
+			//Checkbox handelt, da dann der Wert auf False gesetzt werden würde
+			if(this.myDataNewDozenten[i].checked == true){
+				if(sender.id != this.myDataNewDozenten[i].checkboxId){
+				//Ist dies nicht der Fall so wird der Wert der bisherigen gecheckten Checkbox
+				//auf False gesetzt
+				this.myDataNewDozenten[i].checked = false;
+					
+				}
+			
+			}	
+		}
+		//Suchen in der Liste der genutzten Dozenten nach einer Checkbox mit dem Wert true
+		for(i=0; i<this.myDataUsedDozenten.length; i++){
+			if(this.myDataUsedDozenten[i].checked == true){
+				if(sender.id != this.myDataUsedDozenten[i].checkboxId){
+					this.myDataUsedDozenten[i].checked = false;
+				}
+			}
+		}
+		
+	},
+	
+	suchenEingabe: function suchenEingabe (event, detail, sender){
+
+		//Sollte der String nach der Eingabe leer sein, so müssen alle Dozenten angezeigt werden
+		if(this.suchenDozentName ==""){
+
+			//boolSuchenDozentIsEmpty ist nur dann true, wenn der String bereits leer ist
+			//Bedeutet, dass die Liste nicht neu aufgebaut werden muss
+			//Die Liste muss nur neu aufgebaut werden, wenn der String noch nicht leer war
+			if(this.boolSuchenDozentIsEmpty != true){
+				this.deleteUsedDozenten();
+				this.initNewDozenten();
+				this.boolSuchenDozentIsEmpty = true;
+			}
+			
+		}else{
+		//Sollte der Suchstring nicht leer sein muss die Liste neu aufgebaut werden
+		
+
+			this.deleteUsedDozenten();
+			for (i=0;i<this.newDozentenData.length; i++){
+			var dozentenNameUpperCase = this.newDozentenData[i].name.toUpperCase();
+			var suchenDozentNameUpperCase = this.suchenDozentName.toUpperCase();
+				 if (dozentenNameUpperCase.match(suchenDozentNameUpperCase)) {
+					this.countListNew ++;
+					var newID = "dozent" + this.countListNew;
+					var newID2 = "icon" + this.countListNew;
+					var iconName;
+					var checkboxId = "checkboxNewDozent" + this.countListNew;
+					if(this.newDozentenData[i].fach == "0"){
+						iconName = "";
+					}else{
+						iconName ="check"
+					}
+					var test = this.$.content.querySelector('.mylist2').offsetHeight + 25;
+					this.$.content.querySelector('.mylist2').style.height = test + "px";
+					this.myDataNewDozenten.splice(0,0,{
+						id: newID,
+						id2: newID2,
+						checkboxId: checkboxId,
+						dozentenName: this.newDozentenData[i].name,
+						dozentenId: this.newDozentenData[i].id,
+						iconName: iconName,
+						checked: false,
+					});
+				}
+				 
+				 
+					
+				 
+			}//suchen nach dem Namen
+			this.boolSuchenDozentIsEmpty = false;
+		}
+	},
+	
+	deleteUsedDozenten: function deleteUsedDozenten(){
+				//Gesamte Liste löschen
+		this.myDataNewDozenten.splice(0,this.myDataNewDozenten.length);
+		countListNew = 0;
+		this.$.content.querySelector('.mylist2').style.height = 50 + "px";
+	},
+	
+	speichern: function speichern(){
+		//Suchen nach markiertem Element
+		var dozentFuerVorlesung;
+		
+		for  (i=0; i<this.myDataNewDozenten.length; i++){
+			if(this.myDataNewDozenten[i].checked == true){
+				dozentFuerVorlesung = this.myDataNewDozenten[i];
+				continue;
+			}
+		}
+		if(dozentFuerVorlesung == null){
+			for (i=0; i<this.myDataUsedDozenten.length; i++){
+				if(this.myDataUsedDozenten[i].checked == true){
+				dozentFuerVorlesung = this.myDataUsedDozenten[i];
+				}
+			}
+		}
+		if(dozentFuerVorlesung == null){
+			alert("Keinen Dozenten ausgewählt");
+			return;
+		}
+		alert(dozentFuerVorlesung.dozentenId);
+		alert(dozentFuerVorlesung.dozentenName);
+	},
+	
+	abbrechen: function abbrechen(){
+	
+	},
+	
+	
+});
+</script>
+</polymer-element>
