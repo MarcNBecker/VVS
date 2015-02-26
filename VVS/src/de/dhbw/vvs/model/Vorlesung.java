@@ -17,6 +17,9 @@ public class Vorlesung {
 	private int semester;
 	
 	public static ArrayList<Vorlesung> getAll(Kurs kurs, int semester) throws WebServiceException {
+		if (kurs == null) {
+			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT);
+		}
 		kurs.getDirectAttributes(); //check existance
 		if (semester <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_NUMBER);
@@ -26,6 +29,27 @@ public class Vorlesung {
 		fieldValues.add(kurs.getID());
 		fieldValues.add(semester);
 		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT id, kurs, fachInstanz, dozent, semester FROM vorlesung WHERE kurs = ? AND semester = ? ORDER BY fachInstanz ASC", fieldValues);
+		ArrayList<Vorlesung> vorlesungList = new ArrayList<Vorlesung>();
+		for(TypeHashMap<String, Object> result : resultList) {
+			Vorlesung v = new Vorlesung(result.getInt("id"));
+			v.kursID = result.getInt("kurs");
+			v.fachInstanz = new FachInstanz(result.getInt("fachInstanz")).getDirectAttributes();
+			v.dozentID = result.getInt("dozent");
+			v.semester = result.getInt("semester");
+			vorlesungList.add(v);
+		}
+		return vorlesungList;
+	}
+	
+	public static ArrayList<Vorlesung> getAllForKurs(Kurs kurs) throws WebServiceException {
+		if (kurs == null) {
+			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT);
+		}
+		kurs.getDirectAttributes(); //check existance
+		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
+		ArrayList<Object> fieldValues = new ArrayList<Object>();
+		fieldValues.add(kurs.getID());
+		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT id, kurs, fachInstanz, dozent, semester FROM vorlesung WHERE kurs = ? ORDER BY semester ASC", fieldValues);
 		ArrayList<Vorlesung> vorlesungList = new ArrayList<Vorlesung>();
 		for(TypeHashMap<String, Object> result : resultList) {
 			Vorlesung v = new Vorlesung(result.getInt("id"));

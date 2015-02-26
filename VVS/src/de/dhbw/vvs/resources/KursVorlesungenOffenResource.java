@@ -9,6 +9,8 @@ import org.restlet.resource.ResourceException;
 
 import de.dhbw.vvs.application.ExceptionStatus;
 import de.dhbw.vvs.application.WebServiceException;
+import de.dhbw.vvs.model.FachInstanz;
+import de.dhbw.vvs.model.Kurs;
 
 public class KursVorlesungenOffenResource extends SecureServerResource {
 	
@@ -30,8 +32,8 @@ public class KursVorlesungenOffenResource extends SecureServerResource {
 	
 	@Override
 	protected Object receiveGet() throws WebServiceException {
-		// TODO Auto-generated method stub
-		return super.receiveGet();
+		Kurs kurs = new Kurs(getKursID());
+		return FachInstanz.getAllMissingForKurs(kurs);
 	}
 	
 	public int getKursID() {

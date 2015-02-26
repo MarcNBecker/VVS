@@ -279,6 +279,9 @@ var model = new function() {
 		var fachInstanzenURI = "/modulplaene/{modulplanID}/module/{modulID}/faecher";
 		var fachInstanzURI = "/modulplaene/{modulplanID}/module/{modulID}/faecher/{fachID}";
 		
+		var kursVorlesungen = "/kurse/{kursID}/vorlesungen";
+		var kursVorlesungenOffen = "/kurse/{kursID}/vorlesungen/offen";
+		
 		var vorlesungenURI = "/kurse/{kursID}/{semester}/vorlesungen";
 		var vorlesungURI = "/kurse/{kursID}/{semester}/vorlesungen/{vorlesungsID}";
 		var vorlesungDozentenURI = "/kurse/{kursID}/{semester}/vorlesungen/{vorlesungsID}/dozenten";
@@ -469,7 +472,15 @@ var model = new function() {
 			self.doRequest(fachInstanzURI.replace("{modulplanID}", mi.modulplanID).replace("{modulID}", mi.modul.id).replace("{fachID}", fi.fach.id), "DELETE", null, c);	
 		};
 		
-		this.getAllVorlesungen = function(k, s, c) {
+		this.getAllVorlesungen = function(k, c) {
+			self.doRequest(kursVorlesungen.replace("{kursID}", k.id), "GET", null, c);	
+		};
+		
+		this.getAllVorlesungenOffen = function(k, c) {
+			self.doRequest(kursVorlesungenOffen.replace("{kursID}", k.id), "GET", null, c);	
+		};
+		
+		this.getAllVorlesungenSemester = function(k, s, c) {
 			self.doRequest(vorlesungenURI.replace("{kursID}", k.id).replace("{semester}", s), "GET", null, c);
 		};
 		

@@ -281,8 +281,12 @@
 <!-- Modulplan Helper -->
 <input type="button" onclick="model.helper.getModulplanComplete(modulplan, c)" value="Get Complete Modulplan" /><br />
 
+<!-- Vorlesung und Vorlesung Offen -->
+<input type="button" onclick="model.webService.getAllVorlesungen(kurs, c)" value="Get All Vorlesungen For Kurs" />
+<input type="button" onclick="model.webService.getAllVorlesungenOffen(kurs, c)" value="Get All Vorlesungen Offen For Kurs" /><br />
+
 <!-- Vorlesung -->
-<input type="button" onclick="model.webService.getAllVorlesungen(kurs, semester, c)" value="Get All Vorlesungen For Kurs Semester" />
+<input type="button" onclick="model.webService.getAllVorlesungenSemester(kurs, semester, c)" value="Get All Vorlesungen For Kurs Semester" />
 <input type="button" onclick="model.webService.createVorlesung(vorlesungNew, c)" value="Create Vorlesung" />
 <input type="button" onclick="model.webService.getVorlesung(vorlesung, c)" value="Get Vorlesung" />
 <input type="button" onclick="model.webService.updateVorlesung(vorlesung, c)" value="Update Vorlesung" />
