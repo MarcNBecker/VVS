@@ -146,6 +146,9 @@ public class Termin {
 		if (endUhrzeit == null) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_DATE);
 		}
+		if (startUhrzeit.compareTo(endUhrzeit) > 0) {
+			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_DATE);
+		}
 		if (pause < 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_NUMBER);
 		}
