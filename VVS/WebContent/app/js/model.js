@@ -252,6 +252,7 @@ var model = new function() {
 		var dozentURI = "/dozenten/{dozentID}";
 		var dozentFaecherURI = "/dozenten/{dozentID}/faecher";
 		var dozentFachURI = "/dozenten/{dozentID}/faecher/{fachID}";
+		var dozentenFachURI = "/dozenten/faecher/{fachID}";
 		var dozentKommentareURI = "/dozenten/{dozentID}/kommentare";
 		var dozentKommentarURI = "/dozenten/{dozentID}/kommentare/{kommentarID}";
 
@@ -280,7 +281,7 @@ var model = new function() {
 		
 		var vorlesungenURI = "/kurse/{kursID}/{semester}/vorlesungen";
 		var vorlesungURI = "/kurse/{kursID}/{semester}/vorlesungen/{vorlesungsID}";
-		var vorlesungDozentURI = "/kurse/{kursID}/{semester}/vorlesungen/{vorlesungsID}/dozent";
+		var vorlesungDozentenURI = "/kurse/{kursID}/{semester}/vorlesungen/{vorlesungsID}/dozenten";
 		var vorlesungTermineURI = "/kurse/{kursID}/{semester}/vorlesungen/{vorlesungsID}/termine";
 		var vorlesungTerminURI = "/kurse/{kursID}/{semester}/vorlesungen/{vorlesungsID}/termine/{terminID}";
 		
@@ -314,6 +315,10 @@ var model = new function() {
 		
 		this.deleteDozentFach = function(d, f, c) {
 			self.doRequest(dozentFachURI.replace("{dozentID}", d.id).replace("{fachID}", f.id), "DELETE", null, c);	
+		};
+		
+		this.getAllDozentenFach = function(f, c) {
+			self.doRequest(dozentenFachURI.replace("{fachID}", f.id), "GET", null, c);
 		};
 		
 		this.getAllDozentKommentare = function(d, c) {
@@ -484,8 +489,8 @@ var model = new function() {
 			self.doRequest(vorlesungURI.replace("{kursID}", v.kursID).replace("{semester}", v.semester).replace("{vorlesungsID}", v.id), "DELETE", null, c);
 		};
 		
-		this.getVorlesungDozent = function(v, c) {
-			self.doRequest(vorlesungDozentURI.replace("{kursID}", v.kursID).replace("{semester}", v.semester).replace("{vorlesungsID}", v.id), "GET", null, c);	
+		this.getVorlesungDozenten = function(v, c) {
+			self.doRequest(vorlesungDozentenURI.replace("{kursID}", v.kursID).replace("{semester}", v.semester).replace("{vorlesungsID}", v.id), "GET", null, c);	
 		};
 		
 		this.getAllVorlesungTermine = function(v, c) {

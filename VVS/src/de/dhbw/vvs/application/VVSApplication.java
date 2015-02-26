@@ -11,6 +11,7 @@ import de.dhbw.vvs.resources.DozentFaecherResource;
 import de.dhbw.vvs.resources.DozentKommentarResource;
 import de.dhbw.vvs.resources.DozentKommentareResource;
 import de.dhbw.vvs.resources.DozentResource;
+import de.dhbw.vvs.resources.DozentenFachResource;
 import de.dhbw.vvs.resources.DozentenResource;
 import de.dhbw.vvs.resources.FaecherResource;
 import de.dhbw.vvs.resources.FeiertagResource;
@@ -19,7 +20,7 @@ import de.dhbw.vvs.resources.KursBlocklagenResource;
 import de.dhbw.vvs.resources.KursBlocklagenSemesterResource;
 import de.dhbw.vvs.resources.KursDashboardResource;
 import de.dhbw.vvs.resources.KursResource;
-import de.dhbw.vvs.resources.KursSemesterVorlesungDozentResource;
+import de.dhbw.vvs.resources.KursSemesterVorlesungDozentenResource;
 import de.dhbw.vvs.resources.KursSemesterVorlesungResource;
 import de.dhbw.vvs.resources.KursSemesterVorlesungTerminResource;
 import de.dhbw.vvs.resources.KursSemesterVorlesungTermineResource;
@@ -60,6 +61,7 @@ public class VVSApplication extends Application {
 		router.attach(VERSION_ONE + "/dozenten/{dozentID}", DozentResource.class); //GET, PUT, DELETE
 		router.attach(VERSION_ONE + "/dozenten/{dozentID}/faecher", DozentFaecherResource.class); //GET
 		router.attach(VERSION_ONE + "/dozenten/{dozentID}/faecher/{fachID}", DozentFachResource.class); //PUT, DELETE
+		router.attach(VERSION_ONE + "/dozenten/faecher/{fachID}", DozentenFachResource.class); //GET
 		router.attach(VERSION_ONE + "/dozenten/{dozentID}/anhaenge", DozentAnhaengeResource.class); //GET, POST
 		router.attach(VERSION_ONE + "/dozenten/{dozentID}/anhaenge/{anhangID}", DozentAnhangResource.class); //GET, DELETE
 		router.attach(VERSION_ONE + "/dozenten/{dozentID}/kommentare", DozentKommentareResource.class); //GET, POST
@@ -104,7 +106,7 @@ public class VVSApplication extends Application {
 		//Semester
 		router.attach(VERSION_ONE + "/kurse/{kursID}/{semester}/vorlesungen", KursSemesterVorlesungenResource.class); //GET, POST
 		router.attach(VERSION_ONE + "/kurse/{kursID}/{semester}/vorlesungen/{vorlesungsID}", KursSemesterVorlesungResource.class); //GET, PUT, DELETE
-		router.attach(VERSION_ONE + "/kurse/{kursID}/{semester}/vorlesungen/{vorlesungsID}/dozent", KursSemesterVorlesungDozentResource.class); //GET
+		router.attach(VERSION_ONE + "/kurse/{kursID}/{semester}/vorlesungen/{vorlesungsID}/dozenten", KursSemesterVorlesungDozentenResource.class); //GET
 		router.attach(VERSION_ONE + "/kurse/{kursID}/{semester}/vorlesungen/{vorlesungsID}/termine", KursSemesterVorlesungTermineResource.class); //GET, POST
 		router.attach(VERSION_ONE + "/kurse/{kursID}/{semester}/vorlesungen/{vorlesungsID}/termine/{terminID}", KursSemesterVorlesungTerminResource.class); //GET, PUT, DELETE
 		

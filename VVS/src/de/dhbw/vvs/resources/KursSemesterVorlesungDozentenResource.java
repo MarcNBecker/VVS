@@ -9,9 +9,10 @@ import org.restlet.resource.ResourceException;
 
 import de.dhbw.vvs.application.ExceptionStatus;
 import de.dhbw.vvs.application.WebServiceException;
+import de.dhbw.vvs.model.Dozent;
 import de.dhbw.vvs.model.Vorlesung;
 
-public class KursSemesterVorlesungDozentResource extends SecureServerResource {
+public class KursSemesterVorlesungDozentenResource extends SecureServerResource {
 	
 	private int kursID;
 	private int semester;
@@ -38,7 +39,7 @@ public class KursSemesterVorlesungDozentResource extends SecureServerResource {
 		Vorlesung vorlesung = new Vorlesung(getVorlesungsID());
 		vorlesung.setKursID(getKursID());
 		vorlesung.setSemester(getSemester());
-		return vorlesung.getDozent();
+		return Dozent.getAllForVorlesung(vorlesung);
 	}
 	
 	public int getKursID() {

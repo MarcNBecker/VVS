@@ -64,11 +64,6 @@ public class Vorlesung {
 		return this;
 	}
 	
-	public Dozent getDozent() throws WebServiceException {
-		getDirectAttributes();
-		return new Dozent(dozentID).getDirectAttributes();
-	}
-	
 	public Vorlesung create() throws WebServiceException {
 		if (id != 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -137,6 +132,14 @@ public class Vorlesung {
 	
 	public int getID() {
 		return id;
+	}
+	
+	public int getKursID() {
+		return kursID;
+	}
+	
+	public FachInstanz getFachInstanz() {
+		return fachInstanz;
 	}
 	
 	public void setKursID(int kursID) {
