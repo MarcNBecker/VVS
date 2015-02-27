@@ -1,11 +1,9 @@
-ï»¿
-
-<link rel="import" href="../components/polymer/polymer.html">
-<link rel="import" href="../components/paper-elements/paper-elements.html">
-<link rel="import" href="../components/core-elements/core-elements.html">
+<link rel="import" href="../../polymer/polymer/polymer.html">
+<link rel="import" href="../../polymer/paper-elements/paper-elements.html">
+<link rel="import" href="../../polymer/core-elements/core-elements.html">
 
 
-<polymer-element id="pflegenModulplan" name="pflegen-modulplan3">
+<polymer-element id="pflegenModulplan" name="vvs-modulpan-pflegen">
 	<template>
 	<style>
       .mylist {
@@ -114,7 +112,7 @@
 			</paper-input-decorator>
 			</div>
 			<div id="btn2" style="text-align: center;">
-				<paper-button raised on-click={{uebernehmen}}>Ãœbernehmen</paper-button>
+				<paper-button raised on-click={{uebernehmen}}>Übernehmen</paper-button>
 			</div>
 		</div>
 		<div style="clear: both;"></div>
@@ -127,7 +125,7 @@
 	<script>
 
 
-Polymer({
+Polymer("vvs-modulplan-pflegen", {
 
 
 	mydata: [],
@@ -172,15 +170,15 @@ Polymer({
 
 	init: function init(){
 		//In dieser Methode muss die Selektion auf die Datenbank stattfinden
-		//und die Werte  fÃ¼r Module und FÃ¤cher in die Arrays Ã¼bertragen werden
+		//und die Werte  für Module und Fächer in die Arrays übertragen werden
 		
 		
 		//WICHTIG
 		//WICHTIG
 		//WICHTIG
-		//Die EintrÃ¤ge mit der id neu mÃ¼ssen in beiden Listen erhalten bleiben!
-		//Sollte mit einer Vorlage gearbeitet werden mÃ¼ssen die Werte der Vorlage an die Funktion
-		//werteUebertragen Ã¼bergeben werrden. Diese Ã¼bertrÃ¤gt die Werte dann in die Tabelle
+		//Die Einträge mit der id neu müssen in beiden Listen erhalten bleiben!
+		//Sollte mit einer Vorlage gearbeitet werden müssen die Werte der Vorlage an die Funktion
+		//werteUebertragen übergeben werrden. Diese überträgt die Werte dann in die Tabelle
 		this.alleModule = [
 			{id: '1', name: 'Module 1', beschreibung: 'Beschreibung 1', ects: '10'},
 			{id: '2', name: 'Module 2', beschreibung: 'Beschreibung 2', ects: '20'},
@@ -194,9 +192,9 @@ Polymer({
 		];
 	},
 	
-	//wird durch den Ãœbernehmen-Button aufgerufen
-	// Dient zur Ãœbernahme der Werte in die Tabelle
-	//Liest hierzu die Werte aus dem Eingabebereich aus und Ã¼bergibt diese 
+	//wird durch den Übernehmen-Button aufgerufen
+	// Dient zur Übernahme der Werte in die Tabelle
+	//Liest hierzu die Werte aus dem Eingabebereich aus und übergibt diese 
 	//an eine weitere Funktion
 	
 	uebernehmen: function uebernehmen() {
@@ -211,14 +209,14 @@ Polymer({
 			var modul = this.$.content.querySelector('#menu').selectedModel.item;
 			modulBool = true;
 		}else{
-			alert("Nicht alle notwendigen Angaben getÃ¤tigt!");
+			alert("Nicht alle notwendigen Angaben getätigt!");
 			return;
 		}
 		if(fachTMP !=""){
 			var fach = this.$.content.querySelector('#menu2').selectedModel.item;
 			fachBool = true;
 		}else{
-			alert("Nicht alle notwendigen Angaben getÃ¤tigt!");
+			alert("Nicht alle notwendigen Angaben getätigt!");
 			return;
 		}
 		
@@ -226,13 +224,13 @@ Polymer({
 		var semester = this.$.content.querySelector('#semesterEingabe').value;		
 
 		if(modulBool ==true && fachBool == true){
-		//PrÃ¼fen, ob die Werte in den Standardeingaben gefÃ¼llt sind
+		//Prüfen, ob die Werte in den Standardeingaben gefüllt sind
 		if (modul.name == "" || fach.name == "" || stunden == "" || semester == ""){
-			alert("Nicht alle notwendigen Angaben getÃ¤tigt!");
+			alert("Nicht alle notwendigen Angaben getätigt!");
 		}else{
-			//Alle notwendigen Standardeingaben getÃ¤tigt
+			//Alle notwendigen Standardeingaben getätigt
 	
-			//PrÃ¼fen, ob Modul oder Fach neu sind
+			//Prüfen, ob Modul oder Fach neu sind
 			var modulToCheck = modul.name.toUpperCase();
 			var fachToCheck = fach.name.toUpperCase();
 	
@@ -274,7 +272,7 @@ Polymer({
 			this.werteUebertragen(modulName, modulBeschreibung, modulEcts, modulId, fachName, fachBeschreibung, fachId, stunden, semester);
 		}
 		
-		//ZurÃ¼cksetzen der Eingabefelder
+		//Zurücksetzen der Eingabefelder
 		this.resetFields(modulToCheck, fachToCheck);
 
 
@@ -283,7 +281,7 @@ Polymer({
 
 	},//uebernehmen
 	
-	//Dient zum zurÃ¼cksetzen aller Eingabefelder
+	//Dient zum zurücksetzen aller Eingabefelder
 	resetFields: function resetFields(modulToCheck, fachToCheck){
 		this.$.content.querySelector('#stundenEingabe').value ="";
 		this.$.content.querySelector('#stunden').focused = true;
@@ -307,7 +305,7 @@ Polymer({
 		this.$.content.querySelector('#menu2').selected = null;
 		this.$.content.querySelector('#menu2Label').label = "Fach";
 		
-		//Fall Fach NEU ist mÃ¼ssen die Inputs zurÃ¼ckgesetzt werden
+		//Fall Fach NEU ist müssen die Inputs zurückgesetzt werden
 		//Und der Eingabebereich eingeklappt
 		if(fachToCheck =="NEU"){
 		this.$.content.querySelector('#einblendenFach').innerHTML=	"<paper-input-decorator id='fach' label='Fach' labelVisible floatingLabel>"+
@@ -318,7 +316,7 @@ Polymer({
 		this.blendeAusTwo();															
 		}
 		
-		//Falls Modul NEU ist mÃ¼ssen die Inputs zurÃ¼ckgesetzt werden
+		//Falls Modul NEU ist müssen die Inputs zurückgesetzt werden
 		//Und der Eingabebereich eingeklappt
 		if(modulToCheck == "NEU"){
 			this.$.content.querySelector('#einblendenModul').innerHTML=	"<paper-input-decorator id='modul' label='Modul' labelVisible "+
@@ -334,13 +332,13 @@ Polymer({
 	
 	
 	//Dient dazu die eingegebenen Werte in die Tabelle zu 
-	//Es werden zum einen die Daten des Eingabebereichs mit dieser Methode in die Tabelle Ã¼bernommen
+	//Es werden zum einen die Daten des Eingabebereichs mit dieser Methode in die Tabelle übernommen
 	//und zum anderen die bereits bestehenden Werte aus der Datenbank.
 	werteUebertragen: function werteUebertragen(modulName, modulBeschreibung, modulEcts, modulId, fachName, fachBeschreibung, fachId, stunden, semester){
 		var addIdx = 0; //Index an dem Eintrag gesetzt werden soll
 		var newID = "checkbox" + ++this.count; //ID des divs
-		var newID2 = "buttonDelete" + this.count //ID des lÃ¶schen Buttons
-		var newID3 = "buttonAlter" + this.count // ID des Ã¤ndern Buttons
+		var newID2 = "buttonDelete" + this.count //ID des löschen Buttons
+		var newID3 = "buttonAlter" + this.count // ID des ändern Buttons
 	
 		var test = this.$.content.querySelector('.mylist').offsetHeight + 25;
 		this.$.content.querySelector('.mylist').style.height = test + "px";
@@ -361,8 +359,8 @@ Polymer({
         });
 	},//werteUebertragen
 	
-	//Wird durch den Ã„ndern-Button eines Tabelleneintrags aufgerufen.
-	//Ermittelt, welche Tabellenzeile geÃ¤ndert werden soll und schreibt anschlieÃŸend
+	//Wird durch den Ändern-Button eines Tabelleneintrags aufgerufen.
+	//Ermittelt, welche Tabellenzeile geändert werden soll und schreibt anschließend
 	//die Werte in den rechten Eingabebereich
 	aendern: function aendern(event, detail, sender){
 		//Ermitteln der Positions ID
@@ -391,21 +389,21 @@ Polymer({
 		//this.$.content.querySelector('#stunden').focuse = false;
 		
 		
-		//Suchen des ausgewÃ¤hlten Moduls 
+		//Suchen des ausgewählten Moduls 
 		for (i = 0; i< this.alleModule.length; i++){
 			if(this.alleModule[i].id == changeItem.modulId){
 						this.$.content.querySelector('#menu').selected = i;
 			}
 		}
 		
-		//Suchen des ausgewÃ¤hlten Fachs
+		//Suchen des ausgewählten Fachs
 		for(i = 0; i< this.alleFaecher.length; i++){
 			if(this.alleFaecher[i].id == changeItem.fachId){
 				this.$.content.querySelector('#menu2').selected = i;
 			}
 		}
 		
-		//Ist das Modul neu, so mÃ¼ssen die dazugehÃ¶rigen Werte in 
+		//Ist das Modul neu, so müssen die dazugehörigen Werte in 
 		//die Felder geschrieben werden
 		if (changeItem.modulId.toUpperCase() == "NEU"){
 		this.$.content.querySelector('#modul').focusAction();
@@ -416,7 +414,7 @@ Polymer({
 		this.$.content.querySelector('#modulEctsEingabe').value = changeItem.modulEcts;
 		
 		}
-		//Ist das Fach neu, so mÃ¼ssen die dazugehÃ¶rigen Werte in 
+		//Ist das Fach neu, so müssen die dazugehörigen Werte in 
 		//die Felder geschrieben werden
 		if(changeItem.fachId.toUpperCase() == "NEU"){
 			this.$.content.querySelector('#fach').focusAction();
@@ -425,12 +423,12 @@ Polymer({
 		this.$.content.querySelector('#fachBeschreibungEingabe').value = changeItem.fachBeschreibung;
 		}
 		
-		//lÃ¶schen des Elements aus der Liste
+		//löschen des Elements aus der Liste
 		this.deleteElement(newID);
 	},//aendern
 	
-	//Funktion wird durch den LÃ¶schen Button eines Eintrags in der Tabelle 
-	//aufgerufen. Ermittelt die ID des zu lÃ¶schenden Tabelleneintrags und ruft
+	//Funktion wird durch den Löschen Button eines Eintrags in der Tabelle 
+	//aufgerufen. Ermittelt die ID des zu löschenden Tabelleneintrags und ruft
 	//die Funktion deleteElement mit diesem Wert auf
 	loeschen: function loeschen(event, detail, sender){
 		//Ermitteln der Positions ID
@@ -443,17 +441,17 @@ Polymer({
 
 	},//loeschen
 	
-	//LÃ¶scht mit Hilfe der Ã¼bergebenen ID ein Item
-	//aus myDate, welche alle Elemente der Tabelle enthÃ¤lt
+	//Löscht mit Hilfe der übergebenen ID ein Item
+	//aus myDate, welche alle Elemente der Tabelle enthält
 	deleteElement: function deleteElement(newID){
 		//Holen der Liste mit allen List-Elementen
 		var listData = this.$.content.querySelector('#corelist').data;
 		
-		//Suchen des Elements mit der dessen Button gedrÃ¼ckt wurde
+		//Suchen des Elements mit der dessen Button gedrückt wurde
 		for (i = 0; i < listData.length; i++) {
 
 			if (listData[i].id == newID){
-				//LÃ¶schen des Elements
+				//Löschen des Elements
 				this.mydata.splice(i, 1);
 				continue;
 				

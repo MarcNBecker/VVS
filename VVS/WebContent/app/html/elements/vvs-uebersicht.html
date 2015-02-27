@@ -1,0 +1,78 @@
+<link rel="import" href="../../polymer/polymer/polymer.html">
+<link rel="import" href="../../polymer/paper-elements/paper-elements.html">
+<link rel="import" href="../../polymer/core-elements/core-elements.html">
+
+<polymer-element name="vvs-uebersicht">
+	<template>
+		<link rel="stylesheet" type="text/css" href="../formate.css">
+		<div style="margin: auto; padding:10px;  border:1px black solid;">
+			<h1>Dozentendaten verwalten</h1>
+			<paper-button raised>neuen Dozenten anlegen</paper-button>
+			<form>				
+				<paper-dropdown-menu label="Dozent" floatingLabel style="width:49%">
+				<paper-dropdown class="dropdown">
+						<core-menu class="menu">
+							<paper-item>Baumgart, J&ouml;rg</paper-item>
+							<paper-item>Pagnia, Hans-Henning</paper-item>
+						</core-menu>
+					</paper-dropdown>
+				</paper-dropdown-menu>						
+				<paper-button raised>anzeigen/bearbeiten/l&ouml;schen</paper-button>
+				<paper-button raised>Dozentenplan drucken</paper-button>						
+			</form>
+			<br />
+			<br />
+			<h1>Kursdaten verwalten</h1>
+			<paper-button raised>neuen Kurs anlegen</paper-button>
+			<form>					
+				<paper-dropdown-menu label="Kurs" floatingLabel style="width:49%">
+				<paper-dropdown class="dropdown">
+						<core-menu class="menu">
+							<paper-item>WWI13SEA</paper-item>
+							<paper-item>WWI14SEA</paper-item>
+						</core-menu>
+					</paper-dropdown>
+				</paper-dropdown-menu>						
+				<paper-button raised>anzeigen/bearbeiten/l&ouml;schen</paper-button>			
+			</form>		
+			<br />
+			<br />		
+			<h1>Modulplan verwalten</h1>
+			<paper-button raised>neuen Modulplan anlegen</paper-button>
+			<form>				
+				<paper-dropdown-menu label="Modulplan" floatingLabel style="width:49%">
+				<paper-dropdown class="dropdown">
+						<core-menu class="menu">
+							<paper-item>Neue Konzepte</paper-item>
+							<paper-item>Datenbanken</paper-item>
+						</core-menu>
+					</paper-dropdown>
+				</paper-dropdown-menu>					
+				<paper-button raised>anzeigen/bearbeiten/l&ouml;schen</paper-button>					
+			</form>
+			<br />
+			<br />		
+			<h1>Feiertage verwalten</h1>				
+			<form>					
+				<paper-dropdown-menu label="Jahr" floatingLabel style="width:49%">
+				<paper-dropdown class="dropdown">
+						<core-menu class="menu">
+							<paper-item>2015</paper-item>
+							<paper-item>2016</paper-item>
+						</core-menu>
+					</paper-dropdown>
+				</paper-dropdown-menu>						
+				<paper-button raised>pflegen</paper-button>		
+			</form>	
+		</div>
+	</template>
+	<script type="text/javascript" src="../../js/model.js"></script>
+	<script type="text/javascript">
+		Polymer('vvs-uebersicht', {
+    		ready: function()
+    		{
+    			
+    		}
+ 		});
+	 </script>
+</polymer-element>
