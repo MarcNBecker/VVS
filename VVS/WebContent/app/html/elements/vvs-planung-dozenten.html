@@ -1,11 +1,9 @@
+<link rel="import" href="../../polymer/polymer/polymer.html">
+<link rel="import" href="../../polymer/paper-elements/paper-elements.html">
+<link rel="import" href="../../polymer/core-elements/core-elements.html">
 
 
-<link rel="import" href="../components/polymer/polymer.html">
-<link rel="import" href="../components/paper-elements/paper-elements.html">
-<link rel="import" href="../components/core-elements/core-elements.html">
-
-
-<polymer-element id="dozentenplanung" name="dozenten-planung">
+<polymer-element id="dozentenplanung" name="vvs-planung-dozenten">
 	<template>
 	<style>
 		.mylist1 {
@@ -116,7 +114,7 @@
 	<script>
 
 
-Polymer({
+Polymer("vvs-planung-dozenten", {
 	newDozentenData: [],
 	usedDozentenData: [],
 	myDataNewDozenten: [],
