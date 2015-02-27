@@ -5,504 +5,484 @@
 
 <polymer-element id="pflegenModulplan" name="vvs-modulpan-pflegen">
 	<template>
-	<style>
-      .mylist {
-        height: 50px;
-      }
-    </style>
-	
+		<style>
+		</style>
 	
 		<link rel="stylesheet" type="text/css" href="../formate.css">
 		<h2>Modulplan Cons - Consulting</h2>
-	<div id="content">
-		<div id="table" style="float: left; width: 70%;">
-			<div style="border-top-style: solid; border-left-style: solid; border-bottom-style: solid; width: 13%; height: 40px; float: left; background-color: #D32B18;">
-				<h4 style="color: white; margin: 5px 0px 0px 5px;">Modul</h4>
-			</div>
-			<div style="border-top-style: solid; border-left-style: solid; border-bottom-style: solid; width: 12%; height: 40px; float: left; background-color: #D32B18;">
-				<h4 style="color: white; margin: 5px 0px 0px 5px;">Semester</h4>
-			</div>
-			<div style="border-top-style: solid; border-left-style: solid; border-bottom-style: solid; width: 45%; height: 40px; float: left; background-color: #D32B18;">
-				<h4 style="color: white; margin: 5px 0px 0px 5px;">Fach</h4>
-			</div>
-			<div style="border-top-style: solid; border-left-style: solid; border-bottom-style: solid; width: 10%; height: 40px; float: left; background-color: #D32B18;">
-				<h4 style="color: white; margin: 5px 0px 0px 5px;">Stunden</h4>
-			</div>
-			<div style="border-top-style: solid; border-left-style: solid; border-bottom-style: solid; border-right-style: solid; width: 10%; height: 40px; float: left; background-color: #D32B18;">
-				<h4 style="color: white; margin: 5px 0px 0px 5px;"></h4>
-			</div>
-			<div style="clear:both;"></div>
-			<core-list id="corelist" data="{{mydata}}" class="mylist" style="height: 50px;">
-				<template>
-					<div id={{model.id}} layout horizontal>
-						<div style="border-left-style: solid; border-bottom-style: solid; width: 13%; float: left;">
-							<p style="margin: 1px 5px;">{{model.modulName}}</p>
+		<div id="content">
+			<div id="table" style="float: left; width: 70%;">
+				<div style="border-top-style: solid; border-left-style: solid; border-bottom-style: solid; width: 13%; height: 40px; float: left; background-color: #D32B18;">
+					<h4 style="color: white; margin: 5px 0px 0px 5px;">Modul</h4>
+				</div>
+				<div style="border-top-style: solid; border-left-style: solid; border-bottom-style: solid; width: 12%; height: 40px; float: left; background-color: #D32B18;">
+					<h4 style="color: white; margin: 5px 0px 0px 5px;">Semester</h4>
+				</div>
+				<div style="border-top-style: solid; border-left-style: solid; border-bottom-style: solid; width: 45%; height: 40px; float: left; background-color: #D32B18;">
+					<h4 style="color: white; margin: 5px 0px 0px 5px;">Fach</h4>
+				</div>
+				<div style="border-top-style: solid; border-left-style: solid; border-bottom-style: solid; width: 10%; height: 40px; float: left; background-color: #D32B18;">
+					<h4 style="color: white; margin: 5px 0px 0px 5px;">Stunden</h4>
+				</div>
+				<div style="border-top-style: solid; border-left-style: solid; border-bottom-style: solid; border-right-style: solid; width: 10%; height: 40px; float: left; background-color: #D32B18;">
+					<h4 style="color: white; margin: 5px 0px 0px 5px;"></h4>
+				</div>
+				<div style="clear:both;"></div>
+				<core-list id="corelist" data="{{mydata}}" class="mylist" style="height: 50px;">
+					<template>
+						<div id={{model.id}} layout horizontal>
+							<div style="border-left-style: solid; border-bottom-style: solid; width: 13%; float: left;">
+								<p style="margin: 1px 5px;">{{model.modulName}}</p>
+							</div>
+							<div style="border-left-style: solid; border-bottom-style: solid; width: 12%; float: left;">
+								<p style="margin: 1px; text-align: center;">{{model.semester}}</p>
+							</div>
+							<div style="border-left-style: solid; border-bottom-style: solid; width: 45%; float: left;">
+								<p style="margin: 1px 5px;">{{model.fachName}}</p>
+							</div>
+							<div style="border-left-style: solid; border-bottom-style: solid; width: 10%; float: left;">
+								<p style="margin: 1px; text-align: center;">{{model.stunden}}</p>
+							</div>
+							<div style="border-left-style: solid; border-bottom-style: solid; border-right-style: solid; width: 10%; float: left; text-align: center;">
+								<core-icon id={{model.id3}} on-click={{aendern}} style="height: 17px; width: 17px; margin-right: 5px; cursor: pointer;" icon="create"></core-icon>
+								<core-icon id={{model.id2}} on-click={{loeschen}} style="height: 17px; width: 17px; margin-left: 5px; cursor: pointer;" icon="delete"></core-icon>
+							</div>
 						</div>
-						<div style="border-left-style: solid; border-bottom-style: solid; width: 12%; float: left;">
-							<p style="margin: 1px; text-align: center;">{{model.semester}}</p>
-						</div>
-						<div style="border-left-style: solid; border-bottom-style: solid; width: 45%; float: left;">
-							<p style="margin: 1px 5px;">{{model.fachName}}</p>
-						</div>
-						<div style="border-left-style: solid; border-bottom-style: solid; width: 10%; float: left;">
-							<p style="margin: 1px; text-align: center;">{{model.stunden}}</p>
-						</div>
-						<div style="border-left-style: solid; border-bottom-style: solid; border-right-style: solid; width: 10%; float: left; text-align: center;">
-							<core-icon id={{model.id3}} on-click={{aendern}} style="height: 17px; width: 17px; margin-right: 5px; cursor: pointer;" icon="create"></core-icon>
-							<core-icon id={{model.id2}} on-click={{loeschen}} style="height: 17px; width: 17px; margin-left: 5px; cursor: pointer;" icon="delete"></core-icon>
-						</div>
-						<!--<div><paper-checkbox id={{model.id}} style="float: left; margin-top: 25px; margin-right: 10px; margin-left: 10px;"></paper-checkbox>
-						<div>Index {{index}} to name {{model.name}}</div>-->
-					</div>
-				</template>
-			</core-list>
-			
-		<div id="btn1" style="text-align: center;">
-		<paper-button on-click={{btnDelete}} raised>speichern</paper-button>
-		<paper-button raised>abbrechen</paper-button>
-		</div>
-	</div>
-		<div id="text" style="float: right; width: 28%;">
-			<p><b>Neues Fach anlegen</b></p>
+					</template>
+				</core-list>
+				<div id="btn1" style="text-align: center;">
+					<paper-button on-click={{btnDelete}} raised>speichern</paper-button>
+					<paper-button raised>abbrechen</paper-button>
+				</div>
+			</div>
+			<div id="text" style="float: right; width: 28%;">
+				<p><b>Neues Fach anlegen</b></p>
 				<paper-dropdown-menu  id="menu1Label" style="width: 100%;" label="Modul">
 					<paper-dropdown id="pdrop1"  class="dropdown">
 						<core-menu selected="{{selectionOne}}" id="menu" class="menu" >
-						<template  repeat="{{item in alleModule}}">
-							<paper-item >{{item.name}}</paper-item>
-						</template>
-						<!--<paper-item on-click={{blendeAnOne}}>Neu</paper-item>-->
+							<template  repeat="{{item in alleModule}}">
+								<paper-item >{{item.name}}</paper-item>
+							</template>
 						</core-menu>
 					</paper-dropdown>
 				</paper-dropdown-menu>
-			<div id="einblendenModul" style="display: none; padding-left: 20px;">
-				<paper-input-decorator id="modul" label="Modul" labelVisible floatingLabel>
-					<input id="modulNameEingabe" is="core-input">
-				</paper-input-decorator>
-				<paper-input-decorator id="kurzbeschreibung" label="Kurzbeschreibung" labelVisible floatingLabel>
-					<input id="modulBeschreibungEingabe" is="core-input">
-				</paper-input-decorator>
-				<paper-input-decorator id="ects" label="ECTS-Punkte" labelVisible floatingLabel>
-					<input id="modulEctsEingabe" is="core-input">
-				</paper-input-decorator>
-			</div>
+				<div id="einblendenModul" style="display: none; padding-left: 20px;">
+					<paper-input-decorator id="modul" label="Modul" labelVisible floatingLabel>
+						<input id="modulNameEingabe" is="core-input" value={{eingabeModulName}} on-keyup={{checkForButton}}>
+					</paper-input-decorator>
+					<paper-input-decorator id="kurzbeschreibung" label="Kurzbeschreibung" labelVisible floatingLabel>
+						<input id="modulBeschreibungEingabe" is="core-input" value={{eingabeModulBeschreibung}} on-keyup={{checkForButton}}>
+					</paper-input-decorator>
+					<paper-input-decorator id="ects" label="ECTS-Punkte" labelVisible floatingLabel>
+						<input id="modulEctsEingabe" is="core-input" value={{eingabeModulEcts}} on-keyup={{checkForButton}}>
+					</paper-input-decorator>
+				</div>
 				<paper-dropdown-menu id="menu2Label" style="width: 100%;" label="Fach">
 					<paper-dropdown id="pdrop2" class="dropdown">
-						<core-menu id="menu2" selected="{{selectionTwo}}" class="menuTwo">
-						<template repeat="{{item in alleFaecher}}">
-							<paper-item on-change={{blendeTwo}}>{{item.name}}</paper-item>
-						</template>
-							<!--<paper-item on-click={{blendeAnTwo}}>Neu</paper-item>-->
+						<core-menu id="menu2" selected="{{selectionTwo}}" class="menuTwo" >
+							<template repeat="{{item in alleFaecher}}">
+								<paper-item on-change={{blendeTwo}}>{{item.name}}</paper-item>
+							</template>
 						</core-menu>
 					</paper-dropdown>
 				</paper-dropdown-menu>
-			<div id="einblendenFach" style="display: none; padding-left: 20px;">
-				<paper-input-decorator id="fach" label="Fach" labelVisible floatingLabel>
-					<input id="fachNameEingabe" is="core-input">
-				</paper-input-decorator>
-				<paper-input-decorator id="kurz" label="Kurzbezeichnung" labelVisible floatingLabel>
-					<input id="fachBeschreibungEingabe" is="core-input">
-				</paper-input-decorator>
+				<div id="einblendenFach" style="display: none; padding-left: 20px;">
+					<paper-input-decorator id="fach" label="Fach" labelVisible floatingLabel>
+						<input id="fachNameEingabe" is="core-input" value={{eingabeFachName}} on-keyup={{checkForButton}}>
+					</paper-input-decorator>
+					<paper-input-decorator id="kurz" label="Kurzbezeichnung" labelVisible floatingLabel>
+						<input id="fachBeschreibungEingabe" is="core-input" value={{eingabeFachBeschreibung}} on-keyup={{checkForButton}}>
+					</paper-input-decorator>
+				</div>
+				<div id="stundenUndSemester">
+					<paper-input-decorator id="stunden" label="Stunden" labelVisible floatingLabel>
+						<input id="stundenEingabe" is="core-input" value={{eingabeStunden}} on-keyup={{checkForButton}}>
+					</paper-input-decorator>
+					<paper-input-decorator id="semester" label="Semester" labelVisible floatingLabel>
+						<input id="semesterEingabe" is="core-input" value={{eingabeSemester}} on-keyup={{checkForButton}}>
+					</paper-input-decorator>
+				</div>
+				<div id="btn2" style="text-align: center;">
+					<paper-button raised on-click={{uebernehmen}} disabled="{{uebernehmenButtonZustand}}">Übernehmen</paper-button>
+				</div>
 			</div>
-			<div id="stundenUndSemester">
-			<paper-input-decorator id="stunden" label="Stunden" labelVisible floatingLabel>
-				<input id="stundenEingabe" is="core-input">
-			</paper-input-decorator>
-			<paper-input-decorator id="semester" label="Semester" labelVisible floatingLabel>
-				<input id="semesterEingabe" is="core-input">
-			</paper-input-decorator>
-			</div>
-			<div id="btn2" style="text-align: center;">
-				<paper-button raised on-click={{uebernehmen}}>Übernehmen</paper-button>
-			</div>
+			<div style="clear: both;"></div>
 		</div>
-		<div style="clear: both;"></div>
-
-	</div>
-
 	</template>
-	
-	
 	<script>
-
-
-Polymer("vvs-modulplan-pflegen", {
-
-
-	mydata: [],
-	alleModule: [],
-	alleFaecher: [],
-	selectionOne:'',
+		Polymer("vvs-modulplan-pflegen",{
+			mydata: [],
+			alleModule: [],
+			alleFaecher: [],
+			selectionOne: null,
+			selectionTwo: null,
+			uebernehmenButtonZustand : true,
+			eingabeSemester: null,
+			eingabeStunden: null,
+			eingabeModulName: null,
+			eingabeModulEcts: null,
+			eingabeFachName: null,
+			eingabeFachBeschreibung: null,
+			boolSelectionOneNeu: false,
+			boolSelectionTwoNeu: false,
+		
+			ready: function (){
+				var that = this;
+				this.init();
+				var dropdown1 = this.$.pdrop1;
+				dropdown1.addEventListener('core-select', function(e){
+					if (e.detail.isSelected){
+						that.blendeOne(e);
+					}
+				});
+				var dropdown2 = this.$.pdrop2;
+				dropdown2.addEventListener('core-select', function(e) {
+					if (e.detail.isSelected){
+						that.blendeTwo(e);
+					}
+				});
+			},
 	
+			publish: {
+				count: 0,
+				alleFaecher: [],
+			},
+	
+			init: function init(){
+			//In dieser Methode muss die Selektion auf die Datenbank stattfinden
+			//und die Werte  für Module und Fächer in die Arrays übertragen werden
+			//WICHTIG
+			//WICHTIG
+			//WICHTIG
+			//Die Einträge mit der id neu müssen in beiden Listen erhalten bleiben!
+			//Sollte mit einer Vorlage gearbeitet werden müssen die Werte der Vorlage an die Funktion
+			//werteUebertragen übergeben werrden. Diese überträgt die Werte dann in die Tabelle
+				this.alleModule = [
+					{id: '1', name: 'Module 1', beschreibung: 'Beschreibung 1', ects: '10'},
+					{id: '2', name: 'Module 2', beschreibung: 'Beschreibung 2', ects: '20'},
+					{id: 'neu', name: 'Neu', beschreibung: 'Neu', ects: 'Neu'}
+				];
+		
+				this.alleFaecher = [
+					{id: '1', name: 'Fach 1', beschreibung: 'Beschreibung 1'},
+					{id: '2', name: 'Fach 2', beschreibung: 'Beschreibung 2'},
+					{id: 'neu', name: 'Neu', beschreibung: 'Neu'}
+				];
+			},
+	
+			//wird durch den Übernehmen-Button aufgerufen
+			// Dient zur Übernahme der Werte in die Tabelle
+			//Liest hierzu die Werte aus dem Eingabebereich aus und übergibt diese 
+			//an eine weitere Funktion
+	
+			uebernehmen: function uebernehmen() {
+			//Dient zur Uebernahme von Werten aus dem Eingabebereich in die Tabelle
+			//Ermittlung der Standardeingabewerte
 
-	
-	
-	ready: function (){
-	var that = this;
-	
-		this.init();
-		var dropdown1 = this.$.pdrop1;
-			dropdown1.addEventListener('core-select', function(e){
-				if (e.detail.isSelected){
-					that.blendeOne(e);
+				var modulTMP = this.alleModule[this.selectionOne];
+				var fachTMP = this.alleFaecher[this.selectionTwo];
+				var stunden = this.eingabeStunden;
+				var semester = this.eingabeSemester; 
+				//Prüfen, ob die Werte in den Standardeingaben gefüllt sind
+				if (modulTMP == null || fachTMP == null || stunden == null || semester == null){
+					alert("Nicht alle notwendigen Angaben getätigt!");
+				}else{
+					//Alle notwendigen Standardeingaben getätigt
+					//Prüfen, ob Modul oder Fach neu sind
+					var modulToCheck = modulTMP.name.toUpperCase();
+					var fachToCheck = fachTMP.name.toUpperCase();
+					var modulName;
+					var modulBeschreibung;
+					var modulEcts;
+					var modulId;
+					if (modulToCheck == "NEU"){
+						// Modul ist NEU	
+						modulName = this.eingabeModulName; //this.$.content.querySelector('#modulNameEingabe').value;
+						modulBeschreibung = this.eingabeModulBeschreibung; //this.$.content.querySelector('#modulBeschreibungEingabe').value;
+						modulEcts = this.eingabeModulEcts; //this.$.content.querySelector('#modulEctsEingabe').value;
+						modulId = "neu";
+					}else{
+						//Modul ist nicht NEU
+						modulName = modulTMP.name;
+						modulBeschreibung = modulTMP.beschreibung;
+						modulEcts = modulTMP.ects;
+						modulId = modulTMP.id;
+					}
+					var fachName;
+					var fachBeschreibung;
+					var fachId;
+					if( fachToCheck == "NEU"){
+						//Fach ist NEU
+						fachName = this.eingabeFachName;//this.$.content.querySelector('#fachNameEingabe').value;
+						fachBeschreibung = this.eingabeFachBeschreibung; //this.$.content.querySelector('#fachBeschreibungEingabe').value;
+						fachId = "neu";
+					}else{
+						//Fach ist nicht NEU
+						fachName = fachTMP.name;
+						fachBeschreibung = fachTMP.beschreibung;
+						fachId = fachTMP.id;
+					}
+					this.werteUebertragen(modulName, modulBeschreibung, modulEcts, modulId, fachName, fachBeschreibung, fachId, stunden, semester);
+					//Zurücksetzen der Eingabefelder
+					this.resetFields(modulToCheck, fachToCheck);
 				}
-			});
-
-    	
-		var dropdown2 = this.$.pdrop2;
-    		dropdown2.addEventListener('core-select', function(e) {
-				if (e.detail.isSelected){
-					that.blendeTwo(e);
+			},//uebernehmen
+	
+			//Dient zum zurücksetzen aller Eingabefelder
+			resetFields: function resetFields(modulToCheck, fachToCheck){
+				//this.$.content.querySelector('#stundenEingabe').value ="";
+				//this.$.content.querySelector('#stunden').focused = true;
+				//this.$.content.querySelector('#stunden').focused = false;
+				this.eingabeStunden = null;
+				this.eingabeSemester = null;
+				this.selectionOne = null;
+				this.selectionTwo = null;
+				//Falls Fach NEU ist müssen die Inputs zurückgesetzt werden
+				//Und der Eingabebereich eingeklappt
+				if(fachToCheck =="NEU"){
+					this.eingabeFachName = null;
+					this.eingabeFachBeschreibung = null;
+					this.blendeAusTwo();															
 				}
-    	});
+				//Falls Modul NEU ist müssen die Inputs zurückgesetzt werden
+				//Und der Eingabebereich eingeklappt
+				if(modulToCheck == "NEU"){
+					this.eingabeModulName = null; 
+					this.eingabeModulBeschreibung = null;
+					this.eingabeModulEcts = null;
+					this.blendeAusOne();
+				}
+			},//resetFields
 	
-	
-	},
-	
-
-	
-
-	publish: {
-		count: 0,
-		alleFaecher: [],
-    },
-	
-	
-
-	init: function init(){
-		//In dieser Methode muss die Selektion auf die Datenbank stattfinden
-		//und die Werte  für Module und Fächer in die Arrays übertragen werden
-		
-		
-		//WICHTIG
-		//WICHTIG
-		//WICHTIG
-		//Die Einträge mit der id neu müssen in beiden Listen erhalten bleiben!
-		//Sollte mit einer Vorlage gearbeitet werden müssen die Werte der Vorlage an die Funktion
-		//werteUebertragen übergeben werrden. Diese überträgt die Werte dann in die Tabelle
-		this.alleModule = [
-			{id: '1', name: 'Module 1', beschreibung: 'Beschreibung 1', ects: '10'},
-			{id: '2', name: 'Module 2', beschreibung: 'Beschreibung 2', ects: '20'},
-			{id: 'neu', name: 'Neu', beschreibung: 'Neu', ects: 'Neu'}
-		];
-		
-		this.alleFaecher = [
-			{id: '1', name: 'Fach 1', beschreibung: 'Beschreibung 1'},
-			{id: '2', name: 'Fach 2', beschreibung: 'Beschreibung 2'},
-			{id: 'neu', name: 'Neu', beschreibung: 'Neu'}
-		];
-	},
-	
-	//wird durch den Übernehmen-Button aufgerufen
-	// Dient zur Übernahme der Werte in die Tabelle
-	//Liest hierzu die Werte aus dem Eingabebereich aus und übergibt diese 
-	//an eine weitere Funktion
-	
-	uebernehmen: function uebernehmen() {
-	//Dient zur Uebernahme von Werten aus dem Eingabebereich in die Tabelle
-		//Ermittlung der Standardeingabewerte
-		var modulTMP = this.$.content.querySelector('#menu1Label').selectedItemLabel;
-		var fachTMP = this.$.content.querySelector('#menu2Label').selectedItemLabel;
-		
-		var modulBool = false;
-		var fachBool = false;
-		if(modulTMP !=""){
-			var modul = this.$.content.querySelector('#menu').selectedModel.item;
-			modulBool = true;
-		}else{
-			alert("Nicht alle notwendigen Angaben getätigt!");
-			return;
-		}
-		if(fachTMP !=""){
-			var fach = this.$.content.querySelector('#menu2').selectedModel.item;
-			fachBool = true;
-		}else{
-			alert("Nicht alle notwendigen Angaben getätigt!");
-			return;
-		}
-		
-		var stunden = this.$.content.querySelector('#stundenEingabe').value;
-		var semester = this.$.content.querySelector('#semesterEingabe').value;		
-
-		if(modulBool ==true && fachBool == true){
-		//Prüfen, ob die Werte in den Standardeingaben gefüllt sind
-		if (modul.name == "" || fach.name == "" || stunden == "" || semester == ""){
-			alert("Nicht alle notwendigen Angaben getätigt!");
-		}else{
-			//Alle notwendigen Standardeingaben getätigt
-	
-			//Prüfen, ob Modul oder Fach neu sind
-			var modulToCheck = modul.name.toUpperCase();
-			var fachToCheck = fach.name.toUpperCase();
-	
-			var modulName;
-			var modulBeschreibung;
-			var modulEcts;
-			var modulId;
-			if (modulToCheck == "NEU"){
-				// Modul ist NEU	
-				modulName = this.$.content.querySelector('#modulNameEingabe').value;
-				modulBeschreibung = this.$.content.querySelector('#modulBeschreibungEingabe').value;
-				modulEcts = this.$.content.querySelector('#modulEctsEingabe').value;
-				modulId = "neu";
-			}else{
-				//Modul ist nicht NEU
-				modulName = modul.name;
-				modulBeschreibung = modul.beschreibung;
-				modulEcts = modul.ects;
-				modulId = modul.id;
+			//Dient dazu die eingegebenen Werte in die Tabelle zu 
+			//Es werden zum einen die Daten des Eingabebereichs mit dieser Methode in die Tabelle übernommen
+			//und zum anderen die bereits bestehenden Werte aus der Datenbank.
+			werteUebertragen: function werteUebertragen(modulName, modulBeschreibung, modulEcts, modulId, fachName, fachBeschreibung, fachId, stunden, semester){
+				var addIdx = 0; //Index an dem Eintrag gesetzt werden soll
+				var newID = "checkbox" + ++this.count; //ID des divs
+				var newID2 = "buttonDelete" + this.count //ID des löschen Buttons
+				var newID3 = "buttonAlter" + this.count // ID des ändern Buttons
+				var test = this.$.content.querySelector('.mylist').offsetHeight + 25;
+				this.$.content.querySelector('.mylist').style.height = test + "px";
 				
-			}
-			
-			var fachName;
-			var fachBeschreibung;
-			var fachId;
-			if( fachToCheck == "NEU"){
-				//Fach ist NEU
-				fachName = this.$.content.querySelector('#fachNameEingabe').value;
-				fachBeschreibung = this.$.content.querySelector('#fachBeschreibungEingabe').value;
-				fachId = "neu";
+				this.mydata.splice(addIdx, 0, {
+					id: newID,
+					id2: newID2,
+					id3: newID3,
+					modulName: modulName,
+					modulBeschreibung: modulBeschreibung,
+					modulEcts: modulEcts,
+					modulId: modulId,
+					fachName: fachName,
+					fachBeschreibung: fachBeschreibung,
+					fachId: fachId,
+					semester: semester,
+					stunden: stunden,
+				});
+			},//werteUebertragen
+	
+			//Wird durch den Ändern-Button eines Tabelleneintrags aufgerufen.
+			//Ermittelt, welche Tabellenzeile geändert werden soll und schreibt anschließend
+			//die Werte in den rechten Eingabebereich
+			aendern: function aendern(event, detail, sender){
+				//Ermitteln der Positions ID
+				//Letzte Character der Sender ID
+				var id = sender.id;
+				var laenge = id.length - 1;
+				id = id.charAt(laenge);
+				var newID = "checkbox" + id;
+		
+				//changeItem wird das zu bearbeitende Element beinhalten
+				var changeItem;
+				for (i = 0; i< this.mydata.length; i++){
+					if(this.mydata[i].id == newID){
+						changeItem = this.mydata[i];
+						continue;
+					}
+				}
+				this.eingabeSemester = changeItem.semester;
+				this.eingabeStunden = changeItem.stunden;
+				//Suchen des ausgewählten Moduls 
+				for (i = 0; i< this.alleModule.length; i++){
+					if(this.alleModule[i].id == changeItem.modulId){
+						this.selectionOne = i;
+					}
+				}
+		
+				//Suchen des ausgewählten Fachs
+				for(i = 0; i< this.alleFaecher.length; i++){
+					if(this.alleFaecher[i].id == changeItem.fachId){
+						this.selectionTwo = i;
+					}
+				}
+		
+				//Ist das Modul neu, so müssen die dazugehörigen Werte in 
+				//die Felder geschrieben werden
+				if (changeItem.modulId.toUpperCase() == "NEU"){		
+					this.eingabeModulName = changeItem.modulName;
+					this.eingabeModulBeschreibung = changeItem.modulBeschreibung;
+					this.eingabeModulEcts = changeItem.modulEcts;
+				}
+				//Ist das Fach neu, so müssen die dazugehörigen Werte in 
+				//die Felder geschrieben werden
+				if(changeItem.fachId.toUpperCase() == "NEU"){		
+					this.eingabeFachName = changeItem.fachName;
+					this.eingabeFachBeschreibung = changeItem.fachBeschreibung;
+				}
+		
+				//löschen des Elements aus der Liste
+				this.deleteElement(newID);
+			},//aendern
+	
+			//Funktion wird durch den Löschen Button eines Eintrags in der Tabelle 
+			//aufgerufen. Ermittelt die ID des zu löschenden Tabelleneintrags und ruft
+			//die Funktion deleteElement mit diesem Wert auf
+			loeschen: function loeschen(event, detail, sender){
+				//Ermitteln der Positions ID
+				//Letzte Character der Sender ID
+				var id = sender.id;
+				var laenge = id.length - 1;
+				id = id.charAt(laenge);
+				var newID = "checkbox" + id;
+				this.deleteElement(newID);
+			},//loeschen
+	
+			//Löscht mit Hilfe der übergebenen ID ein Item
+			//aus myDate, welche alle Elemente der Tabelle enthält
+			deleteElement: function deleteElement(newID){
+				//Holen der Liste mit allen List-Elementen
+				//Suchen des Elements mit der dessen Button gedrückt wurde
+				for (i = 0; i < this.mydata.length; i++) {
+					if (this.mydata[i].id == newID){
+						//Löschen des Elements
+						this.mydata.splice(i, 1);
+						continue;
+					}
+				}
+			},//deleteElement
+	
+			//Blendet Zusatzfelder zum Model ein
+			blendeAnOne: function blendeAnOne(){
+				this.$.content.querySelector('#einblendenModul').style.display = "block";
+			},//blendeAnOne
+	
+			//Blendet Zusatzfelder zum Modul aus
+			blendeAusOne: function blendeAusOne(){
+				this.$.content.querySelector('#einblendenModul').style.display = "none";
+			},//blendeAusOne
+	
+			//Blendet Zusatzfelder zum Fach ein
+			blendeAnTwo: function blendeAnTwo(){
+				this.$.content.querySelector('#einblendenFach').style.display = "block";
+			},//blendeAnTwo
+	
+			//Blendet Zusatzfelder zum Fach aus
+			blendeAusTwo: function blendeAusTwo(){
+				this.$.content.querySelector('#einblendenFach').style.display = "none";
+			},//blendeAusTwo
+	
+			//Dient zum ein-/ausblenden der Zusatzfelder bei einem
+			//neuen Modul
+			blendeOne: function blendeOne(e){
+				var selectionTmp = e.detail.item.innerHTML;
+				var selectionUC = selectionTmp.toUpperCase();
+				var test = [];
+				test.id = "menu";
+				if(selectionUC == "NEU"){
+					this.blendeAnOne();
+					this.boolSelectionOneNeu = true;
+					this.checkForButton(null, null, test);
+				}else{
+					this.blendeAusOne();
+					this.boolSelectionOneNeu = false;
+					this.checkForButton(null, null, test);
+				}
 
-			}else{
-				//Fach ist nicht NEU
-				fachName = fach.name;
-				fachBeschreibung = fach.beschreibung;
-				fachId = fach.id;
-			}
-			
-			this.werteUebertragen(modulName, modulBeschreibung, modulEcts, modulId, fachName, fachBeschreibung, fachId, stunden, semester);
-		}
-		
-		//Zurücksetzen der Eingabefelder
-		this.resetFields(modulToCheck, fachToCheck);
-
-
-		
-		}
-
-	},//uebernehmen
+			},
+			//Dient zum ein-/ausblenden der Zusatzfelder bei einem
+			//neuen Fach
+			blendeTwo: function blendeTwo(e){
+				var selectionTmp = e.detail.item.innerHTML;
+				var selectionUC = selectionTmp.toUpperCase();
+				var tmp = [];
+				tmp.id = "menu2";
+				if(selectionUC == "NEU"){
+					this.blendeAnTwo();
+					this.boolSelectionTwoNeu = true;
+					this.checkForButton(null, null, tmp);
+				}else{
+					this.blendeAusTwo();
+					this.boolSelectionTwoNeu = false;
+					this.checkForButton(null, null, tmp);
+				}
+			},
 	
-	//Dient zum zurücksetzen aller Eingabefelder
-	resetFields: function resetFields(modulToCheck, fachToCheck){
-		this.$.content.querySelector('#stundenEingabe').value ="";
-		this.$.content.querySelector('#stunden').focused = true;
-		this.$.content.querySelector('#stunden').focused = false;
-		
-		
-		this.$.content.querySelector('#semesterEingabe').value ="";
-		this.$.content.querySelector('#semester').focused = true;
-		this.$.content.querySelector('#semester').focused = false;
-		document.getElementById("semester").focused = false;
-		
-		
-		//this.$.content.querySelector('#stundenUndSemester').innerHTML =	"<paper-input-decorator id='stunden' label='Stunden'"+
-		//																" labelVisible floatingLabel><input id='stundenEingabe'"+
-		//																" is='core-input'>	</paper-input-decorator><paper-input-decorator"+
-		//																" id='semester' label='Semester' labelVisible floatingLabel><input"+
-		//																" id='semesterEingabe' is='core-input'></paper-input-decorator>"
-		this.$.content.querySelector('#menu').selected = null;
-		this.$.content.querySelector('#menu1Label').label = "Modul";
-		
-		this.$.content.querySelector('#menu2').selected = null;
-		this.$.content.querySelector('#menu2Label').label = "Fach";
-		
-		//Fall Fach NEU ist müssen die Inputs zurückgesetzt werden
-		//Und der Eingabebereich eingeklappt
-		if(fachToCheck =="NEU"){
-		this.$.content.querySelector('#einblendenFach').innerHTML=	"<paper-input-decorator id='fach' label='Fach' labelVisible floatingLabel>"+
-																	"<input id='fachNameEingabe' is='core-input></paper-input-decorator>"+
-																	"<paper-input-decorator id='kurz' label='Kurzbezeichnung' labelVisible "+
-																	"floatingLabel><input id='fachBeschreibungEingabe' is='core-input'>"+
-																	"</paper-input-decorator>";
-		this.blendeAusTwo();															
-		}
-		
-		//Falls Modul NEU ist müssen die Inputs zurückgesetzt werden
-		//Und der Eingabebereich eingeklappt
-		if(modulToCheck == "NEU"){
-			this.$.content.querySelector('#einblendenModul').innerHTML=	"<paper-input-decorator id='modul' label='Modul' labelVisible "+
-																		"floatingLabel><input id='modulNameEingabe' is='core-input'>"+
-																		"</paper-input-decorator><paper-input-decorator id='kurzbeschreibung'"+
-																		" label='Kurzbeschreibung' labelVisible floatingLabel><input"+
-																		" id='modulBeschreibungEingabe' is='core-input'></paper-input-decorator>"+
-																		"<paper-input-decorator id='ects' label='ECTS-Punkte' labelVisible "+
-																		"floatingLabel><input id=modulEctsEingabe is=core-input></paper-input-decorator>";
-		this.blendeAusOne();
-		}
-	},//resetFields
-	
-	
-	//Dient dazu die eingegebenen Werte in die Tabelle zu 
-	//Es werden zum einen die Daten des Eingabebereichs mit dieser Methode in die Tabelle übernommen
-	//und zum anderen die bereits bestehenden Werte aus der Datenbank.
-	werteUebertragen: function werteUebertragen(modulName, modulBeschreibung, modulEcts, modulId, fachName, fachBeschreibung, fachId, stunden, semester){
-		var addIdx = 0; //Index an dem Eintrag gesetzt werden soll
-		var newID = "checkbox" + ++this.count; //ID des divs
-		var newID2 = "buttonDelete" + this.count //ID des löschen Buttons
-		var newID3 = "buttonAlter" + this.count // ID des ändern Buttons
-	
-		var test = this.$.content.querySelector('.mylist').offsetHeight + 25;
-		this.$.content.querySelector('.mylist').style.height = test + "px";
-	
-		this.mydata.splice(addIdx, 0, {
-			id: newID,
-			id2: newID2,
-			id3: newID3,
-			modulName: modulName,
-			modulBeschreibung: modulBeschreibung,
-			modulEcts: modulEcts,
-			modulId: modulId,
-			fachName: fachName,
-			fachBeschreibung: fachBeschreibung,
-			fachId: fachId,
-			semester: semester,
-			stunden: stunden,
-        });
-	},//werteUebertragen
-	
-	//Wird durch den Ändern-Button eines Tabelleneintrags aufgerufen.
-	//Ermittelt, welche Tabellenzeile geändert werden soll und schreibt anschließend
-	//die Werte in den rechten Eingabebereich
-	aendern: function aendern(event, detail, sender){
-		//Ermitteln der Positions ID
-		//Letzte Character der Sender ID
-		var id = sender.id;
-		var laenge = id.length - 1;
-		id = id.charAt(laenge);
-		var newID = "checkbox" + id;
-		
-		//Holen der Liste mit allen List-Elementen
-		var listData = this.$.content.querySelector('#corelist').data;
-		//changeItem wird das zu bearbeitende Element beinhalten
-		var changeItem;
-		for (i = 0; i< listData.length; i++){
-			if(listData[i].id == newID){
-				changeItem = listData[i];
-				continue;
-			}
-		}
-		this.$.content.querySelector('#semester').focusAction();
-		this.$.content.querySelector('#semesterEingabe').value = changeItem.semester;
-		//this.$.content.querySelector('#semester').focused = false;
-		
-		this.$.content.querySelector('#stunden').focusAction();
-		this.$.content.querySelector('#stundenEingabe').value = changeItem.stunden;
-		//this.$.content.querySelector('#stunden').focuse = false;
-		
-		
-		//Suchen des ausgewählten Moduls 
-		for (i = 0; i< this.alleModule.length; i++){
-			if(this.alleModule[i].id == changeItem.modulId){
-						this.$.content.querySelector('#menu').selected = i;
-			}
-		}
-		
-		//Suchen des ausgewählten Fachs
-		for(i = 0; i< this.alleFaecher.length; i++){
-			if(this.alleFaecher[i].id == changeItem.fachId){
-				this.$.content.querySelector('#menu2').selected = i;
-			}
-		}
-		
-		//Ist das Modul neu, so müssen die dazugehörigen Werte in 
-		//die Felder geschrieben werden
-		if (changeItem.modulId.toUpperCase() == "NEU"){
-		this.$.content.querySelector('#modul').focusAction();
-		this.$.content.querySelector('#modulNameEingabe').value = changeItem.modulName;
-		this.$.content.querySelector('#kurzbeschreibung').focusAction();
-		this.$.content.querySelector('#modulBeschreibungEingabe').value = changeItem.modulBeschreibung;
-		this.$.content.querySelector('#ects').focusAction();
-		this.$.content.querySelector('#modulEctsEingabe').value = changeItem.modulEcts;
-		
-		}
-		//Ist das Fach neu, so müssen die dazugehörigen Werte in 
-		//die Felder geschrieben werden
-		if(changeItem.fachId.toUpperCase() == "NEU"){
-			this.$.content.querySelector('#fach').focusAction();
-		this.$.content.querySelector('#fachNameEingabe').value = changeItem.fachName;
-		this.$.content.querySelector('#kurz').focusAction();
-		this.$.content.querySelector('#fachBeschreibungEingabe').value = changeItem.fachBeschreibung;
-		}
-		
-		//löschen des Elements aus der Liste
-		this.deleteElement(newID);
-	},//aendern
-	
-	//Funktion wird durch den Löschen Button eines Eintrags in der Tabelle 
-	//aufgerufen. Ermittelt die ID des zu löschenden Tabelleneintrags und ruft
-	//die Funktion deleteElement mit diesem Wert auf
-	loeschen: function loeschen(event, detail, sender){
-		//Ermitteln der Positions ID
-		//Letzte Character der Sender ID
-		var id = sender.id;
-		var laenge = id.length - 1;
-		id = id.charAt(laenge);
-		var newID = "checkbox" + id;
-		this.deleteElement(newID);
-
-	},//loeschen
-	
-	//Löscht mit Hilfe der übergebenen ID ein Item
-	//aus myDate, welche alle Elemente der Tabelle enthält
-	deleteElement: function deleteElement(newID){
-		//Holen der Liste mit allen List-Elementen
-		var listData = this.$.content.querySelector('#corelist').data;
-		
-		//Suchen des Elements mit der dessen Button gedrückt wurde
-		for (i = 0; i < listData.length; i++) {
-
-			if (listData[i].id == newID){
-				//Löschen des Elements
-				this.mydata.splice(i, 1);
-				continue;
+			checkForButton : function checkForButton(event, detail, sender){
+				var boolSelectionOne = false;
+				var boolSelectionTwo = false;
+				var boolEingabeSemester = false;
+				var boolEingabeStunden = false;
 				
-			}
-		}
-	},//deleteElement
-	
-	//Blendet Zusatzfelder zum Model ein
-	blendeAnOne: function blendeAnOne(){
-		this.$.content.querySelector('#einblendenModul').style.display = "block";
-	},//blendeAnOne
-	
-	//Blendet Zusatzfelder zum Modul aus
-	blendeAusOne: function blendeAusOne(){
-		this.$.content.querySelector('#einblendenModul').style.display = "none";
-	},//blendeAusOne
-	
-	//Blendet Zusatzfelder zum Fach ein
-	blendeAnTwo: function blendeAnTwo(){
-		this.$.content.querySelector('#einblendenFach').style.display = "block";
-	},//blendeAnTwo
-	
-	//Blendet Zusatzfelder zum Fach aus
-	blendeAusTwo: function blendeAusTwo(){
-		this.$.content.querySelector('#einblendenFach').style.display = "none";
-	},//blendeAusTwo
-	
-	//Dient zum ein-/ausblenden der Zusatzfelder bei einem
-	//neuen Modul
-	blendeOne: function blendeOne(e){
-
-		var selectionTmp = e.detail.item.innerHTML;
-		var selectionUC = selectionTmp.toUpperCase();
-		if(selectionUC == "NEU"){
-			this.blendeAnOne();
-		}else{
-			this.blendeAusOne();
-		}
-
-	},
-	//Dient zum ein-/ausblenden der Zusatzfelder bei einem
-	//neuen Fach
-	blendeTwo: function blendeTwo(e){
-		var selectionTmp = e.detail.item.innerHTML;
-		var selectionUC = selectionTmp.toUpperCase();
-		if(selectionUC == "NEU"){
-			this.blendeAnTwo();
-		}else{
-			this.blendeAusTwo();
-		}
-	},
-});
-</script>
+				var boolEingabeModulName = false;
+				var boolEingabeModulBeschreibung = false;
+				var boolEingabeModulEcts = false;
+				var boolEingabeFachName = false;
+				var boolEingabeFachBeschreibung = false;
+				
+				if(this.selectionOne != null || sender.id == "menu"){
+					boolSelectionOne = true;
+				}
+				if(this.selectionTwo != null || sender.id == "menu2"){
+					boolSelectionTwo = true;
+				}
+				if(this.eingabeSemester != null && this.eingabeSemester != ""){
+					boolEingabeSemester = true;
+				}
+				if(this.eingabeStunden != null && this.eingabeStunden != ""){
+					boolEingabeStunden = true;
+				}
+				
+				//Erste Checkbox enthält Wert neu
+				if(this.boolSelectionOneNeu == true){
+					//Aber ist nicht auslösend und daher können die 
+					//zugehörigen Felder schon Werte enthalten
+					if(sender.id != "menu"){
+						if(this.eingabeModulName != null && this.eingabeModulName != ""){
+							boolEingabeModulName = true;
+						}
+						if(this.eingabeModulBeschreibung != null && this.eingabeModulBeschreibung != ""){
+							boolEingabeModulBeschreibung = true;
+						}
+						if(this.eingabeModulEcts != null && this.eingabeModulEcts != ""){
+							boolEingabeModulEcts = true;
+						}
+					}
+				}else{
+					boolEingabeModulName = true;
+					boolEingabeModulBeschreibung = true;
+					boolEingabeModulEcts = true;
+				}
+				if(this.boolSelectionTwoNeu == true){
+					if(sender.id != "menu2"){
+						if(this.eingabeFachName != null && this.eingabeFachName != ""){
+							boolEingabeFachName = true;
+						}
+						if(this.eingabeFachBeschreibung != null && this.eingabeFachBeschreibung != ""){
+							boolEingabeFachBeschreibung = true;
+						}
+					}
+				}else{
+					boolEingabeFachName = true;
+					boolEingabeFachBeschreibung = true;
+				}
+				
+				if(boolSelectionOne == true && boolSelectionTwo == true && boolEingabeSemester == true && boolEingabeStunden == true && boolEingabeModulName == true && boolEingabeModulBeschreibung == true && boolEingabeModulEcts == true && boolEingabeFachName == true && boolEingabeFachBeschreibung == true){
+					this.uebernehmenButtonZustand = false;
+				}else{
+					this.uebernehmenButtonZustand = true;
+				}
+				
+			},
+		});
+	</script>
 </polymer-element>

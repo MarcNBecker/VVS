@@ -6,14 +6,17 @@
 	<template>
 		<link rel="stylesheet" type="text/css" href="../formate.css">
 		<div style="margin: auto; padding:10px;  border:1px black solid;">
-			<h1>Dozentendaten verwalten</h1>
+			<h3>Dozentendaten verwalten</h3>
 			<paper-button raised>neuen Dozenten anlegen</paper-button>
+			<br />
+			<br />
 			<form>				
-				<paper-dropdown-menu label="Dozent" floatingLabel style="width:49%">
+				<paper-dropdown-menu label="Dozent" floatingLabel style="width:25%">
 				<paper-dropdown class="dropdown">
 						<core-menu class="menu">
-							<paper-item>Baumgart, J&ouml;rg</paper-item>
-							<paper-item>Pagnia, Hans-Henning</paper-item>
+							<template  repeat="{{item in dozenten}}">
+								<paper-item>{{item.name}}, {{item.vorname}}</paper-item>
+							</template>
 						</core-menu>
 					</paper-dropdown>
 				</paper-dropdown-menu>						
@@ -22,14 +25,17 @@
 			</form>
 			<br />
 			<br />
-			<h1>Kursdaten verwalten</h1>
+			<h3>Kursdaten verwalten</h3>
 			<paper-button raised>neuen Kurs anlegen</paper-button>
+			<br />
+			<br />
 			<form>					
-				<paper-dropdown-menu label="Kurs" floatingLabel style="width:49%">
+				<paper-dropdown-menu label="Kurs" floatingLabel style="width:25%">
 				<paper-dropdown class="dropdown">
 						<core-menu class="menu">
-							<paper-item>WWI13SEA</paper-item>
-							<paper-item>WWI14SEA</paper-item>
+							<template  repeat="{{item in kurse}}">
+								<paper-item>{{item.kursname}}</paper-item>
+							</template>
 						</core-menu>
 					</paper-dropdown>
 				</paper-dropdown-menu>						
@@ -37,14 +43,17 @@
 			</form>		
 			<br />
 			<br />		
-			<h1>Modulplan verwalten</h1>
+			<h3>Modulplan verwalten</h3>
 			<paper-button raised>neuen Modulplan anlegen</paper-button>
+			<br />
+			<br />
 			<form>				
-				<paper-dropdown-menu label="Modulplan" floatingLabel style="width:49%">
+				<paper-dropdown-menu label="Modulplan" floatingLabel style="width:25%">
 				<paper-dropdown class="dropdown">
 						<core-menu class="menu">
-							<paper-item>Neue Konzepte</paper-item>
-							<paper-item>Datenbanken</paper-item>
+							<template  repeat="{{item in modulplaene}}">
+								<paper-item>{{item.studiengang}}-{{item.vertiefungsrichtung}}</paper-item>
+							</template>
 						</core-menu>
 					</paper-dropdown>
 				</paper-dropdown-menu>					
@@ -52,13 +61,14 @@
 			</form>
 			<br />
 			<br />		
-			<h1>Feiertage verwalten</h1>				
+			<h3>Feiertage verwalten</h3>				
 			<form>					
-				<paper-dropdown-menu label="Jahr" floatingLabel style="width:49%">
+				<paper-dropdown-menu label="Jahr" floatingLabel style="width:25%">
 				<paper-dropdown class="dropdown">
 						<core-menu class="menu">
-							<paper-item>2015</paper-item>
-							<paper-item>2016</paper-item>
+							<template  repeat="{{item in jahre}}">
+								<paper-item>{{item}}</paper-item>
+							</template>
 						</core-menu>
 					</paper-dropdown>
 				</paper-dropdown-menu>						
@@ -69,9 +79,53 @@
 	<script type="text/javascript" src="../../js/model.js"></script>
 	<script type="text/javascript">
 		Polymer('vvs-uebersicht', {
+			dozenten: [],
+			kurse: [],
+			modulplaene: [],
+			jahre:[],
     		ready: function()
     		{
-    			
+    			var self = this;
+    			model.webService.getAllDozenten(function(api) {
+					if (!api.error)
+					{
+						self.dozenten = api.response;
+					}
+					else
+					{
+						console.log(JSON.stringify(api));
+					}
+				});
+    			model.webService.getAllKurse(function(api) {
+					if (!api.error)
+					{
+						self.kurse = api.response;
+					}
+					else
+					{
+						console.log(JSON.stringify(api));
+					}
+				});
+    			model.webService.getAllModulplaene(function(api) {
+					if (!api.error)
+					{
+						self.modulplaene = api.response;
+					}
+					else
+					{
+						console.log(JSON.stringify(api));
+					}
+				});
+    			var aktuellesDatum = new Date();
+    			var aktuellesJahr = aktuellesDatum.getFullYear();
+    			aktuellesJahr = aktuellesJahr - 1;
+    			self.jahre.push(aktuellesJahr);
+    			aktuellesJahr = aktuellesJahr + 1;
+    			self.jahre.push(aktuellesJahr);
+    			aktuellesJahr = aktuellesJahr + 1;
+    			self.jahre.push(aktuellesJahr);
+    			aktuellesJahr = aktuellesJahr + 1;
+    			self.jahre.push(aktuellesJahr);
     		}
  		});
 	 </script>
