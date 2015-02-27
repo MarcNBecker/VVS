@@ -11,6 +11,9 @@ import org.restlet.resource.ResourceException;
 
 import de.dhbw.vvs.application.ExceptionStatus;
 import de.dhbw.vvs.application.WebServiceException;
+import de.dhbw.vvs.model.Termin;
+import de.dhbw.vvs.model.Vorlesung;
+import de.dhbw.vvs.utility.JSONify;
 
 public class KursSemesterVorlesungTermineResource extends SecureServerResource {
 	
@@ -37,14 +40,21 @@ public class KursSemesterVorlesungTermineResource extends SecureServerResource {
 	
 	@Override
 	protected Object receiveGet() throws WebServiceException {
-		// TODO Auto-generated method stub
-		return super.receiveGet();
+		Vorlesung vorlesung = new Vorlesung(getVorlesungsID());
+		vorlesung.setKursID(getKursID());
+		vorlesung.setSemester(getSemester());
+		return Termin.getAll(vorlesung);
 	}
 	
 	@Override
 	protected Object receivePost(JsonRepresentation json) throws JSONException, WebServiceException {
-		// TODO Auto-generated method stub
-		return super.receivePost(json);
+		Vorlesung vorlesung = new Vorlesung(getVorlesungsID());
+		vorlesung.setKursID(getKursID());
+		vorlesung.setSemester(getSemester());
+		vorlesung.getDirectAttributes();
+		Termin termin = JSONify.deserialize(json.getJsonObject().toString(), Termin.class);
+		termin.setVorlesungID(vorlesung.getID());
+		return termin.create();
 	}
 	
 	public int getKursID() {

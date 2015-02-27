@@ -74,6 +74,9 @@ public class Blocklage {
 		if (endDatum == null) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_DATE);
 		}
+		if (startDatum.compareTo(endDatum) > 0) { //end is not after
+			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_DATE);
+		}
 		if (raum == null || (raum = raum.trim()).isEmpty()) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_STRING);
 		}

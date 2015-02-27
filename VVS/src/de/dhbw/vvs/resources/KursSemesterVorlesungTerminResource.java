@@ -11,6 +11,9 @@ import org.restlet.resource.ResourceException;
 
 import de.dhbw.vvs.application.ExceptionStatus;
 import de.dhbw.vvs.application.WebServiceException;
+import de.dhbw.vvs.model.Termin;
+import de.dhbw.vvs.model.Vorlesung;
+import de.dhbw.vvs.utility.JSONify;
 
 public class KursSemesterVorlesungTerminResource extends SecureServerResource {
 	
@@ -22,6 +25,7 @@ public class KursSemesterVorlesungTerminResource extends SecureServerResource {
 	@Override
 	protected void doInit() throws ResourceException {
 		super.doInit();
+		super.allowGet();
 		super.allowPut();
 		super.allowDelete();
 		ConcurrentMap<String, Object> urlAttributes = getRequest().getAttributes();
@@ -38,14 +42,36 @@ public class KursSemesterVorlesungTerminResource extends SecureServerResource {
 	}
 	
 	@Override
+	protected Object receiveGet() throws WebServiceException {
+		Vorlesung vorlesung = new Vorlesung(getVorlesungsID());
+		vorlesung.setKursID(getKursID());
+		vorlesung.setSemester(getSemester());
+		vorlesung.getDirectAttributes();
+		Termin termin = new Termin(getTerminID());
+		termin.setVorlesungID(vorlesung.getID());
+		return termin.getDirectAttributes();
+	}
+	
+	@Override
 	protected Object receivePut(JsonRepresentation json) throws JSONException, WebServiceException {
-		// TODO Auto-generated method stub
-		return super.receivePut(json);
+		Vorlesung vorlesung = new Vorlesung(getVorlesungsID());
+		vorlesung.setKursID(getKursID());
+		vorlesung.setSemester(getSemester());
+		vorlesung.getDirectAttributes();
+		Termin termin = JSONify.deserialize(json.getJsonObject().toString(), Termin.class);
+		termin.setVorlesungID(vorlesung.getID());
+		return termin.update();
 	}
 	
 	@Override
 	protected void receiveDelete() throws WebServiceException {
-		// TODO Auto-generated method stub
+		Vorlesung vorlesung = new Vorlesung(getVorlesungsID());
+		vorlesung.setKursID(getKursID());
+		vorlesung.setSemester(getSemester());
+		vorlesung.getDirectAttributes();
+		Termin termin = new Termin(getTerminID());
+		termin.setVorlesungID(vorlesung.getID());
+		termin.delete();
 	}
 	
 	public int getKursID() {

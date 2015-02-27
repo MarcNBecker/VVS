@@ -248,6 +248,7 @@ CREATE TABLE `vvs`.`Vorlesung` (
   `Kurs` INT unsigned NOT NULL,
   `FachInstanz` INT unsigned NOT NULL,
   `Dozent` INT unsigned NOT NULL,
+  `Semester` INT unsigned NOT NULL,
   PRIMARY KEY (`ID`),
   INDEX `INDEX_Vorlesung_Kurs` (`Kurs` ASC),
   INDEX `INDEX_Vorlesung_FachInstanz` (`FachInstanz` ASC),
