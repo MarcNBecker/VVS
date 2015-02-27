@@ -81,7 +81,7 @@
 						<template  repeat="{{item in dozentenFaecher}}">
 							<span>
 							<paper-item style="display:inline-block">{{item.name}}</paper-item>
-							<paper-icon-button icon="clear" on-click={{deleteFach}}></paper-icon-button>
+							<paper-icon-button icon="clear" on-click={{fachLoeschen}}></paper-icon-button>
 							<br />
 							</span>
 						</template>
@@ -96,7 +96,7 @@
 							</core-menu>
 						</paper-dropdown>
 					</paper-dropdown-menu>
-					<paper-button on-click={{addFach}} raised>+</paper-button>
+					<paper-button on-click={{fachHinzufuegen}} raised>+</paper-button>
 				</div>
 				<br />
 				<br />
@@ -105,11 +105,11 @@
 		<span id="buttons_anzeigen" style="padding-left:40px">
 		<paper-button id="speichern" on-click={{speichern}} raised>Speichern</paper-button>
 		<paper-button on-click={{loeschen}} raised>L&ouml;schen</paper-button>
-		<paper-button on-click={{abbrechen]] raised>Abbrechen</paper-button>
+		<paper-button on-click={{abbrechen}} raised>Abbrechen</paper-button>
 		</span>
 		<span id="buttons_anlegen" style="padding-left:40px">
 		<paper-button id="speichern" on-click={{anlegen}} raised>Anlegen</paper-button>
-		<paper-button on-click={{abbrechen]] raised>Abbrechen</paper-button>
+		<paper-button on-click={{abbrechen}} raised>Abbrechen</paper-button>
 		</span>
 	</template>
 	<script type="text/javascript" src="../../js/model.js"></script>
@@ -240,7 +240,7 @@
 	    		});
     			
     		},
-			addFach: function()
+			fachHinzufuegen: function()
 			{
 				var self = this;
 				if (self.$.fach.selected !== null)
@@ -262,7 +262,7 @@
 					}			
 				}
 			},
-			deleteFach: function(e)
+			fachLoeschen: function(e)
 			{
 				var self = this;
 				var fach = e.target.templateInstance.model.item;

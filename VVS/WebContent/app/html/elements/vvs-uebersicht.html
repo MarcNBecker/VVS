@@ -13,14 +13,14 @@
 			<form>				
 				<paper-dropdown-menu label="Dozent" floatingLabel style="width:25%">
 				<paper-dropdown class="dropdown">
-						<core-menu class="menu">
+						<core-menu id="dozent" class="menu">
 							<template  repeat="{{item in dozenten}}">
 								<paper-item>{{item.name}}, {{item.vorname}}</paper-item>
 							</template>
 						</core-menu>
 					</paper-dropdown>
 				</paper-dropdown-menu>						
-				<paper-button raised>anzeigen/bearbeiten/l&ouml;schen</paper-button>
+				<paper-button on-click={{dozentenZeigen}} raised>anzeigen/bearbeiten/l&ouml;schen</paper-button>
 				<paper-button raised>Dozentenplan drucken</paper-button>						
 			</form>
 			<br />
@@ -32,7 +32,7 @@
 			<form>					
 				<paper-dropdown-menu label="Kurs" floatingLabel style="width:25%">
 				<paper-dropdown class="dropdown">
-						<core-menu class="menu">
+						<core-menu id="kurs" class="menu">
 							<template  repeat="{{item in kurse}}">
 								<paper-item>{{item.kursname}}</paper-item>
 							</template>
@@ -126,6 +126,13 @@
     			self.jahre.push(aktuellesJahr);
     			aktuellesJahr = aktuellesJahr + 1;
     			self.jahre.push(aktuellesJahr);
+    		},
+    		dozentenZeigen: function() {
+    			var self = this;
+				if (self.$.dozent.selected !== null)
+				{
+					var selektierterDozent = self.$.dozent.selected;
+				}
     		}
  		});
 	 </script>
