@@ -1,0 +1,40 @@
+body {
+  font-family: "RobotoDraft", "Arial";
+  font-weight: 300;
+}
+
+body /deep/ core-toolbar {
+  background-color: #E2001A;
+  color: #fff;
+}
+
+#home-scaffold /deep/ core-drawer-panel > div {
+	background: #5C6971;
+}
+
+#drawer-menu {
+  color: #fff;
+  margin: 10px 0 0 0;
+}
+
+#drawer-menu > paper-item.core-selected {
+  background: #E2001A;
+}
+
+#home-pages {
+  width: 85%;
+  height: 85%;
+  -webkit-user-select: none;
+  overflow: hidden;
+}
+
+#home-pages > * {
+  border-radius: 5px;
+  background-color: white;
+}
+
+paper-button {
+	background: #E2001A;
+	color: #FFFFFF;
+}
+
