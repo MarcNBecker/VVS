@@ -6,4 +6,13 @@ body
 paper-button{
 	background: #D32B18;
 	color: #FFFFFF;
-    }
+}
+    
+paper-checkbox::shadow #ink[checked] {
+	color: #D32B18;
+}
+			
+paper-checkbox::shadow #checkbox.checked {
+	background-color: #D32B18;
+	border-color: #D32B18;
+}

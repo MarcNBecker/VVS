@@ -5,44 +5,31 @@
 <polymer-element name="vvs-modulplan-anlegen">
 	<template>
 		<link rel="stylesheet" type="text/css" href="../formate.css">
-		<style>
-			paper-checkbox::shadow #ink[checked] {
-				color: #D32B18;
-			}
-			
-			paper-checkbox::shadow #checkbox.checked {
-				background-color: #D32B18;
-				border-color: #D32B18;
-			}
-		</style>
 		<paper-input-decorator id="modulplan" label="Modulplan" labelVisible floatingLabel>
 			<input is="core-input" value={{eingabeModulplan}} on-keyup={{checkForButton}}>
 		</paper-input-decorator>
 		<paper-input-decorator id="vertiefungsrichtung" label="Vertiefungsrichtung" labelVisible floatingLabel>
 			<input is="core-input" value={{eingabeVertiefungsrichtung}} on-keyup={{checkForButton}}>
-		</paper-input-decorator>
-		
+		</paper-input-decorator>	
 		<p style="float: left; padding-top: 7px;">Vorlage verwenden:</p>
 		<paper-checkbox id="checkboxVorlage" checked={{checkboxZustand}} on-click={{checkboxChanged}} style="float: left; margin-top: 25px; margin-right: 10px; margin-left: 10px;"></paper-checkbox>
 		<paper-dropdown-menu id="dropdownVorlage" style="float: left; " label={{dropdownLabel}} disabled={{dropdownZustand}} >
 			<paper-dropdown class="dropdown">
-				<core-menu selected={{selectedVorlage}} class="menu"  id="dropdownmenu" on-click={{dropdownSelected}}>
-					<paper-item>Vorlage 1</paper-item>
-					<paper-item>Vorlage 2</paper-item>
-					<paper-item>Vorlage 3</paper-item>
-					<paper-item>Vorlage 4</paper-item>
+				<core-menu selected={{selectedVorlage}} class="menu"  id="vorlage" on-click={{dropdownSelected}}>
+					<template  repeat="{{item in vorlagen}}">
+						<paper-item>{{item.studiengang}}-{{item.vertiefungsrichtung}}</paper-item>
+					</template>
 				</core-menu>
 			</paper-dropdown>
-		</paper-dropdown-menu>
-		
+		</paper-dropdown-menu>		
 		<div style="clear:both;"></div>
 		<br /><br />
 		<div style="text-align: center;">
-			<paper-button disabled={{buttonZustand}} raised="">Modulplan anlegen</paper-button>
+			<paper-button on-click="{{modulplanAnlegen}}" disabled={{buttonZustand}} raised>Modulplan anlegen</paper-button>
 		</div>
 	</template>
 	<script>
-		Polymer({
+		Polymer("vvs-modulplan-anlegen", {
 			dropdownZustand: true,
 			buttonZustand: true,
 			eingabeModulplan:"",
@@ -50,48 +37,79 @@
 			checkboxZustand: false,
 			dropdownLabel: "Vorlage",
 			selectedVorlage: null,
-
+			vorlagen: [],
 			ready: function() {
-        
+				var self = this;
+				model.webService.getAllModulplaene(function(api) {
+					if (!api.error)
+					{
+						self.vorlagen = api.response;
+					}
+					else
+					{
+						console.log(JSON.stringify(api));
+					}
+				});
 			},
-	  
-			checkboxChanged: function checkboxChanged(){
-		
-				if (this.checkboxZustand == false){
+			modulplanAnlegen: function() {
+    			var self = this;
+    			var modulplanNew = new model.templates.Modulplan();
+    			modulplanNew.studiengang = self.eingabeStudiengang;
+    			modulplanNew.vertiefungsrichtung = self.eingabeVertiefungsrichtung;
+    			if (self.$.vorlage.selected !== null)
+				{
+    				modulplanNew.vorlage = self.vorlagen[self.$.vorlage.selected].id;
+				}
+    			model.webService.createModulplan(modulplanNew, function(api) {
+					if (!api.error)
+					{
+						var id = api.response.id;
+						//TODO Navigation zur nächsten Seite "Modulplan pflegen"
+					}
+					else
+					{
+    					console.log(JSON.stringify(api));
+					}
+				});
+			},
+			checkboxChanged: function checkboxChanged(){		
+				if (!this.checkboxZustandfalse)
+				{
 					this.dropdownZustand = false;	
-				}else{
+				}
+				else
+				{
 					this.dropdownZustand = true;
 					this.dropdownLabel = "Vorlage";
 					this.selectedVorlage = null;
-					if(this.eingabeModulplan == "" || this.eingabeVertiefungsrichtung == ""){
+					if(this.eingabeModulplan === "" || this.eingabeVertiefungsrichtung === "")
+					{
 						this.buttonZustand = true;
 					}
 				}
-			},
-			
+			},			
 			dropdownSelected: function dropdownSelected(){
-			//Wenn in der Dropdownbox ein Wert selektiert wurde,
-			//kann der Button enabled werden
-				this.buttonZustand = false;
-			},	
-			
-			checkForButton: function checkForButton(){
-				if(this.eingabeModulplan != "" && this.eingabeVertiefungsrichtung != ""){
+				if(this.eingabeModulplan === "" || this.eingabeVertiefungsrichtung === "")
+				{
+					this.buttonZustand = true;
+				}
+				else
+				{
 					this.buttonZustand = false;
 				}
-				else{
-					if(this.checkboxZustand == true){
-						if(this.selectedVorlage == null){
-							this.buttonZustand = true;
-						}else{
-							this.buttonZustand = false;
-						}
-					}else{
-						this.buttonZustand = true;
-					}
+			},				
+			checkForButton: function checkForButton()
+			{
+				if((this.eingabeModulplan !== "" && this.eingabeVertiefungsrichtung !== "" && this.checkboxZustand && this.selectedVorlage !== null) ||(this.eingabeModulplan !== "" && this.eingabeVertiefungsrichtung !== "" && !this.checkboxZustand))
+				{
+					
+					this.buttonZustand = false;
+				}
+				else
+				{
+					this.buttonZustand = true;
 				}
 			},
-
 		});
 	</script>
 </polymer-element>
