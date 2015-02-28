@@ -3,7 +3,7 @@
 		<link rel="stylesheet" type="text/css" href="../formate.css">
 		<div style="margin: auto; padding:10px;  border:1px black solid;">
 			<h3>Dozentendaten verwalten</h3>
-			<paper-button raised>neuen Dozenten anlegen</paper-button>
+			<paper-button on-click={{dozentenAnlegen}} raised>neuen Dozenten anlegen</paper-button>
 			<br />
 			<br />
 			<form>				
@@ -17,12 +17,12 @@
 					</paper-dropdown>
 				</paper-dropdown-menu>						
 				<paper-button on-click={{dozentenZeigen}} raised>anzeigen/bearbeiten/l&ouml;schen</paper-button>
-				<paper-button raised>Dozentenplan drucken</paper-button>						
+				<paper-button on-click={{dozentenplanDrucken}} raised>Dozentenplan drucken</paper-button>						
 			</form>
 			<br />
 			<br />
 			<h3>Kursdaten verwalten</h3>
-			<paper-button raised>neuen Kurs anlegen</paper-button>
+			<paper-button on-click={{kursAnlegen}} raised>neuen Kurs anlegen</paper-button>
 			<br />
 			<br />
 			<form>					
@@ -35,25 +35,25 @@
 						</core-menu>
 					</paper-dropdown>
 				</paper-dropdown-menu>						
-				<paper-button raised>anzeigen/bearbeiten/l&ouml;schen</paper-button>			
+				<paper-button on-click={{kursZeigen}} raised>anzeigen/bearbeiten/l&ouml;schen</paper-button>			
 			</form>		
 			<br />
 			<br />		
 			<h3>Modulplan verwalten</h3>
-			<paper-button raised>neuen Modulplan anlegen</paper-button>
+			<paper-button on-click={{modulplanAnlegen}} raised>neuen Modulplan anlegen</paper-button>
 			<br />
 			<br />
 			<form>				
 				<paper-dropdown-menu label="Modulplan" floatingLabel style="width:25%">
 				<paper-dropdown class="dropdown">
-						<core-menu class="menu">
+						<core-menu id ="modulplan" class="menu">
 							<template  repeat="{{item in modulplaene}}">
 								<paper-item>{{item.studiengang}}-{{item.vertiefungsrichtung}}</paper-item>
 							</template>
 						</core-menu>
 					</paper-dropdown>
 				</paper-dropdown-menu>					
-				<paper-button raised>anzeigen/bearbeiten/l&ouml;schen</paper-button>					
+				<paper-button on-click={{modulplanZeigen}} raised>anzeigen/bearbeiten/l&ouml;schen</paper-button>					
 			</form>
 			<br />
 			<br />		
@@ -61,14 +61,14 @@
 			<form>					
 				<paper-dropdown-menu label="Jahr" floatingLabel style="width:25%">
 				<paper-dropdown class="dropdown">
-						<core-menu class="menu">
+						<core-menu id="feiertagsjahr" class="menu">
 							<template  repeat="{{item in jahre}}">
 								<paper-item>{{item}}</paper-item>
 							</template>
 						</core-menu>
 					</paper-dropdown>
 				</paper-dropdown-menu>						
-				<paper-button raised>pflegen</paper-button>		
+				<paper-button on-click={{feiertagePflegen}} raised>pflegen</paper-button>		
 			</form>	
 		</div>
 	</template>
@@ -122,11 +122,48 @@
     			aktuellesJahr = aktuellesJahr + 1;
     			self.jahre.push(aktuellesJahr);
     		},
+    		dozentenAnlegen: function() {
+    			var self = this;
+    		},
     		dozentenZeigen: function() {
     			var self = this;
 				if (self.$.dozent.selected !== null)
 				{
 					var selektierterDozent = self.$.dozent.selected;
+				}
+    		},
+    		dozentenplanDrucken: function() {
+    			var self = this;
+				if (self.$.dozent.selected !== null)
+				{
+					var selektierterDozent = self.$.dozent.selected;
+				}
+    		},
+    		kursAnlegen: function() {
+    			var self = this;
+    		},
+    		kursZeigen: function() {
+    			var self = this;
+				if (self.$.kurs.selected !== null)
+				{
+					var selektierterKurs = self.$.kurs.selected;
+				}
+    		},
+    		modulplanAnlegen: function() {
+    			var self = this;
+    		},
+    		modulplanZeigen: function() {
+    			var self = this;
+				if (self.$.modulplan.selected !== null)
+				{
+					var selektierterModulplan = self.$.modulplan.selected;
+				}
+    		},
+    		feiertagePflegen: function() {
+    			var self = this;
+				if (self.$.feiertagsjahr.selected !== null)
+				{
+					var selektiertesFeiertagsjahr = self.$.feiertagsjahr.selected;
 				}
     		}
  		});
