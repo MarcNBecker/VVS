@@ -1,0 +1,47 @@
+.vertical-input {
+	margin: 10px 0px 0px 0px;
+}
+
+.headline {
+	font-size: 20pt;
+	font-weight: 475;
+	margin: 0px 0px 0px 20px;
+}
+
+.horizontal-input {
+	margin: 0px 0px 0px 20px;
+}
+
+.horizontal-input > * {
+	margin: 0px 20px 0px 0px;
+}
+
+.horizontal-list {
+	margin: 20px 0px 0px 20px;
+}
+
+.horizontal-list > * {
+	margin: 0px 20px 0px 0px;
+}
+
+.horizontal-button-bar > * {
+	margin: 0px 20px 0px 0px;
+}
+
+paper-button {
+	background: #E2001A;
+	color: #FFFFFF;
+}
+
+paper-checkbox #ink[checked] {
+	color: #D32B18;
+}
+			
+paper-checkbox #checkbox.checked {
+	background-color: #D32B18;
+	border-color: #D32B18;
+}
+
+paper-toast div {
+	color: #eeff41
+}

@@ -36,14 +36,14 @@
       <core-icon-button icon="refresh" on-click={{refresh}}></core-icon-button>
     </core-toolbar>
     <!-- Main pages are loaded here -->
-    <div layout horizontal center-center fit>
-      <core-pages id="home-pages" valueattr="hash" selected="{{route}}">
-        <template repeat="{{page in homePages}}">
-          <section id="home-pages-{{page.hash}}" hash="{{page.hash}}" layout vertical center-center>
-            <div>{{page.name}}</div>
-          </section>
-        </template>
-      </core-pages>
+    <div fit id="page-wrapper">
+	    <core-pages id="home-pages" valueattr="hash" selected="{{route}}">
+	      <template repeat="{{page in homePages}}">
+	        <section id="home-pages-{{page.hash}}" hash="{{page.hash}}">
+	        	<div>{{page.name}}</div>
+	        </section>
+	      </template>
+	    </core-pages>
     </div>
   </core-scaffold>
 </template>

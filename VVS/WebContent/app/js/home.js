@@ -6,6 +6,7 @@ var DEFAULT_ROUTE = 'stammdaten'; //TODO dashboard
 var template = document.querySelector('#home');
 
 //page parameter are used with data binding to exchange data between home and the vvs polymer elements
+//TODO can we add them to the URL hash?
 template.pageParameter = {
 	dozent: {
 		id: 0
@@ -15,7 +16,7 @@ template.pageParameter = {
 //Page descriptors inclduing the HTML code to load the page
 template.pageDescriptor = {
 	stammdaten: {name: 'Stammdaten', hash: 'stammdaten', html: '<vvs-uebersicht></vvs-uebersicht>', loaded: false},
-	dozent: {name: 'Dozent', hash: 'dozent', html: '<vvs-dozent dozentID="{{pageParameter.dozent.id}}" refresh="{{refresh}}" loaded="{{pageDescriptor.dozent.loaded}}"></vvs-dozent>', loaded: false},
+	dozent: {name: 'Dozent pflegen', hash: 'dozent', html: '<vvs-dozent dozentID="{{pageParameter.dozent.id}}" refresh="{{refresh}}" loaded="{{pageDescriptor.dozent.loaded}}"></vvs-dozent>', loaded: false},
 	link2: {name: 'Link2', hash: 'link2', html: null, loaded: true}
 };
 

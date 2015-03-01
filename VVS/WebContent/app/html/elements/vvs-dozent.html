@@ -1,121 +1,135 @@
 <polymer-element name="vvs-dozent">
 	<template>
- 		<link rel="stylesheet" href="../../css/styles.css" shim-shadowdom>
-		<div>
+ 		<link rel="stylesheet" href="../../css/elements.css" shim-shadowdom>
+		<core-media-query query="max-width: 1600px" queryMatches="{{smallScreen}}"></core-media-query>
+		<!-- Main DIV -->
+		<div vertical?="{{smallScreen}}" horizontal?="{{!smallScreen}}" layout>
 			<!-- Main input fields -->
-			<div style="padding:10px; width:50%; border:1px black solid; float:left">
-				<form>
-					<paper-input-decorator id="titel" label="Titel" floatingLabel>
-						<input is="core-input" type="text" value={{dozent.titel}} maxlength="100" disabled?="{{disableToggle}}">
-					</paper-input-decorator>
-					<paper-dropdown-menu label="Anrede" disabled?="{{disableToggle}}">
-						<paper-dropdown class="dropdown">
-							<core-menu class="menu" selected={{dozent.geschlecht}}>
-								<template  repeat="{{item in geschlecht}}">
-									<paper-item>{{item}}</paper-item>
-								</template>
-							</core-menu>
-						</paper-dropdown>
-					</paper-dropdown-menu>
-					<paper-input-decorator id="name" label="Name" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.name}}">
-						<input is="core-input" type="text" value={{dozent.name}} maxlength="100" required disabled?="{{disableToggle}}">
-					</paper-input-decorator>
-					<paper-input-decorator id="vorname" label="Vorname" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.vorname}}">
-						<input is="core-input" type="text" value={{dozent.vorname}} maxlength="100" required disabled?="{{disableToggle}}">
-					</paper-input-decorator>
-					<paper-input-decorator id="strasse" label="Stra&szlig;e" floatingLabel>
-						<input is="core-input" type="text" value={{dozent.strasse}} maxlength="100" disabled?="{{disableToggle}}">
-					</paper-input-decorator>
-					<paper-input-decorator id="postleitzahl" label="Postleitzahl" error="Keine g&uuml;ltige Postleitzahl" floatingLabel autoValidate isInvalid="{{invalid.postleitzahl}}">
-						<input is="core-input" type="text" pattern="[0-9]+" value={{dozent.postleitzahl}} maxlength="100" disabled?="{{disableToggle}}">
-					</paper-input-decorator>
-					<paper-input-decorator id="wohnort" label="Wohnort" floatingLabel>
-						<input is="core-input" type="text" value={{dozent.wohnort}} maxlength="100" disabled?="{{disableToggle}}">
-					</paper-input-decorator>
-					<paper-input-decorator id="mail" label="E-Mail" error="Keine g&uuml;ltige E-Mail" floatingLabel autoValidate isInvalid="{{invalid.mail}}">
-						<input is="core-input" type="email" pattern="[^@]+@[^@]+\.[a-zA-Z]{2,6}" value={{dozent.mail}} maxlength="255" disabled?="{{disableToggle}}">
-					</paper-input-decorator>
-					<paper-input-decorator id="telefonPrivat" label="Telefon (privat)" error="Keine g&uuml;ltige Nummer (Beispiel: +49 234 56789)" floatingLabel on-input="{{validatePhone}}" isInvalid="{{invalid.telefonPrivat}}">
-						<input is="core-input" type="tel" value={{dozent.telefonPrivat}} maxlength="100" disabled?="{{disableToggle}}">
-					</paper-input-decorator>
-					<paper-input-decorator id="telefonGeschaeftlich" label="Telefon (gesch&auml;ftlich)" error="Keine g&uuml;ltige Nummer (Beispiel: +49 234 56789)" floatingLabel on-input="{{validatePhone}}" isInvalid="{{invalid.telefonGeschaeftlich}}">
-						<input is="core-input" type="tel" value={{dozent.telefonGeschaeftlich}} maxlength="100" disabled?="{{disableToggle}}">
-					</paper-input-decorator>
-					<paper-input-decorator id="telefonMobil" label="Telefon (mobil)" error="Keine g&uuml;ltige Nummer (Beispiel: +49 234 56789)" floatingLabel on-input="{{validatePhone}}" isInvalid="{{invalid.telefonMobil}}">
-						<input is="core-input" type="tel" value={{dozent.telefonMobil}} maxlength="100" disabled?="{{disableToggle}}">
-					</paper-input-decorator>
-					<paper-input-decorator id="fax" label="Fax" error="Keine g&uuml;ltige Nummer (Beispiel: +49 234 56789)" floatingLabel on-input="{{validatePhone}}" isInvalid={{invalid.fax}}>
-						<input is="core-input" type="tel" value={{dozent.fax}} maxlength="100" disabled?="{{disableToggle}}">
-					</paper-input-decorator>
-					<paper-input-decorator id="arbeitgeber" label="Arbeitgeber" floatingLabel>
-						<input is="core-input" type="text" value={{dozent.arbeitgeber}} maxlength="100" disabled?="{{disableToggle}}">
-					</paper-input-decorator>
-					<paper-dropdown-menu label="Status" floatingLabel disabled?="{{disableToggle}}">
-						<paper-dropdown class="dropdown">
-							<core-menu class="menu" selected={{dozent.status}}>
-								<template  repeat="{{item in status}}">
-									<paper-item>{{item}}</paper-item>
-								</template>
-							</core-menu>
-						</paper-dropdown>
-					</paper-dropdown-menu>
-					<div id="history_timestamps">
-						<hr>
-						<paper-input-decorator id="angelegt" label="angelegt am" floatingLabel>
+			<div flex two>
+				<!-- Input Fields -->
+				<div vertical layout class="vertical-input">
+					<span class="headline">Informationen</span>
+					<div horizontal start layout class="horizontal-input">
+						<paper-dropdown-menu label="Anrede" disabled?="{{disableToggle}}" self-center flex>
+							<paper-dropdown class="dropdown">
+								<core-menu class="menu" selected={{dozent.geschlecht}}>
+									<template  repeat="{{item in geschlecht}}">
+										<paper-item>{{item}}</paper-item>
+									</template>
+								</core-menu>
+							</paper-dropdown>
+						</paper-dropdown-menu>
+						<paper-input-decorator id="titel" label="Titel" floatingLabel flex>
+							<input is="core-input" type="text" value={{dozent.titel}} maxlength="100" disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+						<paper-input-decorator id="vorname" label="Vorname" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.vorname}}" flex>
+							<input is="core-input" type="text" value={{dozent.vorname}} maxlength="100" required disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+						<paper-input-decorator id="name" label="Name" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.name}}" flex>
+							<input is="core-input" type="text" value={{dozent.name}} maxlength="100" required disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+					</div>
+					<div horizontal start layout class="horizontal-input">
+						<paper-input-decorator id="strasse" label="Stra&szlig;e" floatingLabel flex>
+							<input is="core-input" type="text" value={{dozent.strasse}} maxlength="100" disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+						<paper-input-decorator id="postleitzahl" label="Postleitzahl" error="Keine g&uuml;ltige Postleitzahl" floatingLabel autoValidate isInvalid="{{invalid.postleitzahl}}" flex>
+							<input is="core-input" type="text" pattern="[0-9]+" value={{dozent.postleitzahl}} maxlength="100" disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+						<paper-input-decorator id="wohnort" label="Wohnort" floatingLabel flex>
+							<input is="core-input" type="text" value={{dozent.wohnort}} maxlength="100" disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+					</div>
+					<div horizontal start layout class="horizontal-input">
+						<paper-input-decorator id="mail" label="E-Mail" error="Keine g&uuml;ltige E-Mail" floatingLabel autoValidate isInvalid="{{invalid.mail}}" flex>
+							<input is="core-input" type="email" pattern="[^@]+@[^@]+\.[a-zA-Z]{2,6}" value={{dozent.mail}} maxlength="255" disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+						<paper-input-decorator id="telefonMobil" label="Telefon (mobil)" error="Keine g&uuml;ltige Nummer (Beispiel: +49 234 56789)" floatingLabel on-input="{{validatePhone}}" isInvalid="{{invalid.telefonMobil}}" flex>
+							<input is="core-input" type="tel" value={{dozent.telefonMobil}} maxlength="100" disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+					</div>
+					<div horizontal start layout class="horizontal-input">
+						<paper-input-decorator id="telefonPrivat" label="Telefon (privat)" error="Keine g&uuml;ltige Nummer (Beispiel: +49 234 56789)" floatingLabel on-input="{{validatePhone}}" isInvalid="{{invalid.telefonPrivat}}" flex>
+							<input is="core-input" type="tel" value={{dozent.telefonPrivat}} maxlength="100" disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+						<paper-input-decorator id="fax" label="Fax" error="Keine g&uuml;ltige Nummer (Beispiel: +49 234 56789)" floatingLabel on-input="{{validatePhone}}" isInvalid={{invalid.fax}} flex>
+							<input is="core-input" type="tel" value={{dozent.fax}} maxlength="100" disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+					</div>
+					<div horizontal start layout class="horizontal-input">
+						<paper-input-decorator id="arbeitgeber" label="Arbeitgeber" floatingLabel flex>
+							<input is="core-input" type="text" value={{dozent.arbeitgeber}} maxlength="100" disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+						<paper-input-decorator id="telefonGeschaeftlich" label="Telefon (gesch&auml;ftlich)" error="Keine g&uuml;ltige Nummer (Beispiel: +49 234 56789)" floatingLabel on-input="{{validatePhone}}" isInvalid="{{invalid.telefonGeschaeftlich}}" flex>
+							<input is="core-input" type="tel" value={{dozent.telefonGeschaeftlich}} maxlength="100" disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+					</div>
+					<div horizontal start layout class="horizontal-input">
+						<paper-dropdown-menu label="Status" floatingLabel disabled?="{{disableToggle}}" self-center>
+							<paper-dropdown class="dropdown">
+								<core-menu class="menu" selected={{dozent.status}}>
+									<template  repeat="{{item in status}}">
+										<paper-item>{{item}}</paper-item>
+									</template>
+								</core-menu>
+							</paper-dropdown>
+						</paper-dropdown-menu>
+					</div>
+					<!-- History Fields -->
+					<div horizontal start layout hidden?="{{creationMode}}" class="horizontal-input">
+						<paper-input-decorator id="angelegt" label="angelegt am" floatingLabel flex>
 							<input is="core-input" value="{{dozent.angelegt}}" disabled>
 						</paper-input-decorator>
-						<paper-input-decorator id="bearbeitet" label="bearbeitet am" floatingLabel>
+						<paper-input-decorator id="bearbeitet" label="bearbeitet am" floatingLabel flex>
 							<input is="core-input" value="{{dozent.geaendert}}" disabled>
 						</paper-input-decorator>
 					</div>
-				</form>
+				</div>
 			</div>
 			<!-- Add/Delete Faecher -->
-			<div style="float:right; width:45%">
-				<div style="padding:10px; border: 1px black solid">
-					<h3>Kompetenzf&auml;cher</h3>
-					<hr>
-					<div>
-						<template  repeat="{{item in dozentenFaecher}}">
-							<span>
-							<paper-item style="display:inline-block">{{item.name}}</paper-item>
+			<div flex>
+				<div vertical layout class="vertical-input">
+					<span class="headline">Kompetenzf&auml;cher</span>
+					<template  repeat="{{item in dozentenFaecher}}">
+						<div horizontal layout center class="horizontal-list">
+							<paper-item>{{item.name}}</paper-item>
 							<paper-icon-button icon="clear" on-click={{deleteFach}} disabled?="{{disableToggle}}"></paper-icon-button>
-							<br />
-							</span>
-						</template>
+						</div>
+					</template>
+					<div horizontal layout center class="horizontal-list">
+						<paper-dropdown-menu label="Kompetenzfach" disabled?="{{disableToggle}}">
+							<paper-dropdown class="dropdown">
+								<core-menu id="fach" class="menu" on-core-select={{test}}>
+									<template  repeat="{{item in faecher}}">
+										<paper-item>{{item.name}}</paper-item>
+									</template>
+								</core-menu>
+							</paper-dropdown>
+						</paper-dropdown-menu>
+						<paper-button on-click={{addFach}} raised disabled?="{{disableToggle}}">+</paper-button>
 					</div>
-					<hr>
-					<paper-dropdown-menu label="Kompetenzfach" disabled?="{{disableToggle}}">
-						<paper-dropdown class="dropdown">
-							<core-menu id="fach" class="menu">
-								<template  repeat="{{item in faecher}}">
-									<paper-item>{{item.name}}</paper-item>
-								</template>
-							</core-menu>
-						</paper-dropdown>
-					</paper-dropdown-menu>
-					<paper-button on-click={{addFach}} raised disabled?="{{disableToggle}}">+</paper-button>
+					<!-- Button Bar -->
+					<div horizontal layout center class="horizontal-list">
+						<div hidden?={{creationMode}} horizontal layout class="horizontal-button-bar">
+							<paper-button on-click={{update}} raised disabled?="{{disableToggle}}">Speichern</paper-button>
+							<paper-button on-click={{doDelete}} raised disabled?="{{disableToggle}}">L&ouml;schen</paper-button>
+							<paper-button on-click={{cancel}} raised disabled?="{{disableToggle}}">Abbrechen</paper-button>				
+							<paper-spinner active?={{disableToggle}} self-center></paper-spinner>
+						</div>
+						<div hidden?="{{!creationMode}}" horizontal layout class="horizontal-button-bar">
+							<paper-button on-click={{create}} raised disabled?="{{disableToggle}}">Anlegen</paper-button>
+							<paper-button on-click={{cancel}} raised disabled?="{{disableToggle}}">Abbrechen</paper-button>
+							<paper-spinner active?={{disableToggle}} self-center></paper-spinner>
+						</div>
+					</div>
 				</div>
-				<br />
-				<br />
 			</div>
+			<!-- Toasts -->
+			<paper-toast id="toast_success" text="Erfolgreich ausgef&uuml;hrt"></paper-toast>
+			<paper-toast id="toast_error" text="Leider ist ein Fehler aufgetreten. Bitte laden Sie die Seite neu!" duration="15000">
+				<div on-click={{refresh}}>REFRESH</div>
+			</paper-toast>
 		</div>
-		<!-- Button Bar -->
-		<span id="buttons_update" style="padding-left:40px">
-			<paper-button on-click={{update}} raised disabled?="{{disableToggle}}">Speichern</paper-button>
-			<paper-button on-click={{doDelete}} raised disabled?="{{disableToggle}}">L&ouml;schen</paper-button>
-			<paper-button on-click={{cancel}} raised disabled?="{{disableToggle}}">Abbrechen</paper-button>
-		</span>
-		<span id="buttons_create" style="padding-left:40px">
-			<paper-button on-click={{create}} raised disabled?="{{disableToggle}}">Anlegen</paper-button>
-			<paper-button on-click={{cancel}} raised disabled?="{{disableToggle}}">Abbrechen</paper-button>
-		</span>
-		<paper-spinner active?={{disableToggle}}></paper-spinner>
-		<!-- Toasts -->
-		<paper-toast id="toast_success" text="Erfolgreich ausgef&uuml;hrt"></paper-toast>
-		<paper-toast id="toast_error" text="Leider ist ein Fehler aufgetreten. Bitte laden Sie die Seite neu!" duration="15000">
-			<core-icon-button icon="refresh" on-click={{refresh}}></core-icon-button>
-		</paper-toast>
 	</template>
 	<script type="text/javascript">
 		Polymer('vvs-dozent', {
@@ -127,6 +141,7 @@
 			faecher: [],
 			invalid: {},
 			disableToggle: true,
+			creationMode: true,
 			allFaecher: [],
 			deletedFaecher: [],
 			//Publish those attributes to home
@@ -134,6 +149,10 @@
 				dozentID: -1,
 				refresh: function() {},
 				loaded: false
+			},
+			test: function(e, detail, sender) {
+				console.log(sender.selected);
+				console.log(this.dozent.geschlecht)
 			},
 			//Force a home reload, when you notice that the ID attribute changed
 			dozentIDChanged: function(oldVal, newVal) {
@@ -154,15 +173,13 @@
     			self.dozentenFaecher = [];
     			self.faecher = [];
     			self.invalid = {};
-    			self.disableToggle = true;
+    			self.creationMode = true;
+    			self.hideHistory = true;
     			self.allFaecher = [];
     			self.deletedFaecher = [];
     			//Go to creation mode
     			if (showDozent.id === 0)
     			{
-    				//Show correct button bar
-    				self.$.buttons_update.style.display = "none";
-    				self.$.history_timestamps.style.display = "none";
     				//Load available Faecher
     				model.webService.getAllFaecher(function(api) {
     					if (!api.isError)
@@ -184,8 +201,7 @@
     			//Go to edit mode
     			else
     			{
-    				//show correct button bar
-    				self.$.buttons_create.style.display = "none";
+    				self.creationMode = false;
     				var deepRuns = 0;
     				model.webService.getDozent(showDozent, function(api) {
     					if (!api.isError)
@@ -294,12 +310,9 @@
 									//Enable buttons and display new button bar and history after last webservice call
 									if(deepRuns === self.dozentenFaecher.length) {
 										self.disableToggle = false;
-										self.$.toast_success.show();
-										self.$.buttons_create.style.display = "none";
-										self.$.buttons_update.style.display = "inline";
-										self.$.buttons_update.style.paddingLeft = "40px";
-				    					self.$.history_timestamps.style.display = "block";
-				    					self.$.angelegt.focusAction();
+										self.creationMode = false;
+				    					self.$.toast_success.show();
+										self.$.angelegt.focusAction();
 				    					self.$.bearbeitet.focusAction();
 									}
 								}
@@ -313,12 +326,9 @@
 						//Enable buttons and display new button bar and history after last webservice call
 						if (deepRuns === 0 && self.dozentenFaecher.length === 0) {
 							self.disableToggle = false;
-							self.$.toast_success.show();
-							self.$.buttons_create.style.display = "none";
-							self.$.buttons_update.style.display = "inline";
-							self.$.buttons_update.style.paddingLeft = "40px";
-	    					self.$.history_timestamps.style.display = "block";
-	    					self.$.angelegt.focusAction();
+							self.creationMode = false;
+	    					self.$.toast_success.show();
+							self.$.angelegt.focusAction();
 	    					self.$.bearbeitet.focusAction();
 						}
 					}
@@ -334,8 +344,9 @@
 			addFach: function()
 			{
 				var self = this;
-				if (self.$.fach.selected !== null)
+				if (self.$.fach.selected !== null && self.faecher.length > 0)
 				{
+					console.log(self.$.fach.selected);
 					//Remove fach from dropdown after adding it to the webservice list
 					self.dozentenFaecher.push(self.faecher[self.$.fach.selected]);
 					self.faecher = self.allFaecher.slice();
@@ -489,10 +500,7 @@
 						self.dozentenFaecher = [];
 						self.geloeschteFaecher = [];
 						self.disableToggle = false;
-						self.$.buttons_update.style.display = "none";
-						self.$.buttons_create.style.display = "inline";
-						self.$.buttons_create.style.paddingLeft = "40px";
-    					self.$.history_timestamps.style.display = "none";
+						self.creationMode = true;
     					self.$.name.isInvalid = true;
 						self.$.vorname.isInvalid = true;
 						self.$.toast_success.show();
@@ -510,6 +518,10 @@
 	    	},
 	    	//Validate a phone number using phone.js
 	    	validatePhone: function(e, detail, sender) {
+	    		if(sender.input.value === "") {
+	    			sender.isInvalid = false;
+	    			return;
+	    		}
 				sender.isInvalid = !isValidNumber(sender.input.value, null);
 			},
 			//Check all invalid properties
