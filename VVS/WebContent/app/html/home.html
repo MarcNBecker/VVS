@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
   <title>wi.schedule</title>
+  <!-- Imports -->
   <script src="../polymer/webcomponentsjs/webcomponents.js"></script>
   <link rel="import" href="../polymer/polymer/polymer.html">
   <link rel="import" href="../polymer/core-elements/core-elements.html">
@@ -21,6 +22,7 @@
       <core-toolbar>
         <span>wi.schedule</span>
       </core-toolbar>
+      <!-- Navigation Drawer -->
       <core-menu id="drawer-menu" valueattr="hash" selected="{{route}}" selectedModel={{selectedPage}} on-core-select="{{menuItemSelected}}">
         <template repeat="{{page in homePages}}">
           <paper-item hash="{{page.hash}}" on-click="{{navigateFromDrawer}}">
@@ -31,8 +33,9 @@
     </nav>
     <core-toolbar tool flex>
       <div flex>{{selectedPage.page.name}}</div>
-      <core-icon-button icon="refresh" on-click={{reload}}></core-icon-button>
+      <core-icon-button icon="refresh" on-click={{refresh}}></core-icon-button>
     </core-toolbar>
+    <!-- Main pages are loaded here -->
     <div layout horizontal center-center fit>
       <core-pages id="home-pages" valueattr="hash" selected="{{route}}">
         <template repeat="{{page in homePages}}">
