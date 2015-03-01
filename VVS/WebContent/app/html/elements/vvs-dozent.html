@@ -1,11 +1,11 @@
 <polymer-element name="vvs-dozent">
 	<template>
  		<link rel="stylesheet" href="../../css/elements.css" shim-shadowdom>
-		<core-media-query query="max-width: 1600px" queryMatches="{{smallScreen}}"></core-media-query>
+		<core-media-query query="max-width: 1600px" queryMatches="{{smallScreen}}" core-media-change="{{test}}"></core-media-query>
 		<!-- Main DIV -->
 		<div vertical?="{{smallScreen}}" horizontal?="{{!smallScreen}}" layout>
 			<!-- Main input fields -->
-			<div flex two>
+			<div auto-vertical?="{{smallScreen}}" flex?="{{!smallScreen}}" two?="{{!smallScreen}}">
 				<!-- Input Fields -->
 				<div vertical layout class="vertical-input">
 					<span class="headline">Informationen</span>
@@ -87,7 +87,7 @@
 				</div>
 			</div>
 			<!-- Add/Delete Faecher -->
-			<div flex>
+			<div auto-vertical?="{{smallScreen}}" flex?="{{!smallScreen}}">
 				<div vertical layout class="vertical-input">
 					<span class="headline">Kompetenzf&auml;cher</span>
 					<template  repeat="{{item in dozentenFaecher}}">
@@ -98,8 +98,8 @@
 					</template>
 					<div horizontal layout center class="horizontal-list">
 						<paper-dropdown-menu label="Kompetenzfach" disabled?="{{disableToggle}}">
-							<paper-dropdown class="dropdown">
-								<core-menu id="fach" class="menu" on-core-select={{test}}>
+							<paper-dropdown id="fachDropdown" class="dropdown">
+								<core-menu id="fach" class="menu">
 									<template  repeat="{{item in faecher}}">
 										<paper-item>{{item.name}}</paper-item>
 									</template>
@@ -151,8 +151,8 @@
 				loaded: false
 			},
 			test: function(e, detail, sender) {
-				console.log(sender.selected);
-				console.log(this.dozent.geschlecht)
+				console.log("hi");
+				console.log(sender.queryMatches);
 			},
 			//Force a home reload, when you notice that the ID attribute changed
 			dozentIDChanged: function(oldVal, newVal) {
@@ -346,7 +346,6 @@
 				var self = this;
 				if (self.$.fach.selected !== null && self.faecher.length > 0)
 				{
-					console.log(self.$.fach.selected);
 					//Remove fach from dropdown after adding it to the webservice list
 					self.dozentenFaecher.push(self.faecher[self.$.fach.selected]);
 					self.faecher = self.allFaecher.slice();
@@ -362,7 +361,10 @@
 								break;
 							}
 						}
-					}			
+					}
+					//Reset Dropdown height/width
+			        self.$.fachDropdown.$.scroller.style.height = "";
+			       	self.$.fachDropdown.$.scroller.style.width = "";
 				}
 			},
 			//Deletes a fach from the list and adds it to the dropdown
@@ -395,6 +397,9 @@
 						}
 					}
 				}
+				//Reset Dropdown height/width
+		        self.$.fachDropdown.$.scroller.style.height = "";
+		       	self.$.fachDropdown.$.scroller.style.width = "";
 			},
 			//Updates a Dozent
 	    	update: function()

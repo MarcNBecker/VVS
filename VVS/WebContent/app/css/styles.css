@@ -8,7 +8,7 @@ body /deep/ core-toolbar {
   color: #fff;
 }
 
-#home-scaffold /deep/ core-drawer-panel > div {
+#home-scaffold::shadow core-drawer-panel div[drawer] {
 	background: #5C6971;
 }
 
