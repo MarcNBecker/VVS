@@ -2,50 +2,46 @@
 <link rel="import" href="../../polymer/paper-elements/paper-elements.html">
 <link rel="import" href="../../polymer/core-elements/core-elements.html">
 
-
-<polymer-element id="pflegenModulplan" name="vvs-modulpan-pflegen">
+<polymer-element id="pflegenModulplan" name="vvs-modulplan-pflegen">
 	<template>
-		<style>
-		</style>
-	
 		<link rel="stylesheet" type="text/css" href="../formate.css">
 		<h2>Modulplan Cons - Consulting</h2>
 		<div id="content">
 			<div id="table" style="float: left; width: 70%;">
-				<div style="border-top-style: solid; border-left-style: solid; border-bottom-style: solid; width: 13%; height: 40px; float: left; background-color: #D32B18;">
-					<h4 style="color: white; margin: 5px 0px 0px 5px;">Modul</h4>
+				<div class="divModul">
+					<h4 class="h4Modul">Modul</h4>
 				</div>
-				<div style="border-top-style: solid; border-left-style: solid; border-bottom-style: solid; width: 12%; height: 40px; float: left; background-color: #D32B18;">
-					<h4 style="color: white; margin: 5px 0px 0px 5px;">Semester</h4>
+				<div class="divModul">
+					<h4 class="h4Modul">Semester</h4>
 				</div>
-				<div style="border-top-style: solid; border-left-style: solid; border-bottom-style: solid; width: 45%; height: 40px; float: left; background-color: #D32B18;">
-					<h4 style="color: white; margin: 5px 0px 0px 5px;">Fach</h4>
+				<div class="divModul">
+					<h4 class="h4Modul">Fach</h4>
 				</div>
-				<div style="border-top-style: solid; border-left-style: solid; border-bottom-style: solid; width: 10%; height: 40px; float: left; background-color: #D32B18;">
-					<h4 style="color: white; margin: 5px 0px 0px 5px;">Stunden</h4>
+				<div class="divModul">
+					<h4 class="h4Modul">Stunden</h4>
 				</div>
-				<div style="border-top-style: solid; border-left-style: solid; border-bottom-style: solid; border-right-style: solid; width: 10%; height: 40px; float: left; background-color: #D32B18;">
-					<h4 style="color: white; margin: 5px 0px 0px 5px;"></h4>
+				<div class="divModul" style="border-right-style: solid;">
+					<h4 class="h4Modul"></h4>
 				</div>
 				<div style="clear:both;"></div>
 				<core-list id="corelist" data="{{mydata}}" class="mylist" style="height: 50px;">
 					<template>
 						<div id={{model.id}} layout horizontal>
-							<div style="border-left-style: solid; border-bottom-style: solid; width: 13%; float: left;">
-								<p style="margin: 1px 5px;">{{model.modulName}}</p>
+							<div class="divModul2" style="width:13%">
+								<p class="pModul">{{model.modulName}}</p>
 							</div>
-							<div style="border-left-style: solid; border-bottom-style: solid; width: 12%; float: left;">
-								<p style="margin: 1px; text-align: center;">{{model.semester}}</p>
+							<div class="divModul2" style="width: 12%;">
+								<p class="pModul2">{{model.semester}}</p>
 							</div>
-							<div style="border-left-style: solid; border-bottom-style: solid; width: 45%; float: left;">
-								<p style="margin: 1px 5px;">{{model.fachName}}</p>
+							<div class="divModul2" style="width: 45%;">
+								<p class="pModul">{{model.fachName}}</p>
 							</div>
-							<div style="border-left-style: solid; border-bottom-style: solid; width: 10%; float: left;">
-								<p style="margin: 1px; text-align: center;">{{model.stunden}}</p>
+							<div class="divModul2" style="width: 10%;">
+								<p class="pModul2">{{model.stunden}}</p>
 							</div>
-							<div style="border-left-style: solid; border-bottom-style: solid; border-right-style: solid; width: 10%; float: left; text-align: center;">
-								<core-icon id={{model.id3}} on-click={{aendern}} style="height: 17px; width: 17px; margin-right: 5px; cursor: pointer;" icon="create"></core-icon>
-								<core-icon id={{model.id2}} on-click={{loeschen}} style="height: 17px; width: 17px; margin-left: 5px; cursor: pointer;" icon="delete"></core-icon>
+							<div class="divModul2" style="border-right-style: solid; width: 10%; text-align: center;">
+								<core-icon id={{model.id3}} on-click={{aendern}} class="coreiconModul" icon="create"></core-icon>
+								<core-icon id={{model.id2}} on-click={{loeschen}} class="coreiconModul" icon="delete"></core-icon>
 							</div>
 						</div>
 					</template>
@@ -103,7 +99,7 @@
 					</paper-input-decorator>
 				</div>
 				<div id="btn2" style="text-align: center;">
-					<paper-button raised on-click={{uebernehmen}} disabled="{{uebernehmenButtonZustand}}">Übernehmen</paper-button>
+					<paper-button raised on-click={{uebernehmen}} disabled="{{uebernehmenButtonZustand}}">&uuml;bernehmen</paper-button>
 				</div>
 			</div>
 			<div style="clear: both;"></div>
@@ -127,6 +123,11 @@
 			boolSelectionTwoNeu: false,
 		
 			ready: function (){
+				var modulplan = new model.templates.Modulplan();
+				modulplan.id = 1;
+				model.helper.getModulplanComplete(modulplan, function (api){
+					alert(JSON.stringify(api));
+				});
 				var that = this;
 				this.init();
 				var dropdown1 = this.$.pdrop1;
@@ -141,13 +142,11 @@
 						that.blendeTwo(e);
 					}
 				});
-			},
-	
+			},	
 			publish: {
 				count: 0,
 				alleFaecher: [],
-			},
-	
+			},	
 			init: function init(){
 			//In dieser Methode muss die Selektion auf die Datenbank stattfinden
 			//und die Werte  für Module und Fächer in die Arrays übertragen werden
