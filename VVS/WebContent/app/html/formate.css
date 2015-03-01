@@ -16,3 +16,40 @@ paper-checkbox::shadow #checkbox.checked {
 	background-color: #D32B18;
 	border-color: #D32B18;
 }
+
+.divModul {
+	border-top-style: solid;
+	border-left-style: solid;
+	border-bottom-style: solid;
+	width: 13%;
+	height: 40px;
+	float: left;
+	background-color: #D32B18;
+}
+
+.h4Modul {
+	color: white;
+	margin: 5px 0px 0px 5px;
+}
+
+.divModul2 {
+	border-left-style: solid;
+	border-bottom-style: solid;
+	width: 13%; float: left;
+}
+
+.pModul {
+	margin: 1px 5px;
+}
+
+.pModul2 {
+	margin: 1px;
+	text-align: center;
+}
+
+.coreiconModul {
+	height: 17px;
+	width: 17px;
+	margin-right: 5px;
+	cursor: pointer;
+}

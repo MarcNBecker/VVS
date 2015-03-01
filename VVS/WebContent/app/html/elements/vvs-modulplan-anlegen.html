@@ -1,46 +1,49 @@
-<link rel="import" href="../../polymer/polymer/polymer.html">
-<link rel="import" href="../../polymer/paper-elements/paper-elements.html">
-<link rel="import" href="../../polymer/core-elements/core-elements.html">
-
 <polymer-element name="vvs-modulplan-anlegen">
 	<template>
-		<link rel="stylesheet" type="text/css" href="../formate.css">
-		<paper-input-decorator id="modulplan" label="Modulplan" labelVisible floatingLabel>
-			<input is="core-input" value={{eingabeModulplan}} on-keyup={{checkForButton}}>
-		</paper-input-decorator>
-		<paper-input-decorator id="vertiefungsrichtung" label="Vertiefungsrichtung" labelVisible floatingLabel>
-			<input is="core-input" value={{eingabeVertiefungsrichtung}} on-keyup={{checkForButton}}>
-		</paper-input-decorator>	
-		<p style="float: left; padding-top: 7px;">Vorlage verwenden:</p>
-		<paper-checkbox id="checkboxVorlage" checked={{checkboxZustand}} on-click={{checkboxChanged}} style="float: left; margin-top: 25px; margin-right: 10px; margin-left: 10px;"></paper-checkbox>
-		<paper-dropdown-menu id="dropdownVorlage" style="float: left; " label={{dropdownLabel}} disabled={{dropdownZustand}} >
-			<paper-dropdown class="dropdown">
-				<core-menu selected={{selectedVorlage}} class="menu"  id="vorlage" on-click={{dropdownSelected}}>
-					<template  repeat="{{item in vorlagen}}">
-						<paper-item>{{item.studiengang}}-{{item.vertiefungsrichtung}}</paper-item>
-					</template>
-				</core-menu>
-			</paper-dropdown>
-		</paper-dropdown-menu>		
+		<link rel="stylesheet" href="../../css/styles.css" shim-shadowdom>
+		<div>
+			<!-- Main input fields -->
+			<paper-input-decorator id="modulplan" label="Modulplan" labelVisible floatingLabel>
+				<input is="core-input" value={{modulplan.studiengang}} on-keyup={{checkButton}}>
+			</paper-input-decorator>
+			<paper-input-decorator id="vertiefungsrichtung" label="Vertiefungsrichtung" labelVisible floatingLabel>
+				<input is="core-input" value={{modulplan.vertiefungsrichtung}} on-keyup={{checkButton}}>
+			</paper-input-decorator>	
+			<p style="float: left; padding-top: 7px;">Vorlage verwenden:</p>
+			<paper-checkbox id="checkboxVorlage" checked={{vorlageChecked}} on-click={{enableDropdown}} style="float: left; margin-top: 25px; margin-right: 10px; margin-left: 10px;"></paper-checkbox>
+			<paper-dropdown-menu id="dropdownVorlage" style="float: left; " label="Vorlage" disabled={{vorlagenDisabled}} >
+				<paper-dropdown class="dropdown">
+					<core-menu selected={{selectedVorlage}} class="menu"  id="vorlage" on-click={{checkButton}}>
+						<template  repeat="{{item in vorlagen}}">
+							<paper-item>{{item.studiengang}}-{{item.vertiefungsrichtung}}</paper-item>
+						</template>
+					</core-menu>
+				</paper-dropdown>
+			</paper-dropdown-menu>
+		</div>
 		<div style="clear:both;"></div>
 		<br /><br />
+		<!-- Button Bar -->
 		<div style="text-align: center;">
-			<paper-button on-click="{{modulplanAnlegen}}" disabled={{buttonZustand}} raised>Modulplan anlegen</paper-button>
+			<paper-button on-click="{{create}}" disabled={{buttonDisabled}} raised>Modulplan anlegen</paper-button>
 		</div>
 	</template>
 	<script>
 		Polymer("vvs-modulplan-anlegen", {
-			dropdownZustand: true,
-			buttonZustand: true,
-			eingabeModulplan:"",
-			eingabeVertiefungsrichtung:"",
-			checkboxZustand: false,
-			dropdownLabel: "Vorlage",
+			//Initializing
+			vorlagenDisabled: true,
+			buttonDisabled: true,
+			modulplan: new model.templates.Modulplan(),
+			vorlageChecked: false,
 			selectedVorlage: null,
 			vorlagen: [],
-			ready: function() {
-				var self = this;
-				model.webService.getAllModulplaene(function(api) {
+			//Initialize the screen
+			ready: function()
+			{
+				var self = this;		
+				//Load available Modulplaene
+				model.webService.getAllModulplaene(function(api)
+				{
 					if (!api.error)
 					{
 						self.vorlagen = api.response;
@@ -48,68 +51,73 @@
 					else
 					{
 						console.log(JSON.stringify(api));
+						//TODO Fehlermeldung
 					}
 				});
 			},
-			modulplanAnlegen: function() {
+			//create a new Modulplan
+			create: function()
+			{
     			var self = this;
-    			var modulplanNew = new model.templates.Modulplan();
-    			modulplanNew.studiengang = self.eingabeStudiengang;
-    			modulplanNew.vertiefungsrichtung = self.eingabeVertiefungsrichtung;
+    			// If Vorlage is selected, set ID
     			if (self.$.vorlage.selected !== null)
 				{
-    				modulplanNew.vorlage = self.vorlagen[self.$.vorlage.selected].id;
+    				modulplan.vorlage = self.vorlagen[self.$.vorlage.selected].id;
 				}
-    			model.webService.createModulplan(modulplanNew, function(api) {
+    			//Create Modulplan
+    			model.webService.createModulplan(modulplanNew, function(api)
+    					{
 					if (!api.error)
 					{
-						var id = api.response.id;
+						self.modulplan = api.response;
+						//Tell the outside world about the new ID
+						self.modulplanID = self.modulplan.id;
 						//TODO Navigation zur nächsten Seite "Modulplan pflegen"
+						//TODO Efolgsmeldung
 					}
 					else
 					{
     					console.log(JSON.stringify(api));
+    					//TODO Fehlermeldung
 					}
 				});
 			},
-			checkboxChanged: function checkboxChanged(){		
-				if (!this.checkboxZustandfalse)
-				{
-					this.dropdownZustand = false;	
-				}
-				else
-				{
-					this.dropdownZustand = true;
-					this.dropdownLabel = "Vorlage";
-					this.selectedVorlage = null;
-					if(this.eingabeModulplan === "" || this.eingabeVertiefungsrichtung === "")
-					{
-						this.buttonZustand = true;
-					}
-				}
-			},			
-			dropdownSelected: function dropdownSelected(){
-				if(this.eingabeModulplan === "" || this.eingabeVertiefungsrichtung === "")
-				{
-					this.buttonZustand = true;
-				}
-				else
-				{
-					this.buttonZustand = false;
-				}
-			},				
-			checkForButton: function checkForButton()
+			// Check if create-button should be disabled or not
+			checkButton: function()
 			{
-				if((this.eingabeModulplan !== "" && this.eingabeVertiefungsrichtung !== "" && this.checkboxZustand && this.selectedVorlage !== null) ||(this.eingabeModulplan !== "" && this.eingabeVertiefungsrichtung !== "" && !this.checkboxZustand))
+				if((this.modulplan.studiengang !== "" && this.modulplan.vertiefungsrichtung !== "" && this.vorlageSelected && this.selectedVorlage !== null) ||(this.modulplan.studiengang !== "" && this.modulplan.vertiefungsrichtung !== "" && !this.vorlageSelected))
 				{
 					
-					this.buttonZustand = false;
+					this.buttonDisabled = false;
 				}
 				else
 				{
-					this.buttonZustand = true;
+					this.buttonDisabled = true;
 				}
 			},
+			// Check if dropdown with Vorlagen should be disabled or not
+			enableDropdown: function()
+			{
+				if (!this.vorlageChecked)
+				{
+					this.vorlagenDisabled = false;
+				}
+				else
+				{
+					this.vorlagenDisabled = true;
+					this.selectedVorlage = "";
+				}
+				// Check if create-button should be disabled or not
+				if((this.modulplan.studiengang !== "" && this.modulplan.vertiefungsrichtung !== "" && this.vorlageSelected && this.selectedVorlage !== null) ||(this.modulplan.studiengang !== "" && this.modulplan.vertiefungsrichtung !== "" && !this.vorlageSelected))
+				{
+					
+					this.buttonDisabled = false;
+				}
+				else
+				{
+					this.buttonDisabled = true;
+				}
+			}
 		});
 	</script>
 </polymer-element>
