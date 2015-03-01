@@ -137,6 +137,10 @@ public class FachInstanz {
 		}
 	}
 	
+	public void setID(int id) {
+		this.id = id;
+	}
+	
 	public void setModulInstanzID(int modulInstanzID) {
 		this.modulInstanzID = modulInstanzID;
 	}

@@ -137,6 +137,10 @@ public class ModulInstanz {
 		return id;
 	}
 	
+	public void setID(int id) {
+		this.id = id;
+	}
+	
 	public void setModulplanID(int modulplanID) {
 		this.modulplanID = modulplanID;
 	}

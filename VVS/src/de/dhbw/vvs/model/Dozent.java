@@ -29,7 +29,9 @@ public class Dozent {
 	private String fax;
 	private String arbeitgeber;
 	private Status status;
+	@SuppressWarnings("unused")
 	private Timestamp angelegt;
+	@SuppressWarnings("unused")
 	private Timestamp geaendert;
 	
 	public static ArrayList<Dozent> getAll() throws WebServiceException {
@@ -198,7 +200,7 @@ public class Dozent {
 	}
 	
 	private void checkDirectAttributes() throws WebServiceException {
-		if (titel == null || (titel = titel.trim()).isEmpty()) {
+		if (titel == null) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_STRING);
 		}
 		if (name == null || (name = name.trim()).isEmpty()) {
@@ -210,31 +212,31 @@ public class Dozent {
 		if (geschlecht == null) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ENUM);
 		}
-		if (strasse == null || (strasse = strasse.trim()).isEmpty()) {
+		if (strasse == null) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_STRING);
 		}
-		if (wohnort == null || (wohnort = wohnort.trim()).isEmpty()) {
+		if (wohnort == null) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_STRING);
 		}
-		if (postleitzahl == null || (postleitzahl = postleitzahl.trim()).isEmpty() || !Utility.checkNumeric(postleitzahl)) {
+		if (postleitzahl == null || (!(postleitzahl = postleitzahl.trim()).isEmpty() && !Utility.checkNumeric(postleitzahl))) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_NUMBER);
 		}
-		if (mail == null || (mail = mail.trim()).isEmpty() || !Utility.checkEmail(mail)) {
+		if (mail == null || (!(mail = mail.trim()).isEmpty() && !Utility.checkEmail(mail))) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_MAIL);
 		}
-		if (telefonPrivat == null || (telefonPrivat = telefonPrivat.trim()).isEmpty() || !Utility.checkPhone(telefonPrivat)) {
+		if (telefonPrivat == null || (!(telefonPrivat = telefonPrivat.trim()).isEmpty() && !Utility.checkPhone(telefonPrivat))) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_PHONE);
 		}
-		if (telefonMobil == null || (telefonMobil = telefonMobil.trim()).isEmpty() || !Utility.checkPhone(telefonMobil)) {
+		if (telefonMobil == null || (!(telefonMobil = telefonMobil.trim()).isEmpty() && !Utility.checkPhone(telefonMobil))) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_PHONE);
 		}
-		if (telefonGeschaeftlich == null || (telefonGeschaeftlich = telefonGeschaeftlich.trim()).isEmpty() || !Utility.checkPhone(telefonGeschaeftlich)) {
+		if (telefonGeschaeftlich == null || (!(telefonGeschaeftlich = telefonGeschaeftlich.trim()).isEmpty() && !Utility.checkPhone(telefonGeschaeftlich))) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_PHONE);
 		}
-		if (fax == null || (fax = fax.trim()).isEmpty()) {
+		if (fax == null || (!(fax = fax.trim()).isEmpty() && !Utility.checkPhone(fax))) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_PHONE);
 		}
-		if (arbeitgeber == null || (arbeitgeber = arbeitgeber.trim()).isEmpty()) {
+		if (arbeitgeber == null) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_STRING);
 		}
 		if (status == null) {

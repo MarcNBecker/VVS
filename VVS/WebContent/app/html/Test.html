@@ -5,18 +5,20 @@
   <head>
 	 <meta charset="utf-8">
      <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <!-- 1. Load platform support before any code that touches the DOM. -->
-    <script src="../polymer/webcomponentsjs/webcomponents.js"></script>
-    <!-- 2. Load the component using an HTML Import -->
-    <link rel="import" href="elements/vvs-dozent.html">
-    <link rel="import" href="elements/vvs-modulplan-anlegen.html"> 
-    <link rel="import" href="elements/vvs-uebersicht.html">
-	<link rel="stylesheet" type="text/css" href="formate.css">
+	  <script src="../polymer/webcomponentsjs/webcomponents.js"></script>
+	  <link rel="import" href="../polymer/polymer/polymer.html">
+	  <link rel="import" href="../polymer/core-elements/core-elements.html">
+	  <link rel="import" href="../polymer/paper-elements/paper-elements.html">
+	  <script type="text/javascript" src="../js/model.js"></script>
+	  <script type="text/javascript" src="../js/phone.js"></script>
+	  <link rel="stylesheet" href="../css/styles.css" shim-shadowdom>
+	  <link rel="import" href="elements/vvs-elements.html">
+	  <link rel="import" href="../polymer/font-roboto/roboto.html">
 	<title>Test</title>
   </head>
-  <body>
+  <body unresolved>
     <!-- 3. Declare the element by its tag. -->
-    <vvs-dozent></vvs-dozent>
+    <vvs-dozent dozentID="0"></vvs-dozent>
     <!--<vvs-modulplan-anlegen></vvs-modulplan-anlegen>-->
     <!--<vvs-uebersicht></vvs-uebersicht>-->
   </body>

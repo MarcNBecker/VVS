@@ -1,6 +1,7 @@
 package de.dhbw.vvs.resources;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.restlet.ext.json.JsonRepresentation;
 import org.restlet.resource.ResourceException;
 
@@ -24,8 +25,16 @@ public class ModulplaeneResource extends SecureServerResource {
 	
 	@Override
 	protected Object receivePost(JsonRepresentation json) throws JSONException, WebServiceException {
-		Modulplan modulplan = JSONify.deserialize(json.getJsonObject().toString(), Modulplan.class);
-		return modulplan.create();
+		JSONObject jO = json.getJsonObject();
+		Modulplan modulplan = JSONify.deserialize(jO.toString(), Modulplan.class);
+		int vorlageID = jO.optInt("vorlage");
+		if (vorlageID == 0) {
+			return modulplan.create();	
+		} else {
+			Modulplan m = modulplan.create();
+			modulplan.enhance(vorlageID);
+			return m;
+		}
 	}
 	
 }

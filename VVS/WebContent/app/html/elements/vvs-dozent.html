@@ -1,17 +1,13 @@
-<link rel="import" href="../../polymer/polymer/polymer.html">
-<link rel="import" href="../../polymer/paper-elements/paper-elements.html">
-<link rel="import" href="../../polymer/core-elements/core-elements.html">
-
 <polymer-element name="vvs-dozent">
 	<template>
-		<link rel="stylesheet" type="text/css" href="../formate.css">
+ 		<link rel="stylesheet" href="../../css/styles.css" shim-shadowdom>
 		<div>
-			<div id="dozentendaten" style="padding:10px; width:50%; border:1px black solid; float:left">
+			<div style="padding:10px; width:50%; border:1px black solid; float:left">
 				<form>
-					<paper-input-decorator id="titel" label="Titel" labelVisible floatingLabel style="display:inline-block; width:49%">
-						<input is="core-input" value={{dozent.titel}}>
+					<paper-input-decorator id="titel" label="Titel" floatingLabel>
+						<input is="core-input" type="text" value={{dozent.titel}} maxlength="100" disabled?="{{disableToggle}}">
 					</paper-input-decorator>
-					<paper-dropdown-menu for label="Anrede" labelVisible floatingLabel required style="width:49%">
+					<paper-dropdown-menu label="Anrede" disabled?="{{disableToggle}}">
 						<paper-dropdown class="dropdown">
 							<core-menu class="menu" selected={{dozent.geschlecht}}>
 								<template  repeat="{{item in geschlecht}}">
@@ -20,40 +16,40 @@
 							</core-menu>
 						</paper-dropdown>
 					</paper-dropdown-menu>
-					<paper-input-decorator id="name" label="Name" labelVisible floatingLabel style="display:inline-block; width:49%">
-						<input is="core-input" value={{dozent.name}} required>
+					<paper-input-decorator id="name" label="Name" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.name}}">
+						<input is="core-input" type="text" value={{dozent.name}} maxlength="100" required disabled?="{{disableToggle}}">
 					</paper-input-decorator>
-					<paper-input-decorator id="vorname" label="Vorname" labelVisible floatingLabel style="display:inline-block; width:49%">
-						<input is="core-input" value={{dozent.vorname}} required>
+					<paper-input-decorator id="vorname" label="Vorname" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.vorname}}">
+						<input is="core-input" type="text" value={{dozent.vorname}} maxlength="100" required disabled?="{{disableToggle}}">
 					</paper-input-decorator>
-					<paper-input-decorator id="strasse" label="Stra&szlig;e" labelVisible floatingLabel style="width:49%">
-						<input is="core-input" value={{dozent.strasse}} required>
+					<paper-input-decorator id="strasse" label="Stra&szlig;e" floatingLabel>
+						<input is="core-input" type="text" value={{dozent.strasse}} maxlength="100" disabled?="{{disableToggle}}">
 					</paper-input-decorator>
-					<paper-input-decorator id="postleitzahl" label="PLZ" labelVisible floatingLabel style="display:inline-block; width:49%">
-						<input is="core-input" value={{dozent.postleitzahl}} required>
+					<paper-input-decorator id="postleitzahl" label="Postleitzahl" error="Keine g&uuml;ltige Postleitzahl" floatingLabel autoValidate isInvalid="{{invalid.postleitzahl}}">
+						<input is="core-input" type="text" pattern="[0-9]+" value={{dozent.postleitzahl}} maxlength="100" disabled?="{{disableToggle}}">
 					</paper-input-decorator>
-					<paper-input-decorator id="wohnort" label="Wohnort" labelVisible floatingLabel style="display:inline-block; width:49%">
-						<input is="core-input" value={{dozent.wohnort}} required>
+					<paper-input-decorator id="wohnort" label="Wohnort" floatingLabel>
+						<input is="core-input" type="text" value={{dozent.wohnort}} maxlength="100" disabled?="{{disableToggle}}">
 					</paper-input-decorator>
-					<paper-input-decorator id="mail" label="E-Mail" labelVisible floatingLabel style=" width:49%">
-						<input is="core-input" value={{dozent.mail}} required>
+					<paper-input-decorator id="mail" label="E-Mail" error="Keine g&uuml;ltige E-Mail" floatingLabel autoValidate isInvalid="{{invalid.mail}}">
+						<input is="core-input" type="email" pattern="[^@]+@[^@]+\.[a-zA-Z]{2,6}" value={{dozent.mail}} maxlength="255" disabled?="{{disableToggle}}">
 					</paper-input-decorator>
-					<paper-input-decorator id="telefonPrivat" label="Telefon (privat)" labelVisible floatingLabel style="display:inline-block; width:49%">
-						<input is="core-input" value={{dozent.telefonPrivat}} required>
+					<paper-input-decorator id="telefonPrivat" label="Telefon (privat)" error="Keine g&uuml;ltige Nummer (Beispiel: +49 234 56789)" floatingLabel on-input="{{validatePhone}}" isInvalid="{{invalid.telefonPrivat}}">
+						<input is="core-input" type="tel" value={{dozent.telefonPrivat}} maxlength="100" disabled?="{{disableToggle}}">
 					</paper-input-decorator>
-					<paper-input-decorator id="telefonGeschaeftlich" label="Telefon (gesch&auml;ftlich)" labelVisible floatingLabel style="display:inline-block; width:49%">
-						<input is="core-input" value={{dozent.telefonGeschaeftlich}}>
+					<paper-input-decorator id="telefonGeschaeftlich" label="Telefon (gesch&auml;ftlich)" error="Keine g&uuml;ltige Nummer (Beispiel: +49 234 56789)" floatingLabel on-input="{{validatePhone}}" isInvalid="{{invalid.telefonGeschaeftlich}}">
+						<input is="core-input" type="tel" value={{dozent.telefonGeschaeftlich}} maxlength="100" disabled?="{{disableToggle}}">
 					</paper-input-decorator>
-					<paper-input-decorator id="telefonMobil" label="Telefon (mobil)" labelVisible floatingLabel style="display:inline-block; width:49%">
-						<input is="core-input" value={{dozent.telefonMobil}}>
+					<paper-input-decorator id="telefonMobil" label="Telefon (mobil)" error="Keine g&uuml;ltige Nummer (Beispiel: +49 234 56789)" floatingLabel on-input="{{validatePhone}}" isInvalid="{{invalid.telefonMobil}}">
+						<input is="core-input" type="tel" value={{dozent.telefonMobil}} maxlength="100" disabled?="{{disableToggle}}">
 					</paper-input-decorator>
-					<paper-input-decorator id="fax" label="Fax" labelVisible floatingLabel style="display:inline-block; width:49%">
-						<input is="core-input"  value={{dozent.fax}}>
+					<paper-input-decorator id="fax" label="Fax" error="Keine g&uuml;ltige Nummer (Beispiel: +49 234 56789)" floatingLabel on-input="{{validatePhone}}" isInvalid={{invalid.fax}}>
+						<input is="core-input" type="tel" value={{dozent.fax}} maxlength="100" disabled?="{{disableToggle}}">
 					</paper-input-decorator>
-					<paper-input-decorator id="arbeitgeber" label="Arbeitgeber" labelVisible floatingLabel style="width:49%">
-						<input is="core-input" value={{dozent.arbeitgeber}}>
+					<paper-input-decorator id="arbeitgeber" label="Arbeitgeber" floatingLabel>
+						<input is="core-input" type="text" value={{dozent.arbeitgeber}} maxlength="100" disabled?="{{disableToggle}}">
 					</paper-input-decorator>
-					<paper-dropdown-menu label="Status" labelVisible floatingLabel required style="width:49%">
+					<paper-dropdown-menu label="Status" floatingLabel disabled?="{{disableToggle}}">
 						<paper-dropdown class="dropdown">
 							<core-menu class="menu" selected={{dozent.status}}>
 								<template  repeat="{{item in status}}">
@@ -64,10 +60,10 @@
 					</paper-dropdown-menu>
 					<div id="historie">
 						<hr>
-						<paper-input-decorator id="angelegt" label="angelegt am" labelVisible floatingLabel style="display:inline-block; width:49%">
+						<paper-input-decorator id="angelegt" label="angelegt am" floatingLabel>
 							<input is="core-input" value="{{dozent.angelegt}}" disabled>
 						</paper-input-decorator>
-						<paper-input-decorator id="bearbeitet" label="bearbeitet am" labelVisible floatingLabel style="display:inline-block; width:49%">
+						<paper-input-decorator id="bearbeitet" label="bearbeitet am" floatingLabel>
 							<input is="core-input" value="{{dozent.geaendert}}" disabled>
 						</paper-input-decorator>
 					</div>
@@ -77,18 +73,18 @@
 				<div style="padding:10px; border: 1px black solid">
 					<h3>Kompetenzf&auml;cher</h3>
 					<hr>
-					<div id="kompetenzfaecher">
+					<div>
 						<template  repeat="{{item in dozentenFaecher}}">
 							<span>
 							<paper-item style="display:inline-block">{{item.name}}</paper-item>
-							<paper-icon-button icon="clear" on-click={{fachLoeschen}}></paper-icon-button>
+							<paper-icon-button icon="clear" on-click={{deleteFach}} disabled?="{{disableToggle}}"></paper-icon-button>
 							<br />
 							</span>
 						</template>
 					</div>
 					<hr>
-					<paper-dropdown-menu label="Kompetenzfach">
-						<paper-dropdown id="drop" class="dropdown">
+					<paper-dropdown-menu label="Kompetenzfach" disabled?="{{disableToggle}}">
+						<paper-dropdown class="dropdown">
 							<core-menu id="fach" class="menu">
 								<template  repeat="{{item in faecher}}">
 									<paper-item>{{item.name}}</paper-item>
@@ -96,58 +92,76 @@
 							</core-menu>
 						</paper-dropdown>
 					</paper-dropdown-menu>
-					<paper-button on-click={{fachHinzufuegen}} raised>+</paper-button>
+					<paper-button on-click={{addFach}} raised disabled?="{{disableToggle}}">+</paper-button>
 				</div>
 				<br />
 				<br />
 			</div>
 		</div>
-		<span id="buttons_anzeigen" style="padding-left:40px">
-		<paper-button id="speichern" on-click={{speichern}} raised>Speichern</paper-button>
-		<paper-button on-click={{loeschen}} raised>L&ouml;schen</paper-button>
-		<paper-button on-click={{abbrechen}} raised>Abbrechen</paper-button>
+		<span id="buttons_update" style="padding-left:40px">
+			<paper-button on-click={{update}} raised disabled?="{{disableToggle}}">Speichern</paper-button>
+			<paper-button on-click={{doDelete}} raised disabled?="{{disableToggle}}">L&ouml;schen</paper-button>
+			<paper-button on-click={{cancel}} raised disabled?="{{disableToggle}}">Abbrechen</paper-button>
 		</span>
-		<span id="buttons_anlegen" style="padding-left:40px">
-		<paper-button id="speichern" on-click={{anlegen}} raised>Anlegen</paper-button>
-		<paper-button on-click={{abbrechen}} raised>Abbrechen</paper-button>
+		<span id="buttons_create" style="padding-left:40px">
+			<paper-button on-click={{create}} raised disabled?="{{disableToggle}}">Anlegen</paper-button>
+			<paper-button on-click={{cancel}} raised disabled?="{{disableToggle}}">Abbrechen</paper-button>
 		</span>
+		<paper-spinner active?={{disableToggle}}></paper-spinner>
+		<paper-toast id="toast_success" text="Erfolgreich ausgef&uuml;hrt"></paper-toast>
+		<paper-toast id="toast_error" text="Leider ist ein Fehler aufgetreten. Bitte laden Sie die Seite neu!" duration="15000">
+			<core-icon-button icon="refresh"></core-icon-button>
+		</paper-toast>
 	</template>
-	<script type="text/javascript" src="../../js/model.js"></script>
 	<script type="text/javascript">
 		Polymer('vvs-dozent', {
 			dozent: new model.templates.Dozent(),
-			zeigeDozent: new model.templates.Dozent(),
 			geschlecht: [],
 			status: [],
 			dozentenFaecher: [],
 			faecher: [],
-			alleFaecher: [],
-			geloeschteFaecher: [],
+			invalid: {},
+			disableToggle: true,
+			allFaecher: [],
+			deletedFaecher: [],
+			publish: {
+				dozentID: 0
+			},
     		ready: function()
     		{
     			var self = this;
-    			self.zeigeDozent.id = 0; // muss noch durch Data Binding ersetzt werden
-    			if (self.zeigeDozent.id === 0)
+    			var showDozent = new model.templates.Dozent();
+    			showDozent.id = self.dozentID;
+    			self.status = showDozent.StatusEnum.all;
+    			self.geschlecht = showDozent.GeschlechtEnum.all;
+    			if (showDozent.id === 0)
     			{
-    				self.$.buttons_anzeigen.style.display = "none";
+    				self.$.buttons_update.style.display = "none";
     				self.$.historie.style.display = "none";
     				model.webService.getAllFaecher(function(api) {
-    					if (!api.error)
+    					if (!api.isError)
     					{
     						self.faecher = api.response;
+    						self.allFaecher = api.response.slice();
+    						self.disableToggle = false;
+    						self.$.name.isInvalid = true;
+    						self.$.vorname.isInvalid = true;
     					}
     					else
     					{
     						console.log(JSON.stringify(api));
+    						self.$.toast_error.show();
     					}
-    				});	
+    				});
     			}
     			else
     			{
-    				self.$.buttons_anlegen.style.display = "none";
-    				model.webService.getDozent(self.zeigeDozent, function(api) {
-    					if (!api.error)
+    				self.$.buttons_create.style.display = "none";
+    				var deepRuns = 0;
+    				model.webService.getDozent(showDozent, function(api) {
+    					if (!api.isError)
     					{
+    						deepRuns++;
     						self.dozent = api.response;
     						self.$.titel.focusAction();
     						self.$.name.focusAction();
@@ -163,21 +177,31 @@
     						self.$.arbeitgeber.focusAction();
     						self.$.angelegt.focusAction();
     						self.$.bearbeitet.focusAction();
+    						self.$.name.isInvalid = false;
+    						self.$.vorname.isInvalid = false;
+    						if(deepRuns === 2) {
+    							self.disableToggle = false;
+    						}
     					}
     					else
     					{
-    						console.log(JSON.stringify(api));     
+    						console.log(JSON.stringify(api));
+    						self.$.toast_error.show();
     					}
     				});
-    				model.webService.getAllDozentFaecher(self.zeigeDozent, function(api) {
-    					if (!api.error)
+    				model.webService.getAllDozentFaecher(showDozent, function(api) {
+    					if (!api.isError)
     					{
     						self.dozentenFaecher = api.response;
     						model.webService.getAllFaecher(function(api) {
-    	    					if (!api.error)
+    	    					if (!api.isError)
     	    					{
-    	    						self.faecher = api.response;
-    	    						self.alleFaecher = self.faecher.slice();
+    	    						deepRuns++;
+    	    						if(deepRuns === 2) {
+    	    							self.disableToggle = false;
+    	    						}
+    								self.faecher = api.response;
+    	    						self.allFaecher = self.faecher.slice();
     	    						var i;
     	    						for (i = 0; i < self.dozentenFaecher.length; i++)
     	    						{
@@ -195,58 +219,77 @@
     	    					else
     	    					{
     	    						console.log(JSON.stringify(api));
+    	    						self.$.toast_error.show();
     	    					}
     	    				});	
     					}
     					else
     					{
     						console.log(JSON.stringify(api));
+    						self.$.toast_error.show();
     					}
     				});
     			}
-    			self.status = self.zeigeDozent.StatusEnum.all;
-    			self.geschlecht = self.zeigeDozent.GeschlechtEnum.all;		
     		},
-    		anlegen: function()
+    		create: function()
     		{
+    			if(!this.checkInputs()) {
+    				return;
+    			}
     			var self = this;
+    			self.disableToggle = true;
     			model.webService.createDozent(self.dozent, function(api) {
-	   				if (!api.error)
+	   				if (!api.isError)
 					{
-						console.log(JSON.stringify(api));
 						self.dozent = api.response;
 						var i;
+						var deepRuns = 0;
 						for (i = 0; i < self.dozentenFaecher.length; i++)
 						{
 							model.webService.setDozentFach(self.dozent, self.dozentenFaecher[i], function(api) {
-								if (!api.error)
+								if (!api.isError)
 								{
-									self.$.buttons_anlegen.style.display = "none";
-									self.$.buttons_anzeigen.style.display = "inline";
-									self.$.buttons_anzeigen.style.paddingLeft = "40px";
-			    					self.$.historie.style.display = "block";
+									deepRuns++;
+									if(deepRuns === self.dozentenFaecher.length) {
+										self.disableToggle = false;
+										self.$.toast_success.show();
+										self.$.buttons_create.style.display = "none";
+										self.$.buttons_update.style.display = "inline";
+										self.$.buttons_update.style.paddingLeft = "40px";
+				    					self.$.historie.style.display = "block";
+									}
 								}
 								else
 								{
 									console.log(JSON.stringify(api));
+									self.$.toast_error.show();
 								}
 							});
+						}
+						if (deepRuns === 0 && self.dozentenFaecher.length === 0) {
+							self.disableToggle = false;
+							self.$.toast_success.show();
+							self.$.buttons_create.style.display = "none";
+							self.$.buttons_update.style.display = "inline";
+							self.$.buttons_update.style.paddingLeft = "40px";
+	    					self.$.historie.style.display = "block";
 						}
 					}
 					else
 					{
 						console.log(JSON.stringify(api));
+						self.$.toast_error.show();
 					}
 	    		});
     			
     		},
-			fachHinzufuegen: function()
+			addFach: function()
 			{
 				var self = this;
 				if (self.$.fach.selected !== null)
 				{
 					self.dozentenFaecher.push(self.faecher[self.$.fach.selected]);
-					self.faecher = self.alleFaecher.slice();
+					self.faecher = self.allFaecher.slice();
 					var i;
 					for (i = 0; i < self.dozentenFaecher.length; i++)
 					{
@@ -262,21 +305,21 @@
 					}			
 				}
 			},
-			fachLoeschen: function(e)
+			deleteFach: function(e)
 			{
 				var self = this;
 				var fach = e.target.templateInstance.model.item;
-				self.geloeschteFaecher.push(fach);
+				self.deletedFaecher.push(fach);
 				var i;
 				for (i = 0; i < self.dozentenFaecher.length; i++)
 				{
 					if (self.dozentenFaecher[i].id === fach.id)
 					{
 						self.dozentenFaecher.splice(i, 1 );
+						break;
 					}
 				}
-				self.faecher = self.alleFaecher.slice();
-				var i;
+				self.faecher = self.allFaecher.slice();
 				for (i = 0; i < self.dozentenFaecher.length; i++)
 				{
 					var ii;
@@ -290,46 +333,123 @@
 					}
 				}
 			},
-	    	speichern: function()
+	    	update: function()
 	    	{
+    			if(!this.checkInputs()) {
+    				return;
+    			}
 	    		var self = this;
+	    		self.disableToggle = true;
 	    		model.webService.updateDozent(self.dozent, function(api) {
-	    			if (!api.error)
+	    			if (!api.isError)
 					{
-						console.log(JSON.stringify(api));
 						var i;
-						for (i = 0; i < self.geloeschteFaecher.length; i++)
+						var deepRuns = 0;
+						for (i = 0; i < self.deletedFaecher.length; i++)
 						{
-							alert(self.geloeschteFaecher[i]);
-							model.webService.deleteDozentFach(self.dozent, self.geloeschteFaecher[i], function(api) {
-								console.log(JSON.stringify(api));
+							model.webService.deleteDozentFach(self.dozent, self.deletedFaecher[i], function(api) {
+								if(!api.isError) {
+									deepRuns++;
+									if(deepRuns === self.deletedFaecher.length) {
+										self.deletedFaecher = [];
+										var veryDeepRuns = 0;
+										for (i = 0; i < self.dozentenFaecher.length; i++)
+										{
+											model.webService.setDozentFach(self.dozent, self.dozentenFaecher[i], function(api) {
+												if(!api.isError) {
+													veryDeepRuns++;
+													if (veryDeepRuns === self.dozentenFaecher.length) {
+														self.disableToggle = false;
+														self.$.toast_success.show();
+													}
+												} else {
+													console.log(JSON.stringify(api));
+													self.$.toast_error.show();
+												}
+											});
+										}
+										if(veryDeepRuns === 0 && self.dozentenFaecher.length === 0) {
+											self.disableToggle = false;
+											self.$.toast_success.show();
+										}
+									}
+								} else {
+									console.log(JSON.stringify(api));
+									self.$.toast_error.show();
+								}
 							});
-							self.geloeschteFaecher = [];
 						}
-						for (i = 0; i < self.dozentenFaecher.length; i++)
-						{
-							model.webService.setDozentFach(self.dozent, self.dozentenFaecher[i], function(api) {
-								console.log(JSON.stringify(api));
-							});
+						if(deepRuns === 0 && self.deletedFaecher.length === 0) {
+							for (i = 0; i < self.dozentenFaecher.length; i++)
+							{
+								model.webService.setDozentFach(self.dozent, self.dozentenFaecher[i], function(api) {
+									if(!api.isError) {
+										deepRuns++;
+										if (deepRuns === self.dozentenFaecher.length) {
+											self.disableToggle = false;
+											self.$.toast_success.show();
+										}
+									} else {
+										console.log(JSON.stringify(api));
+										self.$.toast_error.show();
+									}
+								});
+							}
+							if(deepRuns === 0 && self.dozentenFaecher.length === 0) {
+								self.disableToggle = false;
+								self.$.toast_success.show();
+							}
 						}
+
 					}
 					else
 					{
 						console.log(JSON.stringify(api));
+						self.$.toast_error.show();
 					}
 	    		});
 	    	},
-			loeschen: function()
+			doDelete: function()
 			{
 				var self = this;
+				self.disableToggle = true;
 	    		model.webService.deleteDozent(self.dozent, function(api) {
-					console.log(JSON.stringify(api));
+					if(!api.isError) {
+						self.dozent = new model.templates.Dozent();
+						self.faecher = self.allFaecher.slice();
+						self.dozentenFaecher = [];
+						self.geloeschteFaecher = [];
+						self.disableToggle = false;
+						self.$.buttons_update.style.display = "none";
+						self.$.buttons_create.style.display = "inline";
+						self.$.buttons_create.style.paddingLeft = "40px";
+    					self.$.historie.style.display = "none";
+    					self.$.name.isInvalid = true;
+						self.$.vorname.isInvalid = true;
+						self.$.toast_success.show();
+					} else {
+						console.log(JSON.stringify(api));
+						self.$.toast_error.show();
+					}
 	    		});
 			},
-	    	abbrechen: function()
+	    	cancel: function()
 	    	{
-	    	
-	    	}
+	    		//TODO perform applicable navigation
+	    	},
+	    	validatePhone: function(e, detail, sender) {
+				sender.isInvalid = !isValidNumber(sender.input.value, null); //TODO change to germany?
+			},
+			checkInputs : function() {
+				for(var property in this.invalid) {
+					if(this.invalid.hasOwnProperty(property)) {
+						if(this.invalid[property] === true) {
+							return false;
+						}
+					}
+				}
+				return true;
+			}
  		});	
 	 </script>
 </polymer-element>
