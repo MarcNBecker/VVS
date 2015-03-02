@@ -1,57 +1,78 @@
 <polymer-element name="vvs-modulplan-anlegen">
 	<template>
 		<link rel="stylesheet" href="../../css/elements.css" shim-shadowdom>
-		<div>
-			<!-- Main input fields -->
-			<paper-input-decorator id="modulplan" label="Modulplan" labelVisible floatingLabel>
-				<input is="core-input" value={{modulplan.studiengang}} on-keyup={{checkButton}}>
-			</paper-input-decorator>
-			<paper-input-decorator id="vertiefungsrichtung" label="Vertiefungsrichtung" labelVisible floatingLabel>
-				<input is="core-input" value={{modulplan.vertiefungsrichtung}} on-keyup={{checkButton}}>
-			</paper-input-decorator>	
-			<p style="float: left; padding-top: 7px;">Vorlage verwenden:</p>
-			<paper-checkbox id="checkboxVorlage" checked={{vorlageChecked}} on-click={{enableDropdown}} style="float: left; margin-top: 25px; margin-right: 10px; margin-left: 10px;"></paper-checkbox>
-			<paper-dropdown-menu id="dropdownVorlage" style="float: left; " label="Vorlage" disabled={{vorlagenDisabled}} >
-				<paper-dropdown class="dropdown">
-					<core-menu selected={{selectedVorlage}} class="menu"  id="vorlage" on-click={{checkButton}}>
-						<template  repeat="{{item in vorlagen}}">
-							<paper-item>{{item.studiengang}}-{{item.vertiefungsrichtung}}</paper-item>
-						</template>
-					</core-menu>
-				</paper-dropdown>
-			</paper-dropdown-menu>
+		<div vertical layout>
+			<div vertical layout class="vertical-input horizontal-verticalizable">
+				<span class="headline">Allgemeine Angaben</span>	
+				<div vertical layout class="horizontal-input">
+					<!-- Main input fields -->
+					<paper-input-decorator label="Studiengang" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.studiengang}}" disabled?="{{toggleDisabled}}">
+						<input is="core-input" value={{modulplan.studiengang}} required>
+					</paper-input-decorator>
+					<paper-input-decorator label="Vertiefungsrichtung" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.vertiefungsrichtung}}" disabled?="{{toggleDisabled}}">
+						<input is="core-input" value={{modulplan.vertiefungsrichtung}} required>
+					</paper-input-decorator>	
+				</div>
+				<div horizontal layout center>
+					<span class="headline">Vorlage</span>
+					<paper-checkbox checked="{{vorlageChecked}}" self-center disabled?="{{toggleDisabled}}"></paper-checkbox>
+				</div>
+				<div vertical layout class="horizontal-input">
+					<paper-dropdown-menu label="Vorlage" hidden?="{{!vorlageChecked}}" disabled?="{{toggleDisabled}}">
+						<paper-dropdown class="dropdown">
+							<core-menu selected="{{selectedVorlage}}" class="menu">
+								<template  repeat="{{item in vorlagen}}">
+									<paper-item>{{item.studiengang}} - {{item.vertiefungsrichtung}}</paper-item>
+								</template>
+							</core-menu>
+						</paper-dropdown>
+					</paper-dropdown-menu>
+				</div>
+				<!-- Button Bar -->
+				<div horizontal layout center class="horizontal-input horizontal-button-bar">
+					<paper-button on-click="{{create}}" raised disabled?="{{toggleDisabled}}">Modulplan anlegen</paper-button>
+					<paper-button on-click="{{cancel}}" raised disabled?="{{toggleDisabled}}">Abbrechen</paper-button>
+					<paper-spinner active?="{{toggleDisabled}}" self-center></paper-spinner>
+				</div>
+			</div>
+			<!-- Toasts -->
+			<paper-toast id="toast_success" text="Erfolgreich ausgef&uuml;hrt"></paper-toast>
+			<paper-toast id="toast_error" text="Leider ist ein Fehler aufgetreten. Bitte laden Sie die Seite neu!" duration="15000">
+				<core-icon-button icon="refresh" on-click={{refresh}}></core-icon-button>
+			</paper-toast>
 		</div>
-		<div style="clear:both;"></div>
-		<br /><br />
-		<!-- Button Bar -->
-		<div style="text-align: center;">
-			<paper-button on-click="{{create}}" disabled={{buttonDisabled}} raised>Modulplan anlegen</paper-button>
-		</div>
-		<!-- Toasts -->
-		<paper-toast id="toast_success" text="Erfolgreich ausgef&uuml;hrt"></paper-toast>
-		<paper-toast id="toast_error" text="Leider ist ein Fehler aufgetreten. Bitte laden Sie die Seite neu!" duration="15000">
-			<core-icon-button icon="refresh" on-click={{refresh}}></core-icon-button>
-		</paper-toast>
 	</template>
 	<script>
 		Polymer("vvs-modulplan-anlegen", {
 			//Initializing
-			vorlagenDisabled: true,
-			buttonDisabled: true,
 			modulplan: new model.templates.Modulplan(),
-			vorlageChecked: false,
-			selectedVorlage: null,
 			vorlagen: [],
+			vorlageChecked: false,
+			toggleDisabled: true,
+			selectedVorlage: 0,
+			invalid: {},
+			publish: {
+				pageParameter: {},
+				pageLoaded: {},
+				refresh: function() {}
+			},
 			//Initialize the screen
 			ready: function()
 			{
-				var self = this;		
+				var self = this;
+				self.modulplan = new model.templates.Modulplan();
+				self.vorlagen = [];
+				self.vorlageChecked = false;
+				self.toggleDisabled = true;
+				self.selectedVorlage = 0;
+				self.invalid = {};
 				//Load available Modulplaene
 				model.webService.getAllModulplaene(function(api)
 				{
-					if (!api.error)
+					if (!api.isError)
 					{
 						self.vorlagen = api.response;
+						self.toggleDisabled = false;
 					}
 					else
 					{
@@ -64,22 +85,24 @@
 			create: function()
 			{
     			var self = this;
+    			if(!self.checkInputs()) {
+    				return;
+    			}
+    			self.toggleDisabled = true;
     			// If Vorlage is selected, set ID
-    			if (self.$.vorlage.selected !== null)
+    			if (self.vorlageChecked === true && (self.selectedVorlage !== null && self.vorlagen.length > 0))
 				{
-    				modulplan.vorlage = self.vorlagen[self.$.vorlage.selected].id;
+    				self.modulplan.vorlage = self.vorlagen[self.selectedVorlage].id;
 				}
     			//Create Modulplan
-    			model.webService.createModulplan(modulplanNew, function(api)
-    					{
-					if (!api.error)
+    			model.webService.createModulplan(self.modulplan, function(api) {
+					if (!api.isError)
 					{
 						self.modulplan = api.response;
-						//Tell the outside world about the new ID
-						self.modulplanID = self.modulplan.id;
-						self.$.toast_sucess.show();
-						//TODO Navigation zur nächsten Seite "Modulplan pflegen"
-						
+						//self.pageParameter.modulplanPflegen.id = self.modulplan.id;
+						self.pageLoaded.modulplanAnlegen = false;
+						self.$.toast_success.show();
+						//location.href = '#modulplanPflegen';
 					}
 					else
 					{
@@ -87,42 +110,23 @@
     					self.$.toast_error.show();
 					}
 				});
-			},
-			// Check if create-button should be disabled or not
-			checkButton: function()
-			{
-				if((this.modulplan.studiengang !== "" && this.modulplan.vertiefungsrichtung !== "" && this.vorlageSelected && this.selectedVorlage !== null) ||(this.modulplan.studiengang !== "" && this.modulplan.vertiefungsrichtung !== "" && !this.vorlageSelected))
-				{
-					
-					this.buttonDisabled = false;
+			},			
+			//Navigate backwards and force a reload
+	    	cancel: function()
+	    	{
+	    		this.pageLoaded.modulplanAnlegen = false;
+	    		window.history.back();
+	    	},
+			//Check all invalid properties
+			checkInputs : function() {
+				for(var property in this.invalid) {
+					if(this.invalid.hasOwnProperty(property)) {
+						if(this.invalid[property] === true) {
+							return false;
+						}
+					}
 				}
-				else
-				{
-					this.buttonDisabled = true;
-				}
-			},
-			// Check if dropdown with Vorlagen should be disabled or not
-			enableDropdown: function()
-			{
-				if (!this.vorlageChecked)
-				{
-					this.vorlagenDisabled = false;
-				}
-				else
-				{
-					this.vorlagenDisabled = true;
-					this.selectedVorlage = "";
-				}
-				// Check if create-button should be disabled or not
-				if((this.modulplan.studiengang !== "" && this.modulplan.vertiefungsrichtung !== "" && this.vorlageSelected && this.selectedVorlage !== null) ||(this.modulplan.studiengang !== "" && this.modulplan.vertiefungsrichtung !== "" && !this.vorlageSelected))
-				{
-					
-					this.buttonDisabled = false;
-				}
-				else
-				{
-					this.buttonDisabled = true;
-				}
+				return true;
 			}
 		});
 	</script>

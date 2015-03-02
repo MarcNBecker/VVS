@@ -1,6 +1,6 @@
 <polymer-element name="vvs-uebersicht">
 	<template>
-		<link rel="stylesheet" type="text/css" href="../../css/elements.css">
+		<link rel="stylesheet" type="text/css" href="../../css/elements.css" shim-shadowdom>
 		<core-media-query query="max-width: 1600px" queryMatches="{{smallScreen}}"></core-media-query>
 		<core-media-query query="max-width: 950px" queryMatches="{{verySmallScreen}}"></core-media-query>
 		<!-- Main DIV -->
@@ -9,7 +9,7 @@
 			<div vertical?="{{smallScreen}}" horizontal?="{{!smallScreen}}" layout>
 				<!-- Dozent -->
 				<div vertical layout class="vertical-input" auto-vertical?="{{smallScreen}}" flex?="{{!smallScreen}}">
-					<div horizontal layout>
+					<div horizontal layout center>
 						<span class="headline">Dozentendaten verwalten</span>
 						<paper-spinner active?="{{toggleDisableDozent}}" self-center></paper-spinner>
 					</div>
@@ -32,7 +32,7 @@
 				</div>
 				<!-- Kurs -->
 				<div vertical layout class="vertical-input" auto-vertical?="{{smallScreen}}" flex?="{{!smallScreen}}">						
-					<div horizontal layout>
+					<div horizontal layout center>
 						<span class="headline">Kursdaten verwalten</span>
 						<paper-spinner active?="{{toggleDisableKurs}}" self-center></paper-spinner>
 					</div>
@@ -57,7 +57,7 @@
 			<div vertical?="{{smallScreen}}" horizontal?="{{!smallScreen}}" layout>
 				<!-- Modulplan -->	
 				<div vertical layout class="vertical-input" auto-vertical?="{{smallScreen}}" flex?="{{!smallScreen}}">
-					<div horizontal layout>
+					<div horizontal layout center>
 						<span class="headline">Modulplan verwalten</span>
 						<paper-spinner active?="{{toggleDisableModulplan}}" self-center></paper-spinner>
 					</div>
@@ -79,7 +79,7 @@
 				</div>						
 				<!-- Feiertage -->
 				<div vertical layout class="vertical-input" auto-vertical?="{{smallScreen}}" flex?="{{!smallScreen}}">
-					<div>
+					<div horizontal layout center>
 						<span class="headline">Feiertage verwalten</span>		
 						<paper-spinner active?="{{toggleDisableFeiertag}}" self-center></paper-spinner>
 					</div>		
@@ -214,7 +214,8 @@
     		},
     		createModulplan: function() {
     			var self = this;
-    			//TODO navigate to Modulplan pflegen with ID = 0
+    			self.pageLoaded.modulplanAnlegen = false;
+    			location.href = "#" + self.pageDescriptor.modulplanAnlegen.hash;
     		},
     		updateModulplan: function() {
     			var self = this;

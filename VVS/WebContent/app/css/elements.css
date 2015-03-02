@@ -44,11 +44,11 @@ paper-button {
 	color: #FFFFFF;
 }
 
-paper-checkbox #ink[checked] {
+paper-checkbox::shadow #ink[checked] {
 	color: #D32B18;
 }
 			
-paper-checkbox #checkbox.checked {
+paper-checkbox::shadow #checkbox.checked {
 	background-color: #D32B18;
 	border-color: #D32B18;
 }

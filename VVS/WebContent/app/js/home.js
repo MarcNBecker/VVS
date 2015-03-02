@@ -16,20 +16,22 @@ template.pageParameter = {
 //contains the loading state for each page; can be exchanged via data binding
 template.pageLoaded = {
 	stammdaten: false,
-	dozent: false
+	dozent: false,
+	modulplanAnlegen: false
 };
 
 //Page descriptors including the HTML code to load the page
 template.pageDescriptor = {
 	stammdaten: {name: 'Stammdaten', hash: 'stammdaten', html: '<vvs-uebersicht pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" pageDescriptor="{{pageDescriptor}}" refresh="{{refresh}}"></vvs-uebersicht>'},
 	dozent: {name: 'Dozent pflegen', hash: 'dozent', html: '<vvs-dozent pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" refresh="{{refresh}}"></vvs-dozent>'},
+	modulplanAnlegen: {name: 'Modulplan anlegen', hash: 'modulplanAnlegen', html: '<vvs-modulplan-anlegen pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" refresh="{{refresh}}"></vvs-modulplan-anlegen>'}
 };
 
 //Pages to display in the navigation drawer
 template.drawerPages = [template.pageDescriptor.stammdaten];
 
 //Pages that can be displayed in the home main div
-template.homePages = [template.pageDescriptor.stammdaten, template.pageDescriptor.dozent]
+template.homePages = [template.pageDescriptor.stammdaten, template.pageDescriptor.dozent, template.pageDescriptor.modulplanAnlegen];
 
 //Is called whenever the url hash is changed and navigates the app
 function handleHashChange(refresh) {
