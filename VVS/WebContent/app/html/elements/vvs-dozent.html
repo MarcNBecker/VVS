@@ -146,23 +146,16 @@
 			deletedFaecher: [],
 			//Publish those attributes to home
 			publish: {
-				dozentID: -1,
-				refresh: function() {},
-				loaded: false
-			},
-			//Force a home reload, when you notice that the ID attribute changed
-			dozentIDChanged: function(oldVal, newVal) {
-				//causes a reload when deleting -> fix?
-				if(oldVal === this.dozent.id || (this.dozent.id === 0 && oldVal !== -1)) {
-					this.loaded = false;
-				}
+				pageParameter: {},
+				pageLoaded: {},
+				refresh: function() {}
 			},
 			//Initialize the screen
     		ready: function()
     		{
     			var self = this;
     			var showDozent = new model.templates.Dozent();
-    			showDozent.id = self.dozentID;
+    			showDozent.id = self.pageParameter.dozent.id;
     			self.dozent = new model.templates.Dozent();
     			self.geschlecht = showDozent.GeschlechtEnum.all;
     			self.status = showDozent.StatusEnum.all;
@@ -293,7 +286,7 @@
 					{
 						self.dozent = api.response;
 						//Tell the outside world about the new ID
-						self.dozentID = self.dozent.id;
+						self.pageParameter.dozent.id = self.dozent.id;
 						var i;
 						var deepRuns = 0;
 						//Create connection between Dozent and subjects
@@ -496,7 +489,7 @@
 						//Update variables and switch display of button bar
 						self.dozent = new model.templates.Dozent();
 						//Tell the outside world the new ID
-						self.dozentID = 0;
+						self.pageParameter.dozent.id = 0;
 						self.faecher = self.allFaecher.slice();
 						self.dozentenFaecher = [];
 						self.geloeschteFaecher = [];
@@ -514,7 +507,7 @@
 			//Navigate backwards and force a reload
 	    	cancel: function()
 	    	{
-	    		this.loaded = false;
+	    		this.pageLoaded.dozent = false;
 	    		window.history.back();
 	    	},
 	    	//Validate a phone number using phone.js

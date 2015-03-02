@@ -210,6 +210,7 @@ var model = new function() {
 			this.id = 0;
 			this.studiengang = "";
 			this.vertiefungsrichtung = "";
+			this.vorlage = 0;
 		};
 
 		this.Studiengangsleiter = function() {
