@@ -357,6 +357,10 @@ var model = new function() {
 			self.doRequest(studiengangsleiterURI.replace("{studiengangsleiterID}", s.id), "DELETE", null, c);
 		};
 		
+		this.getAllUser = function(c) {
+			self.doRequest(userAllURI, "GET", null, c);
+		};
+		
 		this.createUser = function(u, c) {
 			self.doRequest(userAllURI, "POST", u, c);
 		};

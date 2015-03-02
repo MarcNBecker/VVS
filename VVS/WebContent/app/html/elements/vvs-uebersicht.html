@@ -97,6 +97,32 @@
 					</div>
 				</div>
 			</div>	
+			<!-- Group Three -->
+			<div vertical?="{{smallScreen}}" horizontal?="{{!smallScreen}}" layout>
+				<!-- User -->	
+				<div vertical layout class="vertical-input" auto-vertical?="{{smallScreen}}" flex?="{{!smallScreen}}">
+					<div horizontal layout center>
+						<span class="headline">User verwalten</span>
+						<paper-spinner active?="{{toggleDisableUser}}" self-center></paper-spinner>
+					</div>
+					<div vertical?="{{verySmallScreen}}" horizontal?="{{!verySmallScreen}}" layout center-center?="{{!verySmallScreen}}" start?="{{verySmallScreen}}" class="horizontal-verticalizable horizontal-input horizontal-button-bar">
+						<paper-dropdown-menu label="User" disabled?="{{toggleDisableUser}}" auto-vertical?="{{verySmallScreen}}" flex?="{{!verySmallScreen}}">
+							<paper-dropdown class="dropdown">
+								<core-menu id="user" class="menu">
+									<template repeat="{{item in users}}">
+										<paper-item>{{item.name}}</paper-item>
+									</template>
+								</core-menu>
+							</paper-dropdown>
+						</paper-dropdown-menu>					
+						<paper-button on-click={{updateUser}} raised disabled?="{{toggleDisableUser}}" auto-vertical?="{{verySmallScreen}}" flex?="{{!verySmallScreen}}">anzeigen/bearbeiten/l&ouml;schen</paper-button>
+					</div>
+					<div horizontal layout start class="horizontal-list">
+						<paper-button on-click={{createUser}} raised>neuen User anlegen</paper-button>			
+					</div>
+				</div>
+				<div stlye="display: hidden" flex><!-- Empty DIV to display User verwalten correctly --></div>
+			</div>
 		</div>
 	</template>
 	<script type="text/javascript">
@@ -104,11 +130,13 @@
 			dozenten: [],
 			kurse: [],
 			modulplaene: [],
+			users: [],
 			jahre: [],
 			toggleDisableDozent: true,
 			toggleDisableKurs: true,
 			toggleDisableModulplan: true,
 			toggleDisableFeiertag: true,
+			toggleDisableUser: true,
 			publish: {
 				pageParameter: {},
 				pageLoaded: {},
@@ -121,11 +149,13 @@
     			self.dozenten = [];
     			self.kurse = [];
     			self.modulplaene = [];
+    			self.users = [];
     			self.jahre = [];
     			self.toggleDisableDozent = true;
     			self.toggleDisableKurs = true;
     			self.toggleDisableModulplan = true;
     			self.toggleDisableFeiertag = true;
+    			self.toggleDisableUser = true;
     			model.webService.getAllDozenten(function(api) {
 					if (!api.isError)
 					{
@@ -162,6 +192,15 @@
 						self.toasts.error.show();
 					}
 				});
+    			model.webService.getAllUser(function(api) {
+    				if(!api.isError) {
+    					self.users = api.response;
+    					self.toggleDisableUser = false;
+    				} else {
+						console.log(JSON.stringify(api));
+						self.toasts.error.show();
+    				}
+    			});
     			var aktuellesDatum = new Date();
     			var aktuellesJahr = aktuellesDatum.getFullYear();
     			aktuellesJahr = aktuellesJahr - 1;
@@ -219,6 +258,16 @@
 				{
 					//TODO navigate to Modulplan pflegen with ID = self.modulplaene[self.$.modulplan.selected].id;
 				}
+    		},
+    		createUser: function() {
+    			var self = this;
+    			//TODO navigate to User pflegen with ID = 0
+    		},
+    		updateUser: function() {
+    			var self = this;
+    			if (self.$.user.selected !== null && self.users.length > 0) {
+    				//TODO navigate to User pflegen with ID = self.users[self.$.user.selected].id;
+    			}
     		},
     		updateFeiertage: function() {
     			var self = this;

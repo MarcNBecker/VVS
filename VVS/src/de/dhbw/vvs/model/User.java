@@ -15,6 +15,18 @@ public class User {
 	private String passwort;
 	private int repraesentiert;
 	
+	public static ArrayList<User> getAll() throws WebServiceException {
+		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
+		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT name, repraesentiert FROM user ORDER BY name ASC", null);
+		ArrayList<User> userList = new ArrayList<User>();
+		for(TypeHashMap<String, Object> result : resultList) {
+			User u = new User(result.getString("name"));
+			u.repraesentiert = result.getInt("repraesentiert");
+			userList.add(u);
+		}
+		return userList;
+	}
+	
 	public User(String name) throws WebServiceException {
 		if (name == null || (name = name.trim()).isEmpty()) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_STRING);

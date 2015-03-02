@@ -76,7 +76,7 @@ public class VVSApplication extends Application {
 		router.attach(VERSION_ONE + "/studiengangsleiter", StudiengangsleiterKollektionResource.class); //GET, POST
 		router.attach(VERSION_ONE + "/studiengangsleiter/{studiengangsleiterID}", StudiengangsleiterResource.class); //GET, PUT, DELETE
 		
-		router.attach(VERSION_ONE + "/user", UserKollektionResource.class); //POST
+		router.attach(VERSION_ONE + "/user", UserKollektionResource.class); //GET, POST
 		router.attach(VERSION_ONE + "/user/{name}", UserResource.class); //POST, PUT, DELETE
 		
 		//Feiertage

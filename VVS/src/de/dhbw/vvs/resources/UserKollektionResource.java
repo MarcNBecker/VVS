@@ -13,7 +13,13 @@ public class UserKollektionResource extends SecureServerResource {
 	@Override
 	protected void doInit() throws ResourceException {
 		super.doInit();
+		super.allowGet();
 		super.allowPost();
+	}
+	
+	@Override
+	protected Object receiveGet() throws WebServiceException {
+		return User.getAll();
 	}
 	
 	@Override
