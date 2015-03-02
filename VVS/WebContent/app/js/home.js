@@ -63,13 +63,23 @@ function extractParams() {
 		template.route = template.route.substring(0, paramStart);
 		var pageParameterObj = template.pageParameter[template.route];
 		if(pageParameterObj) {
-			pageParameterObj.id = paramString;
+			if(paramString) {
+				pageParameterObj.id = paramString;	
+			} else {
+				pageParameterObj.id = 0;
+			}
 			return true;
 		} else {
 			return false;
 		}
 	} else {
-		return false;
+		var pageParameterObj = template.pageParameter[template.route];
+		if(pageParameterObj) {
+			pageParameterObj.id = 0;
+			return true;
+		} else {
+			return false;
+		}
 	}
 }
 

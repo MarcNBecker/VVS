@@ -22,9 +22,7 @@ body /deep/ core-toolbar {
 }
 
 #page-wrapper {
-	background-color:white;
-	margin: 20px 20px 20px 20px;
-	border-radius: 5px;
+	margin: 20px 20px auto 20px;
 }
 
 #home-pages {

@@ -3,6 +3,7 @@
  		<link rel="stylesheet" href="../../css/elements.css" shim-shadowdom>
 		<core-media-query query="max-width: 1400px" queryMatches="{{smallScreen}}"></core-media-query>
 		<!-- Main DIV -->
+		<paper-shadow z="3" class="shadow">
 		<div vertical?="{{smallScreen}}" horizontal?="{{!smallScreen}}" layout>
 			<!-- Main input fields -->
 			<div auto-vertical?="{{smallScreen}}" flex?="{{!smallScreen}}" two?="{{!smallScreen}}">
@@ -125,6 +126,7 @@
 				</div>
 			</div>
 		</div>
+		</paper-shadow>
 	</template>
 	<script type="text/javascript">
 		Polymer('vvs-dozent', {

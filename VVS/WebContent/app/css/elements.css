@@ -1,3 +1,10 @@
+.shadow {
+	margin-bottom: 30px;
+	padding-bottom: 50px;
+	background-color: white;
+	border-radius: 5px;
+}
+
 .vertical-input {
 	margin-top: 30px;
 }

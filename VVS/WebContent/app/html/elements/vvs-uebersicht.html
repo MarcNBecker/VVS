@@ -4,6 +4,7 @@
 		<core-media-query query="max-width: 1600px" queryMatches="{{smallScreen}}"></core-media-query>
 		<core-media-query query="max-width: 950px" queryMatches="{{verySmallScreen}}"></core-media-query>
 		<!-- Main DIV -->
+		<paper-shadow z="3" class="shadow">
 		<div vertical layout>
 			<!-- Group One -->
 			<div vertical?="{{smallScreen}}" horizontal?="{{!smallScreen}}" layout>
@@ -124,6 +125,7 @@
 				<div stlye="display: hidden" flex><!-- Empty DIV to display User verwalten correctly --></div>
 			</div>
 		</div>
+		</paper-shadow>
 	</template>
 	<script type="text/javascript">
 		Polymer('vvs-uebersicht', {
