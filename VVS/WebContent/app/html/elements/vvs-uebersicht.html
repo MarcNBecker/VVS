@@ -182,7 +182,7 @@
     			var self = this;
     			self.pageLoaded.dozent = false;
     			self.pageParameter.dozent.id = 0;
-    			location.href = "#" + self.pageDescriptor.dozent.hash;
+    			location.href = "#!" + self.pageDescriptor.dozent.hash;
     		},
     		updateDozent: function() {
     			var self = this;
@@ -190,7 +190,7 @@
 				{
 					self.pageLoaded.dozent = false;
 					self.pageParameter.dozent.id = self.dozenten[self.$.dozent.selected].id;
-					location.href = "#" + self.pageDescriptor.dozent.hash
+					location.href = "#!" + self.pageDescriptor.dozent.hash + "-" + self.pageParameter.dozent.id;
 				}
     		},
     		printPlanDozent: function() {
@@ -215,7 +215,7 @@
     		createModulplan: function() {
     			var self = this;
     			self.pageLoaded.modulplanAnlegen = false;
-    			location.href = "#" + self.pageDescriptor.modulplanAnlegen.hash;
+    			location.href = "#!" + self.pageDescriptor.modulplanAnlegen.hash;
     		},
     		updateModulplan: function() {
     			var self = this;

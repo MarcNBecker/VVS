@@ -6,7 +6,6 @@ var DEFAULT_ROUTE = 'stammdaten'; //TODO dashboard
 var template = document.querySelector('#home');
 
 //page parameter are used with data binding to exchange data between home and the vvs polymer elements (structure should follow template objects)
-//TODO can we add them to the URL hash?
 template.pageParameter = {
 	dozent: {
 		id: 0
@@ -35,17 +34,36 @@ template.homePages = [template.pageDescriptor.stammdaten, template.pageDescripto
 
 //Is called whenever the url hash is changed and navigates the app
 function handleHashChange(refresh) {
-	template.route = location.hash.substring(1, location.hash.length);
+	template.route = location.hash.substring(2, location.hash.length);
 	if (!template.route) { //No hash exists
 		template.route = DEFAULT_ROUTE;
 	}
+	var hasParams = extractParams(template.route);
 	var nextPage = findPage(template.route);
-	if (refresh === true) { //Forced refresh?
+	if (refresh === true || hasParams === true) { //Forced refresh?
 		template.pageLoaded[nextPage.hash] = false;
 	}
 	if(!template.pageLoaded[nextPage.hash]) { //Inject vvs polymer element to correct page
 		template.pageLoaded[nextPage.hash] = true;
 		template.injectBoundHTML(nextPage.html, document.querySelector('#home-pages-'+nextPage.hash));
+	}
+}
+
+//Extract params from URL - first (and currently only parameter) is mapped to ID of corresponding pageParameter object
+function extractParams() {
+	var paramStart = template.route.indexOf('-');
+	if(paramStart !== -1) {
+		var paramString = template.route.substring(paramStart + 1, template.route.length);
+		template.route = template.route.substring(0, paramStart);
+		var pageParameterObj = template.pageParameter[template.route];
+		if(pageParameterObj) {
+			pageParameterObj.id = paramString;
+			return true;
+		} else {
+			return false;
+		}
+	} else {
+		return false;
 	}
 }
 
@@ -66,7 +84,7 @@ template.addEventListener('template-bound', function(e) {
 		handleHashChange(); 
 	} else {
 		this.route = DEFAULT_ROUTE;
-		location.hash = '#' + DEFAULT_ROUTE; //Update hash manually
+		location.hash = '#!' + DEFAULT_ROUTE; //Update hash manually
 	}
 });
 
@@ -79,7 +97,7 @@ template.menuItemSelected = function(e, detail, sender) {
 //Update hash
 template.navigateFromDrawer = function(e, detail, sender) {
   	var selectedPage = e.target.templateInstance.model.page;
-	location.href = '#' + selectedPage.hash;
+	location.href = '#!' + selectedPage.hash;
 };
 
 //Force a refresh for the current page
