@@ -1,6 +1,6 @@
 <polymer-element name="vvs-modulplan-anlegen">
 	<template>
-		<link rel="stylesheet" href="../../css/styles.css" shim-shadowdom>
+		<link rel="stylesheet" href="../../css/elements.css" shim-shadowdom>
 		<div>
 			<!-- Main input fields -->
 			<paper-input-decorator id="modulplan" label="Modulplan" labelVisible floatingLabel>
@@ -27,6 +27,11 @@
 		<div style="text-align: center;">
 			<paper-button on-click="{{create}}" disabled={{buttonDisabled}} raised>Modulplan anlegen</paper-button>
 		</div>
+		<!-- Toasts -->
+		<paper-toast id="toast_success" text="Erfolgreich ausgef&uuml;hrt"></paper-toast>
+		<paper-toast id="toast_error" text="Leider ist ein Fehler aufgetreten. Bitte laden Sie die Seite neu!" duration="15000">
+			<core-icon-button icon="refresh" on-click={{refresh}}></core-icon-button>
+		</paper-toast>
 	</template>
 	<script>
 		Polymer("vvs-modulplan-anlegen", {
@@ -51,7 +56,7 @@
 					else
 					{
 						console.log(JSON.stringify(api));
-						//TODO Fehlermeldung
+						self.$.toast_error.show();
 					}
 				});
 			},
@@ -72,13 +77,14 @@
 						self.modulplan = api.response;
 						//Tell the outside world about the new ID
 						self.modulplanID = self.modulplan.id;
+						self.$.toast_sucess.show();
 						//TODO Navigation zur nächsten Seite "Modulplan pflegen"
-						//TODO Efolgsmeldung
+						
 					}
 					else
 					{
     					console.log(JSON.stringify(api));
-    					//TODO Fehlermeldung
+    					self.$.toast_error.show();
 					}
 				});
 			},
