@@ -33,7 +33,9 @@
     </nav>
     <core-toolbar tool flex>
       <div flex>{{selectedPage.page.name}}</div>
-      <core-icon-button icon="refresh" on-click={{refresh}}></core-icon-button>
+      <div>admin</div>
+      <core-icon-button icon="account-circle" on-click=""></core-icon-button>
+      <core-icon-button icon="refresh" on-click="{{refresh}}"></core-icon-button>
     </core-toolbar>
     <!-- Main pages are loaded here -->
     <div fit id="page-wrapper">

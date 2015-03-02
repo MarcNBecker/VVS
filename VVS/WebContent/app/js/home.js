@@ -111,7 +111,6 @@ template.navigateFromDrawer = function(e, detail, sender) {
 
 //Force a refresh for the current page
 template.refresh = function(e, detail, sender) {
-	console.log("hi");
 	handleHashChange(true);
 };
 
