@@ -23,8 +23,8 @@
         <span>wi.schedule</span>
       </core-toolbar>
       <!-- Navigation Drawer -->
-      <core-menu id="drawer-menu" valueattr="hash" selected="{{route}}" selectedModel={{selectedPage}} on-core-select="{{menuItemSelected}}">
-        <template repeat="{{page in homePages}}">
+      <core-menu id="drawer-menu" valueattr="hash" selected="{{route}}" on-core-select="{{menuItemSelected}}">
+        <template repeat="{{page in drawerPages}}">
           <paper-item hash="{{page.hash}}" on-click="{{navigateFromDrawer}}">
             <span>{{page.name}}</span>
           </paper-item>
@@ -37,7 +37,7 @@
     </core-toolbar>
     <!-- Main pages are loaded here -->
     <div fit id="page-wrapper">
-	    <core-pages id="home-pages" valueattr="hash" selected="{{route}}">
+	    <core-pages id="home-pages" valueattr="hash" selected="{{route}}" selectedModel={{selectedPage}}>
 	      <template repeat="{{page in homePages}}">
 	        <section id="home-pages-{{page.hash}}" hash="{{page.hash}}">
 	        	<div>{{page.name}}</div>

@@ -1,7 +1,7 @@
 <polymer-element name="vvs-dozent">
 	<template>
  		<link rel="stylesheet" href="../../css/elements.css" shim-shadowdom>
-		<core-media-query query="max-width: 1600px" queryMatches="{{smallScreen}}" core-media-change="{{test}}"></core-media-query>
+		<core-media-query query="max-width: 1400px" queryMatches="{{smallScreen}}"></core-media-query>
 		<!-- Main DIV -->
 		<div vertical?="{{smallScreen}}" horizontal?="{{!smallScreen}}" layout>
 			<!-- Main input fields -->
@@ -109,7 +109,7 @@
 						<paper-button on-click={{addFach}} raised disabled?="{{disableToggle}}">+</paper-button>
 					</div>
 					<!-- Button Bar -->
-					<div horizontal layout center class="horizontal-list">
+					<div horizontal layout center class="horizontal-input">
 						<div hidden?={{creationMode}} horizontal layout class="horizontal-button-bar">
 							<paper-button on-click={{update}} raised disabled?="{{disableToggle}}">Speichern</paper-button>
 							<paper-button on-click={{doDelete}} raised disabled?="{{disableToggle}}">L&ouml;schen</paper-button>
@@ -149,10 +149,6 @@
 				dozentID: -1,
 				refresh: function() {},
 				loaded: false
-			},
-			test: function(e, detail, sender) {
-				console.log("hi");
-				console.log(sender.queryMatches);
 			},
 			//Force a home reload, when you notice that the ID attribute changed
 			dozentIDChanged: function(oldVal, newVal) {

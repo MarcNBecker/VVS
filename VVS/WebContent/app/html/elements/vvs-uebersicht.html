@@ -1,75 +1,106 @@
 <polymer-element name="vvs-uebersicht">
 	<template>
-		<link rel="stylesheet" type="text/css" href="../formate.css">
-		<div style="margin: auto; padding:10px;  border:1px black solid;">
-			<h3>Dozentendaten verwalten</h3>
-			<paper-button on-click={{dozentenAnlegen}} raised>neuen Dozenten anlegen</paper-button>
-			<br />
-			<br />
-			<form>				
-				<paper-dropdown-menu label="Dozent" floatingLabel style="width:25%">
-				<paper-dropdown class="dropdown">
-						<core-menu id="dozent" class="menu">
-							<template  repeat="{{item in dozenten}}">
-								<paper-item>{{item.name}}, {{item.vorname}}</paper-item>
-							</template>
-						</core-menu>
-					</paper-dropdown>
-				</paper-dropdown-menu>						
-				<paper-button on-click={{dozentenZeigen}} raised>anzeigen/bearbeiten/l&ouml;schen</paper-button>
-				<paper-button on-click={{dozentenplanDrucken}} raised>Dozentenplan drucken</paper-button>						
-			</form>
-			<br />
-			<br />
-			<h3>Kursdaten verwalten</h3>
-			<paper-button on-click={{kursAnlegen}} raised>neuen Kurs anlegen</paper-button>
-			<br />
-			<br />
-			<form>					
-				<paper-dropdown-menu label="Kurs" floatingLabel style="width:25%">
-				<paper-dropdown class="dropdown">
-						<core-menu id="kurs" class="menu">
-							<template  repeat="{{item in kurse}}">
-								<paper-item>{{item.kursname}}</paper-item>
-							</template>
-						</core-menu>
-					</paper-dropdown>
-				</paper-dropdown-menu>						
-				<paper-button on-click={{kursZeigen}} raised>anzeigen/bearbeiten/l&ouml;schen</paper-button>			
-			</form>		
-			<br />
-			<br />		
-			<h3>Modulplan verwalten</h3>
-			<paper-button on-click={{modulplanAnlegen}} raised>neuen Modulplan anlegen</paper-button>
-			<br />
-			<br />
-			<form>				
-				<paper-dropdown-menu label="Modulplan" floatingLabel style="width:25%">
-				<paper-dropdown class="dropdown">
-						<core-menu id ="modulplan" class="menu">
-							<template  repeat="{{item in modulplaene}}">
-								<paper-item>{{item.studiengang}}-{{item.vertiefungsrichtung}}</paper-item>
-							</template>
-						</core-menu>
-					</paper-dropdown>
-				</paper-dropdown-menu>					
-				<paper-button on-click={{modulplanZeigen}} raised>anzeigen/bearbeiten/l&ouml;schen</paper-button>					
-			</form>
-			<br />
-			<br />		
-			<h3>Feiertage verwalten</h3>				
-			<form>					
-				<paper-dropdown-menu label="Jahr" floatingLabel style="width:25%">
-				<paper-dropdown class="dropdown">
-						<core-menu id="feiertagsjahr" class="menu">
-							<template  repeat="{{item in jahre}}">
-								<paper-item>{{item}}</paper-item>
-							</template>
-						</core-menu>
-					</paper-dropdown>
-				</paper-dropdown-menu>						
-				<paper-button on-click={{feiertagePflegen}} raised>pflegen</paper-button>		
-			</form>	
+		<link rel="stylesheet" type="text/css" href="../../css/elements.css">
+		<core-media-query query="max-width: 1600px" queryMatches="{{smallScreen}}"></core-media-query>
+		<core-media-query query="max-width: 950px" queryMatches="{{verySmallScreen}}"></core-media-query>
+		<!-- Main DIV -->
+		<div vertical layout>
+			<!-- Group One -->
+			<div vertical?="{{smallScreen}}" horizontal?="{{!smallScreen}}" layout>
+				<!-- Dozent -->
+				<div vertical layout class="vertical-input" auto-vertical?="{{smallScreen}}" flex?="{{!smallScreen}}">
+					<div horizontal layout>
+						<span class="headline">Dozentendaten verwalten</span>
+						<paper-spinner active?="{{toggleDisableDozent}}" self-center></paper-spinner>
+					</div>
+					<div vertical?="{{verySmallScreen}}" horizontal?="{{!verySmallScreen}}" layout center-center?="{{!verySmallScreen}}" start?="{{verySmallScreen}}" class="horizontal-verticalizable horizontal-input horizontal-button-bar">
+						<paper-dropdown-menu label="Dozent" disabled?="{{toggleDisableDozent}}" auto-vertical?="{{verySmallScreen}}" flex?="{{!verySmallScreen}}">
+							<paper-dropdown class="dropdown">
+								<core-menu id="dozent" class="menu">
+									<template repeat="{{item in dozenten}}">
+										<paper-item>{{item.name}}, {{item.vorname}}</paper-item>
+									</template>
+								</core-menu>
+							</paper-dropdown>
+						</paper-dropdown-menu>					
+						<paper-button on-click={{updateDozent}} raised disabled?="{{toggleDisableDozent}}" auto-vertical?="{{verySmallScreen}}">anzeigen/bearbeiten/l&ouml;schen</paper-button>
+						<paper-button on-click={{printPlanDozent}} raised disabled?="{{toggleDisableDozent}}" auto-vertical?="{{verySmallScreen}}">Dozentenplan drucken</paper-button>
+					</div>
+					<div horizontal layout start class="horizontal-input horizontal-button-bar">
+						<paper-button on-click={{createDozent}} raised>neuen Dozenten anlegen</paper-button>
+					</div>	
+				</div>
+				<!-- Kurs -->
+				<div vertical layout class="vertical-input" auto-vertical?="{{smallScreen}}" flex?="{{!smallScreen}}">						
+					<div horizontal layout>
+						<span class="headline">Kursdaten verwalten</span>
+						<paper-spinner active?="{{toggleDisableKurs}}" self-center></paper-spinner>
+					</div>
+					<div vertical?="{{verySmallScreen}}" horizontal?="{{!verySmallScreen}}" layout center-center?="{{!verySmallScreen}}" start?="{{verySmallScreen}}" class="horizontal-verticalizable horizontal-input horizontal-button-bar">
+						<paper-dropdown-menu label="Kurs" disabled?="{{toggleDisableKurs}}" auto-vertical?="{{verySmallScreen}}" flex?="{{!verySmallScreen}}">
+							<paper-dropdown class="dropdown">
+								<core-menu id="kurs" class="menu">
+									<template repeat="{{item in kurse}}">
+										<paper-item>{{item.kursname}}</paper-item>
+									</template>
+								</core-menu>
+							</paper-dropdown>
+						</paper-dropdown-menu>						
+						<paper-button on-click={{updateKurs}} raised disabled?="{{toggleDisableKurs}}" auto-vertical?="{{verySmallScreen}}" flex?="{{!verySmallScreen}}">anzeigen/bearbeiten/l&ouml;schen</paper-button>
+					</div>
+					<div horizontal layout start class="horizontal-input horizontal-list">
+						<paper-button on-click={{createKurs}} raised>neuen Kurs anlegen</paper-button>				
+					</div>
+				</div>
+			</div>
+			<!-- Group Two -->
+			<div vertical?="{{smallScreen}}" horizontal?="{{!smallScreen}}" layout>
+				<!-- Modulplan -->	
+				<div vertical layout class="vertical-input" auto-vertical?="{{smallScreen}}" flex?="{{!smallScreen}}">
+					<div horizontal layout>
+						<span class="headline">Modulplan verwalten</span>
+						<paper-spinner active?="{{toggleDisableModulplan}}" self-center></paper-spinner>
+					</div>
+					<div vertical?="{{verySmallScreen}}" horizontal?="{{!verySmallScreen}}" layout center-center?="{{!verySmallScreen}}" start?="{{verySmallScreen}}" class="horizontal-verticalizable horizontal-input horizontal-button-bar">
+						<paper-dropdown-menu label="Modulplan" disabled?="{{toggleDisableModulplan}}" auto-vertical?="{{verySmallScreen}}" flex?="{{!verySmallScreen}}">
+							<paper-dropdown class="dropdown">
+								<core-menu id="modulplan" class="menu">
+									<template repeat="{{item in modulplaene}}">
+										<paper-item>{{item.studiengang}} - {{item.vertiefungsrichtung}}</paper-item>
+									</template>
+								</core-menu>
+							</paper-dropdown>
+						</paper-dropdown-menu>					
+						<paper-button on-click={{updateModulplan}} raised disabled?="{{toggleDisableModulplan}}" auto-vertical?="{{verySmallScreen}}" flex?="{{!verySmallScreen}}">anzeigen/bearbeiten/l&ouml;schen</paper-button>
+					</div>
+					<div horizontal layout start class="horizontal-list">
+						<paper-button on-click={{createModulplan}} raised>neuen Modulplan anlegen</paper-button>			
+					</div>
+				</div>						
+				<!-- Feiertage -->
+				<div vertical layout class="vertical-input" auto-vertical?="{{smallScreen}}" flex?="{{!smallScreen}}">
+					<div>
+						<span class="headline">Feiertage verwalten</span>		
+						<paper-spinner active?="{{toggleDisableFeiertag}}" self-center></paper-spinner>
+					</div>		
+					<div vertical?="{{verySmallScreen}}" horizontal?="{{!verySmallScreen}}" layout center-center?="{{!verySmallScreen}}" start?="{{verySmallScreen}}" class="horizontal-verticalizable horizontal-input horizontal-button-bar">
+						<paper-dropdown-menu label="Jahr" disabled?="{{toggleDisableFeiertag}}" auto-vertical?="{{verySmallScreen}}" flex?="{{!verySmallScreen}}">
+							<paper-dropdown class="dropdown">
+								<core-menu id="jahr" class="menu">
+									<template repeat="{{item in jahre}}">
+										<paper-item>{{item}}</paper-item>
+									</template>
+								</core-menu>
+							</paper-dropdown>
+						</paper-dropdown-menu>						
+						<paper-button on-click={{updateFeiertage}} raised disabled?="{{toggleDisableFeiertag}}" auto-vertical?="{{verySmallScreen}}" flex?="{{!verySmallScreen}}">pflegen</paper-button>
+					</div>
+				</div>
+			</div>
+			<!-- Toasts -->
+			<paper-toast id="toast_error" text="Leider ist ein Fehler aufgetreten. Bitte laden Sie die Seite neu!" duration="15000">
+				<div on-click={{refresh}}>REFRESH</div>
+			</paper-toast>		
 		</div>
 	</template>
 	<script type="text/javascript">
@@ -77,38 +108,62 @@
 			dozenten: [],
 			kurse: [],
 			modulplaene: [],
-			jahre:[],
+			jahre: [],
+			toggleDisableDozent: true,
+			toggleDisableKurs: true,
+			toggleDisableModulplan: true,
+			toggleDisableFeiertag: true,
+			publish: {
+				pageParameter: {},
+				pageLoaded: {},
+				pageDescriptor: {},
+				refresh: function() {}
+			},
     		ready: function()
     		{
     			var self = this;
+    			self.dozenten = [];
+    			self.kurse = [];
+    			self.modulplaene = [];
+    			self.jahre = [];
+    			self.toggleDisableDozent = true;
+    			self.toggleDisableKurs = true;
+    			self.toggleDisableModulplan = true;
+    			self.toggleDisableFeiertag = true;
     			model.webService.getAllDozenten(function(api) {
-					if (!api.error)
+					if (!api.isError)
 					{
 						self.dozenten = api.response;
+						self.toggleDisableDozent = false;
 					}
 					else
 					{
 						console.log(JSON.stringify(api));
+						self.$.toast_error.show();
 					}
 				});
     			model.webService.getAllKurse(function(api) {
-					if (!api.error)
+					if (!api.isError)
 					{
 						self.kurse = api.response;
+						self.toggleDisableKurs = false;
 					}
 					else
 					{
 						console.log(JSON.stringify(api));
+						self.$.toast_error.show();
 					}
 				});
     			model.webService.getAllModulplaene(function(api) {
-					if (!api.error)
+					if (!api.isError)
 					{
 						self.modulplaene = api.response;
+						self.toggleDisableModulplan = false;
 					}
 					else
 					{
 						console.log(JSON.stringify(api));
+						self.$.toast_error.show();
 					}
 				});
     			var aktuellesDatum = new Date();
@@ -121,49 +176,58 @@
     			self.jahre.push(aktuellesJahr);
     			aktuellesJahr = aktuellesJahr + 1;
     			self.jahre.push(aktuellesJahr);
+    			self.toggleDisableFeiertag = false;
     		},
-    		dozentenAnlegen: function() {
+    		createDozent: function() {
     			var self = this;
+    			self.pageLoaded.dozent = false;
+    			self.pageParameter.dozent.id = 0;
+    			location.href = "#" + self.pageDescriptor.dozent.hash;
     		},
-    		dozentenZeigen: function() {
+    		updateDozent: function() {
     			var self = this;
-				if (self.$.dozent.selected !== null)
+    			if (self.$.dozent.selected !== null && self.dozenten.length > 0)
 				{
-					var selektierterDozent = self.$.dozent.selected;
+					self.pageLoaded.dozent = false;
+					self.pageParameter.dozent.id = self.dozenten[self.$.dozent.selected].id;
+					location.href = "#" + self.pageDescriptor.dozent.hash
 				}
     		},
-    		dozentenplanDrucken: function() {
+    		printPlanDozent: function() {
     			var self = this;
-				if (self.$.dozent.selected !== null)
+				if (self.$.dozent.selected !== null && self.dozenten.length > 0)
 				{
-					var selektierterDozent = self.$.dozent.selected;
+					//TODO navigate to Dozent Plan with ID = self.dozenten[self.$.dozent.selected].id;
 				}
     		},
-    		kursAnlegen: function() {
-    			var self = this;
+    		createKurs: function() {
+    			var self = this; 
+    			//TODO navigate to Kurs pflegen with ID = 0
     		},
-    		kursZeigen: function() {
+    		updateKurs: function() {
     			var self = this;
-				if (self.$.kurs.selected !== null)
+				if (self.$.kurs.selected !== null && self.kurse.length > 0)
 				{
-					var selektierterKurs = self.$.kurs.selected;
+					//TODO navigate to Kurs pflegen with ID = self.kurse[self.$.kurs.selected].id;
+					
 				}
     		},
-    		modulplanAnlegen: function() {
+    		createModulplan: function() {
     			var self = this;
+    			//TODO navigate to Modulplan pflegen with ID = 0
     		},
-    		modulplanZeigen: function() {
+    		updateModulplan: function() {
     			var self = this;
-				if (self.$.modulplan.selected !== null)
+				if (self.$.modulplan.selected !== null && self.modulplaene.length > 0)
 				{
-					var selektierterModulplan = self.$.modulplan.selected;
+					//TODO navigate to Modulplan pflegen with ID = self.modulplaene[self.$.modulplan.selected].id;
 				}
     		},
-    		feiertagePflegen: function() {
+    		updateFeiertage: function() {
     			var self = this;
-				if (self.$.feiertagsjahr.selected !== null)
+				if (self.$.jahr.selected !== null && self.jahre.length > 0)
 				{
-					var selektiertesFeiertagsjahr = self.$.feiertagsjahr.selected;
+					//TODO navigate to Feiertag pflegen with ID = self.jahre[self.$.jahr.selected];
 				}
     		}
  		});

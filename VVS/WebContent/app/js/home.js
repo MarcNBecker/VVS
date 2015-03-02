@@ -13,15 +13,23 @@ template.pageParameter = {
 	}
 };
 
-//Page descriptors inclduing the HTML code to load the page
+//contains the loading state for each page; can be exchanged via data binding
+template.pageLoaded = {
+	stammdaten: false,
+	dozent: false
+};
+
+//Page descriptors including the HTML code to load the page
 template.pageDescriptor = {
-	stammdaten: {name: 'Stammdaten', hash: 'stammdaten', html: '<vvs-uebersicht></vvs-uebersicht>', loaded: false},
-	dozent: {name: 'Dozent pflegen', hash: 'dozent', html: '<vvs-dozent dozentID="{{pageParameter.dozent.id}}" refresh="{{refresh}}" loaded="{{pageDescriptor.dozent.loaded}}"></vvs-dozent>', loaded: false},
-	link2: {name: 'Link2', hash: 'link2', html: null, loaded: true}
+	stammdaten: {name: 'Stammdaten', hash: 'stammdaten', html: '<vvs-uebersicht pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" pageDescriptor="{{pageDescriptor}}" refresh="{{refresh}}"></vvs-uebersicht>'},
+	dozent: {name: 'Dozent pflegen', hash: 'dozent', html: '<vvs-dozent dozentID="{{pageParameter.dozent.id}}" refresh="{{refresh}}" loaded="{{pageLoaded.dozent}}"></vvs-dozent>'},
 };
 
 //Pages to display in the navigation drawer
-template.homePages = [template.pageDescriptor.stammdaten, template.pageDescriptor.dozent, template.pageDescriptor.link2];
+template.drawerPages = [template.pageDescriptor.stammdaten];
+
+//Pages that can be displayed in the home main div
+template.homePages = [template.pageDescriptor.stammdaten, template.pageDescriptor.dozent]
 
 //Is called whenever the url hash is changed and navigates the app
 function handleHashChange(refresh) {
@@ -31,10 +39,10 @@ function handleHashChange(refresh) {
 	}
 	var nextPage = findPage(template.route);
 	if (refresh === true) { //Forced refresh?
-		nextPage.loaded = false;
+		template.pageLoaded[nextPage.hash] = false;
 	}
-	if(!nextPage.loaded) { //Inject vvs polymer element to correct page
-		nextPage.loaded = true;
+	if(!template.pageLoaded[nextPage.hash]) { //Inject vvs polymer element to correct page
+		template.pageLoaded[nextPage.hash] = true;
 		template.injectBoundHTML(nextPage.html, document.querySelector('#home-pages-'+nextPage.hash));
 	}
 }
@@ -45,7 +53,7 @@ function findPage(hash) {
 	if(page) {
 		return page;
 	} else {
-		return {name:'', hash: '', html:'', loaded: true};	
+		return {name:'', hash: '', html:''};	
 	}
 }
 

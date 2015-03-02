@@ -1,31 +1,42 @@
 .vertical-input {
-	margin: 10px 0px 0px 0px;
+	margin-top: 30px;
 }
 
 .headline {
 	font-size: 20pt;
 	font-weight: 475;
-	margin: 0px 0px 0px 20px;
+	margin-left: 20px;
+	margin-right: 10px;
 }
 
 .horizontal-input {
-	margin: 0px 0px 0px 20px;
+	margin-left: 20px;
+}
+
+.horizontal-verticalizable > * {
+	margin-bottom: 10px;
 }
 
 .horizontal-input > * {
-	margin: 0px 20px 0px 0px;
+	margin-right: 20px;
+	margin-top: 0px;
 }
 
 .horizontal-list {
-	margin: 20px 0px 0px 20px;
+	margin-top: 20px;
+	margin-left: 20px;
 }
 
 .horizontal-list > * {
-	margin: 0px 20px 0px 0px;
+	margin-right: 20px;
+}
+
+.horizontal-button-bar {
+	margin-top: 20px
 }
 
 .horizontal-button-bar > * {
-	margin: 0px 20px 0px 0px;
+	margin-right: 20px;
 }
 
 paper-button {
