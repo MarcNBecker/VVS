@@ -53,10 +53,6 @@ paper-checkbox::shadow #checkbox.checked {
 	border-color: #D32B18;
 }
 
-paper-toast div {
-	color: #eeff41
-}
-
 /* Modulplan pflegen */
 .divModul {
 	border-top-style: solid;

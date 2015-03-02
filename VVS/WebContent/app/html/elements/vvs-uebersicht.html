@@ -96,11 +96,7 @@
 						<paper-button on-click={{updateFeiertage}} raised disabled?="{{toggleDisableFeiertag}}" auto-vertical?="{{verySmallScreen}}" flex?="{{!verySmallScreen}}">pflegen</paper-button>
 					</div>
 				</div>
-			</div>
-			<!-- Toasts -->
-			<paper-toast id="toast_error" text="Leider ist ein Fehler aufgetreten. Bitte laden Sie die Seite neu!" duration="15000">
-				<div on-click={{refresh}}>REFRESH</div>
-			</paper-toast>		
+			</div>	
 		</div>
 	</template>
 	<script type="text/javascript">
@@ -117,7 +113,7 @@
 				pageParameter: {},
 				pageLoaded: {},
 				pageDescriptor: {},
-				refresh: function() {}
+				toasts: {}
 			},
     		ready: function()
     		{
@@ -139,7 +135,7 @@
 					else
 					{
 						console.log(JSON.stringify(api));
-						self.$.toast_error.show();
+						self.toasts.error.show();
 					}
 				});
     			model.webService.getAllKurse(function(api) {
@@ -151,7 +147,7 @@
 					else
 					{
 						console.log(JSON.stringify(api));
-						self.$.toast_error.show();
+						self.toasts.error.show();
 					}
 				});
     			model.webService.getAllModulplaene(function(api) {
@@ -163,7 +159,7 @@
 					else
 					{
 						console.log(JSON.stringify(api));
-						self.$.toast_error.show();
+						self.toasts.error.show();
 					}
 				});
     			var aktuellesDatum = new Date();

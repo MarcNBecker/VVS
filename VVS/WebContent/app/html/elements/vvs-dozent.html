@@ -124,11 +124,6 @@
 					</div>
 				</div>
 			</div>
-			<!-- Toasts -->
-			<paper-toast id="toast_success" text="Erfolgreich ausgef&uuml;hrt"></paper-toast>
-			<paper-toast id="toast_error" text="Leider ist ein Fehler aufgetreten. Bitte laden Sie die Seite neu!" duration="15000">
-				<div on-click={{refresh}}>REFRESH</div>
-			</paper-toast>
 		</div>
 	</template>
 	<script type="text/javascript">
@@ -148,7 +143,7 @@
 			publish: {
 				pageParameter: {},
 				pageLoaded: {},
-				refresh: function() {}
+				toasts: {}
 			},
 			//Initialize the screen
     		ready: function()
@@ -183,7 +178,7 @@
     					else
     					{
     						console.log(JSON.stringify(api));
-    						self.$.toast_error.show();
+    						self.toasts.error.show();
     					}
     				});
     			}
@@ -222,7 +217,7 @@
     					else
     					{
     						console.log(JSON.stringify(api));
-    						self.$.toast_error.show();
+    						self.toasts.error.show();
     					}
     				});
     				//First read the Faecher of a Dozent..
@@ -259,14 +254,14 @@
     	    					else
     	    					{
     	    						console.log(JSON.stringify(api));
-    	    						self.$.toast_error.show();
+    	    						self.toasts.error.show();
     	    					}
     	    				});	
     					}
     					else
     					{
     						console.log(JSON.stringify(api));
-    						self.$.toast_error.show();
+    						self.toasts.error.show();
     					}
     				});
     			}
@@ -300,7 +295,7 @@
 									if(deepRuns === self.dozentenFaecher.length) {
 										self.disableToggle = false;
 										self.creationMode = false;
-				    					self.$.toast_success.show();
+				    					self.toasts.success.show();
 										self.$.angelegt.focusAction();
 				    					self.$.bearbeitet.focusAction();
 									}
@@ -308,7 +303,7 @@
 								else
 								{
 									console.log(JSON.stringify(api));
-									self.$.toast_error.show();
+									self.toasts.error.show();
 								}
 							});
 						}
@@ -316,7 +311,7 @@
 						if (deepRuns === 0 && self.dozentenFaecher.length === 0) {
 							self.disableToggle = false;
 							self.creationMode = false;
-	    					self.$.toast_success.show();
+	    					self.toasts.success.show();
 							self.$.angelegt.focusAction();
 	    					self.$.bearbeitet.focusAction();
 						}
@@ -324,7 +319,7 @@
 					else
 					{
 						console.log(JSON.stringify(api));
-						self.$.toast_error.show();
+						self.toasts.error.show();
 					}
 	    		});
     			
@@ -424,23 +419,23 @@
 													//Enable inputs after last webservice call
 													if (veryDeepRuns === self.dozentenFaecher.length) {
 														self.disableToggle = false;
-														self.$.toast_success.show();
+														self.toasts.success.show();
 													}
 												} else {
 													console.log(JSON.stringify(api));
-													self.$.toast_error.show();
+													self.toasts.error.show();
 												}
 											});
 										}
 										//Enable inputs after last webservice call
 										if(veryDeepRuns === 0 && self.dozentenFaecher.length === 0) {
 											self.disableToggle = false;
-											self.$.toast_success.show();
+											self.toasts.success.show();
 										}
 									}
 								} else {
 									console.log(JSON.stringify(api));
-									self.$.toast_error.show();
+									self.toasts.error.show();
 								}
 							});
 						}
@@ -454,18 +449,18 @@
 										//Enable inputs after last webservice call
 										if (deepRuns === self.dozentenFaecher.length) {
 											self.disableToggle = false;
-											self.$.toast_success.show();
+											self.toasts.success.show();
 										}
 									} else {
 										console.log(JSON.stringify(api));
-										self.$.toast_error.show();
+										self.toasts.error.show();
 									}
 								});
 							}
 							//Enable inputs after last webservice call
 							if(deepRuns === 0 && self.dozentenFaecher.length === 0) {
 								self.disableToggle = false;
-								self.$.toast_success.show();
+								self.toasts.success.show();
 							}
 						}
 
@@ -473,7 +468,7 @@
 					else
 					{
 						console.log(JSON.stringify(api));
-						self.$.toast_error.show();
+						self.toasts.error.show();
 					}
 	    		});
 	    	},
@@ -497,10 +492,10 @@
 						self.creationMode = true;
     					self.$.name.isInvalid = true;
 						self.$.vorname.isInvalid = true;
-						self.$.toast_success.show();
+						self.toasts.success.show();
 					} else {
 						console.log(JSON.stringify(api));
-						self.$.toast_error.show();
+						self.toasts.error.show();
 					}
 	    		});
 			},

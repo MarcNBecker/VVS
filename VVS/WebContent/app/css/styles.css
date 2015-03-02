@@ -30,3 +30,7 @@ body /deep/ core-toolbar {
 #home-pages {
 	width: 100%;
 }
+
+paper-toast div {
+	color: #eeff41
+}

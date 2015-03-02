@@ -46,6 +46,11 @@
 	    </core-pages>
     </div>
   </core-scaffold>
+  <!-- Toasts -->
+  <paper-toast id="toast_success" text="Erfolgreich ausgef&uuml;hrt"></paper-toast>
+  <paper-toast id="toast_error" text="Leider ist ein Fehler aufgetreten. Bitte laden Sie die Seite neu!" duration="15000">
+	<div on-click={{refresh}}>REFRESH</div>
+  </paper-toast>
 </template>
 <script src="../js/home.js"></script>
 </body>

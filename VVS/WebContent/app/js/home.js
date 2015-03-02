@@ -5,6 +5,12 @@ var DEFAULT_ROUTE = 'stammdaten'; //TODO dashboard
 
 var template = document.querySelector('#home');
 
+//Home toasts: intialized on template bound
+template.toasts = {
+	success: null,
+	error: null
+};
+
 //page parameter are used with data binding to exchange data between home and the vvs polymer elements (structure should follow template objects)
 template.pageParameter = {
 	dozent: {
@@ -21,9 +27,9 @@ template.pageLoaded = {
 
 //Page descriptors including the HTML code to load the page
 template.pageDescriptor = {
-	stammdaten: {name: 'Stammdaten', hash: 'stammdaten', html: '<vvs-uebersicht pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" pageDescriptor="{{pageDescriptor}}" refresh="{{refresh}}"></vvs-uebersicht>'},
-	dozent: {name: 'Dozent pflegen', hash: 'dozent', html: '<vvs-dozent pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" refresh="{{refresh}}"></vvs-dozent>'},
-	modulplanAnlegen: {name: 'Modulplan anlegen', hash: 'modulplanAnlegen', html: '<vvs-modulplan-anlegen pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" refresh="{{refresh}}"></vvs-modulplan-anlegen>'}
+	stammdaten: {name: 'Stammdaten', hash: 'stammdaten', html: '<vvs-uebersicht pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" pageDescriptor="{{pageDescriptor}}" toasts="{{toasts}}"></vvs-uebersicht>'},
+	dozent: {name: 'Dozent pflegen', hash: 'dozent', html: '<vvs-dozent pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-dozent>'},
+	modulplanAnlegen: {name: 'Modulplan anlegen', hash: 'modulplanAnlegen', html: '<vvs-modulplan-anlegen pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-modulplan-anlegen>'}
 };
 
 //Pages to display in the navigation drawer
@@ -38,9 +44,9 @@ function handleHashChange(refresh) {
 	if (!template.route) { //No hash exists
 		template.route = DEFAULT_ROUTE;
 	}
-	var hasParams = extractParams(template.route);
+	var hasParams = extractParams(template.route); //Also removes the parameter from template.route
 	var nextPage = findPage(template.route);
-	if (refresh === true || hasParams === true) { //Forced refresh?
+	if (refresh === true || hasParams === true) { //Forced refresh
 		template.pageLoaded[nextPage.hash] = false;
 	}
 	if(!template.pageLoaded[nextPage.hash]) { //Inject vvs polymer element to correct page
@@ -80,6 +86,9 @@ function findPage(hash) {
 window.addEventListener('hashchange', handleHashChange);
 
 template.addEventListener('template-bound', function(e) {
+	//Init toasts
+	template.toasts.success = template.$.toast_success;
+	template.toasts.error = template.$.toast_error;
 	if(location.hash) { //Hash already set
 		handleHashChange(); 
 	} else {
@@ -102,6 +111,7 @@ template.navigateFromDrawer = function(e, detail, sender) {
 
 //Force a refresh for the current page
 template.refresh = function(e, detail, sender) {
+	console.log("hi");
 	handleHashChange(true);
 };
 
