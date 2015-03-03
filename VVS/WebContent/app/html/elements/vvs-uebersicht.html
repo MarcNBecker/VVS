@@ -140,7 +140,6 @@
 			toggleDisableFeiertag: true,
 			toggleDisableUser: true,
 			publish: {
-				pageParameter: {},
 				pageLoaded: {},
 				pageDescriptor: {},
 				toasts: {}
@@ -218,7 +217,6 @@
     		createDozent: function() {
     			var self = this;
     			self.pageLoaded.dozent = false;
-    			self.pageParameter.dozent.id = 0;
     			location.href = "#!" + self.pageDescriptor.dozent.hash;
     		},
     		updateDozent: function() {
@@ -226,8 +224,7 @@
     			if (self.$.dozent.selected !== null && self.dozenten.length > 0)
 				{
 					self.pageLoaded.dozent = false;
-					self.pageParameter.dozent.id = self.dozenten[self.$.dozent.selected].id;
-					location.href = "#!" + self.pageDescriptor.dozent.hash + "-" + self.pageParameter.dozent.id;
+					location.href = "#!" + self.pageDescriptor.dozent.hash + "-" + self.dozenten[self.$.dozent.selected].id;
 				}
     		},
     		printPlanDozent: function() {
@@ -259,8 +256,7 @@
 				if (self.$.modulplan.selected !== null && self.modulplaene.length > 0)
 				{
 					self.pageLoaded.modulplanPflegen = false;
-					self.pageParameter.modulplanPflegen.id = self.modulplaene[self.$.modulplan.selected].id;
-					location.href = "#!" + self.pageDescriptor.modulplanPflegen.hash + "-" + self.pageParameter.modulplanPflegen.id;
+					location.href = "#!" + self.pageDescriptor.modulplanPflegen.hash + "-" + self.modulplaene[self.$.modulplan.selected].id;
 				}
     		},
     		createUser: function() {

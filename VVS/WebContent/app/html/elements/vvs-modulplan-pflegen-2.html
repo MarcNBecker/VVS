@@ -209,6 +209,7 @@
 			self.disableToggle = true;
 			model.webService.deleteModulplan(self.modulplan, function(api) {
 				if(!api.isError) {
+					self.pageLoaded.stammdaten = false;
 					self.pageLoaded.modulplanAnlegen = false;
 					self.pageLoaded.modulplanPflegen = false;
 					self.toasts.success.show();
@@ -221,7 +222,6 @@
 		},
 		cancel: function() {
     		this.pageLoaded.modulplanPflegen = false;
-    		this.pageParameter.modulplanPflegen.id = 0;
     		window.history.back();
 		},
 		//Check all invalid properties
