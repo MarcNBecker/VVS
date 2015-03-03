@@ -17,7 +17,7 @@
 							</div>
 							<template repeat="{{modulInstanz in modulplan.modulInstanzList}}">
 								<template repeat="{{fachInstanz in modulInstanz.fachInstanzList}}">
-									<paper-shadow z="1" class="inner-inner-shadow">
+									<paper-shadow z="1" class="{{(inputModulInstanz.id === modulInstanz.id && (inputFachInstanz.id === fachInstanz.id || (selectedFach < 0 && (invalid.fname && invalid.fkurzbeschreibung && invalid.semester && invalid.stunden)))) ? 'inner-inner-shadow highlight' : 'inner-inner-shadow'}}">
 										<div horizontal layout center>
 											<span horizontal layout center-center flex>{{modulInstanz.modul.name}}</span>
 											<span horizontal layout center-center flex>{{fachInstanz.semester}}</span>
@@ -40,36 +40,36 @@
 					<div vertical layout flex>			
 						<span class="small-headline">Neues Fach anlegen</span>
 						<div horizontal layout center>
-							<paper-dropdown-menu label="Neues Modul anlegen oder eines ausw&auml;hlen" disabled?="{{disableToggle}}" on-core-select="{{setModulIsInvalid}}" flex>
+							<paper-dropdown-menu label="Neues Modul anlegen oder eines ausw&auml;hlen" disabled?="{{disableToggle || selectedFach >= 0}}" on-core-select="{{setModulIsInvalid}}" flex>
 								<paper-dropdown class="dropdown">
 									<core-menu class="menu" selected="{{selectedModul}}">
 										<template  repeat="{{item in module}}">
-											<paper-item>{{item.name}}</paper-item>
+											<paper-item>{{item.modul.name}}</paper-item>
 										</template>
 									</core-menu>
 								</paper-dropdown>
 							</paper-dropdown-menu>
-							<paper-icon-button icon="clear" on-click="{{resetModul}}" disabled?="{{disableToggle}}" hidden?="{{!(selectedModul >= 0)}}" self-center></paper-icon-button>
+							<paper-icon-button icon="clear" on-click="{{resetModul}}" disabled?="{{disableToggle || selectedFach >= 0}}" hidden?="{{!(selectedModul >= 0)}}" self-center></paper-icon-button>
 							<paper-icon-button icon="info" on-click="{{switchModulInfo}}" disabled?="{{disableToggle}}" hidden?="{{!(selectedModul >= 0) || toggleModulInfo}}" self-center></paper-icon-button>
 							<paper-icon-button icon="expand-less" on-click="{{switchModulInfo}}" disabled?="{{disableToggle}}" hidden?="{{!(selectedModul >= 0) || !toggleModulInfo}}" self-center></paper-icon-button>
 						</div>
 						<core-collapse opened?="{{!(selectedModul >= 0) || toggleModulInfo}}">
 							<paper-input-decorator id="mname" label="Modulname" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.mname}}">
-								<input is="core-input" type="text" value="{{selectedModul >= 0 ? module[selectedModul].name : inputModulInstanz.modul.name}}" maxlength="100" disabled?="{{disableToggle || selectedModul >= 0}}" required>
+								<input is="core-input" type="text" value="{{inputModulInstanz.modul.name}}" maxlength="100" disabled?="{{disableToggle || selectedModul >= 0}}" required>
 							</paper-input-decorator>
 							<paper-input-decorator id="mkurzbeschreibung" label="Kurzbeschreibung" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.mkurzbeschreibung}}">
-								<input is="core-input" type="text" value="{{selectedModul >= 0 ? module[selectedModul].kurzbeschreibung : inputModulInstanz.modul.kurzbeschreibung}}" maxlength="100" disabled?="{{disableToggle || selectedModul >= 0}}" required>
+								<input is="core-input" type="text" value="{{inputModulInstanz.modul.kurzbeschreibung}}" maxlength="100" disabled?="{{disableToggle || selectedModul >= 0}}" required>
 							</paper-input-decorator>
 						</core-collapse>
-						<paper-input-decorator label="Credits" error="Pflichtfeld: Keine g&uuml;ltige Creditanzahl" floatingLabel autoValidate isInvalid="{{invalid.credits}}">
+						<paper-input-decorator id="credits" label="Credits" error="Pflichtfeld: Keine g&uuml;ltige Creditanzahl" floatingLabel autoValidate isInvalid="{{invalid.credits}}">
 							<input is="core-input" type="text" pattern="[0-9]+" value="{{inputModulInstanz.credits}}" disabled?="{{disableToggle}}" required>
 						</paper-input-decorator>
 						<div horizontal layout center>
-							<paper-dropdown-menu label="Neues Fach anlegen oder eines ausw&auml;hlen" disabled?="{{disableToggle}}" on-core-select="{{setFachIsInvalid}}" flex>
+							<paper-dropdown-menu label="Neues Fach anlegen oder eines ausw&auml;hlen" disabled?="{{disableToggle || (selectedModul < 0 && (invalid.mname || invalid.mkurzbeschreibung || invalid.credits))}}" on-core-select="{{setFachIsInvalid}}" flex>
 								<paper-dropdown class="dropdown">
 									<core-menu class="menu" selected="{{selectedFach}}">
 										<template  repeat="{{item in faecher}}">
-											<paper-item>{{item.name}}</paper-item>
+											<paper-item>{{item.fach.name}}</paper-item>
 										</template>
 									</core-menu>
 								</paper-dropdown>
@@ -80,19 +80,22 @@
 						</div>
 						<core-collapse opened?="{{!(selectedFach >= 0) || toggleFachInfo}}">
 							<paper-input-decorator id="fname" label="Fachname" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.fname}}">
-								<input is="core-input" type="text" value="{{selectedFach >= 0 ? faecher[selectedFach].name : inputFachInstanz.fach.name}}" maxlength="100" disabled?="{{disableToggle || selectedFach >= 0}}" required>
+								<input is="core-input" type="text" value="{{inputFachInstanz.fach.name}}" maxlength="100" disabled?="{{disableToggle || selectedFach >= 0}}" required>
 							</paper-input-decorator>
 							<paper-input-decorator id="fkurzbeschreibung" label="Kurzbeschreibung" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.fkurzbeschreibung}}">
-								<input is="core-input" type="text" value="{{selectedFach >= 0 ? faecher[selectedFach].kurzbeschreibung : inputFachInstanz.fach.kurzbeschreibung}}" maxlength="100" disabled?="{{disableToggle || selectedFach >= 0}}" required>
+								<input is="core-input" type="text" value="{{inputFachInstanz.fach.kurzbeschreibung}}" maxlength="100" disabled?="{{disableToggle || selectedFach >= 0}}" required>
 							</paper-input-decorator>
 						</core-collapse>
-						<paper-input-decorator label="Stunden" error="Pflichtfeld: Keine g&uuml;ltige Stundenzahl" floatingLabel autoValidate isInvalid="{{invalid.stunden}}">
-							<input is="core-input" type="text" pattern="[0-9]+" value={{inputFachInstanz.stunden}} disabled?="{{disableToggle}}" required>
+						<paper-input-decorator id="stunden" label="Stunden" error="Pflichtfeld: Keine g&uuml;ltige Stundenzahl" floatingLabel autoValidate isInvalid="{{invalid.stunden}}">
+							<input is="core-input" type="text" pattern="[0-9]+" value="{{inputFachInstanz.stunden}}" disabled?="{{disableToggle}}" required>
 						</paper-input-decorator>
-						<paper-input-decorator label="Semester" error="Pflichtfeld: Keine g&uuml;ltiges Semester" floatingLabel autoValidate isInvalid="{{invalid.semester}}">
-							<input is="core-input" type="text" pattern="[0-9]+" value={{inputFachInstanz.semester}} disabled?="{{disableToggle}}" required>
+						<paper-input-decorator id="semester" label="Semester" error="Pflichtfeld: Keine g&uuml;ltiges Semester" floatingLabel autoValidate isInvalid="{{invalid.semester}}">
+							<input is="core-input" type="text" pattern="[0-9]+" value="{{inputFachInstanz.semester}}" disabled?="{{disableToggle}}" required>
 						</paper-input-decorator>
-						<paper-button on-click={{add}} raised disabled?="{{disableToggle}}">&Uuml;bernehmen</paper-button>
+						<div horizontal layout>
+							<paper-button on-click={{add}} raised disabled?="{{disableToggle}}" flex>&Uuml;bernehmen</paper-button>
+							<paper-button on-click={{reject}} raised disabled?="{{disableToggle}}" flex>Verwerfen</paper-button>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -123,6 +126,18 @@
 		},
 		ready: function() {
 			var self = this;
+			//init
+			self.modulplan = new model.helper.ModulplanComplete();
+			self.module = [];
+			self.faecher = [];
+			self.selectedModul = -1;
+			self.selectedFach = -1;
+			self.inputModulInstanz = new model.templates.ModulInstanz();
+			self.inputFachInstanz = new model.templates.FachInstanz();
+			self.disableToggle = true;
+			self.toggleModulInfo = false;
+			self.toggleFachInfo = false;
+			self.invalid = {};
 			//navigate to modulplanAnlegen
 			if(self.pageParameter.modulplanPflegen.id <= 0) {
 				self.pageLoaded.modulplanAnlegen = false;
@@ -135,68 +150,159 @@
 			showModulplan.id = self.pageParameter.modulplanPflegen.id;
 			var deepRuns = 0;
 			model.helper.getModulplanComplete(showModulplan, function(api) {
-				deepRuns++;
 				self.modulplan = api;
-				if(deepRuns === 3) {
-					self.disableToggle = false;
-					self.invalid.mname = true;
-					self.invalid.mkurzbeschreibung = true;
-					self.invalid.credits = true;
-					self.invalid.fname = true;
-					self.invalid.fkurzbeschreibung = true;
-					self.invalid.semester = true;
-					self.invalid.stunden = true;
-				}
+				model.webService.getAllModule(function(api) {
+					if(!api.isError) {
+						deepRuns++;
+						//Built an array with ModulInstanzen to use with the dropdown
+						//Every modul we get from the webservice needs to be mapped to a ModulInstanz of the Modulplan or a "new" ModulInstanz
+						var found = false;
+						var i;
+						for(i=0; i<api.response.length; i++) {
+							var ii;
+							for(ii=0; ii<self.modulplan.modulInstanzList.length; ii++) {
+								if(api.response[i].id === self.modulplan.modulInstanzList[ii].modul.id) {
+									self.module.push(self.modulplan.modulInstanzList[ii]);
+									found = true;
+									break;
+								}
+							}
+							if(!found) {
+								var modulInstanz = new model.templates.ModulInstanz();
+								modulInstanz.modul = api.response[i];
+								self.module.push(modulInstanz);	
+							}
+							found = false;
+						}
+						if(deepRuns === 2) {
+							self.disableToggle = false;	
+							self.invalid.mname = true;
+							self.invalid.mkurzbeschreibung = true;
+							self.invalid.credits = true;
+							self.invalid.fname = true;
+							self.invalid.fkurzbeschreibung = true;
+							self.invalid.semester = true;
+							self.invalid.stunden = true;
+						}
+					} else {
+						console.log(JSON.stringify(api));
+						self.toasts.error.show();
+					}
+				});
+				model.webService.getAllFaecher(function(api) {
+					if(!api.isError) {
+						deepRuns++;
+						//For every Fach check if there is a FachInstanz in one of the ModulInstanzen of the Modulplan
+						//Built an every with FachInstanzen for the dropdown
+						//self.faecher = api.response;
+						var found = false;
+						var i;
+						for(i=0; i<api.response.length; i++) {
+							var ii;
+							for(ii=0; ii<self.modulplan.modulInstanzList.length; ii++) {
+								var iii;
+								for(iii=0; iii<self.modulplan.modulInstanzList[ii].fachInstanzList.length; iii++) {
+									if(self.modulplan.modulInstanzList[ii].fachInstanzList[iii].fach.id === api.response[i].id) {
+										self.faecher.push(self.modulplan.modulInstanzList[ii].fachInstanzList[iii]);
+										found = true;
+										break;
+									}
+								}
+								//We already found a FachInstanz for the Fach -> don't look into the other ModulInstanzen
+								//There should always only at max ONE instance of every Fach in a Modulplan
+								if(found) {
+									break;
+								}
+							}
+							//Fach is not yet in Modulplan
+							if(!found) {
+								var fachInstanz = new model.templates.FachInstanz();
+								fachInstanz.fach = api.response[i];
+								self.faecher.push(fachInstanz);
+							}
+							found = false;
+						}
+						if(deepRuns === 2) {
+							self.disableToggle = false;
+							self.invalid.mname = true;
+							self.invalid.mkurzbeschreibung = true;
+							self.invalid.credits = true;
+							self.invalid.fname = true;
+							self.invalid.fkurzbeschreibung = true;
+							self.invalid.semester = true;
+							self.invalid.stunden = true;
+						}
+					} else {
+						console.log(JSON.stringify(api));
+						self.toasts.error.show();
+					}
+				});
 			}, function() { //Error
 				self.toasts.error.show();
 			});
-			model.webService.getAllModule(function(api) {
-				if(!api.isError) {
-					deepRuns++;
-					self.module = api.response;				
-					if(deepRuns === 3) {
-						self.disableToggle = false;	
-						self.invalid.mname = true;
-						self.invalid.mkurzbeschreibung = true;
-						self.invalid.credits = true;
-						self.invalid.fname = true;
-						self.invalid.fkurzbeschreibung = true;
-						self.invalid.semester = true;
-						self.invalid.stunden = true;
-					}
-				} else {
-					console.log(JSON.stringify(api));
-					self.toasts.error.show();
-				}
-			});
-			model.webService.getAllFaecher(function(api) {
-				if(!api.isError) {
-					deepRuns++;
-					self.faecher = api.response;				
-					if(deepRuns === 3) {
-						self.disableToggle = false;
-						self.invalid.mname = true;
-						self.invalid.mkurzbeschreibung = true;
-						self.invalid.credits = true;
-						self.invalid.fname = true;
-						self.invalid.fkurzbeschreibung = true;
-						self.invalid.semester = true;
-						self.invalid.stunden = true;
-					}
-				} else {
-					console.log(JSON.stringify(api));
-					self.toasts.error.show();
-				}
-			});
 		},
 		add: function() {
-			
+			//Update a ModulInstanz and FachInstanz in modulplan
+			if(this.inputModulInstanz.id > 0 && this.inputFachInstanz.id > 0) {
+				//validate everything
+				if(!this.checkInputs()) {
+					return;	
+				}
+				var i;
+				for(i=0; i<this.modulplan.modulInstanzList.length; i++) {
+					if(this.modulplan.modulInstanzList[i].id === this.inputModulInstanz.id) {
+						var ii;
+						for(ii=0; ii<this.modulplan.modulInstanzList[i].fachInstanzList.length; ii++) {
+							if(this.modulplan.modulInstanzList[i].fachInstanzList[ii].id === this.inputFachInstanz.id) {
+								this.modulplan.modulInstanzList[i].credits = this.inputModulInstanz.credits;
+								this.modulplan.modulInstanzList[i].fachInstanzList[ii].stunden = this.inputFachInstanz.stunden;
+								this.modulplan.modulInstanzList[i].fachInstanzList[ii].semester = this.inputFachInstanz.semester;
+								break;
+							}
+						}
+						break;	
+					}
+				}
+			} else if(this.inputModulInstanz.id > 0 && this.selectedFach < 0) { //Only update ModulInstanz
+				//validate modul
+				if(!this.checkInputsModul()) {
+					return;
+				}
+				var i;
+				for(i=0; i<this.modulplan.modulInstanzList.length; i++) {
+					if(this.modulplan.modulInstanzList[i].id === this.inputModulInstanz.id) {
+						this.modulplan.modulInstanzList[i].credits = this.inputModulInstanz.credits;
+					}
+					break;
+				}
+			} else {
+				//Create new Modul and new Fach
+				//Create exisisting Modul with new Fach
+				//Create existing Modul with existing Fach
+				//TODO FachList muss richtig geupdated werden
+				//TODO save ermöglichen
+				//TODO action dialog bei delete
+			}
+			this.selectedModul = -1;
+			this.selectedFach = -1;
+		},
+		reject: function() {
+			this.selectedModul = -1;
+			this.selectedFach = -1;
 		},
 		edit: function(e, detail, sender) {
-			
+			this.selectedModul = this.module.indexOf(e.target.templateInstance.model.modulInstanz);
+			this.selectedFach = this.faecher.indexOf(e.target.templateInstance.model.fachInstanz);
 		},
 		doDelete: function(e, detail, sender) {
-			
+			var miPos = this.modulplan.modulInstanzList.indexOf(e.target.templateInstance.model.modulInstanz);
+			if(this.modulplan.modulInstanzList[miPos].fachInstanzList.length > 1) {
+				//Delete FachInstanz
+				var fiPos = this.modulplan.modulInstanzList[miPos].fachInstanzList.indexOf(e.target.templateInstance.model.fachInstanz);
+				this.modulplan.modulInstanzList[miPos].fachInstanzList.splice(fiPos, 1)
+			} else {
+				this.modulplan.modulInstanzList.splice(miPos, 1);
+			}
 		},
 		save: function() {
 			
@@ -235,13 +341,21 @@
 			}
 			return true;
 		},
+		checkInputsModul : function() {
+			return (!this.invalid.mname && !this.invalid.mkurzbeschreibung && !this.invalid.credits);
+		},
 		//Reset the modul dropdown
 		resetModul: function() {
 			this.selectedModul = -1;
 			this.setModulIsInvalid(true);
 		},
-		//Toggle invalid properties for modul
+		//Set modul and toggle invalid properties for modul
 		setModulIsInvalid: function(invalid, detail) {
+			if(this.selectedModul >= 0) {
+				this.inputModulInstanz = Object.create(this.module[this.selectedModul]);
+			} else {
+				this.inputModulInstanz = new model.templates.ModulInstanz();
+			}
 			if(invalid !== true && invalid !== false) {
 				//Is called from on-core-select
 				invalid = !detail.isSelected;
@@ -249,10 +363,12 @@
 				this.job('update-labels-modulplan', function() {
 					this.$.mname.inputAction();
 					this.$.mkurzbeschreibung.inputAction();
+					this.$.credits.inputAction();
 				}, 100);
 			}
 			this.invalid.mname = invalid;
 			this.invalid.mkurzbeschreibung = invalid;
+			this.invalid.credits = invalid;
 		},
 		switchModulInfo: function() {
 			this.toggleModulInfo = !this.toggleModulInfo;
@@ -262,8 +378,13 @@
 			this.selectedFach = -1;
 			this.setFachIsInvalid(true);
 		},
-		//Togle invalid properties for fach
+		//Set fach and toggle invalid properties for fach
 		setFachIsInvalid: function(invalid, detail) {
+			if(this.selectedFach >= 0) {
+				this.inputFachInstanz = Object.create(this.faecher[this.selectedFach]);
+			} else {
+				this.inputFachInstanz = new model.templates.FachInstanz();
+			}
 			if(invalid !== true && invalid !== false) {
 				//Is called from on-core-select
 				invalid = !detail.isSelected;
@@ -271,10 +392,14 @@
 				this.job('update-labels-fach', function() {
 					this.$.fname.inputAction();
 					this.$.fkurzbeschreibung.inputAction();
+					this.$.stunden.inputAction();
+					this.$.semester.inputAction();
 				}, 100);
 			}
 			this.invalid.fname = invalid;
 			this.invalid.fkurzbeschreibung = invalid;
+			this.invalid.stunden = invalid;
+			this.invalid.semester = invalid;
 		},
 		switchFachInfo: function() {
 			this.toggleFachInfo = !this.toggleFachInfo;
