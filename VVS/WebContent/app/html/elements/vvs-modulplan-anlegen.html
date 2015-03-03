@@ -99,11 +99,11 @@
 					if (!api.isError)
 					{
 						self.modulplan = api.response;
-						//self.pageParameter.modulplanPflegen.id = self.modulplan.id;
-						self.pageLoaded.modulplanAnlegen = false;
 						self.toasts.success.show();
-						location.href = '#!stammdaten';
-						//location.href = '#!modulplanPflegen';
+						self.pageLoaded.modulplanAnlegen = false;
+						self.pageParameter.modulplanPflegen.id = self.modulplan.id;
+						self.pageLoaded.modulplanPflegen = false;
+						location.href = '#!modulplanPflegen-'+self.modulplan.id;
 					}
 					else
 					{

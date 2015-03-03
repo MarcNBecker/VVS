@@ -144,7 +144,7 @@ template.refresh = function(e, detail, sender) {
 
 //handle redirects
 window.addEventListener('popstate', function(event) {
-	if(event.state !== null && event.state.twoSteps === true) {
+	if(event.state !== null && event.state.redirect === true) {
 		window.history.back();
 	}
 });

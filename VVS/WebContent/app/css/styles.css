@@ -32,3 +32,8 @@ body /deep/ core-toolbar {
 paper-toast div {
 	color: #eeff41
 }
+
+body /deep/ paper-button[autofocus] {
+	font-weight: 500;
+	color: #E2001A;
+}
