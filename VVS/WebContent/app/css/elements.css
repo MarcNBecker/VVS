@@ -1,8 +1,23 @@
 .shadow {
 	margin-bottom: 30px;
 	padding-bottom: 50px;
-	background-color: white;
+	background-color: #FFF;
 	border-radius: 5px;
+}
+
+.inner-shadow {
+	background-color: #EEEEEE;
+	border-radius: 5px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+.inner-inner-shadow {
+	background-color: #FFF;
+	border-radius: 3px;
+	margin-bottom: 10px;
+	padding-left: 5px;
+	padding-right: 5px
 }
 
 .vertical-input {
@@ -14,6 +29,13 @@
 	font-weight: 475;
 	margin-left: 20px;
 	margin-right: 10px;
+}
+
+.small-headline {
+	font-size: 16pt;
+	font-weight: 350;
+	margin-top: 10px;
+	margin-bottom: 10px;
 }
 
 .horizontal-input {
@@ -46,9 +68,18 @@
 	margin-right: 20px;
 }
 
+.hide {
+	display: hidden;
+}
+
 paper-button {
 	background: #E2001A;
 	color: #FFFFFF;
+}
+
+paper-icon-button::shadow #ripple {
+  color: #D32B18;
+  opacity: 25%;
 }
 
 paper-checkbox::shadow #ink[checked] {

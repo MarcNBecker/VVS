@@ -7,11 +7,11 @@
 				<span class="headline">Allgemeine Angaben</span>	
 				<div vertical layout class="horizontal-input">
 					<!-- Main input fields -->
-					<paper-input-decorator label="Studiengang" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.studiengang}}" disabled?="{{toggleDisabled}}">
-						<input is="core-input" value={{modulplan.studiengang}} required>
+					<paper-input-decorator label="Studiengang" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.studiengang}}">
+						<input is="core-input" value={{modulplan.studiengang}} maxlength="100" required disabled?="{{toggleDisabled}}">
 					</paper-input-decorator>
-					<paper-input-decorator label="Vertiefungsrichtung" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.vertiefungsrichtung}}" disabled?="{{toggleDisabled}}">
-						<input is="core-input" value={{modulplan.vertiefungsrichtung}} required>
+					<paper-input-decorator label="Vertiefungsrichtung" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.vertiefungsrichtung}}">
+						<input is="core-input" value={{modulplan.vertiefungsrichtung}} maxlength="100" required disabled?="{{toggleDisabled}}">
 					</paper-input-decorator>	
 				</div>
 				<div horizontal layout center>
@@ -69,6 +69,9 @@
 					if (!api.isError)
 					{
 						self.vorlagen = api.response;
+						//Init required fields
+						self.invalid.studiengang = true;
+						self.invalid.vertiefungsrichtung = true;
 						self.toggleDisabled = false;
 					}
 					else

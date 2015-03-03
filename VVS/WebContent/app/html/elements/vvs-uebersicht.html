@@ -122,7 +122,7 @@
 						<paper-button on-click={{createUser}} raised>neuen User anlegen</paper-button>			
 					</div>
 				</div>
-				<div stlye="display: hidden" flex><!-- Empty DIV to display User verwalten correctly --></div>
+				<div class="hide" flex><!-- Empty DIV to display User verwalten correctly --></div>
 			</div>
 		</div>
 		</paper-shadow>
@@ -258,7 +258,9 @@
     			var self = this;
 				if (self.$.modulplan.selected !== null && self.modulplaene.length > 0)
 				{
-					//TODO navigate to Modulplan pflegen with ID = self.modulplaene[self.$.modulplan.selected].id;
+					self.pageLoaded.modulplanPflegen = false;
+					self.pageParameter.modulplanPflegen.id = self.modulplaene[self.$.modulplan.selected].id;
+					location.href = "#!" + self.pageDescriptor.modulplanPflegen.hash + "-" + self.pageParameter.modulplanPflegen.id;
 				}
     		},
     		createUser: function() {

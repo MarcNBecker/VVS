@@ -15,6 +15,9 @@ template.toasts = {
 template.pageParameter = {
 	dozent: {
 		id: 0
+	},
+	modulplanPflegen: {
+		id: 0
 	}
 };
 
@@ -22,21 +25,23 @@ template.pageParameter = {
 template.pageLoaded = {
 	stammdaten: false,
 	dozent: false,
-	modulplanAnlegen: false
+	modulplanAnlegen: false,
+	modulplanPflegen: false
 };
 
 //Page descriptors including the HTML code to load the page
 template.pageDescriptor = {
 	stammdaten: {name: 'Stammdaten', hash: 'stammdaten', html: '<vvs-uebersicht pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" pageDescriptor="{{pageDescriptor}}" toasts="{{toasts}}"></vvs-uebersicht>'},
 	dozent: {name: 'Dozent pflegen', hash: 'dozent', html: '<vvs-dozent pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-dozent>'},
-	modulplanAnlegen: {name: 'Modulplan anlegen', hash: 'modulplanAnlegen', html: '<vvs-modulplan-anlegen pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-modulplan-anlegen>'}
+	modulplanAnlegen: {name: 'Modulplan anlegen', hash: 'modulplanAnlegen', html: '<vvs-modulplan-anlegen pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-modulplan-anlegen>'},
+	modulplanPflegen: {name: 'Modulplan pflegen', hash: 'modulplanPflegen', html: '<vvs-modulplan-pflegen-2 pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-modulplan-pflegen-2>'}
 };
 
 //Pages to display in the navigation drawer
 template.drawerPages = [template.pageDescriptor.stammdaten];
 
 //Pages that can be displayed in the home main div
-template.homePages = [template.pageDescriptor.stammdaten, template.pageDescriptor.dozent, template.pageDescriptor.modulplanAnlegen];
+template.homePages = [template.pageDescriptor.stammdaten, template.pageDescriptor.dozent, template.pageDescriptor.modulplanAnlegen, template.pageDescriptor.modulplanPflegen];
 
 //Is called whenever the url hash is changed and navigates the app
 function handleHashChange(refresh) {
@@ -44,9 +49,9 @@ function handleHashChange(refresh) {
 	if (!template.route) { //No hash exists
 		template.route = DEFAULT_ROUTE;
 	}
-	var hasParams = extractParams(template.route); //Also removes the parameter from template.route
+	var hasChangedParams = extractParams(template.route); //Also removes the parameter from template.route
 	var nextPage = findPage(template.route);
-	if (refresh === true || hasParams === true) { //Forced refresh
+	if (refresh === true || hasChangedParams === true) { //Forced refresh
 		template.pageLoaded[nextPage.hash] = false;
 	}
 	if(!template.pageLoaded[nextPage.hash]) { //Inject vvs polymer element to correct page
@@ -64,19 +69,32 @@ function extractParams() {
 		var pageParameterObj = template.pageParameter[template.route];
 		if(pageParameterObj) {
 			if(paramString) {
-				pageParameterObj.id = paramString;	
+				if(pageParameterObj.id != paramString) {
+					pageParameterObj.id = paramString;
+					return true;
+				} else {
+					return false;
+				}
 			} else {
-				pageParameterObj.id = 0;
+				if(pageParameterObj.id !== 0) {
+					pageParameterObj.id = 0;
+					return true;
+				} else {
+					return false;
+				}
 			}
-			return true;
 		} else {
 			return false;
 		}
 	} else {
 		var pageParameterObj = template.pageParameter[template.route];
 		if(pageParameterObj) {
-			pageParameterObj.id = 0;
-			return true;
+			if(pageParameterObj.id !== 0) {
+				pageParameterObj.id = 0;
+				return true;
+			} else {
+				return false;
+			}
 		} else {
 			return false;
 		}
@@ -123,5 +141,12 @@ template.navigateFromDrawer = function(e, detail, sender) {
 template.refresh = function(e, detail, sender) {
 	handleHashChange(true);
 };
+
+//handle redirects
+window.addEventListener('popstate', function(event) {
+	if(event.state !== null && event.state.twoSteps === true) {
+		window.history.back();
+	}
+});
 
 })();

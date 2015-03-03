@@ -35,7 +35,7 @@
 							<input is="core-input" type="text" value={{dozent.strasse}} maxlength="100" disabled?="{{disableToggle}}">
 						</paper-input-decorator>
 						<paper-input-decorator id="postleitzahl" label="Postleitzahl" error="Keine g&uuml;ltige Postleitzahl" floatingLabel autoValidate isInvalid="{{invalid.postleitzahl}}" flex>
-							<input is="core-input" type="text" pattern="[0-9]+" value={{dozent.postleitzahl}} maxlength="100" disabled?="{{disableToggle}}">
+							<input is="core-input" type="text" pattern="[0-9]+" value={{dozent.postleitzahl}} disabled?="{{disableToggle}}">
 						</paper-input-decorator>
 						<paper-input-decorator id="wohnort" label="Wohnort" floatingLabel flex>
 							<input is="core-input" type="text" value={{dozent.wohnort}} maxlength="100" disabled?="{{disableToggle}}">
@@ -174,8 +174,8 @@
     						self.allFaecher = api.response.slice();
     						//Enable buttons and force correct input label display
     						self.disableToggle = false;
-    						self.$.name.isInvalid = true;
-    						self.$.vorname.isInvalid = true;
+    						self.invalid.name = true;
+    						self.invalid.vorname = true;
     					}
     					else
     					{
@@ -195,22 +195,24 @@
     						deepRuns++;
     						//Initialize input fields and make them display correctly
     						self.dozent = api.response;
-    						self.$.titel.focusAction();
-    						self.$.name.focusAction();
-    						self.$.vorname.focusAction();
-    						self.$.strasse.focusAction();
-    						self.$.postleitzahl.focusAction();
-    						self.$.wohnort.focusAction();
-    						self.$.mail.focusAction();
-    						self.$.telefonPrivat.focusAction();
-    						self.$.telefonGeschaeftlich.focusAction();
-    						self.$.telefonMobil.focusAction();
-    						self.$.fax.focusAction();
-    						self.$.arbeitgeber.focusAction();
-    						self.$.angelegt.focusAction();
-    						self.$.bearbeitet.focusAction();
-    						self.$.name.isInvalid = false;
-    						self.$.vorname.isInvalid = false;
+    						self.job('update-labels-ready', function() {
+    							self.$.titel.inputAction();
+        						self.$.name.inputAction();
+       							self.$.vorname.inputAction();
+       							self.$.strasse.inputAction();	
+       							self.$.postleitzahl.inputAction();	
+       							self.$.wohnort.inputAction();	
+       							self.$.mail.inputAction();	
+       							self.$.telefonPrivat.inputAction();	
+       							self.$.telefonGeschaeftlich.inputAction();	
+       							self.$.telefonMobil.inputAction();	
+       							self.$.fax.inputAction();	
+       							self.$.arbeitgeber.inputAction();	
+        						self.$.angelegt.inputAction();
+        						self.$.bearbeitet.inputAction();
+    						}, 100);
+    						self.invalid.name = false;
+    						self.invalid.vorname = false;
     						//Enable inputs after last webservice call
     						if(deepRuns === 2) {
     							self.disableToggle = false;
@@ -297,9 +299,11 @@
 									if(deepRuns === self.dozentenFaecher.length) {
 										self.disableToggle = false;
 										self.creationMode = false;
-				    					self.toasts.success.show();
-										self.$.angelegt.focusAction();
-				    					self.$.bearbeitet.focusAction();
+				    					self.toasts.success.show();	    					
+				    					self.job('update-labels-create', function() {
+											self.$.angelegt.inputAction();
+					    					self.$.bearbeitet.inputAction();
+				    					}, 100);
 									}
 								}
 								else
@@ -314,8 +318,10 @@
 							self.disableToggle = false;
 							self.creationMode = false;
 	    					self.toasts.success.show();
-							self.$.angelegt.focusAction();
-	    					self.$.bearbeitet.focusAction();
+	    					self.job('update-labels-create', function() {
+								self.$.angelegt.inputAction();
+		    					self.$.bearbeitet.inputAction();
+	    					}, 100);
 						}
 					}
 					else
@@ -492,8 +498,8 @@
 						self.geloeschteFaecher = [];
 						self.disableToggle = false;
 						self.creationMode = true;
-    					self.$.name.isInvalid = true;
-						self.$.vorname.isInvalid = true;
+    					self.invalid.name = true;
+						self.invalid.vorname = true;
 						self.toasts.success.show();
 					} else {
 						console.log(JSON.stringify(api));

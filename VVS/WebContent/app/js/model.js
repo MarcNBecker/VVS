@@ -18,19 +18,19 @@ var model = new function() {
 			this.fachInstanzList = [];
 		};
 		
-		var ModulplanComplete = function() {
+		this.ModulplanComplete = function() {
 			this.id = 0;
 			this.studiengang = "";
 			this.vertiefungsrichtung = "";
 			this.modulInstanzList = [];
 		};
 		
-		this.getModulplanComplete = function(m, c) {
+		this.getModulplanComplete = function(m, c, e) {
 			//Read basic modulplan information
 			model.webService.getModulplan(m, function(api1) {
 				//Modulplan exists
 				if(!api1.isError) {
-					var modulplan = new ModulplanComplete();
+					var modulplan = new model.helper.ModulplanComplete();
 					modulplan.id = api1.response.id;
 					modulplan.studiengang = api1.response.studiengang;
 					modulplan.vertiefungsrichtung = api1.response.vertiefungsrichtung;
@@ -44,6 +44,7 @@ var model = new function() {
 								return;
 							}
 							var deepRuns = 0;
+							var fachInstanzError = false;
 							//Parse list of ModulInstanz
 							for(var i=0; i<api2.response.length; i++) {
 								var currentModulInstanz = api2.response[i];
@@ -56,37 +57,42 @@ var model = new function() {
 								//Read FachInstanzen
 								model.webService.getAllFachInstanzen(currentModulInstanz, function(api3) {
 									//FachInstanzList can be read
-									if(!api3.isError) {
-										for(var ii=0; ii<api3.response.length; ii++) {
-											var currentFachInstanz = api3.response[ii];
-											var completeFachInstanz = new FachInstanzComplete();
-											completeFachInstanz.id = currentFachInstanz.id;
-											completeFachInstanz.fach = currentFachInstanz.fach;
-											completeFachInstanz.semester = currentFachInstanz.semester;
-											completeFachInstanz.stunden = currentFachInstanz.stunden;
-											//Search correct completeModulInstanz; can't rely on outer scope
-											for(var iii=0; iii<modulplan.modulInstanzList.length; iii++) {
-												if(modulplan.modulInstanzList[iii].id === currentFachInstanz.modulInstanzID) {
-													modulplan.modulInstanzList[iii].fachInstanzList.push(completeFachInstanz);			
-													break;
+									if(!fachInstanzError) {
+										if(!api3.isError) {
+											for(var ii=0; ii<api3.response.length; ii++) {
+												var currentFachInstanz = api3.response[ii];
+												var completeFachInstanz = new FachInstanzComplete();
+												completeFachInstanz.id = currentFachInstanz.id;
+												completeFachInstanz.fach = currentFachInstanz.fach;
+												completeFachInstanz.semester = currentFachInstanz.semester;
+												completeFachInstanz.stunden = currentFachInstanz.stunden;
+												//Search correct completeModulInstanz; can't rely on outer scope
+												for(var iii=0; iii<modulplan.modulInstanzList.length; iii++) {
+													if(modulplan.modulInstanzList[iii].id === currentFachInstanz.modulInstanzID) {
+														modulplan.modulInstanzList[iii].fachInstanzList.push(completeFachInstanz);			
+														break;
+													}
 												}
 											}
+										} else {
+											fachInstanzError = true;
+											e(modulplan); //Reading some FachInstanzList failed, return Modulplan, but to error callback
 										}
-									}
-									//Every ModulInstanz triggers a FachInstanzList call (deepRun)
-									deepRuns++;
-									//Last call is triggered, then go to callback
-									if(api2.response.length === deepRuns) {
-										c(modulplan);
+										//Every ModulInstanz triggers a FachInstanzList call (deepRun)
+										deepRuns++;
+										//Last call is triggered, then go to callback
+										if(api2.response.length === deepRuns) {
+											c(modulplan);
+										}
 									}
 								});
 							}
-						} else { //Reading ModulInstanzList failed, return Modulplan
-							c(modulplan);
+						} else { //Reading ModulInstanzList failed, return Modulplan, but to error callback
+							e(modulplan);
 						}
 					});
 				} else { //Reading Modulplan failed, return null
-					c(null);
+					e(null);
 				}
 			});
 		};
@@ -162,8 +168,8 @@ var model = new function() {
 			this.id = 0;
 			this.fach = new model.templates.Fach();
 			this.modulInstanzID = 0;
-			this.semester = 0;
-			this.stunden = 0;
+			this.semester = ""; //number
+			this.stunden = ""; //number
 		};
 
 		this.Feiertag = function() {
@@ -203,7 +209,7 @@ var model = new function() {
 			this.id = 0;
 			this.modul = new model.templates.Modul();
 			this.modulplanID = 0;
-			this.credits = 0;
+			this.credits = ""; //number
 		};
 
 		this.Modulplan = function() {
