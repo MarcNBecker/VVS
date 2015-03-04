@@ -5,7 +5,7 @@
 		<!-- Main DIV -->
 		<paper-shadow z="3" class="shadow">
 		<div vertical?="{{smallScreen}}" horizontal?="{{!smallScreen}}" layout>
-			<!-- Kurs input fields -->
+			<!-- Kurs und Kurssprecher Input Fields -->
 			<div auto-vertical?="{{smallScreen}}" flex?="{{!smallScreen}}" two?="{{!smallScreen}}">
 				<!-- Input Fields Kurs -->
 				<div vertical layout class="vertical-input">
@@ -66,18 +66,19 @@
 					</div>
 				</div>
 			</div>
-			<div auto-vertical?="{{smallScreen}}" flex?="{{!smallScreen}}" two?="{{!smallScreen}}">
+			<!-- Blocklagen Input Fields -->
+			<div auto-vertical?="{{smallScreen}}" flex?="{{!smallScreen}}">
 				<!-- Input Fields -->
 				<div vertical layout class="vertical-input">
 					<span class="headline">Blocklagen</span>
 					<div horizontal start layout class="horizontal-input">
 						<polymer-date-picker id="datePicker1a" relatedTarget="{{$.von1a.input}}" relatedInput="von1a" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{$.von1a.input.value}}" opened="false"></polymer-date-picker>
-						<paper-input-decorator id="von1a" label="1. Blocklage von" on-click="{{toggle}}" relatedDatePicker="datePicker1a" floatingLabel flex>
-							<input is="core-input" value="{{blocklage1.startDatum}}">
+						<paper-input-decorator id="von1a" label="1. Blocklage von" on-click="{{toggle}}" relatedDatePicker="datePicker1a" floatingLabel error="Pflichtfeld" isInvalid="{{invalid.von1a}}" flex>
+							<input is="core-input" value="{{blocklage1.startDatum}}" required?="{{$.bis1b.input.value}}">
 						</paper-input-decorator>
 						<polymer-date-picker id="datePicker1b" relatedTarget="{{$.bis1b.input}}" relatedInput="bis1b" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{$.bis1b.input.value}}" opened="false"></polymer-date-picker>
-						<paper-input-decorator id="bis1b" label="1. Blocklage bis" on-click="{{toggle}}" relatedDatePicker="datePicker1b" floatingLabel flex>
-							<input is="core-input" value="{{blocklage1.endDatum}}">
+						<paper-input-decorator id="bis1b" label="1. Blocklage bis" on-click="{{toggle}}" relatedDatePicker="datePicker1b" floatingLabel error="Pflichtfeld" isInvalid="{{invalid.bis1b}}" flex>
+							<input is="core-input" value="{{blocklage1.endDatum}}" required?="{{$.von1a.input.value}}">
 						</paper-input-decorator>
 						<paper-input-decorator id="raum1" label="Raum" floatingLabel flex>
 							<input is="core-input" type="text" value={{blocklage1.raum}} maxlength="100" disabled?="{{disableToggle}}">
@@ -86,12 +87,12 @@
 					</div>
 					<div horizontal start layout class="horizontal-input">
 						<polymer-date-picker id="datePicker2a" relatedTarget="{{$.von2a.input}}" relatedInput="von2a" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{$.von2a.input.value}}" opened="false"></polymer-date-picker>
-						<paper-input-decorator id="von2a" label="2. Blocklage von" on-click="{{toggle}}" relatedDatePicker="datePicker2a" floatingLabel flex>
-							<input is="core-input" value="{{blocklage2.startDatum}}">
+						<paper-input-decorator id="von2a" label="2. Blocklage von" on-click="{{toggle}}" relatedDatePicker="datePicker2a" floatingLabel error="Pflichtfeld" isInvalid="{{invalid.von2a}}" flex>
+							<input is="core-input" value="{{blocklage2.startDatum}}" required?="{{$.bis2b.input.value}}">
 						</paper-input-decorator>
 						<polymer-date-picker id="datePicker2b" relatedTarget="{{$.bis2b.input}}" relatedInput="bis2b" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{$.bis2b.input.value}}" opened="false"></polymer-date-picker>
-						<paper-input-decorator id="bis2b" label="2. Blocklage bis" on-click="{{toggle}}" relatedDatePicker="datePicker2b" floatingLabel flex>
-							<input is="core-input" value="{{blocklage2.endDatum}}">
+						<paper-input-decorator id="bis2b" label="2. Blocklage bis" on-click="{{toggle}}" relatedDatePicker="datePicker2b" floatingLabel error="Pflichtfeld" isInvalid="{{invalid.bis2b}}" flex>
+							<input is="core-input" value="{{blocklage2.endDatum}}" required?="{{$.von2a.input.value}}">
 						</paper-input-decorator>
 						<paper-input-decorator id="raum2" label="Raum" floatingLabel flex>
 							<input is="core-input" type="text" value={{blocklage2.raum}} maxlength="100" disabled?="{{disableToggle}}">
@@ -100,12 +101,12 @@
 					</div>
 					<div horizontal start layout class="horizontal-input">
 						<polymer-date-picker id="datePicker3a" relatedTarget="{{$.von3a.input}}" relatedInput="von3a" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{$.von3a.input.value}}" opened="false"></polymer-date-picker>
-						<paper-input-decorator id="von3a" label="3. Blocklage von" on-click="{{toggle}}" relatedDatePicker="datePicker3a" floatingLabel flex>
-							<input is="core-input" value="{{blocklage3.startDatum}}">
+						<paper-input-decorator id="von3a" label="3. Blocklage von" on-click="{{toggle}}" relatedDatePicker="datePicker3a" floatingLabel error="Pflichtfeld" isInvalid="{{invalid.von3a}}" flex>
+							<input is="core-input" value="{{blocklage3.startDatum}}" required?="{{$.bis3b.input.value}}">
 						</paper-input-decorator>
 						<polymer-date-picker id="datePicker3b" relatedTarget="{{$.bis3b.input}}" relatedInput="bis3b" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{$.bis1b.input.value}}" opened="false"></polymer-date-picker>
-						<paper-input-decorator id="bis3b" label="3. Blocklage bis" on-click="{{toggle}}" relatedDatePicker="datePicker3b" floatingLabel flex>
-							<input is="core-input" value="{{blocklage3.endDatum}}">
+						<paper-input-decorator id="bis3b" label="3. Blocklage bis" on-click="{{toggle}}" relatedDatePicker="datePicker3b" floatingLabel error="Pflichtfeld" isInvalid="{{invalid.bis3b}}" flex>
+							<input is="core-input" value="{{blocklage3.endDatum}}" required?="{{$.von3a.input.value}}">
 						</paper-input-decorator>
 						<paper-input-decorator id="raum3" label="Raum" floatingLabel flex>
 							<input is="core-input" type="text" value={{blocklage3.raum}} maxlength="100" disabled?="{{disableToggle}}">
@@ -114,12 +115,12 @@
 					</div>
 					<div horizontal start layout class="horizontal-input">
 						<polymer-date-picker id="datePicker4a" relatedTarget="{{$.von4a.input}}" relatedInput="von4a" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{$.von4a.input.value}}" opened="false"></polymer-date-picker>
-						<paper-input-decorator id="von4a" label="4. Blocklage von" on-click="{{toggle}}" relatedDatePicker="datePicker4a" floatingLabel flex>
-							<input is="core-input" value="{{blocklage4.startDatum}}">
+						<paper-input-decorator id="von4a" label="4. Blocklage von" on-click="{{toggle}}" relatedDatePicker="datePicker4a" floatingLabel error="Pflichtfeld" isInvalid="{{invalid.von4a}}" flex>
+							<input is="core-input" value="{{blocklage4.startDatum}}" required?="{{$.bis4b.input.value}}">
 						</paper-input-decorator>
 						<polymer-date-picker id="datePicker4b" relatedTarget="{{$.bis4b.input}}" relatedInput="bis4b" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{$.bis4b.input.value}}" opened="false"></polymer-date-picker>
-						<paper-input-decorator id="bis4b" label="4. Blocklage bis" on-click="{{toggle}}" relatedDatePicker="datePicker4b" floatingLabel flex>
-							<input is="core-input" value="{{blocklage4.endDatum}}">
+						<paper-input-decorator id="bis4b" label="4. Blocklage bis" on-click="{{toggle}}" relatedDatePicker="datePicker4b" floatingLabel error="Pflichtfeld" isInvalid="{{invalid.bis4b}}" flex>
+							<input is="core-input" value="{{blocklage4.endDatum}}" required?="{{$.von4a.input.value}}">
 						</paper-input-decorator>
 						<paper-input-decorator id="raum4" label="Raum" floatingLabel flex>
 							<input is="core-input" type="text" value={{blocklage4.raum}} maxlength="100" disabled?="{{disableToggle}}">
@@ -128,12 +129,12 @@
 					</div>
 					<div horizontal start layout class="horizontal-input">
 						<polymer-date-picker id="datePicker5a" relatedTarget="{{$.von5a.input}}" relatedInput="von5a" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{$.von5a.input.value}}" opened="false"></polymer-date-picker>
-						<paper-input-decorator id="von5a" label="5. Blocklage von" on-click="{{toggle}}" relatedDatePicker="datePicker5a" floatingLabel flex>
-							<input is="core-input" value="{{blocklage5.startDatum}}">
+						<paper-input-decorator id="von5a" label="5. Blocklage von" on-click="{{toggle}}" relatedDatePicker="datePicker5a" floatingLabel error="Pflichtfeld" isInvalid="{{invalid.von5a}}" flex>
+							<input is="core-input" value="{{blocklage5.startDatum}}" required?="{{$.bis5b.input.value}}">
 						</paper-input-decorator>
 						<polymer-date-picker id="datePicker5b" relatedTarget="{{$.bis5b.input}}" relatedInput="bis5b" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{$.bis5b.input.value}}" opened="false"></polymer-date-picker>
-						<paper-input-decorator id="bis5b" label="5. Blocklage bis" on-click="{{toggle}}" relatedDatePicker="datePicker5b" floatingLabel flex>
-							<input is="core-input" value="{{blocklage5.endDatum}}">
+						<paper-input-decorator id="bis5b" label="5. Blocklage bis" on-click="{{toggle}}" relatedDatePicker="datePicker5b" floatingLabel error="Pflichtfeld" isInvalid="{{invalid.bis5b}}" flex>
+							<input is="core-input" value="{{blocklage5.endDatum}}" required?="{{$.von5a.input.value}}">
 						</paper-input-decorator>
 						<paper-input-decorator id="raum5" label="Raum" floatingLabel flex>
 							<input is="core-input" type="text" value={{blocklage5.raum}} maxlength="100" disabled?="{{disableToggle}}">
@@ -142,12 +143,12 @@
 					</div>
 					<div horizontal start layout class="horizontal-input">
 						<polymer-date-picker id="datePicker6a" relatedTarget="{{$.von6a.input}}" relatedInput="von6a" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{$.von6a.input.value}}" opened="false"></polymer-date-picker>
-						<paper-input-decorator id="von6a" label="6. Blocklage von" on-click="{{toggle}}" relatedDatePicker="datePicker6a" floatingLabel flex>
-							<input is="core-input" value="{{blocklage6.startDatum}}">
+						<paper-input-decorator id="von6a" label="6. Blocklage von" on-click="{{toggle}}" relatedDatePicker="datePicker6a" floatingLabel error="Pflichtfeld" isInvalid="{{invalid.von6a}}" flex>
+							<input is="core-input" value="{{blocklage6.startDatum}}" required?="{{$.bis6b.input.value}}">
 						</paper-input-decorator>
 						<polymer-date-picker id="datePicker6b" relatedTarget="{{$.bis6b.input}}" relatedInput="bis6b" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{$.bis6b.input.value}}" opened="false"></polymer-date-picker>
-						<paper-input-decorator id="bis6b" label="6. Blocklage bis" on-click="{{toggle}}" relatedDatePicker="datePicker6b" floatingLabel flex>
-							<input is="core-input" value="{{blocklage6.endDatum}}">
+						<paper-input-decorator id="bis6b" label="6. Blocklage bis" on-click="{{toggle}}" relatedDatePicker="datePicker6b" floatingLabel error="Pflichtfeld" isInvalid="{{invalid.bis6b}}" flex>
+							<input is="core-input" value="{{blocklage6.endDatum}}" required?="{{$.von6a.input.value}}">
 						</paper-input-decorator>
 						<paper-input-decorator id="raum6" label="Raum" floatingLabel flex>
 							<input is="core-input" type="text" value={{blocklage6.raum}} maxlength="100" disabled?="{{disableToggle}}">
@@ -172,6 +173,10 @@
 			</div>
 		</div>
 		</paper-shadow>
+		<paper-action-dialog id="delete_kurs_dialog" heading="{{kurs.kursname}} wirklich l&ouml;schen?">
+			<paper-button affirmative>Nein</paper-button>
+			<paper-button on-click="{{doDelete}}" affirmative autofocus>L&ouml;schen</paper-button>
+		</paper-action-dialog>
 	</template>
 	<script type="text/javascript" src="../../js/model.js"></script>
 	<script type="text/javascript">
@@ -243,7 +248,19 @@
     						//Enable buttons and force correct input label display
     						self.disableToggle = false;
     						self.invalid.kursname = true;
-    					}
+    						self.invalid.von1a = false;
+    						self.invalid.bis1b = false;
+    						self.invalid.von2a = false;
+    						self.invalid.bis2b = false;
+    						self.invalid.von3a = false;
+    						self.invalid.bis3b = false;    
+    						self.invalid.von4a = false;
+    						self.invalid.bis4b = false;    
+    						self.invalid.von5a = false;
+    						self.invalid.bis5b = false;    
+    						self.invalid.von6a = false;
+    						self.invalid.bis6b = false;    
+    						}
     					else
     					{
     						console.log(JSON.stringify(api));
@@ -290,7 +307,8 @@
     			//Go to edit mode
     			else
     			{
-					model.webService.getKurs(showKurs, function(api) {
+					this.creationMode = false;
+    				model.webService.getKurs(showKurs, function(api) {
 						if (!api.isError) {
 							self.kurs = api.response;
 							model.webService.getAllStudiengangsleiter(function(api) {
@@ -419,6 +437,215 @@
 					});
     			}
     		},
+    		//create a new Kurs
+    		create: function()
+    		{
+    			var self = this;
+    			self.$.von1a.inputAction();
+				self.$.bis1b.inputAction();
+				self.$.von2a.inputAction();
+				self.$.bis2b.inputAction();
+				self.$.von3a.inputAction();
+				self.$.bis3b.inputAction();  
+				self.$.von4a.inputAction();
+				self.$.bis4b.inputAction();  
+				self.$.von5a.inputAction();
+				self.$.bis5b.inputAction();   
+				self.$.von6a.inputAction();
+				self.$.bis6b.inputAction(); 
+    			if(!this.checkInputs()) {
+    				return;
+    			}
+    			//Disable everything
+    			self.disableToggle = true;
+    			//Create Dozent
+    			self.kurs.studiengangsleiterID = self.studiengangsleiter[self.selectedStudiengangsleiter].id;
+    			self.kurs.modulplanID = self.modulplaene[self.selectedModulplan].id;
+    			model.webService.createKurs(self.kurs, function(api) {
+	   				if (!api.isError)
+					{
+						self.kurs = api.response;
+						//Tell the outside world about the new ID
+						self.pageLoaded.stammdaten = false;
+						window.history.replaceState({}, '', '#!kurs-'+self.kurs.id);
+						if (self.$.von1a.input.value !== null && self.$.bis1b.input.value !== null)
+						{
+							self.blocklage1.kursID = self.kurs.id;
+							self.blocklage1.semester = 1;
+							self.blocklage1.startDatum = self.$.von1a.input.value;
+							self.blocklage1.endDatum = self.$.bis1b.input.value;
+							self.blocklagen.push(self.blocklage1);
+						}
+						if (self.$.von2a.input.value !== null && self.$.bis2b.input.value !== null)
+						{
+							self.blocklage2.kursID = self.kurs.id;
+							self.blocklage2.semester = 2;
+							self.blocklage2.startDatum = self.$.von2a.input.value;
+							self.blocklage2.endDatum = self.$.bis2b.input.value;
+							self.blocklagen.push(self.blocklage2);
+						}
+						if (self.$.von3a.input.value !== null && self.$.bis3b.input.value !== null)
+						{
+							self.blocklage3.kursID = self.kurs.id;
+							self.blocklage3.semester = 3;
+							self.blocklage3.startDatum = self.$.von3a.input.value;
+							self.blocklage3.endDatum = self.$.bis3b.input.value;
+							self.blocklagen.push(self.blocklage3);
+						}
+						if (self.$.von4a.input.value !== null && self.$.bis4b.input.value !== null)
+						{
+							self.blocklage4.kursID = self.kurs.id;
+							self.blocklage4.semester = 4;
+							self.blocklage4.startDatum = self.$.von4a.input.value;
+							self.blocklage4.endDatum = self.$.bis4b.input.value;
+							self.blocklagen.push(self.blocklage4);
+						}
+						if (self.$.von5a.input.value !== null && self.$.bis5b.input.value !== null)
+						{
+							self.blocklage5.kursID = self.kurs.id;
+							self.blocklage5.semester = 5;
+							self.blocklage5.startDatum = self.$.von5a.input.value;
+							self.blocklage5.endDatum = self.$.bis5b.input.value;
+							self.blocklagen.push(self.blocklage5);
+						}
+						if (self.$.von6a.input.value !== null && self.$.bis6b.input.value !== null)
+						{
+							self.blocklage6.kursID = self.kurs.id;
+							self.blocklage6.semester = 6;
+							self.blocklage6.startDatum = self.$.von6a.input.value;
+							self.blocklage6.endDatum = self.$.bis6b.input.value;
+							self.blocklagen.push(self.blocklage6);
+						}
+						var i;
+						var deepRuns = 0;
+						//Create connection between Kurs and Blocklagen
+						for (i = 0; i < self.blocklagen.length; i++)
+						{
+							console.log(self.blocklagen[i]);
+							model.webService.setKursBlocklage(self.blocklagen[i], function(api) {
+								if (!api.isError)
+								{
+									deepRuns++;
+									//Enable buttons and display new button bar after last webservice call
+									if(deepRuns === self.blocklagen.length) {
+										self.disableToggle = false;
+										self.creationMode = false;
+				    					self.toasts.success.show();
+									}
+								}
+								else
+								{
+									console.log(JSON.stringify(api));
+									self.toasts.error.show();
+								}
+							});
+						}
+						//Enable buttons and display new button bar after last webservice call
+						if (deepRuns === 0 && self.blocklagen.length === 0) {
+							self.disableToggle = false;
+							self.creationMode = false;
+	    					self.toasts.success.show();
+						}
+					}
+					else
+					{
+						console.log(JSON.stringify(api));
+						self.toasts.error.show();
+					}
+	    		});
+    			
+    		},
+    		update: function() {
+       			var self = this;
+    			self.$.von1a.inputAction();
+				self.$.bis1b.inputAction();
+				self.$.von2a.inputAction();
+				self.$.bis2b.inputAction();
+				self.$.von3a.inputAction();
+				self.$.bis3b.inputAction();  
+				self.$.von4a.inputAction();
+				self.$.bis4b.inputAction();  
+				self.$.von5a.inputAction();
+				self.$.bis5b.inputAction();   
+				self.$.von6a.inputAction();
+				self.$.bis6b.inputAction(); 
+    			if(!this.checkInputs()) {
+    				return;
+    			}
+    		},
+    		// Show Action Dialog for Deletion
+    		initDelete: function() {
+	    		this.$.delete_kurs_dialog.toggle();
+	    	},
+	    	//Delete a kurs
+			doDelete: function()
+			{
+				var self = this;
+				//Disable inputs
+				self.disableToggle = true;
+				//Delete the Kurs
+	    		model.webService.deleteKurs(self.kurs, function(api) {
+					if(!api.isError) {
+						//Update variables and switch display of button bar
+						self.kurs = new model.templates.Kurs();
+						//Tell the outside world the new ID
+						self.pageLoaded.stammdaten = false;
+						window.history.replaceState({}, '', '#!kurs');
+						self.modulplaene = [];
+		    			self.studiengangsleiter = [];
+		    			self.blocklagen = [];
+		    			self.blocklage1 = new model.templates.Blocklage();
+		    			self.blocklage2 = new model.templates.Blocklage();
+		    			self.blocklage3 = new model.templates.Blocklage();
+		    			self.blocklage4 = new model.templates.Blocklage();
+		    			self.blocklage5 = new model.templates.Blocklage();
+		    			self.blocklage6 = new model.templates.Blocklage();
+		    			self.disableToggle = false;
+		    			self.selectedModulplan = -1;
+		    			self.selectedStudiengangsleiter = -1;
+		    			self.creationMode = true;
+    					self.invalid.kursname = true;
+						self.invalid.von1a = false;
+						self.invalid.bis1b = false;
+						self.invalid.von2a = false;
+						self.invalid.bis2b = false;
+						self.invalid.von3a = false;
+						self.invalid.bis3b = false;    
+						self.invalid.von4a = false;
+						self.invalid.bis4b = false;    
+						self.invalid.von5a = false;
+						self.invalid.bis5b = false;    
+						self.invalid.von6a = false;
+						self.invalid.bis6b = false;   
+						self.job('update-labels-delete', function() {
+							self.$.kursname.inputAction();
+							self.$.sekretariatName.inputAction();
+							self.$.studentenAnzahl.inputAction();
+							self.$.kurssprecherName.inputAction();
+							self.$.kurssprecherVorname.inputAction();
+							self.$.kurssprecherTelefon.inputAction();
+							self.$.kurssprecherMail.inputAction();
+							self.$.kursmail.inputAction();	
+							self.$.raum1.inputAction();
+							self.$.raum2.inputAction();
+							self.$.raum3.inputAction();
+							self.$.raum4.inputAction();
+							self.$.raum5.inputAction();
+							self.$.raum6.inputAction();
+						}, 100);
+						self.toasts.success.show();
+					} else {
+						console.log(JSON.stringify(api));
+						self.toasts.error.show();
+					}
+	    		});
+			},
+    		//Navigate backwards and force a reload
+	    	cancel: function()
+	    	{
+	    		this.pageLoaded.kurs = false;
+	    		window.history.back();
+	    	},
 			toggle2: function(e, detail, sender) {
 				var input = sender.getAttribute("relatedInput");
 				if (this.shadowRoot.querySelector("#" + input).input.committedValue !== this.blocklage1.startDatum)
