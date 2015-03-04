@@ -14,8 +14,8 @@
 						<paper-input-decorator id="kursname" label="Kursname" floatingLabel flex>
 							<input is="core-input" type="text" value={{kurs.kursname}} maxlength="100" disabled?="{{disableToggle}}">
 						</paper-input-decorator>
-						<paper-input-decorator id="studiengangsleiterID" label="Studiengangsleiter" floatingLabel flex>
-							<input is="core-input" type="text" value={{kurs.studiengangsleiterID}} maxlength="100" disabled?="{{disableToggle}}">
+						<paper-input-decorator id="studiengangsleiter" label="Studiengangsleiter" floatingLabel flex>
+							<input is="core-input" type="text" value={{studiengangsleiter.name}} maxlength="100" disabled?="{{disableToggle}}">
 						</paper-input-decorator>
 						<paper-input-decorator id="sekretariatName" label="Sekretariat" floatingLabel flex>
 							<input is="core-input" type="text" value={{kurs.sekretariatName}} maxlength="100" disabled?="{{disableToggle}}">
@@ -28,13 +28,15 @@
 						<paper-input-decorator id="kursmail" label="Kurs E-Mail-Adresse" floatingLabel flex>
 							<input is="core-input" type="text" value={{kurs.kursmail}} maxlength="100" disabled?="{{disableToggle}}">
 						</paper-input-decorator>					
-						<paper-dropdown-menu label="modulplanID" disabled?="{{disableToggle}}" self-center flex>
+						<paper-dropdown-menu label="Modulplan" disabled?="{{disableToggle}}" self-center flex>
 							<paper-dropdown class="dropdown">
-								<core-menu class="menu" selected={{kurs.modulplanID}}>
-									<template  repeat="{{item in modulplanID}}">
-										<paper-item>{{modulplanID}}</paper-item>
-									</template>
-								</core-menu>
+								<core-menu class="menu">
+								<template repeat="{{item in modulplaene}}" selected="{{selectedModulplan}}">
+									<paper-item>
+										{{item.studiengang}}-{{item.vertiefungsrichtung}}
+									</paper-item>
+								</template>
+							</core-menu>
 							</paper-dropdown>
 						</paper-dropdown-menu>
 					</div>
@@ -94,6 +96,8 @@
 			blocklage5 : new model.templates.Blocklage(),
 			blocklage6 : new model.templates.Blocklage(),
 			kurs: new model.templates.Kurs(),
+			studiengangsleiter: new model.templates.Studiengangsleiter(),
+			selectedModulplan : -1,
 			formateDate: function() {
 			    var date = new Date();
 				var year = date.getFullYear();
@@ -102,6 +106,9 @@
 			    var day = '0' + date.getDate();
 			    day = day.slice(-2, (day.length - 2) + 3);
 			    return year + '-' + month + '-' + day;
+			},
+			publish: {
+				toasts:{}
 			},
 			toggle2: function() {
 				if (this.$.von1a.input.committedValue !== this.blocklage1.startDatum)
@@ -135,26 +142,65 @@
 			},
     		ready: function() {
     			var self = this;
+    			modulplaene = [];
+    			blocklagen = [];
+    			blocklage1 = new model.templates.Blocklage();
+    			blocklage2 = new model.templates.Blocklage();
+    			blocklage3 = new model.templates.Blocklage();
+    			blocklage4 = new model.templates.Blocklage();
+    			blocklage5 = new model.templates.Blocklage();
+    			blocklage6 = new model.templates.Blocklage();
+    			kurs = new model.templates.Kurs();
+    			studiengangsleiter = new model.templates.Studiengangsleiter();
+    			selectedModulplan = -1;
     			var zeigeKurs = new model.templates.Kurs();
     			zeigeKurs.id = 1;
-    			publish: {
-    				toasts:{}
-    			}
 				model.webService.getKurs(zeigeKurs, function(api) {
-					self.kurs = api.response;
-					self.$.kursname.focusAction();
-					self.$.sekretariatName.focusAction();
-					self.$.studiengangsleiterID.focusAction();
-					self.$.studentenAnzahl.focusAction();
-					self.$.kurssprecherName.focusAction();
-					self.$.kurssprecherVorname.focusAction();
-					self.$.kurssprecherTelefon.focusAction();
-					self.$.kurssprecherMail.focusAction();
-					self.$.kursmail.focusAction();					
-					
-				});
-				model.webService.getAllModulplaene(function(api){
-					self.modulplaene = api.response;
+					if (!api.isError) {
+						self.kurs = api.response;
+						self.studiengangsleiter.id = self.kurs.studiengangsleiterID;
+						model.webService.getStudiengangsleiter(self.studiengangsleiter, function(api) {
+							if (!api.isError) {
+								self.studiengangsleiter = api.response;						
+							}
+							else{
+								console.log(JSON.stringify(api));
+								self.toasts.error.show();
+							}
+						});
+						model.webService.getAllModulplaene(function(api){
+							if (!api.isError) {	
+								self.modulplaene = api.response;
+								var i;
+								for(i = 0; i<self.modulplaene.length; i++) {
+									if (self.modulplaene[i].id === self.kurs.modulplanID) {
+										self.selectedModulplan = i;
+										break;
+									}
+								}
+							}
+							else{
+								console.log(JSON.stringify(api));
+								self.toasts.error.show();
+							}
+						});
+						alert(self.selectedModulplan);
+						self.job('update-labels-ready', function() {
+							self.$.kursname.inputAction();
+							self.$.sekretariatName.inputAction();
+							self.$.studiengangsleiter.inputAction();
+							self.$.studentenAnzahl.inputAction();
+							self.$.kurssprecherName.inputAction();
+							self.$.kurssprecherVorname.inputAction();
+							self.$.kurssprecherTelefon.inputAction();
+							self.$.kurssprecherMail.inputAction();
+							self.$.kursmail.inputAction();			
+						},100);
+					}					
+					else{
+						console.log(JSON.stringify(api));
+						self.toasts.error.show();
+					}					
 				});
 				model.webService.getAllKursBlocklagen(zeigeKurs, function(api) {
 					if(!api.isError) {
