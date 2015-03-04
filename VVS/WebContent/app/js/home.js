@@ -27,7 +27,8 @@ template.pageLoaded = {
 	stammdaten: false,
 	dozent: false,
 	modulplanAnlegen: false,
-	modulplanPflegen: false
+	modulplanPflegen: false,
+	kurs: false
 };
 
 //Page descriptors including the HTML code to load the page
@@ -35,14 +36,15 @@ template.pageDescriptor = {
 	stammdaten: {name: 'Stammdaten', hash: 'stammdaten', html: '<vvs-uebersicht pageLoaded="{{pageLoaded}}" pageDescriptor="{{pageDescriptor}}" toasts="{{toasts}}"></vvs-uebersicht>'},
 	dozent: {name: 'Dozent pflegen', hash: 'dozent', html: '<vvs-dozent pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-dozent>'},
 	modulplanAnlegen: {name: 'Modulplan anlegen', hash: 'modulplanAnlegen', html: '<vvs-modulplan-anlegen pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-modulplan-anlegen>'},
-	modulplanPflegen: {name: 'Modulplan pflegen', hash: 'modulplanPflegen', html: '<vvs-modulplan-pflegen pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-modulplan-pflegen>'}
+	modulplanPflegen: {name: 'Modulplan pflegen', hash: 'modulplanPflegen', html: '<vvs-modulplan-pflegen pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-modulplan-pflegen>'},
+	kurs: {name: 'Kurs pflegen', hash: 'kurs', html: '<vvs-kurs pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-kurs>'}
 };
 
 //Pages to display in the navigation drawer
-template.drawerPages = [template.pageDescriptor.stammdaten];
+template.drawerPages = [template.pageDescriptor.stammdaten, template.pageDescriptor.kurs];
 
 //Pages that can be displayed in the home main div
-template.homePages = [template.pageDescriptor.stammdaten, template.pageDescriptor.dozent, template.pageDescriptor.modulplanAnlegen, template.pageDescriptor.modulplanPflegen];
+template.homePages = [template.pageDescriptor.stammdaten, template.pageDescriptor.dozent, template.pageDescriptor.kurs, template.pageDescriptor.modulplanAnlegen, template.pageDescriptor.modulplanPflegen];
 
 //Is called whenever the url hash is changed and navigates the app
 function handleHashChange(refresh) {
