@@ -1,0 +1,161 @@
+<polymer-element name="vvs-kurs">
+	<template>
+ 		<link rel="stylesheet" href="../../css/elements.css" shim-shadowdom>
+		<core-media-query query="max-width: 1400px" queryMatches="{{smallScreen}}"></core-media-query>
+		<!-- Main DIV -->
+		<paper-shadow z="3" class="shadow">
+		<div vertical?="{{smallScreen}}" horizontal?="{{!smallScreen}}" layout>
+			<!-- Kurs input fields -->
+			<div auto-vertical?="{{smallScreen}}" flex?="{{!smallScreen}}" two?="{{!smallScreen}}">
+				<!-- Input Fields -->
+				<div vertical layout class="vertical-input">
+					<span class="headline">Kurs</span>
+					<div horizontal start layout class="horizontal-input">
+						<paper-input-decorator id="kursname" label="Kursname" floatingLabel flex>
+							<input is="core-input" type="text" value={{kurs.kursname}} maxlength="100" disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+						<paper-input-decorator id="studiengangsleiterID" label="Studiengangsleiter" floatingLabel flex>
+							<input is="core-input" type="text" value={{kurs.studiengangsleiterID}} maxlength="100" disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+						<paper-input-decorator id="sekretariatName" label="Sekretariat" floatingLabel flex>
+							<input is="core-input" type="text" value={{kurs.sekretariatName}} maxlength="100" disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+					</div>
+					<div horizontal start layout class="horizontal-input">
+						<paper-input-decorator id="studentenAnzahl" label="Anzahl Studenten" floatingLabel flex>
+							<input is="core-input" type="text" value={{kurs.studentenAnzahl}} maxlength="100" disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+						<paper-input-decorator id="kursmail" label="Kurs E-Mail-Adresse" floatingLabel flex>
+							<input is="core-input" type="text" value={{kurs.kursmail}} maxlength="100" disabled?="{{disableToggle}}">
+						</paper-input-decorator>					
+						<paper-dropdown-menu label="modulplanID" disabled?="{{disableToggle}}" self-center flex>
+							<paper-dropdown class="dropdown">
+								<core-menu class="menu" selected={{kurs.modulplanID}}>
+									<template  repeat="{{item in modulplanID}}">
+										<paper-item>{{modulplanID}}</paper-item>
+									</template>
+								</core-menu>
+							</paper-dropdown>
+						</paper-dropdown-menu>
+					</div>
+			 	</div>
+		 	</div>
+			<div auto-vertical?="{{smallScreen}}" flex?="{{!smallScreen}}" two?="{{!smallScreen}}">
+				<!-- Input Fields -->
+				<div vertical layout class="vertical-input">
+					<span class="headline">Kurssprecher</span>
+					<div horizontal start layout class="horizontal-input">
+						<paper-input-decorator id="kurssprecherVorname" label="Vorname" floatingLabel flex>
+							<input is="core-input" type="text" value={{kurs.kurssprecherVorname}} maxlength="100" disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+						<paper-input-decorator id="kurssprecherName" label="Nachname" floatingLabel flex>
+							<input is="core-input" type="text" value={{kurs.kurssprecherName}} maxlength="100" disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+						<paper-input-decorator id="kurssprecherMail" label="E-Mail-Adresse" floatingLabel flex>
+							<input is="core-input" type="text" value={{kurs.sekretariatName}} maxlength="100" disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+						<paper-input-decorator id="kurssprecherTelefon" label="Telefonnummer" floatingLabel flex>
+							<input is="core-input" type="text" value={{kurs.kurssprecherTelefon}} maxlength="100" disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+					</div>
+				</div>
+			</div>
+			
+			
+			
+			<div auto-vertical?="{{smallScreen}}" flex?="{{!smallScreen}}" two?="{{!smallScreen}}">
+				<!-- Input Fields -->
+				<div vertical layout class="vertical-input">
+					<span class="headline">Blocklagen</span>
+					<div horizontal start layout class="horizontal-input">
+						<polymer-date-picker id="datePicker1a" relatedTarget="{{$.von1a.input}}" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{dozent.angelegt}}" opened="false"></polymer-date-picker>
+						<paper-input-decorator id="von1a" label="1. Blocklage von" on-click="{{toggle}}" floatingLabel flex>
+						<input is="core-input" value="{{this.blocklage1.startDatum}}" readonly>
+						</paper-input-decorator>
+					</div>
+				</div>
+			</div>
+		</div>
+		</paper-shadow>
+	</template>
+	<script type="text/javascript" src="../../js/model.js"></script>
+	<script type="text/javascript">
+		Polymer('vvs-kurs', {
+			modulplaene: [],
+			blocklagen: [],
+			blocklage1 : new model.templates.Blocklage(),
+			blocklage2 : new model.templates.Blocklage(),
+			blocklage3 : new model.templates.Blocklage(),
+			blocklage4 : new model.templates.Blocklage(),
+			blocklage5 : new model.templates.Blocklage(),
+			blocklage6 : new model.templates.Blocklage(),
+			kurs: new model.templates.Kurs(),
+			toggle2: function() {
+				if (this.$.von1a.input.committedValue !== this.blocklage1.startDatum)
+				{
+					this.$.datePicker1a.toggle();
+					this.job("von1a-commit", function() {
+					this.$.von1a.input.commit();
+					},100);
+				}
+			},
+			toggle: function() {
+				this.$.datePicker1a.toggle();
+			},
+    		ready: function() {
+    			var self = this;
+    			var zeigeKurs = new model.templates.Kurs();
+    			zeigeKurs.id = 1;
+    			publish: {
+    				toasts:{}
+    			}
+				model.webService.getKurs(zeigeKurs, function(api) {
+					self.kurs = api.response;
+					self.$.kursname.focusAction();
+					self.$.sekretariatName.focusAction();
+					self.$.studiengangsleiterID.focusAction();
+					self.$.studentenAnzahl.focusAction();
+					self.$.kurssprecherName.focusAction();
+					self.$.kurssprecherVorname.focusAction();
+					self.$.kurssprecherTelefon.focusAction();
+					self.$.kurssprecherMail.focusAction();
+					self.$.kursmail.focusAction();					
+					
+				});
+				model.webService.getAllModulplaene(function(api){
+					self.modulplaene = api.response;
+				});
+				model.webService.getAllKursBlocklagen(zeigeKurs, function(api) {
+					if(!api.isError) {
+						self.blocklagen = api.response;
+						var i;
+						for(i = 0; i < self.blocklagen.length; i++) {
+							switch(self.blocklagen[i].semester) {
+							case 1:
+								self.blocklage1 = self.blocklagen[i];
+								break;
+							case 2:
+								break;
+							case 3:
+								break;
+							case 4:
+								break;
+							case 5:
+								break;
+							case 6:
+								break;
+							default:
+								break;
+							}
+						}
+					self.$.von1a.input.commit();
+					}
+					else{
+						console.log(JSON.stringify(api));
+						self.toasts.error.show();
+					}
+				});
+    		}
+ 		});
+	 </script>
+</polymer-element>
