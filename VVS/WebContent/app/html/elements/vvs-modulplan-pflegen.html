@@ -1,483 +1,410 @@
-<polymer-element id="pflegenModulplan" name="vvs-modulplan-pflegen">
+<polymer-element name="vvs-modulplan-pflegen">
 	<template>
 		<link rel="stylesheet" type="text/css" href="../../css/elements.css">
-		<h2>Modulplan Cons - Consulting</h2>
-		<div id="content">
-			<div id="table" style="float: left; width: 70%;">
-				<div class="divModul">
-					<h4 class="h4Modul">Modul</h4>
-				</div>
-				<div class="divModul">
-					<h4 class="h4Modul">Semester</h4>
-				</div>
-				<div class="divModul">
-					<h4 class="h4Modul">Fach</h4>
-				</div>
-				<div class="divModul">
-					<h4 class="h4Modul">Stunden</h4>
-				</div>
-				<div class="divModul" style="border-right-style: solid;">
-					<h4 class="h4Modul"></h4>
-				</div>
-				<div style="clear:both;"></div>
-				<core-list id="corelist" data="{{mydata}}" class="mylist" style="height: 50px;">
-					<template>
-						<div id={{model.id}} layout horizontal>
-							<div class="divModul2" style="width:13%">
-								<p class="pModul">{{model.modulName}}</p>
+		<paper-shadow z="3" class="shadow">
+			<div vertical layout>
+				<span horizontal layout class="headline vertical-input">{{modulplan.studiengang}} - {{modulplan.vertiefungsrichtung}}</span>
+				<div horizontal layout class="horizontal-input vertical-input">
+					<div vertical layout flex two>
+						<paper-shadow z="2" class="inner-shadow">
+							<div horizontal layout>
+								<span horizontal layout center-center class="small-headline" flex>Modul</span>
+								<span horizontal layout center-center class="small-headline" flex>Semester</span>
+								<span horizontal layout center-center class="small-headline" flex>Fach</span>
+								<span horizontal layout center-center class="small-headline" flex>Stunden</span>
+								<paper-icon-button class="hide"></paper-icon-button>
+								<paper-icon-button class="hide"></paper-icon-button>
 							</div>
-							<div class="divModul2" style="width: 12%;">
-								<p class="pModul2">{{model.semester}}</p>
-							</div>
-							<div class="divModul2" style="width: 45%;">
-								<p class="pModul">{{model.fachName}}</p>
-							</div>
-							<div class="divModul2" style="width: 10%;">
-								<p class="pModul2">{{model.stunden}}</p>
-							</div>
-							<div class="divModul2" style="border-right-style: solid; width: 10%; text-align: center;">
-								<core-icon id={{model.id3}} on-click={{aendern}} class="coreiconModul" icon="create"></core-icon>
-								<core-icon id={{model.id2}} on-click={{loeschen}} class="coreiconModul" icon="delete"></core-icon>
-							</div>
+							<template repeat="{{modulInstanz in modulplan.modulInstanzList}}">
+								<template repeat="{{fachInstanz in modulInstanz.fachInstanzList}}">
+									<paper-shadow z="1" class="{{(inputModulInstanz.id === modulInstanz.id && (inputFachInstanz.id === fachInstanz.id || (selectedFach < 0 && (invalid.fname && invalid.fkurzbeschreibung && invalid.semester && invalid.stunden)))) ? 'inner-inner-shadow highlight' : 'inner-inner-shadow'}}">
+										<div horizontal layout center>
+											<span horizontal layout center-center flex>{{modulInstanz.modul.name}}</span>
+											<span horizontal layout center-center flex>{{fachInstanz.semester}}</span>
+											<span horizontal layout center-center flex>{{fachInstanz.fach.name}}</span>
+											<span horizontal layout center-center flex>{{fachInstanz.stunden}}</span>
+											<paper-icon-button on-click="{{edit}}" icon="create" self-center></paper-icon-button>
+											<paper-icon-button on-click="{{doDelete}}" icon="delete" self-center></paper-icon-button>
+										</div>
+									</paper-shadow>
+								</template>
+							</template>
+						</paper-shadow>
+						<div horizontal layout center class="horizontal-button-bar">
+							<paper-button on-click={{save}} raised disabled?="{{disableToggle}}">Speichern</paper-button>
+							<paper-button on-click={{initDeleteModulplan}} raised disabled?="{{disableToggle}}">L&ouml;schen</paper-button>
+							<paper-button on-click={{cancel}} raised disabled?="{{disableToggle}}">Abbrechen</paper-button>				
+							<paper-spinner active?={{disableToggle}} self-center></paper-spinner>
 						</div>
-					</template>
-				</core-list>
-				<div id="btn1" style="text-align: center;">
-					<paper-button on-click={{btnDelete}} raised>speichern</paper-button>
-					<paper-button raised>abbrechen</paper-button>
+					</div>
+					<div vertical layout flex>			
+						<span class="small-headline">Neues Fach anlegen</span>
+						<div horizontal layout center>
+							<paper-dropdown-menu label="Neues Modul anlegen oder eines ausw&auml;hlen" disabled?="{{disableToggle || selectedFach >= 0}}" on-core-select="{{setModulIsInvalid}}" flex>
+								<paper-dropdown class="dropdown">
+									<core-menu class="menu" selected="{{selectedModul}}">
+										<template  repeat="{{item in module}}">
+											<paper-item>{{item.modul.name}}</paper-item>
+										</template>
+									</core-menu>
+								</paper-dropdown>
+							</paper-dropdown-menu>
+							<paper-icon-button icon="clear" on-click="{{resetModul}}" disabled?="{{disableToggle || selectedFach >= 0}}" hidden?="{{!(selectedModul >= 0)}}" self-center></paper-icon-button>
+							<paper-icon-button icon="info" on-click="{{switchModulInfo}}" disabled?="{{disableToggle}}" hidden?="{{!(selectedModul >= 0) || toggleModulInfo}}" self-center></paper-icon-button>
+							<paper-icon-button icon="expand-less" on-click="{{switchModulInfo}}" disabled?="{{disableToggle}}" hidden?="{{!(selectedModul >= 0) || !toggleModulInfo}}" self-center></paper-icon-button>
+						</div>
+						<core-collapse opened?="{{!(selectedModul >= 0) || toggleModulInfo}}">
+							<paper-input-decorator id="mname" label="Modulname" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.mname}}">
+								<input is="core-input" type="text" value="{{inputModulInstanz.modul.name}}" maxlength="100" disabled?="{{disableToggle || selectedModul >= 0}}" required>
+							</paper-input-decorator>
+							<paper-input-decorator id="mkurzbeschreibung" label="Kurzbeschreibung" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.mkurzbeschreibung}}">
+								<input is="core-input" type="text" value="{{inputModulInstanz.modul.kurzbeschreibung}}" maxlength="100" disabled?="{{disableToggle || selectedModul >= 0}}" required>
+							</paper-input-decorator>
+						</core-collapse>
+						<paper-input-decorator id="credits" label="Credits" error="Pflichtfeld: Keine g&uuml;ltige Creditanzahl" floatingLabel autoValidate isInvalid="{{invalid.credits}}">
+							<input is="core-input" type="text" pattern="[0-9]+" value="{{inputModulInstanz.credits}}" disabled?="{{disableToggle}}" required>
+						</paper-input-decorator>
+						<div horizontal layout center>
+							<paper-dropdown-menu label="Neues Fach anlegen oder eines ausw&auml;hlen" disabled?="{{disableToggle || (selectedModul < 0 && (invalid.mname || invalid.mkurzbeschreibung || invalid.credits))}}" on-core-select="{{setFachIsInvalid}}" flex>
+								<paper-dropdown class="dropdown">
+									<core-menu class="menu" selected="{{selectedFach}}">
+										<template  repeat="{{item in faecher}}">
+											<paper-item>{{item.fach.name}}</paper-item>
+										</template>
+									</core-menu>
+								</paper-dropdown>
+							</paper-dropdown-menu>
+							<paper-icon-button icon="clear" on-click="{{resetFach}}" disabled?="{{disableToggle}}" hidden?="{{!(selectedFach >= 0)}}" self-center></paper-icon-button>
+							<paper-icon-button icon="info" on-click="{{switchFachInfo}}" disabled?="{{disableToggle}}" hidden?="{{!(selectedFach >= 0) || toggleFachInfo}}" self-center></paper-icon-button>
+							<paper-icon-button icon="expand-less" on-click="{{switchFachInfo}}" disabled?="{{disableToggle}}" hidden?="{{!(selectedFach >= 0) || !toggleFachInfo}}" self-center></paper-icon-button>
+						</div>
+						<core-collapse opened?="{{!(selectedFach >= 0) || toggleFachInfo}}">
+							<paper-input-decorator id="fname" label="Fachname" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.fname}}">
+								<input is="core-input" type="text" value="{{inputFachInstanz.fach.name}}" maxlength="100" disabled?="{{disableToggle || selectedFach >= 0}}" required>
+							</paper-input-decorator>
+							<paper-input-decorator id="fkurzbeschreibung" label="Kurzbeschreibung" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.fkurzbeschreibung}}">
+								<input is="core-input" type="text" value="{{inputFachInstanz.fach.kurzbeschreibung}}" maxlength="100" disabled?="{{disableToggle || selectedFach >= 0}}" required>
+							</paper-input-decorator>
+						</core-collapse>
+						<paper-input-decorator id="stunden" label="Stunden" error="Pflichtfeld: Keine g&uuml;ltige Stundenzahl" floatingLabel autoValidate isInvalid="{{invalid.stunden}}">
+							<input is="core-input" type="text" pattern="[0-9]+" value="{{inputFachInstanz.stunden}}" disabled?="{{disableToggle}}" required>
+						</paper-input-decorator>
+						<paper-input-decorator id="semester" label="Semester" error="Pflichtfeld: Keine g&uuml;ltiges Semester" floatingLabel autoValidate isInvalid="{{invalid.semester}}">
+							<input is="core-input" type="text" pattern="[0-9]+" value="{{inputFachInstanz.semester}}" disabled?="{{disableToggle}}" required>
+						</paper-input-decorator>
+						<div horizontal layout>
+							<paper-button on-click={{add}} raised disabled?="{{disableToggle}}" flex>&Uuml;bernehmen</paper-button>
+							<paper-button on-click={{reject}} raised disabled?="{{disableToggle}}" flex>Verwerfen</paper-button>
+						</div>
+					</div>
 				</div>
 			</div>
-			<div id="text" style="float: right; width: 28%;">
-				<p><b>Neues Fach anlegen</b></p>
-				<paper-dropdown-menu  id="menu1Label" style="width: 100%;" label="Modul">
-					<paper-dropdown id="pdrop1"  class="dropdown">
-						<core-menu selected="{{selectionOne}}" id="menu" class="menu" >
-							<template  repeat="{{item in alleModule}}">
-								<paper-item >{{item.name}}</paper-item>
-							</template>
-						</core-menu>
-					</paper-dropdown>
-				</paper-dropdown-menu>
-				<div id="einblendenModul" style="display: none; padding-left: 20px;">
-					<paper-input-decorator id="modul" label="Modul" labelVisible floatingLabel>
-						<input id="modulNameEingabe" is="core-input" value={{eingabeModulName}} on-keyup={{checkForButton}}>
-					</paper-input-decorator>
-					<paper-input-decorator id="kurzbeschreibung" label="Kurzbeschreibung" labelVisible floatingLabel>
-						<input id="modulBeschreibungEingabe" is="core-input" value={{eingabeModulBeschreibung}} on-keyup={{checkForButton}}>
-					</paper-input-decorator>
-					<paper-input-decorator id="ects" label="ECTS-Punkte" labelVisible floatingLabel>
-						<input id="modulEctsEingabe" is="core-input" value={{eingabeModulEcts}} on-keyup={{checkForButton}}>
-					</paper-input-decorator>
-				</div>
-				<paper-dropdown-menu id="menu2Label" style="width: 100%;" label="Fach">
-					<paper-dropdown id="pdrop2" class="dropdown">
-						<core-menu id="menu2" selected="{{selectionTwo}}" class="menuTwo" >
-							<template repeat="{{item in alleFaecher}}">
-								<paper-item on-change={{blendeTwo}}>{{item.name}}</paper-item>
-							</template>
-						</core-menu>
-					</paper-dropdown>
-				</paper-dropdown-menu>
-				<div id="einblendenFach" style="display: none; padding-left: 20px;">
-					<paper-input-decorator id="fach" label="Fach" labelVisible floatingLabel>
-						<input id="fachNameEingabe" is="core-input" value={{eingabeFachName}} on-keyup={{checkForButton}}>
-					</paper-input-decorator>
-					<paper-input-decorator id="kurz" label="Kurzbezeichnung" labelVisible floatingLabel>
-						<input id="fachBeschreibungEingabe" is="core-input" value={{eingabeFachBeschreibung}} on-keyup={{checkForButton}}>
-					</paper-input-decorator>
-				</div>
-				<div id="stundenUndSemester">
-					<paper-input-decorator id="stunden" label="Stunden" labelVisible floatingLabel>
-						<input id="stundenEingabe" is="core-input" value={{eingabeStunden}} on-keyup={{checkForButton}}>
-					</paper-input-decorator>
-					<paper-input-decorator id="semester" label="Semester" labelVisible floatingLabel>
-						<input id="semesterEingabe" is="core-input" value={{eingabeSemester}} on-keyup={{checkForButton}}>
-					</paper-input-decorator>
-				</div>
-				<div id="btn2" style="text-align: center;">
-					<paper-button raised on-click={{uebernehmen}} disabled="{{uebernehmenButtonZustand}}">&uuml;bernehmen</paper-button>
-				</div>
-			</div>
-			<div style="clear: both;"></div>
-		</div>
+		</paper-shadow>
+		<paper-action-dialog id="delete_modulplan_dialog" heading="{{modulplan.studiengang}} - {{modulplan.vertiefungsrichtung}} wirklich l&ouml;schen?">
+			<paper-button affirmative>Nein</paper-button>
+			<paper-button on-click="{{deleteModulplan}}" affirmative autofocus>L&ouml;schen</paper-button>
+		</paper-action-dialog>
 	</template>
 	<script>
-		Polymer("vvs-modulplan-pflegen",{
-			mydata: [],
-			alleModule: [],
-			alleFaecher: [],
-			selectionOne: null,
-			selectionTwo: null,
-			uebernehmenButtonZustand : true,
-			eingabeSemester: null,
-			eingabeStunden: null,
-			eingabeModulName: null,
-			eingabeModulEcts: null,
-			eingabeFachName: null,
-			eingabeFachBeschreibung: null,
-			boolSelectionOneNeu: false,
-			boolSelectionTwoNeu: false,
-		
-			ready: function (){
-				var modulplan = new model.templates.Modulplan();
-				modulplan.id = 1;
-				model.helper.getModulplanComplete(modulplan, function (api){
-					alert(JSON.stringify(api));
+	Polymer("vvs-modulplan-pflegen",{
+		modulplan: new model.helper.ModulplanComplete(),
+		module: [],
+		faecher: [],
+		selectedModul: -1,
+		selectedFach: -1,
+		inputModulInstanz: new model.templates.ModulInstanz(),
+		inputFachInstanz: new model.templates.FachInstanz(),
+		disableToggle: true,
+		toggleModulInfo: false,
+		toggleFachInfo: false,
+		invalid: {},
+		//Publish those attributes to home
+		publish: {
+			pageParameter: {},
+			pageLoaded: {},
+			toasts: {}
+		},
+		ready: function() {
+			var self = this;
+			//init
+			self.modulplan = new model.helper.ModulplanComplete();
+			self.module = [];
+			self.faecher = [];
+			self.selectedModul = -1;
+			self.selectedFach = -1;
+			self.inputModulInstanz = new model.templates.ModulInstanz();
+			self.inputFachInstanz = new model.templates.FachInstanz();
+			self.disableToggle = true;
+			self.toggleModulInfo = false;
+			self.toggleFachInfo = false;
+			self.invalid = {};
+			//navigate to modulplanAnlegen
+			if(self.pageParameter.modulplanPflegen.id <= 0) {
+				self.pageLoaded.modulplanAnlegen = false;
+				self.pageLoaded.modulplanPflegen = false;
+				window.history.replaceState({redirect: true}, '', '#!modulplanAnlegen-');
+				location.href = "#!modulplanAnlegen";
+				return;
+			}
+			var showModulplan = new model.templates.Modulplan();
+			showModulplan.id = self.pageParameter.modulplanPflegen.id;
+			var deepRuns = 0;
+			model.helper.getModulplanComplete(showModulplan, function(api) {
+				self.modulplan = api;
+				model.webService.getAllModule(function(api) {
+					if(!api.isError) {
+						deepRuns++;
+						//Built an array with ModulInstanzen to use with the dropdown
+						//Every modul we get from the webservice needs to be mapped to a ModulInstanz of the Modulplan or a "new" ModulInstanz
+						var found = false;
+						var i;
+						for(i=0; i<api.response.length; i++) {
+							var ii;
+							for(ii=0; ii<self.modulplan.modulInstanzList.length; ii++) {
+								if(api.response[i].id === self.modulplan.modulInstanzList[ii].modul.id) {
+									self.module.push(self.modulplan.modulInstanzList[ii]);
+									found = true;
+									break;
+								}
+							}
+							if(!found) {
+								var modulInstanz = new model.templates.ModulInstanz();
+								modulInstanz.modul = api.response[i];
+								self.module.push(modulInstanz);	
+							}
+							found = false;
+						}
+						if(deepRuns === 2) {
+							self.disableToggle = false;	
+							self.invalid.mname = true;
+							self.invalid.mkurzbeschreibung = true;
+							self.invalid.credits = true;
+							self.invalid.fname = true;
+							self.invalid.fkurzbeschreibung = true;
+							self.invalid.semester = true;
+							self.invalid.stunden = true;
+						}
+					} else {
+						console.log(JSON.stringify(api));
+						self.toasts.error.show();
+					}
 				});
-				var that = this;
-				this.init();
-				var dropdown1 = this.$.pdrop1;
-				dropdown1.addEventListener('core-select', function(e){
-					if (e.detail.isSelected){
-						that.blendeOne(e);
+				model.webService.getAllFaecher(function(api) {
+					if(!api.isError) {
+						deepRuns++;
+						//For every Fach check if there is a FachInstanz in one of the ModulInstanzen of the Modulplan
+						//Built an every with FachInstanzen for the dropdown
+						//self.faecher = api.response;
+						var found = false;
+						var i;
+						for(i=0; i<api.response.length; i++) {
+							var ii;
+							for(ii=0; ii<self.modulplan.modulInstanzList.length; ii++) {
+								var iii;
+								for(iii=0; iii<self.modulplan.modulInstanzList[ii].fachInstanzList.length; iii++) {
+									if(self.modulplan.modulInstanzList[ii].fachInstanzList[iii].fach.id === api.response[i].id) {
+										self.faecher.push(self.modulplan.modulInstanzList[ii].fachInstanzList[iii]);
+										found = true;
+										break;
+									}
+								}
+								//We already found a FachInstanz for the Fach -> don't look into the other ModulInstanzen
+								//There should always only at max ONE instance of every Fach in a Modulplan
+								if(found) {
+									break;
+								}
+							}
+							//Fach is not yet in Modulplan
+							if(!found) {
+								var fachInstanz = new model.templates.FachInstanz();
+								fachInstanz.fach = api.response[i];
+								self.faecher.push(fachInstanz);
+							}
+							found = false;
+						}
+						if(deepRuns === 2) {
+							self.disableToggle = false;
+							self.invalid.mname = true;
+							self.invalid.mkurzbeschreibung = true;
+							self.invalid.credits = true;
+							self.invalid.fname = true;
+							self.invalid.fkurzbeschreibung = true;
+							self.invalid.semester = true;
+							self.invalid.stunden = true;
+						}
+					} else {
+						console.log(JSON.stringify(api));
+						self.toasts.error.show();
 					}
 				});
-				var dropdown2 = this.$.pdrop2;
-				dropdown2.addEventListener('core-select', function(e) {
-					if (e.detail.isSelected){
-						that.blendeTwo(e);
-					}
-				});
-			},	
-			publish: {
-				count: 0,
-				alleFaecher: [],
-			},	
-			init: function init(){
-			//In dieser Methode muss die Selektion auf die Datenbank stattfinden
-			//und die Werte  für Module und Fächer in die Arrays übertragen werden
-			//WICHTIG
-			//WICHTIG
-			//WICHTIG
-			//Die Einträge mit der id neu müssen in beiden Listen erhalten bleiben!
-			//Sollte mit einer Vorlage gearbeitet werden müssen die Werte der Vorlage an die Funktion
-			//werteUebertragen übergeben werrden. Diese überträgt die Werte dann in die Tabelle
-				this.alleModule = [
-					{id: '1', name: 'Module 1', beschreibung: 'Beschreibung 1', ects: '10'},
-					{id: '2', name: 'Module 2', beschreibung: 'Beschreibung 2', ects: '20'},
-					{id: 'neu', name: 'Neu', beschreibung: 'Neu', ects: 'Neu'}
-				];
-		
-				this.alleFaecher = [
-					{id: '1', name: 'Fach 1', beschreibung: 'Beschreibung 1'},
-					{id: '2', name: 'Fach 2', beschreibung: 'Beschreibung 2'},
-					{id: 'neu', name: 'Neu', beschreibung: 'Neu'}
-				];
-			},
-	
-			//wird durch den Übernehmen-Button aufgerufen
-			// Dient zur Übernahme der Werte in die Tabelle
-			//Liest hierzu die Werte aus dem Eingabebereich aus und übergibt diese 
-			//an eine weitere Funktion
-	
-			uebernehmen: function uebernehmen() {
-			//Dient zur Uebernahme von Werten aus dem Eingabebereich in die Tabelle
-			//Ermittlung der Standardeingabewerte
-
-				var modulTMP = this.alleModule[this.selectionOne];
-				var fachTMP = this.alleFaecher[this.selectionTwo];
-				var stunden = this.eingabeStunden;
-				var semester = this.eingabeSemester; 
-				//Prüfen, ob die Werte in den Standardeingaben gefüllt sind
-				if (modulTMP == null || fachTMP == null || stunden == null || semester == null){
-					alert("Nicht alle notwendigen Angaben getätigt!");
-				}else{
-					//Alle notwendigen Standardeingaben getätigt
-					//Prüfen, ob Modul oder Fach neu sind
-					var modulToCheck = modulTMP.name.toUpperCase();
-					var fachToCheck = fachTMP.name.toUpperCase();
-					var modulName;
-					var modulBeschreibung;
-					var modulEcts;
-					var modulId;
-					if (modulToCheck == "NEU"){
-						// Modul ist NEU	
-						modulName = this.eingabeModulName; //this.$.content.querySelector('#modulNameEingabe').value;
-						modulBeschreibung = this.eingabeModulBeschreibung; //this.$.content.querySelector('#modulBeschreibungEingabe').value;
-						modulEcts = this.eingabeModulEcts; //this.$.content.querySelector('#modulEctsEingabe').value;
-						modulId = "neu";
-					}else{
-						//Modul ist nicht NEU
-						modulName = modulTMP.name;
-						modulBeschreibung = modulTMP.beschreibung;
-						modulEcts = modulTMP.ects;
-						modulId = modulTMP.id;
-					}
-					var fachName;
-					var fachBeschreibung;
-					var fachId;
-					if( fachToCheck == "NEU"){
-						//Fach ist NEU
-						fachName = this.eingabeFachName;//this.$.content.querySelector('#fachNameEingabe').value;
-						fachBeschreibung = this.eingabeFachBeschreibung; //this.$.content.querySelector('#fachBeschreibungEingabe').value;
-						fachId = "neu";
-					}else{
-						//Fach ist nicht NEU
-						fachName = fachTMP.name;
-						fachBeschreibung = fachTMP.beschreibung;
-						fachId = fachTMP.id;
-					}
-					this.werteUebertragen(modulName, modulBeschreibung, modulEcts, modulId, fachName, fachBeschreibung, fachId, stunden, semester);
-					//Zurücksetzen der Eingabefelder
-					this.resetFields(modulToCheck, fachToCheck);
+			}, function() { //Error
+				self.toasts.error.show();
+			});
+		},
+		add: function() {
+			//Update a ModulInstanz and FachInstanz in modulplan
+			if(this.inputModulInstanz.id > 0 && this.inputFachInstanz.id > 0) {
+				//validate everything
+				if(!this.checkInputs()) {
+					return;	
 				}
-			},//uebernehmen
-	
-			//Dient zum zurücksetzen aller Eingabefelder
-			resetFields: function resetFields(modulToCheck, fachToCheck){
-				//this.$.content.querySelector('#stundenEingabe').value ="";
-				//this.$.content.querySelector('#stunden').focused = true;
-				//this.$.content.querySelector('#stunden').focused = false;
-				this.eingabeStunden = null;
-				this.eingabeSemester = null;
-				this.selectionOne = null;
-				this.selectionTwo = null;
-				//Falls Fach NEU ist müssen die Inputs zurückgesetzt werden
-				//Und der Eingabebereich eingeklappt
-				if(fachToCheck =="NEU"){
-					this.eingabeFachName = null;
-					this.eingabeFachBeschreibung = null;
-					this.blendeAusTwo();															
-				}
-				//Falls Modul NEU ist müssen die Inputs zurückgesetzt werden
-				//Und der Eingabebereich eingeklappt
-				if(modulToCheck == "NEU"){
-					this.eingabeModulName = null; 
-					this.eingabeModulBeschreibung = null;
-					this.eingabeModulEcts = null;
-					this.blendeAusOne();
-				}
-			},//resetFields
-	
-			//Dient dazu die eingegebenen Werte in die Tabelle zu 
-			//Es werden zum einen die Daten des Eingabebereichs mit dieser Methode in die Tabelle übernommen
-			//und zum anderen die bereits bestehenden Werte aus der Datenbank.
-			werteUebertragen: function werteUebertragen(modulName, modulBeschreibung, modulEcts, modulId, fachName, fachBeschreibung, fachId, stunden, semester){
-				var addIdx = 0; //Index an dem Eintrag gesetzt werden soll
-				var newID = "checkbox" + ++this.count; //ID des divs
-				var newID2 = "buttonDelete" + this.count //ID des löschen Buttons
-				var newID3 = "buttonAlter" + this.count // ID des ändern Buttons
-				var test = this.$.content.querySelector('.mylist').offsetHeight + 25;
-				this.$.content.querySelector('.mylist').style.height = test + "px";
-				
-				this.mydata.splice(addIdx, 0, {
-					id: newID,
-					id2: newID2,
-					id3: newID3,
-					modulName: modulName,
-					modulBeschreibung: modulBeschreibung,
-					modulEcts: modulEcts,
-					modulId: modulId,
-					fachName: fachName,
-					fachBeschreibung: fachBeschreibung,
-					fachId: fachId,
-					semester: semester,
-					stunden: stunden,
-				});
-			},//werteUebertragen
-	
-			//Wird durch den Ändern-Button eines Tabelleneintrags aufgerufen.
-			//Ermittelt, welche Tabellenzeile geändert werden soll und schreibt anschließend
-			//die Werte in den rechten Eingabebereich
-			aendern: function aendern(event, detail, sender){
-				//Ermitteln der Positions ID
-				//Letzte Character der Sender ID
-				var id = sender.id;
-				var laenge = id.length - 1;
-				id = id.charAt(laenge);
-				var newID = "checkbox" + id;
-		
-				//changeItem wird das zu bearbeitende Element beinhalten
-				var changeItem;
-				for (i = 0; i< this.mydata.length; i++){
-					if(this.mydata[i].id == newID){
-						changeItem = this.mydata[i];
-						continue;
-					}
-				}
-				this.eingabeSemester = changeItem.semester;
-				this.eingabeStunden = changeItem.stunden;
-				//Suchen des ausgewählten Moduls 
-				for (i = 0; i< this.alleModule.length; i++){
-					if(this.alleModule[i].id == changeItem.modulId){
-						this.selectionOne = i;
-					}
-				}
-		
-				//Suchen des ausgewählten Fachs
-				for(i = 0; i< this.alleFaecher.length; i++){
-					if(this.alleFaecher[i].id == changeItem.fachId){
-						this.selectionTwo = i;
-					}
-				}
-		
-				//Ist das Modul neu, so müssen die dazugehörigen Werte in 
-				//die Felder geschrieben werden
-				if (changeItem.modulId.toUpperCase() == "NEU"){		
-					this.eingabeModulName = changeItem.modulName;
-					this.eingabeModulBeschreibung = changeItem.modulBeschreibung;
-					this.eingabeModulEcts = changeItem.modulEcts;
-				}
-				//Ist das Fach neu, so müssen die dazugehörigen Werte in 
-				//die Felder geschrieben werden
-				if(changeItem.fachId.toUpperCase() == "NEU"){		
-					this.eingabeFachName = changeItem.fachName;
-					this.eingabeFachBeschreibung = changeItem.fachBeschreibung;
-				}
-		
-				//löschen des Elements aus der Liste
-				this.deleteElement(newID);
-			},//aendern
-	
-			//Funktion wird durch den Löschen Button eines Eintrags in der Tabelle 
-			//aufgerufen. Ermittelt die ID des zu löschenden Tabelleneintrags und ruft
-			//die Funktion deleteElement mit diesem Wert auf
-			loeschen: function loeschen(event, detail, sender){
-				//Ermitteln der Positions ID
-				//Letzte Character der Sender ID
-				var id = sender.id;
-				var laenge = id.length - 1;
-				id = id.charAt(laenge);
-				var newID = "checkbox" + id;
-				this.deleteElement(newID);
-			},//loeschen
-	
-			//Löscht mit Hilfe der übergebenen ID ein Item
-			//aus myDate, welche alle Elemente der Tabelle enthält
-			deleteElement: function deleteElement(newID){
-				//Holen der Liste mit allen List-Elementen
-				//Suchen des Elements mit der dessen Button gedrückt wurde
-				for (i = 0; i < this.mydata.length; i++) {
-					if (this.mydata[i].id == newID){
-						//Löschen des Elements
-						this.mydata.splice(i, 1);
-						continue;
-					}
-				}
-			},//deleteElement
-	
-			//Blendet Zusatzfelder zum Model ein
-			blendeAnOne: function blendeAnOne(){
-				this.$.content.querySelector('#einblendenModul').style.display = "block";
-			},//blendeAnOne
-	
-			//Blendet Zusatzfelder zum Modul aus
-			blendeAusOne: function blendeAusOne(){
-				this.$.content.querySelector('#einblendenModul').style.display = "none";
-			},//blendeAusOne
-	
-			//Blendet Zusatzfelder zum Fach ein
-			blendeAnTwo: function blendeAnTwo(){
-				this.$.content.querySelector('#einblendenFach').style.display = "block";
-			},//blendeAnTwo
-	
-			//Blendet Zusatzfelder zum Fach aus
-			blendeAusTwo: function blendeAusTwo(){
-				this.$.content.querySelector('#einblendenFach').style.display = "none";
-			},//blendeAusTwo
-	
-			//Dient zum ein-/ausblenden der Zusatzfelder bei einem
-			//neuen Modul
-			blendeOne: function blendeOne(e){
-				var selectionTmp = e.detail.item.innerHTML;
-				var selectionUC = selectionTmp.toUpperCase();
-				var test = [];
-				test.id = "menu";
-				if(selectionUC == "NEU"){
-					this.blendeAnOne();
-					this.boolSelectionOneNeu = true;
-					this.checkForButton(null, null, test);
-				}else{
-					this.blendeAusOne();
-					this.boolSelectionOneNeu = false;
-					this.checkForButton(null, null, test);
-				}
-
-			},
-			//Dient zum ein-/ausblenden der Zusatzfelder bei einem
-			//neuen Fach
-			blendeTwo: function blendeTwo(e){
-				var selectionTmp = e.detail.item.innerHTML;
-				var selectionUC = selectionTmp.toUpperCase();
-				var tmp = [];
-				tmp.id = "menu2";
-				if(selectionUC == "NEU"){
-					this.blendeAnTwo();
-					this.boolSelectionTwoNeu = true;
-					this.checkForButton(null, null, tmp);
-				}else{
-					this.blendeAusTwo();
-					this.boolSelectionTwoNeu = false;
-					this.checkForButton(null, null, tmp);
-				}
-			},
-	
-			checkForButton : function checkForButton(event, detail, sender){
-				var boolSelectionOne = false;
-				var boolSelectionTwo = false;
-				var boolEingabeSemester = false;
-				var boolEingabeStunden = false;
-				
-				var boolEingabeModulName = false;
-				var boolEingabeModulBeschreibung = false;
-				var boolEingabeModulEcts = false;
-				var boolEingabeFachName = false;
-				var boolEingabeFachBeschreibung = false;
-				
-				if(this.selectionOne != null || sender.id == "menu"){
-					boolSelectionOne = true;
-				}
-				if(this.selectionTwo != null || sender.id == "menu2"){
-					boolSelectionTwo = true;
-				}
-				if(this.eingabeSemester != null && this.eingabeSemester != ""){
-					boolEingabeSemester = true;
-				}
-				if(this.eingabeStunden != null && this.eingabeStunden != ""){
-					boolEingabeStunden = true;
-				}
-				
-				//Erste Checkbox enthält Wert neu
-				if(this.boolSelectionOneNeu == true){
-					//Aber ist nicht auslösend und daher können die 
-					//zugehörigen Felder schon Werte enthalten
-					if(sender.id != "menu"){
-						if(this.eingabeModulName != null && this.eingabeModulName != ""){
-							boolEingabeModulName = true;
+				var i;
+				for(i=0; i<this.modulplan.modulInstanzList.length; i++) {
+					if(this.modulplan.modulInstanzList[i].id === this.inputModulInstanz.id) {
+						var ii;
+						for(ii=0; ii<this.modulplan.modulInstanzList[i].fachInstanzList.length; ii++) {
+							if(this.modulplan.modulInstanzList[i].fachInstanzList[ii].id === this.inputFachInstanz.id) {
+								this.modulplan.modulInstanzList[i].credits = this.inputModulInstanz.credits;
+								this.modulplan.modulInstanzList[i].fachInstanzList[ii].stunden = this.inputFachInstanz.stunden;
+								this.modulplan.modulInstanzList[i].fachInstanzList[ii].semester = this.inputFachInstanz.semester;
+								break;
+							}
 						}
-						if(this.eingabeModulBeschreibung != null && this.eingabeModulBeschreibung != ""){
-							boolEingabeModulBeschreibung = true;
-						}
-						if(this.eingabeModulEcts != null && this.eingabeModulEcts != ""){
-							boolEingabeModulEcts = true;
-						}
+						break;	
 					}
-				}else{
-					boolEingabeModulName = true;
-					boolEingabeModulBeschreibung = true;
-					boolEingabeModulEcts = true;
 				}
-				if(this.boolSelectionTwoNeu == true){
-					if(sender.id != "menu2"){
-						if(this.eingabeFachName != null && this.eingabeFachName != ""){
-							boolEingabeFachName = true;
-						}
-						if(this.eingabeFachBeschreibung != null && this.eingabeFachBeschreibung != ""){
-							boolEingabeFachBeschreibung = true;
-						}
+			} else if(this.inputModulInstanz.id > 0 && this.selectedFach < 0) { //Only update ModulInstanz
+				//validate modul
+				if(!this.checkInputsModul()) {
+					return;
+				}
+				var i;
+				for(i=0; i<this.modulplan.modulInstanzList.length; i++) {
+					if(this.modulplan.modulInstanzList[i].id === this.inputModulInstanz.id) {
+						this.modulplan.modulInstanzList[i].credits = this.inputModulInstanz.credits;
 					}
-				}else{
-					boolEingabeFachName = true;
-					boolEingabeFachBeschreibung = true;
+					break;
 				}
-				
-				if(boolSelectionOne == true && boolSelectionTwo == true && boolEingabeSemester == true && boolEingabeStunden == true && boolEingabeModulName == true && boolEingabeModulBeschreibung == true && boolEingabeModulEcts == true && boolEingabeFachName == true && boolEingabeFachBeschreibung == true){
-					this.uebernehmenButtonZustand = false;
-				}else{
-					this.uebernehmenButtonZustand = true;
+			} else {
+				//Create new Modul and new Fach
+				//Create exisisting Modul with new Fach
+				//Create existing Modul with existing Fach
+				//TODO FachList muss richtig geupdated werden
+				//TODO save ermöglichen
+				//TODO action dialog bei delete
+				//TODO credit bruchteile anzeigen
+			}
+			this.selectedModul = -1;
+			this.selectedFach = -1;
+		},
+		reject: function() {
+			this.selectedModul = -1;
+			this.selectedFach = -1;
+		},
+		edit: function(e, detail, sender) {
+			this.selectedModul = this.module.indexOf(e.target.templateInstance.model.modulInstanz);
+			this.selectedFach = this.faecher.indexOf(e.target.templateInstance.model.fachInstanz);
+		},
+		doDelete: function(e, detail, sender) {
+			var miPos = this.modulplan.modulInstanzList.indexOf(e.target.templateInstance.model.modulInstanz);
+			if(this.modulplan.modulInstanzList[miPos].fachInstanzList.length > 1) {
+				//Delete FachInstanz
+				var fiPos = this.modulplan.modulInstanzList[miPos].fachInstanzList.indexOf(e.target.templateInstance.model.fachInstanz);
+				this.modulplan.modulInstanzList[miPos].fachInstanzList.splice(fiPos, 1)
+			} else {
+				this.modulplan.modulInstanzList.splice(miPos, 1);
+			}
+		},
+		save: function() {
+			
+		},
+		initDeleteModulplan: function() {
+			this.$.delete_modulplan_dialog.toggle();
+		},
+		deleteModulplan: function() {
+			var self = this;
+			self.disableToggle = true;
+			model.webService.deleteModulplan(self.modulplan, function(api) {
+				if(!api.isError) {
+					self.pageLoaded.stammdaten = false;
+					self.pageLoaded.modulplanAnlegen = false;
+					self.pageLoaded.modulplanPflegen = false;
+					self.toasts.success.show();
+					window.history.back();
+				} else {
+					console.log(JSON.stringify(api));
+					self.toasts.error.show();
 				}
-				
-			},
-		});
+			});
+		},
+		cancel: function() {
+    		this.pageLoaded.modulplanPflegen = false;
+    		window.history.back();
+		},
+		//Check all invalid properties
+		checkInputs : function() {
+			for(var property in this.invalid) {
+				if(this.invalid.hasOwnProperty(property)) {
+					if(this.invalid[property] === true) {
+						return false;
+					}
+				}
+			}
+			return true;
+		},
+		checkInputsModul : function() {
+			return (!this.invalid.mname && !this.invalid.mkurzbeschreibung && !this.invalid.credits);
+		},
+		//Reset the modul dropdown
+		resetModul: function() {
+			this.selectedModul = -1;
+			this.setModulIsInvalid(true);
+		},
+		//Set modul and toggle invalid properties for modul
+		setModulIsInvalid: function(invalid, detail) {
+			if(this.selectedModul >= 0) {
+				this.inputModulInstanz = Object.create(this.module[this.selectedModul]);
+			} else {
+				this.inputModulInstanz = new model.templates.ModulInstanz();
+			}
+			if(invalid !== true && invalid !== false) {
+				//Is called from on-core-select
+				invalid = !detail.isSelected;
+				//Modulinfo is filled -> focus
+				this.job('update-labels-modulplan', function() {
+					this.$.mname.inputAction();
+					this.$.mkurzbeschreibung.inputAction();
+					this.$.credits.inputAction();
+				}, 100);
+			}
+			this.invalid.mname = invalid;
+			this.invalid.mkurzbeschreibung = invalid;
+			this.invalid.credits = invalid;
+		},
+		switchModulInfo: function() {
+			this.toggleModulInfo = !this.toggleModulInfo;
+		},
+		//Reset the fach dropdown
+		resetFach: function() {
+			this.selectedFach = -1;
+			this.setFachIsInvalid(true);
+		},
+		//Set fach and toggle invalid properties for fach
+		setFachIsInvalid: function(invalid, detail) {
+			if(this.selectedFach >= 0) {
+				this.inputFachInstanz = Object.create(this.faecher[this.selectedFach]);
+			} else {
+				this.inputFachInstanz = new model.templates.FachInstanz();
+			}
+			if(invalid !== true && invalid !== false) {
+				//Is called from on-core-select
+				invalid = !detail.isSelected;
+				//Fachinfo is filled -> focus
+				this.job('update-labels-fach', function() {
+					this.$.fname.inputAction();
+					this.$.fkurzbeschreibung.inputAction();
+					this.$.stunden.inputAction();
+					this.$.semester.inputAction();
+				}, 100);
+			}
+			this.invalid.fname = invalid;
+			this.invalid.fkurzbeschreibung = invalid;
+			this.invalid.stunden = invalid;
+			this.invalid.semester = invalid;
+		},
+		switchFachInfo: function() {
+			this.toggleFachInfo = !this.toggleFachInfo;
+		}
+	});
 	</script>
 </polymer-element>

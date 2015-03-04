@@ -49,7 +49,6 @@
 			selectedVorlage: 0,
 			invalid: {},
 			publish: {
-				pageParameter: {},
 				pageLoaded: {},
 				toasts: {}
 			},
@@ -100,8 +99,8 @@
 					{
 						self.modulplan = api.response;
 						self.toasts.success.show();
+						self.pageLoaded.stammdaten = false;
 						self.pageLoaded.modulplanAnlegen = false;
-						self.pageParameter.modulplanPflegen.id = self.modulplan.id;
 						self.pageLoaded.modulplanPflegen = false;
 						location.href = '#!modulplanPflegen-'+self.modulplan.id;
 					}

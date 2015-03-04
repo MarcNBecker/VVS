@@ -20,6 +20,10 @@
 	padding-right: 5px
 }
 
+.highlight {
+	background-color: rgba(226,0,26,0.5);
+}
+
 .vertical-input {
 	margin-top: 30px;
 }
@@ -79,7 +83,7 @@ paper-button {
 
 paper-icon-button::shadow #ripple {
   color: #D32B18;
-  opacity: 25%;
+  opacity: 0.25;
 }
 
 paper-checkbox::shadow #ink[checked] {
@@ -89,42 +93,4 @@ paper-checkbox::shadow #ink[checked] {
 paper-checkbox::shadow #checkbox.checked {
 	background-color: #D32B18;
 	border-color: #D32B18;
-}
-
-/* Modulplan pflegen */
-.divModul {
-	border-top-style: solid;
-	border-left-style: solid;
-	border-bottom-style: solid;
-	width: 13%;
-	height: 40px;
-	float: left;
-	background-color: #D32B18;
-}
-
-.h4Modul {
-	color: white;
-	margin: 5px 0px 0px 5px;
-}
-
-.divModul2 {
-	border-left-style: solid;
-	border-bottom-style: solid;
-	width: 13%; float: left;
-}
-
-.pModul {
-	margin: 1px 5px;
-}
-
-.pModul2 {
-	margin: 1px;
-	text-align: center;
-}
-
-.coreiconModul {
-	height: 17px;
-	width: 17px;
-	margin-right: 5px;
-	cursor: pointer;
 }

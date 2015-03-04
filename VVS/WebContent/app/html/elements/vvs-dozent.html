@@ -289,7 +289,7 @@
 					{
 						self.dozent = api.response;
 						//Tell the outside world about the new ID
-						self.pageParameter.dozent.id = self.dozent.id;
+						self.pageLoaded.stammdaten = false;
 						window.history.replaceState({}, '', '#!dozent-'+self.dozent.id);
 						var i;
 						var deepRuns = 0;
@@ -500,7 +500,7 @@
 						//Update variables and switch display of button bar
 						self.dozent = new model.templates.Dozent();
 						//Tell the outside world the new ID
-						self.pageParameter.dozent.id = 0
+						self.pageLoaded.stammdaten = false;
 						window.history.replaceState({}, '', '#!dozent');
 						self.faecher = self.allFaecher.slice();
 						self.dozentenFaecher = [];
@@ -536,7 +536,6 @@
 	    	cancel: function()
 	    	{
 	    		this.pageLoaded.dozent = false;
-	    		this.pageParameter.dozent.id = 0;
 	    		window.history.back();
 	    	},
 	    	//Validate a phone number using phone.js
