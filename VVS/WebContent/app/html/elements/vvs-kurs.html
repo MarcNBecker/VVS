@@ -70,12 +70,12 @@
 				<div vertical layout class="vertical-input">
 					<span class="headline">Blocklagen</span>
 					<div horizontal start layout class="horizontal-input">
-						<polymer-date-picker id="datePicker1a" relatedTarget="{{$.von1a.input}}" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{blocklage1.startDatum}}" opened="false"></polymer-date-picker>
-						<paper-input-decorator id="von1a" label="1. Blocklage von" on-click="{{toggle}}" relatedTarget="{{$.datePicker1a}}" floatingLabel flex>
+						<polymer-date-picker id="datePicker1a" relatedTarget="{{$.von1a.input}}" relatedInput="von1a" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{blocklage1.startDatum}}" opened="false"></polymer-date-picker>
+						<paper-input-decorator id="von1a" label="1. Blocklage von" on-click="{{toggle}}" relatedDatePicker="datePicker1a" floatingLabel flex>
 							<input is="core-input" value="{{blocklage1.startDatum}}" readonly>
 						</paper-input-decorator>
-						<polymer-date-picker id="datePicker1b" relatedTarget="{{$.von1b.input}}" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{blocklage1.endDatum}}" opened="false"></polymer-date-picker>
-						<paper-input-decorator id="von1b" label="1. Blocklage bis" on-click="{{toggle}}" relatedTarget="{{$.datePicker1b}}" floatingLabel flex>
+						<polymer-date-picker id="datePicker1b" relatedTarget="{{$.von1b.input}}" relatedInput="von1b" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{blocklage1.endDatum}}" opened="false"></polymer-date-picker>
+						<paper-input-decorator id="von1b" label="1. Blocklage bis" on-click="{{toggle}}" relatedDatePicker="datePicker1b" floatingLabel flex>
 							<input is="core-input" value="{{blocklage1.endDatum}}" readonly>
 						</paper-input-decorator>
 					</div>
@@ -110,22 +110,23 @@
 			publish: {
 				toasts:{}
 			},
-			toggle2: function(e) {
-				if (this.$.von1a.input.committedValue !== this.blocklage1.startDatum)
+			toggle2: function(e, detail, sender) {
+				var input = sender.getAttribute("relatedInput");
+				if (this.shadowRoot.querySelector("#" + input).input.committedValue !== this.blocklage1.startDatum)
 				{
-					this.$.datePicker1a.toggle();
+					var datePicker = sender.getAttribute("id");
+					this.shadowRoot.querySelector("#" + datePicker).toggle();
 					this.job("von1a-commit", function() {
-					this.$.von1a.input.commit();
+						this.shadowRoot.querySelector("#" + input).input.commit();
 					},100);
 				}
 			},
-			toggle: function(e) {
+			toggle: function(e, detail, sender) {
 				if (this.blocklage1.startDatum === "") {
 					this.blocklage1.startDatum = this.formateDate();
 				}
-				var datePicker = e.target.templateInstance;
-				console.log(datePicker);
-				this.$.datePicker1a.toggle();
+				var datePicker = sender.getAttribute("relatedDatePicker");
+				this.shadowRoot.querySelector("#" + datePicker).toggle();
 			},
     		ready: function() {
     			var self = this;
