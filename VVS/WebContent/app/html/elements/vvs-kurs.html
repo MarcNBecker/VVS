@@ -60,7 +60,7 @@
 							<input is="core-input" type="text" value={{kurs.kurssprecherName}} maxlength="100" disabled?="{{disableToggle}}">
 						</paper-input-decorator>
 						<paper-input-decorator id="kurssprecherMail" label="E-Mail-Adresse" floatingLabel flex>
-							<input is="core-input" type="text" value={{kurs.sekretariatName}} maxlength="100" disabled?="{{disableToggle}}">
+							<input is="core-input" type="text" value={{kurs.kurssprecherMail}} maxlength="100" disabled?="{{disableToggle}}">
 						</paper-input-decorator>
 						<paper-input-decorator id="kurssprecherTelefon" label="Telefonnummer" floatingLabel flex>
 							<input is="core-input" type="text" value={{kurs.kurssprecherTelefon}} maxlength="100" disabled?="{{disableToggle}}">
@@ -73,13 +73,13 @@
 				<div vertical layout class="vertical-input">
 					<span class="headline">Blocklagen</span>
 					<div horizontal start layout class="horizontal-input">
-						<polymer-date-picker id="datePicker1a" relatedTarget="{{$.von1a.input}}" relatedInput="von1a" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{blocklage1.startDatum}}" opened="false"></polymer-date-picker>
+						<polymer-date-picker id="datePicker1a" relatedTarget="{{$.von1a.input}}" relatedInput="von1a" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{$.von1a.input.value}}" opened="false"></polymer-date-picker>
 						<paper-input-decorator id="von1a" label="1. Blocklage von" on-click="{{toggle}}" relatedDatePicker="datePicker1a" floatingLabel flex>
-							<input is="core-input" value="{{blocklage1.startDatum}}" readonly>
+							<input is="core-input" value="{{blocklage1.startDatum}}">
 						</paper-input-decorator>
-						<polymer-date-picker id="datePicker1b" relatedTarget="{{$.bis1b.input}}" relatedInput="bis1b" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{blocklage1.endDatum}}" opened="false"></polymer-date-picker>
+						<polymer-date-picker id="datePicker1b" relatedTarget="{{$.bis1b.input}}" relatedInput="bis1b" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{$.bis1b.input.value}}" opened="false"></polymer-date-picker>
 						<paper-input-decorator id="bis1b" label="1. Blocklage bis" on-click="{{toggle}}" relatedDatePicker="datePicker1b" floatingLabel flex>
-							<input is="core-input" value="{{blocklage1.endDatum}}" readonly>
+							<input is="core-input" value="{{blocklage1.endDatum}}">
 						</paper-input-decorator>
 						<paper-input-decorator id="raum1" label="Raum" floatingLabel flex>
 							<input is="core-input" type="text" value={{blocklage1.raum}} maxlength="100" disabled?="{{disableToggle}}">
@@ -87,13 +87,13 @@
 						<paper-icon-button on-click="{{print}}" icon="print" horizontal layout center self-center></paper-icon-button>
 					</div>
 					<div horizontal start layout class="horizontal-input">
-						<polymer-date-picker id="datePicker2a" relatedTarget="{{$.von2a.input}}" relatedInput="von2a" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{blocklage2.startDatum}}" opened="false"></polymer-date-picker>
+						<polymer-date-picker id="datePicker2a" relatedTarget="{{$.von2a.input}}" relatedInput="von2a" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{$.von2a.input.value}}" opened="false"></polymer-date-picker>
 						<paper-input-decorator id="von2a" label="2. Blocklage von" on-click="{{toggle}}" relatedDatePicker="datePicker2a" floatingLabel flex>
-							<input is="core-input" value="{{blocklage2.startDatum}}" readonly>
+							<input is="core-input" value="{{blocklage2.startDatum}}">
 						</paper-input-decorator>
-						<polymer-date-picker id="datePicker2b" relatedTarget="{{$.bis2b.input}}" relatedInput="bis2b" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{blocklage2.endDatum}}" opened="false"></polymer-date-picker>
+						<polymer-date-picker id="datePicker2b" relatedTarget="{{$.bis2b.input}}" relatedInput="bis2b" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{$.bis2b.input.value}}" opened="false"></polymer-date-picker>
 						<paper-input-decorator id="bis2b" label="2. Blocklage bis" on-click="{{toggle}}" relatedDatePicker="datePicker2b" floatingLabel flex>
-							<input is="core-input" value="{{blocklage2.endDatum}}" readonly>
+							<input is="core-input" value="{{blocklage2.endDatum}}">
 						</paper-input-decorator>
 						<paper-input-decorator id="raum2" label="Raum" floatingLabel flex>
 							<input is="core-input" type="text" value={{blocklage2.raum}} maxlength="100" disabled?="{{disableToggle}}">
@@ -101,13 +101,13 @@
 						<paper-icon-button on-click="{{print}}" icon="print" horizontal layout center self-center></paper-icon-button>
 					</div>
 					<div horizontal start layout class="horizontal-input">
-						<polymer-date-picker id="datePicker3a" relatedTarget="{{$.von3a.input}}" relatedInput="von3a" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{blocklage3.startDatum}}" opened="false"></polymer-date-picker>
+						<polymer-date-picker id="datePicker3a" relatedTarget="{{$.von3a.input}}" relatedInput="von3a" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{$.von3a.input.value}}" opened="false"></polymer-date-picker>
 						<paper-input-decorator id="von3a" label="3. Blocklage von" on-click="{{toggle}}" relatedDatePicker="datePicker3a" floatingLabel flex>
-							<input is="core-input" value="{{blocklage3.startDatum}}" readonly>
+							<input is="core-input" value="{{blocklage3.startDatum}}">
 						</paper-input-decorator>
-						<polymer-date-picker id="datePicker3b" relatedTarget="{{$.bis3b.input}}" relatedInput="bis3b" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{blocklage3.endDatum}}" opened="false"></polymer-date-picker>
+						<polymer-date-picker id="datePicker3b" relatedTarget="{{$.bis3b.input}}" relatedInput="bis3b" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{$.bis1b.input.value}}" opened="false"></polymer-date-picker>
 						<paper-input-decorator id="bis3b" label="3. Blocklage bis" on-click="{{toggle}}" relatedDatePicker="datePicker3b" floatingLabel flex>
-							<input is="core-input" value="{{blocklage3.endDatum}}" readonly>
+							<input is="core-input" value="{{blocklage3.endDatum}}">
 						</paper-input-decorator>
 						<paper-input-decorator id="raum3" label="Raum" floatingLabel flex>
 							<input is="core-input" type="text" value={{blocklage3.raum}} maxlength="100" disabled?="{{disableToggle}}">
@@ -115,13 +115,13 @@
 						<paper-icon-button on-click="{{print}}" icon="print" horizontal layout center self-center></paper-icon-button>
 					</div>
 					<div horizontal start layout class="horizontal-input">
-						<polymer-date-picker id="datePicker4a" relatedTarget="{{$.von4a.input}}" relatedInput="von4a" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{blocklage4.startDatum}}" opened="false"></polymer-date-picker>
+						<polymer-date-picker id="datePicker4a" relatedTarget="{{$.von4a.input}}" relatedInput="von4a" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{$.von4a.input.value}}" opened="false"></polymer-date-picker>
 						<paper-input-decorator id="von4a" label="4. Blocklage von" on-click="{{toggle}}" relatedDatePicker="datePicker4a" floatingLabel flex>
-							<input is="core-input" value="{{blocklage4.startDatum}}" readonly>
+							<input is="core-input" value="{{blocklage4.startDatum}}">
 						</paper-input-decorator>
-						<polymer-date-picker id="datePicker4b" relatedTarget="{{$.bis4b.input}}" relatedInput="bis4b" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{blocklage4.endDatum}}" opened="false"></polymer-date-picker>
+						<polymer-date-picker id="datePicker4b" relatedTarget="{{$.bis4b.input}}" relatedInput="bis4b" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{$.bis4b.input.value}}" opened="false"></polymer-date-picker>
 						<paper-input-decorator id="bis4b" label="4. Blocklage bis" on-click="{{toggle}}" relatedDatePicker="datePicker4b" floatingLabel flex>
-							<input is="core-input" value="{{blocklage4.endDatum}}" readonly>
+							<input is="core-input" value="{{blocklage4.endDatum}}">
 						</paper-input-decorator>
 						<paper-input-decorator id="raum4" label="Raum" floatingLabel flex>
 							<input is="core-input" type="text" value={{blocklage4.raum}} maxlength="100" disabled?="{{disableToggle}}">
@@ -129,13 +129,13 @@
 						<paper-icon-button on-click="{{print}}" icon="print" horizontal layout center self-center></paper-icon-button>
 					</div>
 					<div horizontal start layout class="horizontal-input">
-						<polymer-date-picker id="datePicker5a" relatedTarget="{{$.von5a.input}}" relatedInput="von5a" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{blocklage5.startDatum}}" opened="false"></polymer-date-picker>
+						<polymer-date-picker id="datePicker5a" relatedTarget="{{$.von5a.input}}" relatedInput="von5a" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{$.von5a.input.value}}" opened="false"></polymer-date-picker>
 						<paper-input-decorator id="von5a" label="5. Blocklage von" on-click="{{toggle}}" relatedDatePicker="datePicker5a" floatingLabel flex>
-							<input is="core-input" value="{{blocklage5.startDatum}}" readonly>
+							<input is="core-input" value="{{blocklage5.startDatum}}">
 						</paper-input-decorator>
-						<polymer-date-picker id="datePicker5b" relatedTarget="{{$.bis5b.input}}" relatedInput="bis5b" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{blocklage5.endDatum}}" opened="false"></polymer-date-picker>
+						<polymer-date-picker id="datePicker5b" relatedTarget="{{$.bis5b.input}}" relatedInput="bis5b" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{$.bis5b.input.value}}" opened="false"></polymer-date-picker>
 						<paper-input-decorator id="bis5b" label="5. Blocklage bis" on-click="{{toggle}}" relatedDatePicker="datePicker5b" floatingLabel flex>
-							<input is="core-input" value="{{blocklage5.endDatum}}" readonly>
+							<input is="core-input" value="{{blocklage5.endDatum}}">
 						</paper-input-decorator>
 						<paper-input-decorator id="raum5" label="Raum" floatingLabel flex>
 							<input is="core-input" type="text" value={{blocklage5.raum}} maxlength="100" disabled?="{{disableToggle}}">
@@ -143,13 +143,13 @@
 						<paper-icon-button on-click="{{print}}" icon="print" horizontal layout center self-center></paper-icon-button>
 					</div>
 					<div horizontal start layout class="horizontal-input">
-						<polymer-date-picker id="datePicker6a" relatedTarget="{{$.von6a.input}}" relatedInput="von6a" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{blocklage6.startDatum}}" opened="false"></polymer-date-picker>
+						<polymer-date-picker id="datePicker6a" relatedTarget="{{$.von6a.input}}" relatedInput="von6a" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{$.von6a.input.value}}" opened="false"></polymer-date-picker>
 						<paper-input-decorator id="von6a" label="6. Blocklage von" on-click="{{toggle}}" relatedDatePicker="datePicker6a" floatingLabel flex>
-							<input is="core-input" value="{{blocklage6.startDatum}}" readonly>
+							<input is="core-input" value="{{blocklage6.startDatum}}">
 						</paper-input-decorator>
-						<polymer-date-picker id="datePicker6b" relatedTarget="{{$.bis6b.input}}" relatedInput="bis6b" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{blocklage6.endDatum}}" opened="false"></polymer-date-picker>
+						<polymer-date-picker id="datePicker6b" relatedTarget="{{$.bis6b.input}}" relatedInput="bis6b" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{$.bis6b.input.value}}" opened="false"></polymer-date-picker>
 						<paper-input-decorator id="bis6b" label="6. Blocklage bis" on-click="{{toggle}}" relatedDatePicker="datePicker6b" floatingLabel flex>
-							<input is="core-input" value="{{blocklage6.endDatum}}" readonly>
+							<input is="core-input" value="{{blocklage6.endDatum}}">
 						</paper-input-decorator>
 						<paper-input-decorator id="raum6" label="Raum" floatingLabel flex>
 							<input is="core-input" type="text" value={{blocklage6.raum}} maxlength="100" disabled?="{{disableToggle}}">
@@ -252,6 +252,42 @@
     						self.toasts.error.show();
     					}
     				});
+					self.job("von1a-commit", function() {
+						self.$.von1a.input.commit();
+						},100);
+					self.job("bis1b-commit", function() {
+						self.$.bis1b.input.commit();
+						},100);
+					self.job("von2a-commit", function() {
+						self.$.von2a.input.commit();
+						},100);
+					self.job("bis2b-commit", function() {
+						self.$.bis2b.input.commit();
+						},100);
+					self.job("von3a-commit", function() {
+						self.$.von3a.input.commit();
+						},100);
+					self.job("bis3b-commit", function() {
+						self.$.bis3b.input.commit();
+						},100);
+					self.job("von4a-commit", function() {
+						self.$.von4a.input.commit();
+						},100);
+					self.job("bis4b-commit", function() {
+						self.$.bis4b.input.commit();
+						},100);
+					self.job("von5a-commit", function() {
+						self.$.von5a.input.commit();
+						},100);
+					self.job("bis5b-commit", function() {
+						self.$.bis5b.input.commit();
+						},100);
+					self.job("von6a-commit", function() {
+						self.$.von6a.input.commit();
+						},100);
+					self.job("bis6b-commit", function() {
+						self.$.bis6b.input.commit();
+						},100);
     			}
     			//Go to edit mode
     			else
@@ -294,7 +330,6 @@
 							self.job('update-labels-ready', function() {
 								self.$.kursname.inputAction();
 								self.$.sekretariatName.inputAction();
-								self.$.studiengangsleiter.inputAction();
 								self.$.studentenAnzahl.inputAction();
 								self.$.kurssprecherName.inputAction();
 								self.$.kurssprecherVorname.inputAction();
@@ -398,11 +433,17 @@
 				}
 			},
 			toggle: function(e, detail, sender) {
-				if (this.blocklage1.startDatum === "") {
-					this.blocklage1.startDatum = this.formateDate();
+				var self = this;
+				if (!sender.input.value) {
+					sender.input.value = this.formateDate();
+					//self.blocklage1.startDatum = this.formateDate();
+					sender.input.commit();
+
 				}
-				var datePicker = sender.getAttribute("relatedDatePicker");
-				this.shadowRoot.querySelector("#" + datePicker).toggle();
+				self.job("datePicker-data", function() {
+					var datePicker = sender.getAttribute("relatedDatePicker");
+					self.shadowRoot.querySelector("#" + datePicker).toggle();
+				},500);
 			},
 			print: function () {
 				// TODO
