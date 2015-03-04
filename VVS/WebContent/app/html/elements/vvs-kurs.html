@@ -30,8 +30,8 @@
 						</paper-input-decorator>					
 						<paper-dropdown-menu label="Modulplan" disabled?="{{disableToggle}}" self-center flex>
 							<paper-dropdown class="dropdown">
-								<core-menu class="menu">
-								<template repeat="{{item in modulplaene}}" selected="{{selectedModulplan}}">
+								<core-menu class="menu" selected="{{selectedModulplan}}">
+								<template repeat="{{item in modulplaene}}">
 									<paper-item>
 										{{item.studiengang}}-{{item.vertiefungsrichtung}}
 									</paper-item>
@@ -71,11 +71,11 @@
 					<span class="headline">Blocklagen</span>
 					<div horizontal start layout class="horizontal-input">
 						<polymer-date-picker id="datePicker1a" relatedTarget="{{$.von1a.input}}" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{blocklage1.startDatum}}" opened="false"></polymer-date-picker>
-						<paper-input-decorator id="von1a" label="1. Blocklage von" on-click="{{toggle}}" floatingLabel flex>
+						<paper-input-decorator id="von1a" label="1. Blocklage von" on-click="{{toggle}}" relatedTarget="{{$.datePicker1a}}" floatingLabel flex>
 							<input is="core-input" value="{{blocklage1.startDatum}}" readonly>
 						</paper-input-decorator>
-						<polymer-date-picker id="datePicker1b" relatedTarget="{{$.von1b.input}}" on-click="{{toggle2b}}" halign="left" style="z-index:99" selectedDate="{{blocklage1.endDatum}}" opened="false"></polymer-date-picker>
-						<paper-input-decorator id="von1b" label="1. Blocklage bis" on-click="{{toggleb}}" floatingLabel flex>
+						<polymer-date-picker id="datePicker1b" relatedTarget="{{$.von1b.input}}" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{blocklage1.endDatum}}" opened="false"></polymer-date-picker>
+						<paper-input-decorator id="von1b" label="1. Blocklage bis" on-click="{{toggle}}" relatedTarget="{{$.datePicker1b}}" floatingLabel flex>
 							<input is="core-input" value="{{blocklage1.endDatum}}" readonly>
 						</paper-input-decorator>
 					</div>
@@ -110,7 +110,7 @@
 			publish: {
 				toasts:{}
 			},
-			toggle2: function() {
+			toggle2: function(e) {
 				if (this.$.von1a.input.committedValue !== this.blocklage1.startDatum)
 				{
 					this.$.datePicker1a.toggle();
@@ -119,26 +119,13 @@
 					},100);
 				}
 			},
-			toggle: function() {
+			toggle: function(e) {
 				if (this.blocklage1.startDatum === "") {
 					this.blocklage1.startDatum = this.formateDate();
 				}
+				var datePicker = e.target.templateInstance;
+				console.log(datePicker);
 				this.$.datePicker1a.toggle();
-			},
-			toggle2b: function() {
-				if (this.$.von1b.input.committedValue !== this.blocklage1.endDatum)
-				{
-					this.$.datePicker1b.toggle();
-					this.job("von1b-commit", function() {
-					this.$.von1b.input.commit();
-					},100);
-				}
-			},
-			toggleb: function() {
-				if (this.blocklage1.endDatum === "") {
-					this.blocklage1.endDatum = this.formateDate();
-				}
-				this.$.datePicker1b.toggle();
 			},
     		ready: function() {
     			var self = this;
@@ -184,7 +171,6 @@
 								self.toasts.error.show();
 							}
 						});
-						alert(self.selectedModulplan);
 						self.job('update-labels-ready', function() {
 							self.$.kursname.inputAction();
 							self.$.sekretariatName.inputAction();
