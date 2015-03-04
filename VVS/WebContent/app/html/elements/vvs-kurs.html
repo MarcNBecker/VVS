@@ -62,9 +62,6 @@
 					</div>
 				</div>
 			</div>
-			
-			
-			
 			<div auto-vertical?="{{smallScreen}}" flex?="{{!smallScreen}}" two?="{{!smallScreen}}">
 				<!-- Input Fields -->
 				<div vertical layout class="vertical-input">
@@ -74,10 +71,84 @@
 						<paper-input-decorator id="von1a" label="1. Blocklage von" on-click="{{toggle}}" relatedDatePicker="datePicker1a" floatingLabel flex>
 							<input is="core-input" value="{{blocklage1.startDatum}}" readonly>
 						</paper-input-decorator>
-						<polymer-date-picker id="datePicker1b" relatedTarget="{{$.von1b.input}}" relatedInput="von1b" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{blocklage1.endDatum}}" opened="false"></polymer-date-picker>
-						<paper-input-decorator id="von1b" label="1. Blocklage bis" on-click="{{toggle}}" relatedDatePicker="datePicker1b" floatingLabel flex>
+						<polymer-date-picker id="datePicker1b" relatedTarget="{{$.bis1b.input}}" relatedInput="bis1b" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{blocklage1.endDatum}}" opened="false"></polymer-date-picker>
+						<paper-input-decorator id="bis1b" label="1. Blocklage bis" on-click="{{toggle}}" relatedDatePicker="datePicker1b" floatingLabel flex>
 							<input is="core-input" value="{{blocklage1.endDatum}}" readonly>
 						</paper-input-decorator>
+						<paper-input-decorator id="raum1" label="Raum" floatingLabel flex>
+							<input is="core-input" type="text" value={{blocklage1.raum}} maxlength="100" disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+						<paper-icon-button on-click="{{print}}" icon="print" horizontal layout center self-center></paper-icon-button>
+					</div>
+					<div horizontal start layout class="horizontal-input">
+						<polymer-date-picker id="datePicker2a" relatedTarget="{{$.von2a.input}}" relatedInput="von2a" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{blocklage2.startDatum}}" opened="false"></polymer-date-picker>
+						<paper-input-decorator id="von2a" label="2. Blocklage von" on-click="{{toggle}}" relatedDatePicker="datePicker2a" floatingLabel flex>
+							<input is="core-input" value="{{blocklage2.startDatum}}" readonly>
+						</paper-input-decorator>
+						<polymer-date-picker id="datePicker2b" relatedTarget="{{$.bis2b.input}}" relatedInput="bis2b" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{blocklage2.endDatum}}" opened="false"></polymer-date-picker>
+						<paper-input-decorator id="bis2b" label="2. Blocklage bis" on-click="{{toggle}}" relatedDatePicker="datePicker2b" floatingLabel flex>
+							<input is="core-input" value="{{blocklage2.endDatum}}" readonly>
+						</paper-input-decorator>
+						<paper-input-decorator id="raum2" label="Raum" floatingLabel flex>
+							<input is="core-input" type="text" value={{blocklage2.raum}} maxlength="100" disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+						<paper-icon-button on-click="{{print}}" icon="print" horizontal layout center self-center></paper-icon-button>
+					</div>
+					<div horizontal start layout class="horizontal-input">
+						<polymer-date-picker id="datePicker3a" relatedTarget="{{$.von3a.input}}" relatedInput="von3a" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{blocklage3.startDatum}}" opened="false"></polymer-date-picker>
+						<paper-input-decorator id="von3a" label="3. Blocklage von" on-click="{{toggle}}" relatedDatePicker="datePicker3a" floatingLabel flex>
+							<input is="core-input" value="{{blocklage3.startDatum}}" readonly>
+						</paper-input-decorator>
+						<polymer-date-picker id="datePicker3b" relatedTarget="{{$.bis3b.input}}" relatedInput="bis3b" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{blocklage3.endDatum}}" opened="false"></polymer-date-picker>
+						<paper-input-decorator id="bis3b" label="3. Blocklage bis" on-click="{{toggle}}" relatedDatePicker="datePicker3b" floatingLabel flex>
+							<input is="core-input" value="{{blocklage3.endDatum}}" readonly>
+						</paper-input-decorator>
+						<paper-input-decorator id="raum3" label="Raum" floatingLabel flex>
+							<input is="core-input" type="text" value={{blocklage3.raum}} maxlength="100" disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+						<paper-icon-button on-click="{{print}}" icon="print" horizontal layout center self-center></paper-icon-button>
+					</div>
+					<div horizontal start layout class="horizontal-input">
+						<polymer-date-picker id="datePicker4a" relatedTarget="{{$.von4a.input}}" relatedInput="von4a" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{blocklage4.startDatum}}" opened="false"></polymer-date-picker>
+						<paper-input-decorator id="von4a" label="4. Blocklage von" on-click="{{toggle}}" relatedDatePicker="datePicker4a" floatingLabel flex>
+							<input is="core-input" value="{{blocklage4.startDatum}}" readonly>
+						</paper-input-decorator>
+						<polymer-date-picker id="datePicker4b" relatedTarget="{{$.bis4b.input}}" relatedInput="bis4b" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{blocklage4.endDatum}}" opened="false"></polymer-date-picker>
+						<paper-input-decorator id="bis4b" label="4. Blocklage bis" on-click="{{toggle}}" relatedDatePicker="datePicker4b" floatingLabel flex>
+							<input is="core-input" value="{{blocklage4.endDatum}}" readonly>
+						</paper-input-decorator>
+						<paper-input-decorator id="raum4" label="Raum" floatingLabel flex>
+							<input is="core-input" type="text" value={{blocklage4.raum}} maxlength="100" disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+						<paper-icon-button on-click="{{print}}" icon="print" horizontal layout center self-center></paper-icon-button>
+					</div>
+					<div horizontal start layout class="horizontal-input">
+						<polymer-date-picker id="datePicker5a" relatedTarget="{{$.von5a.input}}" relatedInput="von5a" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{blocklage5.startDatum}}" opened="false"></polymer-date-picker>
+						<paper-input-decorator id="von5a" label="5. Blocklage von" on-click="{{toggle}}" relatedDatePicker="datePicker5a" floatingLabel flex>
+							<input is="core-input" value="{{blocklage5.startDatum}}" readonly>
+						</paper-input-decorator>
+						<polymer-date-picker id="datePicker5b" relatedTarget="{{$.bis5b.input}}" relatedInput="bis5b" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{blocklage5.endDatum}}" opened="false"></polymer-date-picker>
+						<paper-input-decorator id="bis5b" label="5. Blocklage bis" on-click="{{toggle}}" relatedDatePicker="datePicker5b" floatingLabel flex>
+							<input is="core-input" value="{{blocklage5.endDatum}}" readonly>
+						</paper-input-decorator>
+						<paper-input-decorator id="raum5" label="Raum" floatingLabel flex>
+							<input is="core-input" type="text" value={{blocklage5.raum}} maxlength="100" disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+						<paper-icon-button on-click="{{print}}" icon="print" horizontal layout center self-center></paper-icon-button>
+					</div>
+					<div horizontal start layout class="horizontal-input">
+						<polymer-date-picker id="datePicker6a" relatedTarget="{{$.von6a.input}}" relatedInput="von6a" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{blocklage6.startDatum}}" opened="false"></polymer-date-picker>
+						<paper-input-decorator id="von6a" label="6. Blocklage von" on-click="{{toggle}}" relatedDatePicker="datePicker6a" floatingLabel flex>
+							<input is="core-input" value="{{blocklage6.startDatum}}" readonly>
+						</paper-input-decorator>
+						<polymer-date-picker id="datePicker6b" relatedTarget="{{$.bis6b.input}}" relatedInput="bis6b" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{blocklage6.endDatum}}" opened="false"></polymer-date-picker>
+						<paper-input-decorator id="bis6b" label="6. Blocklage bis" on-click="{{toggle}}" relatedDatePicker="datePicker6b" floatingLabel flex>
+							<input is="core-input" value="{{blocklage6.endDatum}}" readonly>
+						</paper-input-decorator>
+						<paper-input-decorator id="raum6" label="Raum" floatingLabel flex>
+							<input is="core-input" type="text" value={{blocklage6.raum}} maxlength="100" disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+						<paper-icon-button on-click="{{print}}" icon="print" horizontal layout center self-center></paper-icon-button>
 					</div>
 				</div>
 			</div>
@@ -127,6 +198,9 @@
 				}
 				var datePicker = sender.getAttribute("relatedDatePicker");
 				this.shadowRoot.querySelector("#" + datePicker).toggle();
+			},
+			print: function () {
+				// TODO
 			},
     		ready: function() {
     			var self = this;
@@ -181,7 +255,13 @@
 							self.$.kurssprecherVorname.inputAction();
 							self.$.kurssprecherTelefon.inputAction();
 							self.$.kurssprecherMail.inputAction();
-							self.$.kursmail.inputAction();			
+							self.$.kursmail.inputAction();	
+							self.$.raum1.inputAction();
+							self.$.raum2.inputAction();
+							self.$.raum3.inputAction();
+							self.$.raum4.inputAction();
+							self.$.raum5.inputAction();
+							self.$.raum6.inputAction();
 						},100);
 					}					
 					else{
@@ -200,19 +280,54 @@
 								self.job("von1a-commit", function() {
 									self.$.von1a.input.commit();
 									},100);
-								self.job("von1b-commit", function() {
+								self.job("bis1b-commit", function() {
 									self.$.von1b.input.commit();
 									},100);
 								break;
 							case 2:
+								self.blocklage2 = self.blocklagen[i];
+								self.job("von2a-commit", function() {
+									self.$.von1a.input.commit();
+									},100);
+								self.job("bis2b-commit", function() {
+									self.$.von1b.input.commit();
+									},100);
 								break;
 							case 3:
+								self.blocklage3 = self.blocklagen[i];
+								self.job("von3a-commit", function() {
+									self.$.von1a.input.commit();
+									},100);
+								self.job("bis3b-commit", function() {
+									self.$.von1b.input.commit();
+									},100);
 								break;
 							case 4:
+								self.blocklage4 = self.blocklagen[i];
+								self.job("von4a-commit", function() {
+									self.$.von1a.input.commit();
+									},100);
+								self.job("bis4b-commit", function() {
+									self.$.von1b.input.commit();
+									},100);
 								break;
 							case 5:
+								self.blocklage5 = self.blocklagen[i];
+								self.job("von5a-commit", function() {
+									self.$.von1a.input.commit();
+									},100);
+								self.job("bis5b-commit", function() {
+									self.$.von1b.input.commit();
+									},100);
 								break;
 							case 6:
+								self.blocklage6 = self.blocklagen[i];
+								self.job("von6a-commit", function() {
+									self.$.von1a.input.commit();
+									},100);
+								self.job("bis6b-commit", function() {
+									self.$.von1b.input.commit();
+									},100);
 								break;
 							default:
 								break;
