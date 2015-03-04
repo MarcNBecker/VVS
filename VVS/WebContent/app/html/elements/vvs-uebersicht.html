@@ -236,14 +236,15 @@
     		},
     		createKurs: function() {
     			var self = this; 
-    			//TODO navigate to Kurs pflegen with ID = 0
+    			self.pageLoaded.kurs = false;
+    			location.href = "#!" + self.pageDescriptor.kurs.hash;
     		},
     		updateKurs: function() {
     			var self = this;
-				if (self.$.kurs.selected !== null && self.kurse.length > 0)
+    			if (self.$.kurs.selected !== null && self.kurse.length > 0)
 				{
-					//TODO navigate to Kurs pflegen with ID = self.kurse[self.$.kurs.selected].id;
-					
+					self.pageLoaded.kurs = false;
+					location.href = "#!" + self.pageDescriptor.kurs.hash + "-" + self.kurse[self.$.kurs.selected].id;
 				}
     		},
     		createModulplan: function() {
