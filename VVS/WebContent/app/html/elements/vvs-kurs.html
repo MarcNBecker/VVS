@@ -68,9 +68,13 @@
 				<div vertical layout class="vertical-input">
 					<span class="headline">Blocklagen</span>
 					<div horizontal start layout class="horizontal-input">
-						<polymer-date-picker id="datePicker1a" relatedTarget="{{$.von1a.input}}" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{dozent.angelegt}}" opened="false"></polymer-date-picker>
+						<polymer-date-picker id="datePicker1a" relatedTarget="{{$.von1a.input}}" on-click="{{toggle2}}" halign="left" style="z-index:99" selectedDate="{{blocklage1.startDatum}}" opened="false"></polymer-date-picker>
 						<paper-input-decorator id="von1a" label="1. Blocklage von" on-click="{{toggle}}" floatingLabel flex>
-						<input is="core-input" value="{{this.blocklage1.startDatum}}" readonly>
+							<input is="core-input" value="{{blocklage1.startDatum}}" readonly>
+						</paper-input-decorator>
+						<polymer-date-picker id="datePicker1b" relatedTarget="{{$.von1b.input}}" on-click="{{toggle2b}}" halign="left" style="z-index:99" selectedDate="{{blocklage1.endDatum}}" opened="false"></polymer-date-picker>
+						<paper-input-decorator id="von1b" label="1. Blocklage bis" on-click="{{toggleb}}" floatingLabel flex>
+							<input is="core-input" value="{{blocklage1.endDatum}}" readonly>
 						</paper-input-decorator>
 					</div>
 				</div>
@@ -90,6 +94,15 @@
 			blocklage5 : new model.templates.Blocklage(),
 			blocklage6 : new model.templates.Blocklage(),
 			kurs: new model.templates.Kurs(),
+			formateDate: function() {
+			    var date = new Date();
+				var year = date.getFullYear();
+			    var month = '0' + (date.getMonth() + 1);
+			    month = month.slice(-2, (month.length - 2) + 3);
+			    var day = '0' + date.getDate();
+			    day = day.slice(-2, (day.length - 2) + 3);
+			    return year + '-' + month + '-' + day;
+			},
 			toggle2: function() {
 				if (this.$.von1a.input.committedValue !== this.blocklage1.startDatum)
 				{
@@ -100,7 +113,25 @@
 				}
 			},
 			toggle: function() {
+				if (this.blocklage1.startDatum === "") {
+					this.blocklage1.startDatum = this.formateDate();
+				}
 				this.$.datePicker1a.toggle();
+			},
+			toggle2b: function() {
+				if (this.$.von1b.input.committedValue !== this.blocklage1.endDatum)
+				{
+					this.$.datePicker1b.toggle();
+					this.job("von1b-commit", function() {
+					this.$.von1b.input.commit();
+					},100);
+				}
+			},
+			toggleb: function() {
+				if (this.blocklage1.endDatum === "") {
+					this.blocklage1.endDatum = this.formateDate();
+				}
+				this.$.datePicker1b.toggle();
 			},
     		ready: function() {
     			var self = this;
@@ -133,6 +164,12 @@
 							switch(self.blocklagen[i].semester) {
 							case 1:
 								self.blocklage1 = self.blocklagen[i];
+								self.job("von1a-commit", function() {
+									self.$.von1a.input.commit();
+									},100);
+								self.job("von1b-commit", function() {
+									self.$.von1b.input.commit();
+									},100);
 								break;
 							case 2:
 								break;
@@ -148,7 +185,6 @@
 								break;
 							}
 						}
-					self.$.von1a.input.commit();
 					}
 					else{
 						console.log(JSON.stringify(api));
