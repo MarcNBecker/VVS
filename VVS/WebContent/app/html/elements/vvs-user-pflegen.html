@@ -10,7 +10,7 @@
 				autoValidate isInvalid="{{invalid.name}}"
 				disabled?="{{toggleDisabled}}"> <input
 				is="core-input" value={{user.name}} required> </paper-input-decorator>
-			<paper-input-decorator label="Passwort" error="Pflichtfeld"
+			<paper-input-decorator label="Neues Passwort" error="Pflichtfeld"
 				floatingLabel autoValidate isInvalid="{{invalid.password}}"
 				disabled?="{{toggleDisabled}}"> <input
 				is="core-input" value={{user.passwort}} type="password" required>
@@ -103,7 +103,7 @@
 						if (!api.isError) {
 							self.user = api.response;
 							//self.pageParameter.modulplanPflegen.id = self.modulplan.id;
-							self.pageLoaded.userAnlegen = false;
+							self.pageLoaded.userPflegen = false;
 							self.toasts.success.show();
 							location.href = '#!stammdaten';
 							//location.href = '#!modulplanPflegen';

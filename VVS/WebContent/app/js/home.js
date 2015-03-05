@@ -32,6 +32,8 @@ template.pageLoaded = {
 	dozent: false,
 	modulplanAnlegen: false,
 	modulplanPflegen: false,
+	userAnlegen: false,
+	userPflegen: false,
 	kurs: false
 };
 
@@ -41,6 +43,8 @@ template.pageDescriptor = {
 	dozent: {name: 'Dozent pflegen', hash: 'dozent', html: '<vvs-dozent pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-dozent>'},
 	modulplanAnlegen: {name: 'Modulplan anlegen', hash: 'modulplanAnlegen', html: '<vvs-modulplan-anlegen pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-modulplan-anlegen>'},
 	modulplanPflegen: {name: 'Modulplan pflegen', hash: 'modulplanPflegen', html: '<vvs-modulplan-pflegen pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-modulplan-pflegen>'},
+	userAnlegen: {name: 'User anlegen', hash: 'userAnlegen', html: '<vvs-user-anlegen pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-user-anlegen>'},
+	userPflegen: {name: 'User pflegen', hash: 'userPflegen', html: '<vvs-user-pflegen pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-user-pflegen>'},
 	kurs: {name: 'Kurs pflegen', hash: 'kurs', html: '<vvs-kurs pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-kurs>'}
 };
 
@@ -48,7 +52,7 @@ template.pageDescriptor = {
 template.drawerPages = [template.pageDescriptor.stammdaten];
 
 //Pages that can be displayed in the home main div
-template.homePages = [template.pageDescriptor.stammdaten, template.pageDescriptor.dozent, template.pageDescriptor.kurs, template.pageDescriptor.modulplanAnlegen, template.pageDescriptor.modulplanPflegen];
+template.homePages = [template.pageDescriptor.stammdaten, template.pageDescriptor.dozent, template.pageDescriptor.kurs, template.pageDescriptor.modulplanAnlegen, template.pageDescriptor.modulplanPflegen, template.pageDescriptor.userAnlegen, template.pageDescriptor.userPflegen];
 
 //Is called whenever the url hash is changed and navigates the app
 function handleHashChange(refresh) {
