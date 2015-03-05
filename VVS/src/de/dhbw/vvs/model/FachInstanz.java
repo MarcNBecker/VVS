@@ -135,7 +135,7 @@ public class FachInstanz {
 		ArrayList<Object> fieldValues = new ArrayList<Object>();
 		fieldValues.add(id);
 		db.doQuery("DELETE FROM fachinstanz WHERE id = ?", fieldValues);
-		if (fach.getInstanzenCount() == 0) {
+		if (fach.getInstanzenCount() == 0 && Dozent.getAllForFach(fach).isEmpty()) {
 			fach.delete();	
 		}
 	}

@@ -225,6 +225,9 @@ public class Dozent {
 		fieldValues.add(id);
 		fieldValues.add(fach.getID());
 		db.doQuery("DELETE FROM dozentfach WHERE dozent = ? AND fach = ?", fieldValues);
+		if (fach.getInstanzenCount() == 0 && Dozent.getAllForFach(fach).isEmpty()) {
+			fach.delete();	
+		}
 	}
 	
 	public void deleteKommentar(Kommentar kommentar) throws WebServiceException {
