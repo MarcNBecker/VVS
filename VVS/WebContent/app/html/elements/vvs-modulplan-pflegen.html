@@ -1,11 +1,12 @@
 <polymer-element name="vvs-modulplan-pflegen">
 	<template>
 		<link rel="stylesheet" type="text/css" href="../../css/elements.css">
+		<core-media-query query="max-width: 1400px" queryMatches="{{smallScreen}}"></core-media-query>
 		<paper-shadow z="3" class="shadow">
 			<div vertical layout>
 				<span horizontal layout class="headline vertical-input">{{modulplan.studiengang}} - {{modulplan.vertiefungsrichtung}}</span>
-				<div horizontal layout class="horizontal-input vertical-input">
-					<div vertical layout flex two>
+				<div horizontal?="{{!smallScreen}}" vertical?="{{smallScreen}}" layout class="horizontal-input vertical-input">
+					<div auto-vertical?="{{smallScreen}}" vertical layout flex?="{{!smallScreen}}" two?="{{!smallScreen}}">
 						<paper-shadow z="2" class="inner-shadow">
 							<div horizontal layout>
 								<span horizontal layout center-center class="small-headline" flex>Modul</span>
@@ -30,14 +31,14 @@
 								</template>
 							</template>
 						</paper-shadow>
-						<div horizontal layout center class="horizontal-button-bar">
+						<div horizontal layout center class="horizontal-button-bar horizontal-verticalizable">
 							<paper-button on-click={{save}} raised disabled?="{{disableToggle}}">Speichern</paper-button>
 							<paper-button on-click={{initDeleteModulplan}} raised disabled?="{{disableToggle}}">L&ouml;schen</paper-button>
 							<paper-button on-click={{cancel}} raised disabled?="{{disableToggle}}">Abbrechen</paper-button>				
 							<paper-spinner active?={{disableToggle}} self-center></paper-spinner>
 						</div>
 					</div>
-					<div vertical layout flex class="input-padding">			
+					<div auto-vertical?="{{smallScreen}}" vertical layout flex?="{{!smallScreen}}" class="input-padding">			
 						<span class="small-headline">Modulplan bearbeiten</span>
 						<div horizontal layout center>
 							<paper-dropdown-menu label="Neues Modul anlegen oder eines ausw&auml;hlen" disabled?="{{disableToggle || selectedFach >= 0}}" on-core-select="{{setModulIsInvalid}}" flex>
