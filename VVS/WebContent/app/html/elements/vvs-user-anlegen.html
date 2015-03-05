@@ -1,0 +1,124 @@
+<polymer-element name="vvs-user-anlegen"> <template>
+<link rel="stylesheet" href="../../css/elements.css" shim-shadowdom>
+<paper-shadow z="3" class="shadow">
+<div vertical layout>
+	<div vertical layout class="vertical-input horizontal-verticalizable">
+		<span class="headline">User Anlegen</span>
+		<div vertical layout class="horizontal-input">
+			<!-- Main input fields -->
+			<paper-input-decorator label="Name" error="Pflichtfeld" floatingLabel
+				autoValidate isInvalid="{{invalid.name}}"
+				disabled?="{{toggleDisabled}}"> <input
+				is="core-input" value={{user.name}} required> </paper-input-decorator>
+			<paper-input-decorator label="Passwort" error="Pflichtfeld"
+				floatingLabel autoValidate isInvalid="{{invalid.password}}"
+				disabled?="{{toggleDisabled}}"> <input
+				is="core-input" value={{user.passwort}} type="password" required>
+			</paper-input-decorator>
+		</div>
+		<div horizontal layout center>
+			<span class="headline">Sekret&aumlr</span>
+			<paper-checkbox checked="{{sekretaerChecked}}" self-center
+				disabled?="{{toggleDisabled}}"></paper-checkbox>
+		</div>
+		<div vertical layout class="horizontal-input">
+			<paper-dropdown-menu label="Studiengangsleiter"
+				hidden?="{{!sekretaerChecked}}" disabled?="{{toggleDisabled}}">
+			<paper-dropdown class="dropdown"> <core-menu
+				selected="{{selectedStudiengangsleiter}}" class="menu">
+			<template repeat="{{item in studiengangsleiter}}"> <paper-item>{{item.id}}
+			- {{item.name}}</paper-item> </template> </core-menu> </paper-dropdown> </paper-dropdown-menu>
+		</div>
+		<!-- Button Bar -->
+		<div horizontal layout center
+			class="horizontal-input horizontal-button-bar">
+			<paper-button on-click="{{create}}" raised
+				disabled?="{{toggleDisabled}}">User anlegen</paper-button>
+			<paper-button on-click="{{cancel}}" raised
+				disabled?="{{toggleDisabled}}">Abbrechen</paper-button>
+			<paper-spinner active?="{{toggleDisabled}}" self-center></paper-spinner>
+		</div>
+	</div>
+</paper-shadow> </template> <script>
+	Polymer(
+			"vvs-user-anlegen",
+			{
+				//Initializing
+				user : new model.templates.User(),
+				studiengangsleiter : [],
+				sekretaerChecked : false,
+				toggleDisabled : true,
+				selectedStudiengangsleiter : 0,
+				invalid : {},
+				publish : {
+					pageParameter : {},
+					pageLoaded : {},
+					toasts : {}
+				},
+				//Initialize the screen
+				ready : function() {
+					var self = this;
+					self.user = new model.templates.User();
+					self.studiengangsleiter = [];
+					self.sekretaerChecked = false;
+					self.toggleDisabled = true;
+					self.selectedStudiengangsleiter = 0;
+					self.invalid = {};
+					//Load available User
+					model.webService.getAllStudiengangsleiter(function(api) {
+						if (!api.isError) {
+							self.studiengangsleiter = api.response;
+							self.toggleDisabled = false;
+						} else {
+							console.log(JSON.stringify(api));
+							self.toasts.error.show();
+						}
+					});
+				},
+				//create a new User
+				create : function() {
+					var self = this;
+					if (!self.checkInputs()) {
+						return;
+					}
+					self.toggleDisabled = true;
+					// If Sekretaer is selected, set studiengangsleiter ID
+					if (self.sekretaerChecked === true
+							&& (self.sekretaerChecked !== null && self.selectedStudiengangsleiter.length > 0)) {
+						self.user.repraesentiert = self.studiengangsleiter[self.selectedStudiengangsleiter].id;
+					} else {
+						self.user.repraesentiert = 1;
+					}
+					//Create User
+					model.webService.createUser(self.user, function(api) {
+						if (!api.isError) {
+							self.user = api.response;
+							//self.pageParameter.modulplanPflegen.id = self.modulplan.id;
+							self.pageLoaded.userAnlegen = false;
+							self.toasts.success.show();
+							location.href = '#!stammdaten';
+							//location.href = '#!modulplanPflegen';
+						} else {
+							console.log(JSON.stringify(api));
+							self.toasts.error.show();
+						}
+					});
+				},
+				//Navigate backwards and force a reload
+				cancel : function() {
+					this.pageLoaded.userAnlegen = false;
+					window.history.back();
+				},
+				//Check all invalid properties
+				checkInputs : function() {
+					for ( var property in this.invalid) {
+						if (this.invalid.hasOwnProperty(property)) {
+							if (this.invalid[property] === true) {
+								return false;
+							}
+						}
+					}
+					return true;
+				}
+			});
+</script> </polymer-element>
