@@ -9,8 +9,8 @@
 						<paper-shadow z="2" class="inner-shadow">
 							<div horizontal layout>
 								<span horizontal layout center-center class="small-headline" flex>Modul</span>
-								<span horizontal layout center-center class="small-headline" flex>Semester</span>
 								<span horizontal layout center-center class="small-headline" flex>Fach</span>
+								<span horizontal layout center-center class="small-headline" flex>Semester</span>
 								<span horizontal layout center-center class="small-headline" flex>Stunden</span>
 								<paper-icon-button class="hide"></paper-icon-button>
 								<paper-icon-button class="hide"></paper-icon-button>
@@ -19,12 +19,12 @@
 								<template repeat="{{fachInstanz in modulInstanz.fachInstanzList}}">
 									<paper-shadow z="1" class="{{(inputModulInstanz.id === modulInstanz.id && (inputFachInstanz.id === fachInstanz.id || (selectedFach < 0 && (invalid.fname && invalid.fkurzbeschreibung && invalid.semester && invalid.stunden)))) ? 'inner-inner-shadow highlight' : 'inner-inner-shadow'}}">
 										<div horizontal layout center>
-											<span horizontal layout center-center flex>{{modulInstanz.modul.name}}</span>
-											<span horizontal layout center-center flex>{{fachInstanz.semester}}</span>
+											<span horizontal layout center-center flex>{{modulInstanz.modul.name}} ({{modulInstanz.credits}} Credits)</span>
 											<span horizontal layout center-center flex>{{fachInstanz.fach.name}}</span>
+											<span horizontal layout center-center flex>{{fachInstanz.semester}}</span>
 											<span horizontal layout center-center flex>{{fachInstanz.stunden}}</span>
-											<paper-icon-button on-click="{{edit}}" icon="create" self-center></paper-icon-button>
-											<paper-icon-button on-click="{{doDelete}}" icon="delete" self-center></paper-icon-button>
+											<paper-icon-button on-click="{{edit}}" icon="create" disabled?="{{disableToggle}}" self-center></paper-icon-button>
+											<paper-icon-button on-click="{{initDoDelete}}" icon="delete" disabled?="{{disableToggle}}" self-center></paper-icon-button>
 										</div>
 									</paper-shadow>
 								</template>
@@ -37,11 +37,11 @@
 							<paper-spinner active?={{disableToggle}} self-center></paper-spinner>
 						</div>
 					</div>
-					<div vertical layout flex>			
-						<span class="small-headline">Neues Fach anlegen</span>
+					<div vertical layout flex class="input-padding">			
+						<span class="small-headline">Modulplan bearbeiten</span>
 						<div horizontal layout center>
 							<paper-dropdown-menu label="Neues Modul anlegen oder eines ausw&auml;hlen" disabled?="{{disableToggle || selectedFach >= 0}}" on-core-select="{{setModulIsInvalid}}" flex>
-								<paper-dropdown class="dropdown">
+								<paper-dropdown id="modulDropdown" class="dropdown">
 									<core-menu class="menu" selected="{{selectedModul}}">
 										<template  repeat="{{item in module}}">
 											<paper-item>{{item.modul.name}}</paper-item>
@@ -54,19 +54,21 @@
 							<paper-icon-button icon="expand-less" on-click="{{switchModulInfo}}" disabled?="{{disableToggle}}" hidden?="{{!(selectedModul >= 0) || !toggleModulInfo}}" self-center></paper-icon-button>
 						</div>
 						<core-collapse opened?="{{!(selectedModul >= 0) || toggleModulInfo}}">
-							<paper-input-decorator id="mname" label="Modulname" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.mname}}">
-								<input is="core-input" type="text" value="{{inputModulInstanz.modul.name}}" maxlength="100" disabled?="{{disableToggle || selectedModul >= 0}}" required>
-							</paper-input-decorator>
-							<paper-input-decorator id="mkurzbeschreibung" label="Kurzbeschreibung" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.mkurzbeschreibung}}">
-								<input is="core-input" type="text" value="{{inputModulInstanz.modul.kurzbeschreibung}}" maxlength="100" disabled?="{{disableToggle || selectedModul >= 0}}" required>
-							</paper-input-decorator>
+							<div horizontal layout start>
+								<paper-input-decorator id="mname" label="Modulname" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.mname}}" flex>
+									<input is="core-input" type="text" value="{{inputModulInstanz.modul.name}}" maxlength="100" disabled?="{{disableToggle || selectedModul >= 0}}" required>
+								</paper-input-decorator>
+								<paper-input-decorator id="mkurzbeschreibung" label="Kurzbeschreibung" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.mkurzbeschreibung}}" flex>
+									<input is="core-input" type="text" value="{{inputModulInstanz.modul.kurzbeschreibung}}" maxlength="100" disabled?="{{disableToggle || selectedModul >= 0}}" required>
+								</paper-input-decorator>
+							</div>
 						</core-collapse>
 						<paper-input-decorator id="credits" label="Credits" error="Pflichtfeld: Keine g&uuml;ltige Creditanzahl" floatingLabel autoValidate isInvalid="{{invalid.credits}}">
 							<input is="core-input" type="text" pattern="[0-9]+" value="{{inputModulInstanz.credits}}" disabled?="{{disableToggle}}" required>
 						</paper-input-decorator>
 						<div horizontal layout center>
 							<paper-dropdown-menu label="Neues Fach anlegen oder eines ausw&auml;hlen" disabled?="{{disableToggle || (selectedModul < 0 && (invalid.mname || invalid.mkurzbeschreibung || invalid.credits))}}" on-core-select="{{setFachIsInvalid}}" flex>
-								<paper-dropdown class="dropdown">
+								<paper-dropdown id="fachDropdown" class="dropdown">
 									<core-menu class="menu" selected="{{selectedFach}}">
 										<template  repeat="{{item in faecher}}">
 											<paper-item>{{item.fach.name}}</paper-item>
@@ -79,19 +81,23 @@
 							<paper-icon-button icon="expand-less" on-click="{{switchFachInfo}}" disabled?="{{disableToggle}}" hidden?="{{!(selectedFach >= 0) || !toggleFachInfo}}" self-center></paper-icon-button>
 						</div>
 						<core-collapse opened?="{{!(selectedFach >= 0) || toggleFachInfo}}">
-							<paper-input-decorator id="fname" label="Fachname" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.fname}}">
-								<input is="core-input" type="text" value="{{inputFachInstanz.fach.name}}" maxlength="100" disabled?="{{disableToggle || selectedFach >= 0}}" required>
-							</paper-input-decorator>
-							<paper-input-decorator id="fkurzbeschreibung" label="Kurzbeschreibung" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.fkurzbeschreibung}}">
-								<input is="core-input" type="text" value="{{inputFachInstanz.fach.kurzbeschreibung}}" maxlength="100" disabled?="{{disableToggle || selectedFach >= 0}}" required>
-							</paper-input-decorator>
+							<div horizontal layout start>
+								<paper-input-decorator id="fname" label="Fachname" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.fname}}" flex>
+									<input is="core-input" type="text" value="{{inputFachInstanz.fach.name}}" maxlength="100" disabled?="{{disableToggle || selectedFach >= 0}}" required>
+								</paper-input-decorator>
+								<paper-input-decorator id="fkurzbeschreibung" label="Kurzbeschreibung" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.fkurzbeschreibung}}" flex>
+									<input is="core-input" type="text" value="{{inputFachInstanz.fach.kurzbeschreibung}}" maxlength="100" disabled?="{{disableToggle || selectedFach >= 0}}" required>
+								</paper-input-decorator>
+							</div>
 						</core-collapse>
-						<paper-input-decorator id="stunden" label="Stunden" error="Pflichtfeld: Keine g&uuml;ltige Stundenzahl" floatingLabel autoValidate isInvalid="{{invalid.stunden}}">
-							<input is="core-input" type="text" pattern="[0-9]+" value="{{inputFachInstanz.stunden}}" disabled?="{{disableToggle}}" required>
-						</paper-input-decorator>
-						<paper-input-decorator id="semester" label="Semester" error="Pflichtfeld: Keine g&uuml;ltiges Semester" floatingLabel autoValidate isInvalid="{{invalid.semester}}">
-							<input is="core-input" type="text" pattern="[0-9]+" value="{{inputFachInstanz.semester}}" disabled?="{{disableToggle}}" required>
-						</paper-input-decorator>
+						<div horizontal layout start>
+							<paper-input-decorator id="semester" label="Semester" error="Pflichtfeld: Keine g&uuml;ltiges Semester" floatingLabel autoValidate isInvalid="{{invalid.semester}}" flex>
+								<input is="core-input" type="text" pattern="[0-9]+" value="{{inputFachInstanz.semester}}" disabled?="{{disableToggle}}" required>
+							</paper-input-decorator>
+							<paper-input-decorator id="stunden" label="Stunden" error="Pflichtfeld: Keine g&uuml;ltige Stundenzahl" floatingLabel autoValidate isInvalid="{{invalid.stunden}}" flex>
+								<input is="core-input" type="text" pattern="[0-9]+" value="{{inputFachInstanz.stunden}}" disabled?="{{disableToggle}}" required>
+							</paper-input-decorator>
+						</div>
 						<div horizontal layout>
 							<paper-button on-click={{add}} raised disabled?="{{disableToggle}}" flex>&Uuml;bernehmen</paper-button>
 							<paper-button on-click={{reject}} raised disabled?="{{disableToggle}}" flex>Verwerfen</paper-button>
@@ -100,9 +106,14 @@
 				</div>
 			</div>
 		</paper-shadow>
+		<paper-toast id="toast_forbidden_fachinstanz" text="Ein Fach darf nicht mehreren Modulen zugeordnet werden" duration="7000"></paper-toast>
 		<paper-action-dialog id="delete_modulplan_dialog" heading="{{modulplan.studiengang}} - {{modulplan.vertiefungsrichtung}} wirklich l&ouml;schen?">
 			<paper-button affirmative>Nein</paper-button>
 			<paper-button on-click="{{deleteModulplan}}" affirmative autofocus>L&ouml;schen</paper-button>
+		</paper-action-dialog>
+		<paper-action-dialog id="delete_fach_dialog" heading="{{modulInstanzToDelete.modul.name}} - {{fachInstanzToDelete.fach.name}} wirklich l&ouml;schen?">
+			<paper-button affirmative>Nein</paper-button>
+			<paper-button on-click="{{doDelete}}" affirmative autofocus>L&ouml;schen</paper-button>
 		</paper-action-dialog>
 	</template>
 	<script>
@@ -112,8 +123,14 @@
 		faecher: [],
 		selectedModul: -1,
 		selectedFach: -1,
+		modulInstanzToDelete: null,
+		fachInstanzToDelete: null,
+		deletedModulInstanzen: [],
+		deletedFachInstanzen: [],
 		inputModulInstanz: new model.templates.ModulInstanz(),
 		inputFachInstanz: new model.templates.FachInstanz(),
+		nextModulID: -1,
+		nextFachID: -1,
 		disableToggle: true,
 		toggleModulInfo: false,
 		toggleFachInfo: false,
@@ -132,8 +149,14 @@
 			self.faecher = [];
 			self.selectedModul = -1;
 			self.selectedFach = -1;
+			self.modulInstanzToDelete = null;
+			self.fachInstanzToDelete = null;
+			self.deletedModulInstanzen = [];
+			self.deletedFachInstanzen = [];
 			self.inputModulInstanz = new model.templates.ModulInstanz();
 			self.inputFachInstanz = new model.templates.FachInstanz();
+			self.nextModulID = -1;
+			self.nextFachID = -1;
 			self.disableToggle = true;
 			self.toggleModulInfo = false;
 			self.toggleFachInfo = false;
@@ -193,8 +216,7 @@
 					if(!api.isError) {
 						deepRuns++;
 						//For every Fach check if there is a FachInstanz in one of the ModulInstanzen of the Modulplan
-						//Built an every with FachInstanzen for the dropdown
-						//self.faecher = api.response;
+						//Built an array with FachInstanzen for the dropdown
 						var found = false;
 						var i;
 						for(i=0; i<api.response.length; i++) {
@@ -242,71 +264,263 @@
 			});
 		},
 		add: function() {
-			//Update a ModulInstanz and FachInstanz in modulplan
-			if(this.inputModulInstanz.id > 0 && this.inputFachInstanz.id > 0) {
-				//validate everything
-				if(!this.checkInputs()) {
-					return;	
-				}
-				var i;
-				for(i=0; i<this.modulplan.modulInstanzList.length; i++) {
-					if(this.modulplan.modulInstanzList[i].id === this.inputModulInstanz.id) {
-						var ii;
-						for(ii=0; ii<this.modulplan.modulInstanzList[i].fachInstanzList.length; ii++) {
-							if(this.modulplan.modulInstanzList[i].fachInstanzList[ii].id === this.inputFachInstanz.id) {
-								this.modulplan.modulInstanzList[i].credits = this.inputModulInstanz.credits;
-								this.modulplan.modulInstanzList[i].fachInstanzList[ii].stunden = this.inputFachInstanz.stunden;
-								this.modulplan.modulInstanzList[i].fachInstanzList[ii].semester = this.inputFachInstanz.semester;
-								break;
-							}
-						}
-						break;	
-					}
-				}
-			} else if(this.inputModulInstanz.id > 0 && this.selectedFach < 0) { //Only update ModulInstanz
-				//validate modul
-				if(!this.checkInputsModul()) {
+			var onlyAllowModulplanUpdate = false;
+			if(!this.checkInputs()) {
+				if(this.checkInputsModul() && !this.checkInputsFach()) {
+					onlyAllowModulplanUpdate = true;
+				} else {
 					return;
 				}
-				var i;
-				for(i=0; i<this.modulplan.modulInstanzList.length; i++) {
-					if(this.modulplan.modulInstanzList[i].id === this.inputModulInstanz.id) {
-						this.modulplan.modulInstanzList[i].credits = this.inputModulInstanz.credits;
-					}
-					break;
-				}
-			} else {
-				//Create new Modul and new Fach
-				//Create exisisting Modul with new Fach
-				//Create existing Modul with existing Fach
-				//TODO FachList muss richtig geupdated werden
-				//TODO save ermöglichen
-				//TODO action dialog bei delete
-				//TODO credit bruchteile anzeigen
 			}
-			this.selectedModul = -1;
-			this.selectedFach = -1;
-		},
+			//Says if the modul was newly created and thus doesn't have a fachInstanzList
+			var modulHasFachList = false;
+			
+			//The ModulInstanz is completely new, we need to set an internal ID and add it to the modulplan and the dropdown
+			if(this.selectedModul < 0 && !onlyAllowModulplanUpdate) {
+				this.inputModulInstanz.id = this.nextModulID;
+				this.nextModulID--;
+				this.modulplan.modulInstanzList.push(this.inputModulInstanz);
+				this.module.push(this.inputModulInstanz);
+			} else if (this.inputModulInstanz.id === 0 && !onlyAllowModulplanUpdate) 
+			{ // The new ModulInstanz is based on an existing Modul, we need to set an internal ID and add it to the modulplan, but replace it in the dropdown
+				this.inputModulInstanz.id = this.nextModulID;
+				this.nextModulID--;
+				this.modulplan.modulInstanzList.push(this.inputModulInstanz);
+				this.module[this.selectedModul] = this.inputModulInstanz;
+			} else { //We are referencing a ModulInstanz which is already in the modulplan (either by service or because we already added it) or it is in the deletion list and we need to add it
+				this.module[this.selectedModul].credits = this.inputModulInstanz.credits;
+				this.inputModulInstanz = this.module[this.selectedModul]; //set inputModulInstanz to correct reference
+				//Check if the ModulInstanz was deleted
+				var miDelPos = this.deletedModulInstanzen.indexOf(this.inputModulInstanz)
+				if(miDelPos >= 0) {
+					//Remove from deletion
+					this.deletedModulInstanzen.splice(miDelPos, 1);
+					//Add to modulplan again
+					this.modulplan.modulInstanzList.push(this.inputModulInstanz);
+				}
+				modulHasFachList = true;
+			}
+			
+			//Stop if we only want to update the modulplan
+			if(onlyAllowModulplanUpdate) {
+				//clear inputs
+				this.reject();
+				return;
+			}
+			
+			//Says if the fach was newly created or only updated
+			var onlyUpdateFach = false;
+			
+			//Equivalent to ModulInstanz
+			if(this.selectedFach < 0) {
+				this.inputFachInstanz.id = this.nextFachID;
+				this.nextFachID--;
+				this.faecher.push(this.inputFachInstanz);
+			} else if (this.inputFachInstanz.id === 0) {
+				this.inputFachInstanz.id = this.nextFachID;
+				this.nextFachID--;
+				this.faecher[this.selectedFach] = this.inputFachInstanz;
+			} else {
+				this.faecher[this.selectedFach].stunden = this.inputFachInstanz.stunden;
+				this.faecher[this.selectedFach].semester = this.inputFachInstanz.semester;
+				var fiDelPos = this.deletedFachInstanzen.indexOf(this.faecher[this.selectedFach]);
+				onlyUpdateFach = true;
+				if(fiDelPos >= 0) {
+					this.inputFachInstanz = this.faecher[this.selectedFach];
+					this.deletedFachInstanzen.splice(fiDelPos, 1);	
+					//Someone moved this FachInstanz to another ModulInstanz, this means we need to keep deleting this FachInstanz and create a new FachInstanz on the fly
+					//However we need to put a clone in the deletion list to prevent updating the object in the deletion list
+					if(this.inputFachInstanz.modulInstanzID !== this.inputModulInstanz.id) {
+						this.deletedFachInstanzen.push(JSON.parse(JSON.stringify(this.inputFachInstanz)));
+						this.inputFachInstanz.id = this.nextFachID;
+						this.nextFachID--;
+					}
+					onlyUpdateFach = false;
+				}
+			}
+			
+			if(!onlyUpdateFach) {
+				if(modulHasFachList) {
+					this.inputModulInstanz.fachInstanzList.push(this.inputFachInstanz);
+				} else {
+					this.inputModulInstanz.fachInstanzList = [this.inputFachInstanz];
+				}
+				this.inputFachInstanz.modulInstanzID = this.inputModulInstanz.id;
+			}
+			
+			//reset input fields
+			this.reject();
+			//reset dropdowns, if something changed
+			this.$.fachDropdown.$.scroller.style.height = "";
+	       	this.$.fachDropdown.$.scroller.style.width = "";
+	        this.$.modulDropdown.$.scroller.style.height = "";
+	       	this.$.modulDropdown.$.scroller.style.width = "";
+	    },
 		reject: function() {
-			this.selectedModul = -1;
-			this.selectedFach = -1;
+			if(this.selectedModul === -1) {
+				//Imitate dropdown change
+				this.setModulIsInvalid({}, {isSelected: false});
+			} else {
+				this.selectedModul = -1;
+			}
+			if(this.selectedFach === -1) {
+				//Imitate dropdown change
+				this.setFachIsInvalid({}, {isSelected: false});
+			} else {
+				this.selectedFach = -1;
+			}
 		},
 		edit: function(e, detail, sender) {
 			this.selectedModul = this.module.indexOf(e.target.templateInstance.model.modulInstanz);
 			this.selectedFach = this.faecher.indexOf(e.target.templateInstance.model.fachInstanz);
 		},
-		doDelete: function(e, detail, sender) {
-			var miPos = this.modulplan.modulInstanzList.indexOf(e.target.templateInstance.model.modulInstanz);
-			if(this.modulplan.modulInstanzList[miPos].fachInstanzList.length > 1) {
-				//Delete FachInstanz
-				var fiPos = this.modulplan.modulInstanzList[miPos].fachInstanzList.indexOf(e.target.templateInstance.model.fachInstanz);
-				this.modulplan.modulInstanzList[miPos].fachInstanzList.splice(fiPos, 1)
-			} else {
-				this.modulplan.modulInstanzList.splice(miPos, 1);
+		initDoDelete: function(e, detail, sender) {
+			//These references directly point to the same object that is in the modulplan and in the dropdown arrays
+			this.modulInstanzToDelete = e.target.templateInstance.model.modulInstanz;
+			this.fachInstanzToDelete = e.target.templateInstance.model.fachInstanz;
+			this.$.delete_fach_dialog.toggle();
+		},
+		doDelete: function() {
+			var miPosModulplan = this.modulplan.modulInstanzList.indexOf(this.modulInstanzToDelete);
+			var fiPosModulplan = this.modulplan.modulInstanzList[miPosModulplan].fachInstanzList.indexOf(this.fachInstanzToDelete);
+			var lastFach = (this.modulplan.modulInstanzList[miPosModulplan].fachInstanzList.length === 1);
+			
+			//FachInstanzen which originally came from the server should be recoverable, when adding them again, only reset attributes
+			if(this.fachInstanzToDelete.id > 0 && this.fachInstanzToDelete.fach.id > 0) {
+				this.fachInstanzToDelete.semester = "";
+				this.fachInstanzToDelete.stunden = "";
+				this.deletedFachInstanzen.push(this.fachInstanzToDelete);
+			} else if (this.fachInstanzToDelete.id < 0 && this.fachInstanzToDelete.fach.id > 0) 
+			{ //FachInstanzen which are based on existing moduls should be reseted with their ID
+				this.fachInstanzToDelete.id = 0;
+				this.fachInstanzToDelete.semester = "";
+				this.fachInstanzToDelete.stunden = "";
+			} else 
+			{ //FachInstanzen which were created completely new, can be deleted from the dropdown
+				var fiPosDropdown = this.module.indexOf(this.fachInstanzToDelete);
+				this.faecher.splice(fiPosDropdown, 1);
 			}
+			//Remove fachInstanz from modulplan
+			this.modulplan.modulInstanzList[miPosModulplan].fachInstanzList.splice(fiPosModulplan, 1);
+			
+			//Only delete the ModulInstanz if it is not used in any other place in the Modulplan
+			if(lastFach) {
+				//ModulInstanzen which originally came from the server should be recoverable, when adding them again, only reset attributes
+				if(this.modulInstanzToDelete.id > 0 && this.modulInstanzToDelete.modul.id > 0) {
+					this.modulInstanzToDelete.credits = "";
+					this.deletedModulInstanzen.push(this.modulInstanzToDelete);
+				} else if (this.modulInstanzToDelete.id < 0 && this.modulInstanzToDelete.modul.id > 0) 
+				{ //ModulInstanzen which are based on existing moduls should be reseted with their ID
+					this.modulInstanzToDelete.id = 0;
+					this.modulInstanzToDelete.credits = "";
+				} else 
+				{ //Modul Instanzen which were created completely new, can be deleted from the dropdown
+					var miPosDropdown = this.module.indexOf(this.modulInstanzToDelete);
+					this.module.splice(miPosDropdown, 1);
+				}
+				//Remove modulInstanz from modulplan
+				this.modulplan.modulInstanzList.splice(miPosModulplan, 1);
+			}
+			//reset inputs
+			this.reject();
 		},
 		save: function() {
-			
+			//DELETE ALL
+			//UPDATE ALL
+			var self = this;
+			self.disableToggle = true;
+			var deepRuns = 0;
+			var j;
+			//Delete FachInstanzen
+			for(j=0; j<self.deletedFachInstanzen.length; j++) {
+				model.webService.quickDeleteFachInstanz(self.deletedFachInstanzen[j], function(api) {
+					if(!api.isError) {
+						deepRuns++;
+						if(deepRuns === self.deletedFachInstanzen.length) {
+							var deeperRuns = 0;
+							var jj;
+							//Delete ModulInstanzen
+							for(jj=0; jj<self.deletedModulInstanzen.length; jj++) {
+								model.webService.deleteModulInstanz(self.deletedModulInstanzen[jj], function(api) {
+									if(!api.isError) {
+										deeperRuns++;
+										if(deeperRuns === self.deletedModulInstanzen.length) {
+											self.doUpdatePart();
+										}
+									} else {
+										console.log(JSON.stringify(api));
+										self.toasts.error.show();
+									}
+								});
+							}
+							if(self.deletedModulInstanzen.length === 0) {
+								self.doUpdatePart();
+							}
+						}
+					} else {
+						console.log(JSON.stringify(api));
+						self.toasts.error.show();
+					}
+				});
+			}
+			if(self.deletedFachInstanzen.length === 0) {
+				self.doUpdatePart();
+			}
+		},
+		doUpdatePart: function() {
+			var self = this;
+			self.deletedModulInstanzen = [];
+			self.deletedFachInstanzen = [];
+			var totalVeryDeepRuns = self.modulplan.modulInstanzList.length;
+			var veryDeepRuns = 0;
+			var i;
+			//Update every ModulInstanz
+			for(i=0;i<self.modulplan.modulInstanzList.length;i++) {
+				var currentModulInstanz = self.modulplan.modulInstanzList[i];
+				currentModulInstanz.modulplanID = self.modulplan.id;
+				if(currentModulInstanz.id < 0) {
+					currentModulInstanz.id = 0;
+				}
+				model.helper.setModulInstanz(currentModulInstanz, function(api, outerI) {
+					if(!api.isError) {
+						veryDeepRuns++;
+						totalVeryDeepRuns = totalVeryDeepRuns + self.modulplan.modulInstanzList[outerI].fachInstanzList.length;
+						var modulInstanz = api.response;
+						self.modulplan.modulInstanzList[outerI].id = api.response.id;
+						self.modulplan.modulInstanzList[outerI].modul.id = api.response.modul.id;
+						var ii;
+						//Update or create every FachInstanz
+						for(ii=0; ii<self.modulplan.modulInstanzList[outerI].fachInstanzList.length; ii++) {
+							var currentFachInstanz = self.modulplan.modulInstanzList[outerI].fachInstanzList[ii];
+							currentFachInstanz.modulInstanzID = modulInstanz.id;
+							if(currentFachInstanz.id < 0) {
+								currentFachInstanz.id = 0;
+							}
+							model.helper.setFachInstanz(modulInstanz, currentFachInstanz, function(api, data) {
+								if(!api.isError) {
+									self.modulplan.modulInstanzList[data.i].fachInstanzList[data.ii].id = api.response.id;
+									self.modulplan.modulInstanzList[data.i].fachInstanzList[data.ii].fach.id = api.response.fach.id;
+									veryDeepRuns++;
+									if(veryDeepRuns === totalVeryDeepRuns) {
+										self.disableToggle = false;
+										self.toasts.success.show();
+									}
+								} else {
+									console.log(JSON.stringify(api));
+									self.toasts.error.show();
+								}
+							}, {i: outerI, ii: ii});
+						} 
+					} else {
+						console.log(JSON.stringify(api));
+						self.toasts.error.show();
+					}
+				}, i);
+			}
+			if(self.modulplan.modulInstanzList.length === 0) {
+				self.disableToggle = false;
+				self.toasts.success.show();
+			}
 		},
 		initDeleteModulplan: function() {
 			this.$.delete_modulplan_dialog.toggle();
@@ -331,6 +545,24 @@
     		this.pageLoaded.modulplanPflegen = false;
     		window.history.back();
 		},
+		checkModulIsDeleted: function(id) {
+			var i;
+			for(i=0; i<this.deletedModulInstanzList.length; i++) {
+				if(this.deletedModulInstanzList[i].id === id) {
+					return true;
+				}
+			}
+			return false;
+		},
+		checkFachIsDeleted: function(id) {
+			var i;
+			for(i=0; i<this.deletedFachInstanzList.length; i++) {
+				if(this.deletedFachInstanzList[i].id === id) {
+					return true;
+				}
+			}
+			return false;
+		},
 		//Check all invalid properties
 		checkInputs : function() {
 			for(var property in this.invalid) {
@@ -345,28 +577,28 @@
 		checkInputsModul : function() {
 			return (!this.invalid.mname && !this.invalid.mkurzbeschreibung && !this.invalid.credits);
 		},
+		checkInputsFach: function() {
+			return (!this.invalid.fname && !this.invalid.fkurzbeschreibung && !this.invalid.stunden && !this.invalid.semester);
+		},
 		//Reset the modul dropdown
 		resetModul: function() {
 			this.selectedModul = -1;
-			this.setModulIsInvalid(true);
 		},
 		//Set modul and toggle invalid properties for modul
-		setModulIsInvalid: function(invalid, detail) {
+		setModulIsInvalid: function(e, detail, sender) {
 			if(this.selectedModul >= 0) {
-				this.inputModulInstanz = Object.create(this.module[this.selectedModul]);
+				this.inputModulInstanz = JSON.parse(JSON.stringify(this.module[this.selectedModul])); //clone
 			} else {
 				this.inputModulInstanz = new model.templates.ModulInstanz();
 			}
-			if(invalid !== true && invalid !== false) {
-				//Is called from on-core-select
-				invalid = !detail.isSelected;
-				//Modulinfo is filled -> focus
-				this.job('update-labels-modulplan', function() {
-					this.$.mname.inputAction();
-					this.$.mkurzbeschreibung.inputAction();
-					this.$.credits.inputAction();
-				}, 100);
-			}
+			//Is called from on-core-select
+			var invalid = !detail.isSelected;
+			//Modulinfo is filled -> focus
+			this.job('update-labels-modulplan', function() {
+				this.$.mname.inputAction();
+				this.$.mkurzbeschreibung.inputAction();
+				this.$.credits.inputAction();
+			}, 100);
 			this.invalid.mname = invalid;
 			this.invalid.mkurzbeschreibung = invalid;
 			this.invalid.credits = invalid;
@@ -377,26 +609,35 @@
 		//Reset the fach dropdown
 		resetFach: function() {
 			this.selectedFach = -1;
-			this.setFachIsInvalid(true);
 		},
 		//Set fach and toggle invalid properties for fach
-		setFachIsInvalid: function(invalid, detail) {
+		setFachIsInvalid: function(e, detail, sender) {
 			if(this.selectedFach >= 0) {
-				this.inputFachInstanz = Object.create(this.faecher[this.selectedFach]);
+				//Check if the selected Fach is not a FachInstanz of another Modul
+				if(this.faecher[this.selectedFach].id !== 0 && this.deletedFachInstanzen.indexOf(this.faecher[this.selectedFach]) === -1) { //Fach is in Modulplan and not deleted
+					var selectedModulInstanzID = 0;
+					if(this.selectedModul >= 0) {
+						selectedModulInstanzID = this.module[this.selectedModul].id;
+					}
+					if(selectedModulInstanzID !== this.faecher[this.selectedFach].modulInstanzID) {
+						this.$.toast_forbidden_fachinstanz.show();
+						this.selectedFach = -1;
+						return;
+					}
+				}
+				this.inputFachInstanz = JSON.parse(JSON.stringify(this.faecher[this.selectedFach])); //clone
 			} else {
 				this.inputFachInstanz = new model.templates.FachInstanz();
 			}
-			if(invalid !== true && invalid !== false) {
-				//Is called from on-core-select
-				invalid = !detail.isSelected;
-				//Fachinfo is filled -> focus
-				this.job('update-labels-fach', function() {
-					this.$.fname.inputAction();
-					this.$.fkurzbeschreibung.inputAction();
-					this.$.stunden.inputAction();
-					this.$.semester.inputAction();
-				}, 100);
-			}
+			//Is called from on-core-select
+			var invalid = !detail.isSelected;
+			//Fachinfo is filled -> focus
+			this.job('update-labels-fach', function() {
+				this.$.fname.inputAction();
+				this.$.fkurzbeschreibung.inputAction();
+				this.$.stunden.inputAction();
+				this.$.semester.inputAction();
+			}, 100);
 			this.invalid.fname = invalid;
 			this.invalid.fkurzbeschreibung = invalid;
 			this.invalid.stunden = invalid;

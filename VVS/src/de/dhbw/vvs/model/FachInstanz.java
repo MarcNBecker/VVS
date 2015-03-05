@@ -87,9 +87,9 @@ public class FachInstanz {
 	}
 	
 	public FachInstanz create() throws WebServiceException {
-		if (id != 0) {
+		/*if (id != 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
-		}
+		}*/
 		if(fach.getID() == 0) {
 			fach.create();
 		}
@@ -100,7 +100,9 @@ public class FachInstanz {
 		fieldValues.add(modulInstanzID);
 		fieldValues.add(semester);
 		fieldValues.add(stunden);
-		this.id = db.doQuery("INSERT INTO fachinstanz (fach, modulInstanz, semester, stunden) VALUES (?, ?, ?, ?)", fieldValues);
+		fieldValues.add(semester);
+		fieldValues.add(stunden);
+		this.id = db.doQuery("INSERT INTO fachinstanz (fach, modulInstanz, semester, stunden) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE semester = ?, stunden = ?", fieldValues);
 		return this;
 	}
 	

@@ -4,20 +4,6 @@ var model = new function() {
 	 * Helper functions
 	 */
 	this.helper = new function() {
-		var FachInstanzComplete = function() { //Use this only with ModulplanComplete and ModulInstanzComplete
-			this.id = 0;
-			this.fach = new model.templates.Fach();
-			this.semester = 0;
-			this.stunden = 0;
-		};
-		
-		var ModulInstanzComplete = function() { //Use this only with ModulplanComplete to store FachInstanzen with a ModulInstanz
-			this.id = 0;
-			this.modul = new model.templates.Modul();
-			this.credits = 0;
-			this.fachInstanzList = [];
-		};
-		
 		this.ModulplanComplete = function() {
 			this.id = 0;
 			this.studiengang = "";
@@ -48,12 +34,9 @@ var model = new function() {
 							//Parse list of ModulInstanz
 							for(var i=0; i<api2.response.length; i++) {
 								var currentModulInstanz = api2.response[i];
-								var completeModulInstanz = new ModulInstanzComplete();
-								completeModulInstanz.id = currentModulInstanz.id;
-								completeModulInstanz.modul = currentModulInstanz.modul;
-								completeModulInstanz.credits = currentModulInstanz.credits;
+								currentModulInstanz.fachInstanzList = [];
 								//Add ModulInstanz to Modulplan
-								modulplan.modulInstanzList.push(completeModulInstanz);
+								modulplan.modulInstanzList.push(currentModulInstanz);
 								//Read FachInstanzen
 								model.webService.getAllFachInstanzen(currentModulInstanz, function(api3) {
 									//FachInstanzList can be read
@@ -61,15 +44,10 @@ var model = new function() {
 										if(!api3.isError) {
 											for(var ii=0; ii<api3.response.length; ii++) {
 												var currentFachInstanz = api3.response[ii];
-												var completeFachInstanz = new FachInstanzComplete();
-												completeFachInstanz.id = currentFachInstanz.id;
-												completeFachInstanz.fach = currentFachInstanz.fach;
-												completeFachInstanz.semester = currentFachInstanz.semester;
-												completeFachInstanz.stunden = currentFachInstanz.stunden;
-												//Search correct completeModulInstanz; can't rely on outer scope
+												//Search correct ModulInstanz; can't rely on outer scope
 												for(var iii=0; iii<modulplan.modulInstanzList.length; iii++) {
 													if(modulplan.modulInstanzList[iii].id === currentFachInstanz.modulInstanzID) {
-														modulplan.modulInstanzList[iii].fachInstanzList.push(completeFachInstanz);			
+														modulplan.modulInstanzList[iii].fachInstanzList.push(currentFachInstanz);			
 														break;
 													}
 												}
@@ -95,6 +73,22 @@ var model = new function() {
 					e(null);
 				}
 			});
+		};
+
+		this.setModulInstanz = function(mi, c, cd) {
+			if(mi.modul.id === 0) {
+				model.webService.createModulInstanzWithModul(mi, c, cd);
+			} else {
+				model.webService.createModulInstanz(mi, c, cd);
+			}
+		};
+		
+		this.setFachInstanz = function(mi, fi, c, cd) {
+			if(fi.fach.id === 0) {
+				model.webService.createFachInstanzWithFach(mi, fi, c, cd);
+			} else {
+				model.webService.createFachInstanz(mi, fi, c, cd);
+			}
 		};
 		
 	};
@@ -270,6 +264,7 @@ var model = new function() {
 		var modulInstanzURI = "/modulplaene/{modulplanID}/module/{modulID}";
 		var fachInstanzenURI = "/modulplaene/{modulplanID}/module/{modulID}/faecher";
 		var fachInstanzURI = "/modulplaene/{modulplanID}/module/{modulID}/faecher/{fachID}";
+		var quickDeleteFachInstanzURI = "/modulplaene/quickdelete/faecher/{fachInstanzID}";
 		
 		this.getAllDozenten = function(c) {
 			self.doRequest(dozentenURI, "GET", null, c);
@@ -427,12 +422,12 @@ var model = new function() {
 			self.doRequest(modulInstanzenURI.replace("{modulplanID}", m.id), "GET", null, c);
 		};
 		
-		this.createModulInstanzWithModul = function(mi, c) {
-			self.doRequest(modulInstanzenURI.replace("{modulplanID}", mi.modulplanID), "POST", mi, c);	
+		this.createModulInstanzWithModul = function(mi, c, cd) {
+			self.doRequest(modulInstanzenURI.replace("{modulplanID}", mi.modulplanID), "POST", mi, c, cd);	
 		};
 		
-		this.createModulInstanz = function(mi, c) {
-			self.doRequest(modulInstanzURI.replace("{modulplanID}", mi.modulplanID).replace("{modulID}", mi.modul.id), "PUT", mi, c);
+		this.createModulInstanz = function(mi, c, cd) {
+			self.doRequest(modulInstanzURI.replace("{modulplanID}", mi.modulplanID).replace("{modulID}", mi.modul.id), "PUT", mi, c, cd);
 		};
 		
 		this.deleteModulInstanz = function(mi, c) {
@@ -443,24 +438,28 @@ var model = new function() {
 			self.doRequest(fachInstanzenURI.replace("{modulplanID}", mi.modulplanID).replace("{modulID}", mi.modul.id), "GET", null, c);
 		};
 		
-		this.createFachInstanzWithFach = function(mi, fi, c) {
-			self.doRequest(fachInstanzenURI.replace("{modulplanID}", mi.modulplanID).replace("{modulID}", mi.modul.id), "POST", fi, c);	
+		this.createFachInstanzWithFach = function(mi, fi, c, cd) {
+			self.doRequest(fachInstanzenURI.replace("{modulplanID}", mi.modulplanID).replace("{modulID}", mi.modul.id), "POST", fi, c, cd);	
 		};
 		
-		this.createFachInstanz = function(mi, fi, c) {
-			self.doRequest(fachInstanzURI.replace("{modulplanID}", mi.modulplanID).replace("{modulID}", mi.modul.id).replace("{fachID}", fi.fach.id), "PUT", fi, c);	
+		this.createFachInstanz = function(mi, fi, c, cd) {
+			self.doRequest(fachInstanzURI.replace("{modulplanID}", mi.modulplanID).replace("{modulID}", mi.modul.id).replace("{fachID}", fi.fach.id), "PUT", fi, c, cd);	
 		};
 		
 		this.deleteFachInstanz = function(mi, fi, c) {
 			self.doRequest(fachInstanzURI.replace("{modulplanID}", mi.modulplanID).replace("{modulID}", mi.modul.id).replace("{fachID}", fi.fach.id), "DELETE", null, c);	
 		};
 		
-		this.doRequest = function(uri, method, data, callback) {
+		this.quickDeleteFachInstanz = function(fi, c) {
+			self.doRequest(quickDeleteFachInstanzURI.replace("{fachInstanzID}", fi.id), "DELETE", null, c);
+		};
+		
+		this.doRequest = function(uri, method, data, callback, callbackData) {
 			if(uri === undefined || uri === null || method === undefined || method === null || allowedMethods.indexOf(method) === -1) {
 				api.isError = true;
 				api.status = "0";
 				api.response = "";
-				callback(api);
+				callback(api, callbackData);
 			}
 			var xhr = new XMLHttpRequest();
 			xhr.onreadystatechange = function() {
@@ -490,7 +489,7 @@ var model = new function() {
 							}
 						}
 					}
-					callback(api); //GO TO CALLBACK
+					callback(api, callbackData); //GO TO CALLBACK
 				}
 			};
 			//NETWORK ERROR
@@ -498,7 +497,7 @@ var model = new function() {
 				api.isError = true;
 				api.status = "0";
 				api.response = "";
-				callback(api);
+				callback(api, callbackData);
 			};
 			xhr.open(method, rootURI+uri, true);
 			if(data !== undefined && data !== null && (method === "POST" || method === "PUT")) {

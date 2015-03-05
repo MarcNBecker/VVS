@@ -72,6 +72,11 @@
 	margin-right: 20px;
 }
 
+.input-padding paper-input-decorator {
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
 .hide {
 	display: hidden;
 }
