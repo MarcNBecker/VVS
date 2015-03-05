@@ -8,7 +8,8 @@ var template = document.querySelector('#home');
 //Home toasts: intialized on template bound
 template.toasts = {
 	success: null,
-	error: null
+	error: null,
+	constraint: null
 };
 
 //page parameter are used with data binding to exchange data between home and the vvs polymer elements (structure should follow template objects)
@@ -123,6 +124,7 @@ template.addEventListener('template-bound', function(e) {
 	//Init toasts
 	template.toasts.success = template.$.toast_success;
 	template.toasts.error = template.$.toast_error;
+	template.toasts.constraint = template.$.toast_constraint;
 	if(location.hash) { //Hash already set
 		handleHashChange(); 
 	} else {
