@@ -100,7 +100,10 @@ public class ModulInstanz {
 		fieldValues.add(modulplanID);
 		fieldValues.add(credits);
 		fieldValues.add(credits);
-		this.id = db.doQuery("INSERT INTO modulinstanz (modul, modulplan, credits) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE credits = ?", fieldValues);
+		int newID = db.doQuery("INSERT INTO modulinstanz (modul, modulplan, credits) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE credits = ?", fieldValues);
+		if(id <= 0) {
+			id = newID;
+		}
 		return this;
 	}
 	

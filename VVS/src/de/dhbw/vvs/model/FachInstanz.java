@@ -102,7 +102,10 @@ public class FachInstanz {
 		fieldValues.add(stunden);
 		fieldValues.add(semester);
 		fieldValues.add(stunden);
-		this.id = db.doQuery("INSERT INTO fachinstanz (fach, modulInstanz, semester, stunden) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE semester = ?, stunden = ?", fieldValues);
+		int newID = db.doQuery("INSERT INTO fachinstanz (fach, modulInstanz, semester, stunden) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE semester = ?, stunden = ?", fieldValues);
+		if(id <= 0) {
+			id = newID;
+		}
 		return this;
 	}
 	

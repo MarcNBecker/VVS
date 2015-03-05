@@ -424,54 +424,33 @@
 			}
 			//reset inputs
 			this.reject();
+			//reset dropdowns
+			this.$.fachDropdown.$.scroller.style.height = "";
+	       	this.$.fachDropdown.$.scroller.style.width = "";
+	        this.$.modulDropdown.$.scroller.style.height = "";
+	       	this.$.modulDropdown.$.scroller.style.width = "";
 		},
 		save: function() {
-			//DELETE ALL
-			//UPDATE ALL
-			var self = this;
-			self.disableToggle = true;
-			var deepRuns = 0;
-			var j;
-			//Delete FachInstanzen
-			for(j=0; j<self.deletedFachInstanzen.length; j++) {
-				model.webService.quickDeleteFachInstanz(self.deletedFachInstanzen[j], function(api) {
-					if(!api.isError) {
-						deepRuns++;
-						if(deepRuns === self.deletedFachInstanzen.length) {
-							var deeperRuns = 0;
-							var jj;
-							//Delete ModulInstanzen
-							for(jj=0; jj<self.deletedModulInstanzen.length; jj++) {
-								model.webService.deleteModulInstanz(self.deletedModulInstanzen[jj], function(api) {
-									if(!api.isError) {
-										deeperRuns++;
-										if(deeperRuns === self.deletedModulInstanzen.length) {
-											self.doUpdatePart();
-										}
-									} else {
-										console.log(JSON.stringify(api));
-										self.toasts.error.show();
-									}
-								});
-							}
-							if(self.deletedModulInstanzen.length === 0) {
-								self.doUpdatePart();
-							}
-						}
-					} else {
-						console.log(JSON.stringify(api));
-						self.toasts.error.show();
-					}
-				});
+			this.disableToggle = true;
+			//FIRST COPY OBJECTS IN DELETION LISTS
+			this.doCopyPartOfSave();
+			//UPDATE AND THEN DELETE
+			//This has to be done, because the last FachInstanz of a Fach deletes the Fach (same for ModulInstanz & Modul)
+			this.doUpdatePartOfSave();
+		},
+		doCopyPartOfSave: function() {
+			//copy deletion list
+			var i;
+			for(i=0; i<this.deletedFachInstanzen.length; i++) {
+				this.deletedFachInstanzen[i] = JSON.parse(JSON.stringify(this.deletedFachInstanzen[i])); //clone
 			}
-			if(self.deletedFachInstanzen.length === 0) {
-				self.doUpdatePart();
+			var j;
+			for(j=0; j<this.deletedModulInstanzen.length; j++) {
+				this.deletedModulInstanzen[j] = JSON.parse(JSON.stringify(this.deletedModulInstanzen[j])); //clone
 			}
 		},
-		doUpdatePart: function() {
+		doUpdatePartOfSave: function() {
 			var self = this;
-			self.deletedModulInstanzen = [];
-			self.deletedFachInstanzen = [];
 			var totalVeryDeepRuns = self.modulplan.modulInstanzList.length;
 			var veryDeepRuns = 0;
 			var i;
@@ -503,8 +482,7 @@
 									self.modulplan.modulInstanzList[data.i].fachInstanzList[data.ii].fach.id = api.response.fach.id;
 									veryDeepRuns++;
 									if(veryDeepRuns === totalVeryDeepRuns) {
-										self.disableToggle = false;
-										self.toasts.success.show();
+										self.doDeletePartOfSave();
 									}
 								} else {
 									console.log(JSON.stringify(api));
@@ -519,7 +497,56 @@
 				}, i);
 			}
 			if(self.modulplan.modulInstanzList.length === 0) {
+				self.doDeletePartOfSave();
+			}
+		},
+		doDeletePartOfSave: function() {
+			//DELETE (NEEDS A COPIED LIST, FROM BEFORE UPDATE (otherwise ids are broken by update))
+			var self = this;
+			var deepRuns = 0;
+			var j;
+			//Delete FachInstanzen
+			for(j=0; j<self.deletedFachInstanzen.length; j++) {
+				model.webService.quickDeleteFachInstanz(self.deletedFachInstanzen[j], function(api) {
+					if(!api.isError) {
+						deepRuns++;
+						if(deepRuns === self.deletedFachInstanzen.length) {
+							var deeperRuns = 0;
+							var jj;
+							//Delete ModulInstanzen
+							for(jj=0; jj<self.deletedModulInstanzen.length; jj++) {
+								model.webService.deleteModulInstanz(self.deletedModulInstanzen[jj], function(api) {
+									if(!api.isError) {
+										deeperRuns++;
+										if(deeperRuns === self.deletedModulInstanzen.length) {
+											self.disableToggle = false;
+											self.deletedModulInstanzen = [];
+											self.deletedFachInstanzen = [];
+											self.toasts.success.show();
+										}
+									} else {
+										console.log(JSON.stringify(api));
+										self.toasts.error.show();
+									}
+								});
+							}
+							if(self.deletedModulInstanzen.length === 0) {
+								self.disableToggle = false;
+								self.deletedModulInstanzen = [];
+								self.deletedFachInstanzen = [];
+								self.toasts.success.show();
+							}
+						}
+					} else {
+						console.log(JSON.stringify(api));
+						self.toasts.error.show();
+					}
+				});
+			}
+			if(self.deletedFachInstanzen.length === 0) {
 				self.disableToggle = false;
+				self.deletedModulInstanzen = [];
+				self.deletedFachInstanzen = [];
 				self.toasts.success.show();
 			}
 		},
