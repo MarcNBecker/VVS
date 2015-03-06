@@ -1,0 +1,154 @@
+<polymer-element name="vvs-feiertage"> 
+	<template>
+		<link rel="stylesheet" href="../../css/elements.css" shim-shadowdom>
+		<paper-shadow z="3" class="shadow">
+			<!-- Input Fields -->
+			<div vertical layout>
+				<div vertical layout class="vertical-input">
+					<span class="headline">Feiertage pflegen</span>
+					<div vertical layout class="horizontal-input vertical-input">
+						<paper-shadow z="2" class="inner-shadow">
+							<div horizontal layout>
+								<span horizontal layout center-center class="small-headline" flex>Name</span>
+								<span horizontal layout center-center class="small-headline" flex>Datum</span>
+								<paper-icon-button class="hide"></paper-icon-button>
+							</div>
+							<template repeat="{{item in feiertage}}"> 
+								<paper-shadow z="1" class="inner-inner-shadow">
+									<div horizontal layout center>
+										<span horizontal layout center-center flex>{{item.name}}</span>
+										<span horizontal layout center-center flex>{{item.datum}}</span>
+										<paper-icon-button on-click="{{initDelete}}" icon="delete" self-center disabled?="{{disableToggle}}"></paper-icon-button>
+									</div>
+								</paper-shadow>
+							</template>
+						</paper-shadow>
+					</div>
+				</div>
+				<div vertical layout>
+					<div horizontal start layout class="horizontal-input vertical-input">
+						<paper-input-decorator label="Name" error="Pflichtfeld" autoValidate isInvalid="{{invalid.name}}" floatingLabel flex>
+							<input is="core-input"  type="text" value={{feiertag.name}} maxlength="100" required disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+						<polymer-date-picker id="datePicker" relatedTarget="{{$.datum}}" halign="left" style="z-index:99" selectedDate="{{selectedDate}}" opened="false"></polymer-date-picker>
+						<paper-input-decorator id="datum" label="Datum"  error="Pflichtfeld" on-click="{{toggleDatePicker}}" autoValidate isInvalid="{{invalid.datum}}" floatingLabel flex>
+							<input is="core-input" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" preventInvalidInput="true" value="{{feiertag.datum}}" required disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+						<paper-button on-click="{{add}}" disabled?="{{disableToggle}}" self-center raised>Feiertag speichern</paper-button>
+						<paper-button on-click="{{cancel}}" disabled?="{{disableToggle}}" self-center raised>Abbrechen</paper-button>
+						<paper-spinner active?={{disableToggle}} self-center></paper-spinner>
+					</div>
+				</div>
+				<paper-action-dialog id="delete_feiertag_dialog" heading="{{feiertagToDelete.name}} am {{feiertagToDelete.datum}} wirklich l&ouml;schen?">
+					<paper-button affirmative>Nein</paper-button>
+					<paper-button on-click="{{doDelete}}" affirmative autofocus>L&ouml;schen</paper-button>
+				</paper-action-dialog>
+			</div>
+		</paper-shadow> 
+	</template>
+	<script type="text/javascript">
+		Polymer(
+				'vvs-feiertage',
+				{
+					feiertag: new model.templates.Feiertag(),
+					feiertage: [],
+					feiertagToDelete: null,
+					selectedDate: '2000-01-01',
+					datePickerOpened: false,
+					disableToggle: true,
+					invalid : {},
+					publish: {
+						pageParameter: {},
+						pageLoaded: {},
+						toasts: {}
+					},
+					ready : function() {
+						var self = this;
+						self.feiertag = new model.templates.Feiertag();
+						self.feiertage = [];
+						self.feiertagToDelete = null;
+						self.selectedDate = self.today();
+						self.datePickerOpened = false;
+						self.disableToggle = false;
+						self.invalid = {};
+						self.invalid.name = true;
+						self.invalid.datum = true;
+						var jahr = self.pageParameter.feiertage.id; //ID is correct, needs to be named like this for other functions
+						//TODO load feiertage
+					},	
+					add : function() {
+						if (!this.checkInputs()) {
+							return;
+						}
+						//Add feiertag
+					},
+					initDelete: function(e, detail, sender) {
+						this.feiertagToDelete = e.target.templateInstance.model.item;
+						this.$.delete_feiertag_dialog.toggle();
+					},
+					doDelete : function(e, detail, sender) {
+						//TODO delete feiertage
+					},
+					//Navigate backwards and force a reload
+			    	cancel: function()
+			    	{
+			    		this.pageLoaded.dozent = false;
+			    		window.history.back();
+			    	},
+					//Show DatePicker
+					toggleDatePicker: function(e, detail, sender) {
+						if(this.disableToggle === true) {
+							return;
+						}
+						//Init or set selected date
+						if(this.$.datum.input.value) {
+							this.selectedDate = this.feiertag.datum;
+						} else {
+							this.feiertag.datum = this.today();		
+						}
+						//Wait until the date picker potentially auto closed to reopen it
+						this.job('open-date-picker', function() {
+							this.$.datum.inputAction();
+							this.$.datePicker.open();
+							this.datePickerOpened = true;
+						}, 100);
+					},
+					//Close date picker
+					selectedDateChanged: function() {
+						if(!this.datePickerOpened) {
+							return;
+						}
+						//Read date
+						this.feiertag.datum = this.selectedDate;
+						//Update UI
+						this.$.datePicker.close();
+						this.datePickerOpened = false;
+						this.job('label-date-picker', function() {
+							this.$.datum.inputAction();
+						}, 100);
+					},
+					//Calculate date of today
+					today: function() {
+					    var date = new Date();
+						var year = date.getFullYear();
+					    var month = '0' + (date.getMonth() + 1);
+					    month = month.slice(-2, (month.length - 2) + 3);
+					    var day = '0' + date.getDate();
+					    day = day.slice(-2, (day.length - 2) + 3);
+					    return year + '-' + month + '-' + day;
+					},
+					//Check all invalid properties
+					checkInputs : function() {
+						for ( var property in this.invalid) {
+							if (this.invalid.hasOwnProperty(property)) {
+								if (this.invalid[property] === true) {
+									alert(this.invalid[property]);
+									return false;
+								}
+							}
+						}
+						return true;
+					}
+			});
+	</script> 
+</polymer-element>

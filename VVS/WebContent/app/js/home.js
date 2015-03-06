@@ -23,6 +23,9 @@ template.pageParameter = {
 	},
 	kurs: {
 		id: 0
+	},
+	feiertage: {
+		id: 0 //is a year, name id is necessary for correct handling by other functions
 	}
 };
 
@@ -32,7 +35,8 @@ template.pageLoaded = {
 	dozent: false,
 	modulplanAnlegen: false,
 	modulplanPflegen: false,
-	kurs: false
+	kurs: false,
+	feiertage: false
 };
 
 //Page descriptors including the HTML code to load the page
@@ -41,14 +45,15 @@ template.pageDescriptor = {
 	dozent: {name: 'Dozent pflegen', hash: 'dozent', html: '<vvs-dozent pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-dozent>'},
 	modulplanAnlegen: {name: 'Modulplan anlegen', hash: 'modulplanAnlegen', html: '<vvs-modulplan-anlegen pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-modulplan-anlegen>'},
 	modulplanPflegen: {name: 'Modulplan pflegen', hash: 'modulplanPflegen', html: '<vvs-modulplan-pflegen pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-modulplan-pflegen>'},
-	kurs: {name: 'Kurs pflegen', hash: 'kurs', html: '<vvs-kurs pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-kurs>'}
+	kurs: {name: 'Kurs pflegen', hash: 'kurs', html: '<vvs-kurs pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-kurs>'},
+	feiertage: {name: 'Feiertage pflegen', hash: 'feiertage', html: '<vvs-feiertage pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-feiertage>'}
 };
 
 //Pages to display in the navigation drawer
 template.drawerPages = [template.pageDescriptor.stammdaten];
 
 //Pages that can be displayed in the home main div
-template.homePages = [template.pageDescriptor.stammdaten, template.pageDescriptor.dozent, template.pageDescriptor.kurs, template.pageDescriptor.modulplanAnlegen, template.pageDescriptor.modulplanPflegen];
+template.homePages = [template.pageDescriptor.stammdaten, template.pageDescriptor.dozent, template.pageDescriptor.kurs, template.pageDescriptor.modulplanAnlegen, template.pageDescriptor.modulplanPflegen, template.pageDescriptor.feiertage];
 
 //Is called whenever the url hash is changed and navigates the app
 function handleHashChange(refresh) {
