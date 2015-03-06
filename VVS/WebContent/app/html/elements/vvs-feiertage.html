@@ -2,7 +2,7 @@
 	<template>
 		<link rel="stylesheet" href="../../css/elements.css" shim-shadowdom>
 		<paper-shadow z="3" class="shadow">
-			<!-- Input Fields -->
+			<!-- List of all available Feirtage -->
 			<div vertical layout>
 				<div vertical layout class="vertical-input">
 					<span class="headline">Feiertage pflegen</span>
@@ -25,6 +25,7 @@
 						</paper-shadow>
 					</div>
 				</div>
+				<!-- Input Fields -->
 				<div vertical layout>
 					<div horizontal start layout class="horizontal-input vertical-input">
 						<paper-input-decorator label="Name" error="Pflichtfeld" autoValidate isInvalid="{{invalid.name}}" floatingLabel flex>
@@ -39,6 +40,7 @@
 						<paper-spinner active?={{disableToggle}} self-center></paper-spinner>
 					</div>
 				</div>
+				<!-- Button Bar -->
 				<paper-action-dialog id="delete_feiertag_dialog" heading="{{feiertagToDelete.name}} am {{feiertagToDelete.datum}} wirklich l&ouml;schen?">
 					<paper-button affirmative>Nein</paper-button>
 					<paper-button on-click="{{doDelete}}" affirmative autofocus>L&ouml;schen</paper-button>
@@ -57,11 +59,13 @@
 					datePickerOpened: false,
 					disableToggle: true,
 					invalid : {},
+					//Publish those attributes to home
 					publish: {
 						pageParameter: {},
 						pageLoaded: {},
 						toasts: {}
 					},
+					//Initialize the screen
 					ready : function() {
 						var self = this;
 						self.feiertag = new model.templates.Feiertag();
@@ -74,20 +78,67 @@
 						self.invalid.name = true;
 						self.invalid.datum = true;
 						var jahr = self.pageParameter.feiertage.id; //ID is correct, needs to be named like this for other functions
-						//TODO load feiertage
-					},	
+						model.webService.getAllFeiertage(jahr, function(api) {
+							if (!api.isError)
+	    					{
+	    						self.feiertage = api.response;
+	    					}
+	    					else
+	    					{
+	    						console.log(JSON.stringify(api));
+	    						self.toasts.error.show();
+	    					}
+						});
+					},
+					//Add a Feiertag
 					add : function() {
+						var self = this;
 						if (!this.checkInputs()) {
 							return;
 						}
-						//Add feiertag
+						//Disable everything
+		    			self.disableToggle = true;
+						model.webService.setFeiertag(self.feiertag, function(api) {
+							if (!api.isError)
+	    					{
+	    						self.feiertage.push(self.feiertag);
+	    						//Enable everything
+	    		    			self.disableToggle = false;
+	    					}
+	    					else
+	    					{
+	    						console.log(JSON.stringify(api));
+	    						self.toasts.error.show();
+	    					}
+						});
 					},
+					// Show Action Dialog for Deletion
 					initDelete: function(e, detail, sender) {
 						this.feiertagToDelete = e.target.templateInstance.model.item;
 						this.$.delete_feiertag_dialog.toggle();
 					},
-					doDelete : function(e, detail, sender) {
-						//TODO delete feiertage
+					//Delete a Feiertag
+					doDelete : function() {
+						var self = this;
+						model.webService.deleteFeiertag(self.feiertagToDelete, function(api) {
+							if (!api.isError)
+	    					{
+	    						var i;
+	    						for (i = 0; i < self.feiertage.length; i++)
+	    						{
+	    							if (self.feiertagToDelete.name === self.feiertage[i].name)
+	    							{
+	    								self.feiertage.splice(i, 1);
+	    								break;
+	    							}
+	    						}
+	    					}
+	    					else
+	    					{
+	    						console.log(JSON.stringify(api));
+	    						self.toasts.error.show();
+	    					}
+						});
 					},
 					//Navigate backwards and force a reload
 			    	cancel: function()
