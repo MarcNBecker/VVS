@@ -91,7 +91,7 @@ public class Utility {
 	 * @return the string representation
 	 */
 	public static String dateString(Date d) {
-		return DATE_FORMAT.format(d);
+		return d == null ? null : DATE_FORMAT.format(d);
 	}
 	
 	/**
@@ -102,7 +102,7 @@ public class Utility {
 	 */
 	public static Date stringDate(String s) throws WebServiceException {
 		try {
-			return new Date(DATE_FORMAT.parse(s).getTime());
+			return s == null ? null : new Date(DATE_FORMAT.parse(s).getTime());
 		} catch (ParseException e) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_DATE);
 		}

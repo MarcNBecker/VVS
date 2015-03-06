@@ -238,10 +238,6 @@
     	    					if (!api.isError)
     	    					{
     	    						deepRuns++;
-    	    						//Enable inputs after last webservice call
-    	    						if(deepRuns === 2) {
-    	    							self.disableToggle = false;
-    	    						}
     	    						//Fill dropdown boxes correctly to avoid seeing Faecher twice (in the upper list and the dropdown)
     								self.faecher = api.response;
     	    						self.allFaecher = self.faecher.slice();
@@ -257,6 +253,10 @@
     	    									break;
     	    								}
     	    							}
+    	    						}
+    	    						//Enable inputs after last webservice call
+    	    						if(deepRuns === 2) {
+    	    							self.disableToggle = false;
     	    						}
     	    					}
     	    					else
