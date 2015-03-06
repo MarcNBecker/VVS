@@ -539,7 +539,7 @@ var model = new function() {
 			self.doRequest(vorlesungTerminURI.replace("{kursID}", v.kursID).replace("{semester}", v.semester).replace("{vorlesungsID}", v.id).replace("{terminID}", t.id), "DELETE", null, c);		
 		};
 		
-		this.doRequest = function(uri, method, data, callback) {
+		this.doRequest = function(uri, method, data, callback, callbackData) {
 			if(uri === undefined || uri === null || method === undefined || method === null || allowedMethods.indexOf(method) === -1) {
 				api.isError = true;
 				api.status = "0";
