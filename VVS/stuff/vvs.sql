@@ -145,8 +145,8 @@ CREATE TABLE `vvs`.`Kurs` (
 CREATE TABLE `vvs`.`Blocklage` (
   `Kurs` INT unsigned NOT NULL,
   `Semester` INT unsigned NOT NULL,
-  `StartDatum` DATE NOT NULL,
-  `EndDatum` DATE NOT NULL,
+  `StartDatum` DATE NULL,
+  `EndDatum` DATE NULL,
   `Raum` VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`Kurs`, `Semester`),
   INDEX `INDEX_Blocklage_Kurs` (`Kurs` ASC),
@@ -176,6 +176,8 @@ CREATE TABLE `vvs`.`Dozent` (
   `Arbeitgeber` VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL,
   `Geschlecht` BOOLEAN NOT NULL,
   `Status` INT unsigned NOT NULL,
+  `Angelegt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `Geaendert` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
@@ -247,8 +249,8 @@ CREATE TABLE `vvs`.`Vorlesung` (
   `ID` INT unsigned NOT NULL AUTO_INCREMENT,
   `Kurs` INT unsigned NOT NULL,
   `FachInstanz` INT unsigned NOT NULL,
-  `Dozent` INT unsigned NOT NULL,
   `Semester` INT unsigned NOT NULL,
+  `Dozent` INT unsigned NULL,
   PRIMARY KEY (`ID`),
   INDEX `INDEX_Vorlesung_Kurs` (`Kurs` ASC),
   INDEX `INDEX_Vorlesung_FachInstanz` (`FachInstanz` ASC),
@@ -258,7 +260,7 @@ CREATE TABLE `vvs`.`Vorlesung` (
   CONSTRAINT `FK_Vorlesung_Kurs`
     FOREIGN KEY (`Kurs`)
     REFERENCES `vvs`.`Kurs` (`ID`)
-    ON DELETE RESTRICT
+    ON DELETE CASCADE
     ON UPDATE RESTRICT,
   CONSTRAINT `FK_Vorlesung_FachInstanz`
     FOREIGN KEY (`FachInstanz`)
@@ -268,7 +270,7 @@ CREATE TABLE `vvs`.`Vorlesung` (
   CONSTRAINT `FK_Vorlesung_Dozent`
     FOREIGN KEY (`Dozent`)
     REFERENCES `vvs`.`Dozent` (`ID`)
-    ON DELETE RESTRICT
+    ON DELETE SET NULL
     ON UPDATE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 

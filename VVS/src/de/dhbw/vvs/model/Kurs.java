@@ -146,7 +146,7 @@ public class Kurs {
 		if (kursname == null || (kursname = kursname.trim()).isEmpty()) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_STRING);
 		}
-		if (kursmail == null || (kursmail = kursmail.trim()).isEmpty() || !Utility.checkEmail(kursmail)) {
+		if (kursmail == null || (!(kursmail = kursmail.trim()).isEmpty() && !Utility.checkEmail(kursmail))) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_MAIL);
 		}
 		if (modulplanID <= 0) {
@@ -157,16 +157,16 @@ public class Kurs {
 		if (studentenAnzahl < 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_NUMBER);
 		}
-		if (kurssprecherName == null || (kurssprecherName = kurssprecherName.trim()).isEmpty()) {
+		if (kurssprecherName == null) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_STRING);
 		}
-		if (kurssprecherVorname == null || (kurssprecherVorname = kurssprecherVorname.trim()).isEmpty()) {
+		if (kurssprecherVorname == null) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_STRING);
 		}
-		if (kurssprecherMail == null || (kurssprecherMail = kurssprecherMail.trim()).isEmpty() || !Utility.checkEmail(kurssprecherMail)) {
+		if (kurssprecherMail == null || (!(kurssprecherMail = kurssprecherMail.trim()).isEmpty() && !Utility.checkEmail(kurssprecherMail))) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_MAIL);
 		}
-		if (kurssprecherTelefon == null || (kurssprecherTelefon = kurssprecherTelefon.trim()).isEmpty() || !Utility.checkPhone(kurssprecherTelefon)) {
+		if (kurssprecherTelefon == null || (!(kurssprecherTelefon = kurssprecherTelefon.trim()).isEmpty() && !Utility.checkPhone(kurssprecherTelefon))) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_PHONE);
 		}
 		if (studiengangsleiterID <= 0) {
@@ -174,7 +174,7 @@ public class Kurs {
 		} else {
 			new Studiengangsleiter(studiengangsleiterID).getDirectAttributes(); //check existance
 		}
-		if (sekretariatName == null || (sekretariatName = sekretariatName.trim()).isEmpty()) {
+		if (sekretariatName == null) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_STRING);
 		}
 	}

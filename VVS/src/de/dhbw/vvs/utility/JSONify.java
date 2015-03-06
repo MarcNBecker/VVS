@@ -89,6 +89,7 @@ public class JSONify {
             }
         });
         gsonBuilder.setDateFormat(Utility.DATE_STRING);
+        gsonBuilder.serializeNulls();
 		gson = gsonBuilder.create();	
 	}
 	

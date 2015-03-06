@@ -1,0 +1,520 @@
+<polymer-element name="vvs-kurs">
+	<template>
+ 		<link rel="stylesheet" href="../../css/elements.css" shim-shadowdom>
+		<core-media-query query="max-width: 1400px" queryMatches="{{smallScreen}}"></core-media-query>
+		<!-- Main DIV -->
+		<paper-shadow z="3" class="shadow">
+		<div vertical?="{{smallScreen}}" horizontal?="{{!smallScreen}}" layout>
+			<!-- Kurs und Kurssprecher Input Fields -->
+			<div auto-vertical?="{{smallScreen}}" flex?="{{!smallScreen}}" two?="{{!smallScreen}}">
+				<!-- Input Fields Kurs -->
+				<div vertical layout class="vertical-input">
+					<span class="headline">Kurs</span>
+					<div horizontal start layout class="horizontal-input">
+						<paper-input-decorator id="kursname" label="Kursname" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.kursname}}" flex>
+							<input is="core-input" type="text" value={{kurs.kursname}} maxlength="100" required disabled?="{{disableToggle}}">
+						</paper-input-decorator>						
+						<paper-dropdown-menu label="Studiengangsleiter" disabled?="{{disableToggle}}" self-center flex>
+							<paper-dropdown class="dropdown">
+								<core-menu class="menu" selected="{{selectedStudiengangsleiter}}">
+								<template repeat="{{item in studiengangsleiter}}">
+									<paper-item>{{item.name}}</paper-item>
+								</template>
+							</core-menu>
+							</paper-dropdown>
+						</paper-dropdown-menu>						
+						<paper-dropdown-menu label="Modulplan" disabled?="{{disableToggle}}" self-center flex>
+							<paper-dropdown class="dropdown">
+								<core-menu class="menu" selected="{{selectedModulplan}}">
+								<template repeat="{{item in modulplaene}}">
+									<paper-item>
+										{{item.studiengang}} - {{item.vertiefungsrichtung}}
+									</paper-item>
+								</template>
+							</core-menu>
+							</paper-dropdown>
+						</paper-dropdown-menu>
+					</div>
+					<div horizontal start layout class="horizontal-input">
+						<paper-input-decorator id="studentenAnzahl" label="Anzahl Studenten" error="Keine g&uuml;ltige Studentenanzahl" autoValidate isInvalid="{{invalid.studentenAnzahl}}" floatingLabel flex>
+							<input is="core-input" type="text" pattern="[0-9]+" value={{kurs.studentenAnzahl}} maxlength="100" disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+						<paper-input-decorator id="kursmail" label="Kurs E-Mail-Adresse" error="Keine g&uuml;ltige E-Mail" floatingLabel autoValidate isInvalid="{{invalid.kursmail}}" flex>
+							<input is="core-input" type="email" pattern="[^@]+@[^@]+\.[a-zA-Z]{2,6}" value={{kurs.kursmail}} maxlength="255" disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+						<paper-input-decorator id="sekretariatName" label="Sekretariat" floatingLabel flex>
+							<input is="core-input" type="text" value={{kurs.sekretariatName}} maxlength="100" disabled?="{{disableToggle}}">
+						</paper-input-decorator>					
+					</div>
+			 	</div>
+				<!-- Input Fields Kurssprecher -->
+				<div vertical layout class="vertical-input">
+					<span class="headline">Kurssprecher</span>
+					<div horizontal start layout class="horizontal-input">
+						<paper-input-decorator id="kurssprecherVorname" label="Vorname" floatingLabel flex>
+							<input is="core-input" type="text" value={{kurs.kurssprecherVorname}} maxlength="100" disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+						<paper-input-decorator id="kurssprecherName" label="Nachname" floatingLabel flex>
+							<input is="core-input" type="text" value={{kurs.kurssprecherName}} maxlength="100" disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+						<paper-input-decorator id="kurssprecherMail" label="E-Mail-Adresse" error="Keine g&uuml;ltige E-Mail" floatingLabel autoValidate isInvalid="{{invalid.kurssprecherMail}}" flex>
+							<input is="core-input" type="email" pattern="[^@]+@[^@]+\.[a-zA-Z]{2,6}" value={{kurs.kurssprecherMail}} maxlength="100" disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+						<paper-input-decorator id="kurssprecherTelefon" label="Telefonnummer" error="Keine g&uuml;ltige Nummer (Beispiel: +49 234 56789)" floatingLabel on-input="{{validatePhone}}" isInvalid="{{invalid.kurssprecherTelefon}}" flex>
+							<input is="core-input" type="tel" value={{kurs.kurssprecherTelefon}} maxlength="100" disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+					</div>
+				</div>
+			</div>
+			<!-- Blocklagen Input Fields -->
+			<div auto-vertical?="{{smallScreen}}" flex?="{{!smallScreen}}">
+				<!-- Input Fields -->
+				<div vertical layout class="vertical-input">
+					<span class="headline">Blocklagen</span>
+					<template repeat="{{item, i in blocklagen}}">
+						<div horizontal start layout class="horizontal-input">
+							<paper-input-decorator class="s" label="{{i + 1}}. Blocklage von" on-click="{{toggleDatePicker}}" floatingLabel flex>
+								<input is="core-input" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" preventInvalidInput="true" value="{{item.startDatum}}" disabled?="{{disableToggle}}">
+							</paper-input-decorator>
+							<paper-input-decorator class="e" label="{{i + 1}}. Blocklage bis" on-click="{{toggleDatePicker}}" autoValidate floatingLabel flex>
+								<input is="core-input" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" preventInvalidInput="true" value="{{item.endDatum}}" disabled?="{{disableToggle}}">
+							</paper-input-decorator>
+							<paper-input-decorator label="Raum" floatingLabel flex>
+								<input is="core-input" type="text" value={{item.raum}} maxlength="100" disabled?="{{disableToggle}}">
+							</paper-input-decorator>
+							<paper-icon-button on-click="{{print}}" icon="print" self-center disabled?="{{disableToggle}}"></paper-icon-button>
+						</div>
+					</template>
+					<polymer-date-picker id="datePicker" relatedTarget="{{$.s1}}" halign="left" style="z-index:99" selectedDate="{{selectedDate}}" opened="false"></polymer-date-picker>
+				</div>
+				<!-- Button Bar -->
+				<div horizontal layout center class="horizontal-input">
+					<div hidden?={{creationMode}} horizontal layout center class="horizontal-button-bar">
+						<paper-button on-click={{update}} raised disabled?="{{disableToggle}}">Speichern</paper-button>
+						<paper-button on-click={{initDelete}} raised disabled?="{{disableToggle}}">L&ouml;schen</paper-button>
+						<paper-button on-click={{cancel}} raised disabled?="{{disableToggle}}">Abbrechen</paper-button>				
+						<paper-spinner active?={{disableToggle}} self-center></paper-spinner>
+					</div>
+					<div hidden?="{{!creationMode}}" horizontal layout center class="horizontal-button-bar">
+						<paper-button on-click={{create}} raised disabled?="{{disableToggle}}">Anlegen</paper-button>
+						<paper-button on-click={{cancel}} raised disabled?="{{disableToggle}}">Abbrechen</paper-button>
+						<paper-spinner active?={{disableToggle}} self-center></paper-spinner>
+					</div>
+				</div>
+			</div>
+		</div>
+		</paper-shadow>
+		<paper-action-dialog id="delete_kurs_dialog" heading="{{kurs.kursname}} wirklich l&ouml;schen?">
+			<paper-button affirmative>Nein</paper-button>
+			<paper-button on-click="{{doDelete}}" affirmative autofocus>L&ouml;schen</paper-button>
+		</paper-action-dialog>
+	</template>
+	<script type="text/javascript" src="../../js/model.js"></script>
+	<script type="text/javascript">
+		Polymer('vvs-kurs', {
+			modulplaene: [],
+			studiengangsleiter: [],
+			blocklagen: [new model.templates.Blocklage(), 
+			             new model.templates.Blocklage(), 
+			             new model.templates.Blocklage(), 
+			             new model.templates.Blocklage(), 
+			             new model.templates.Blocklage(), 
+			             new model.templates.Blocklage()],
+			kurs: new model.templates.Kurs(),
+			selectedModulplan: 0,
+			selectedStudiengangsleiter : 0,
+			selectedDate: '2000-01-01',
+			lastDatePickerSender: null,
+			creationMode: true,
+			disableToggle: true,
+			invalid: {},
+			//Publish those attributes to home
+			publish: {
+				pageParameter: {},
+				pageLoaded: {},
+				toasts: {}
+			},
+			//Initialize the screen
+    		ready: function() {
+    			var self = this;
+    			self.modulplaene = [];
+    			self.studiengangsleiter = [];
+    			self.blocklagen = [new model.templates.Blocklage(), 
+    			                   new model.templates.Blocklage(), 
+    			                   new model.templates.Blocklage(), 
+    			                   new model.templates.Blocklage(), 
+    			                   new model.templates.Blocklage(), 
+    			                   new model.templates.Blocklage()];
+    			self.kurs = new model.templates.Kurs();
+    			self.selectedModulplan = 0;
+    			self.selectedStudiengangsleiter = 0;
+    			self.selectedDate = this.today();
+    			self.lastDatePickerSender = null;
+    			self.creationMode = true;
+    			self.disableToggle = true;
+    			self.invalid = {};
+    			var showKurs = new model.templates.Kurs();
+    			showKurs.id = self.pageParameter.kurs.id;
+    			//Go to creation mode
+    			if (showKurs.id === 0)
+    			{
+    				var deepRuns = 0;
+					//Load available Studiengangsleiter
+    				model.webService.getAllStudiengangsleiter(function(api) {
+						if (!api.isError) {
+							deepRuns++;
+							self.studiengangsleiter = api.response;
+							if(deepRuns === 2) {
+								//Enable buttons and force correct input label display
+	    						self.disableToggle = false;
+	    						self.invalid.kursname = true;
+							}
+						}
+						else{
+							console.log(JSON.stringify(api));
+							self.toasts.error.show();
+						}
+					});
+    				//Load available Modulplaene
+    				model.webService.getAllModulplaene(function(api) {
+    					if (!api.isError)
+    					{
+    						deepRuns++;
+    						self.modulplaene = api.response;
+							if(deepRuns === 2) {
+								//Enable buttons and force correct input label display
+	    						self.disableToggle = false;
+	    						self.invalid.kursname = true;
+							}
+    					}
+    					else
+    					{
+    						console.log(JSON.stringify(api));
+    						self.toasts.error.show();
+    					}
+    				});
+    			}
+    			//Go to edit mode
+    			else
+    			{
+					var totalDeepRuns = 0;
+    				self.creationMode = false;
+    				model.webService.getKurs(showKurs, function(api) {
+						if (!api.isError) {
+							var deepRuns = 0;
+							self.kurs = api.response;
+							//Get all available Studiengangsleiter
+							model.webService.getAllStudiengangsleiter(function(api) {
+								if (!api.isError) {
+									deepRuns++;
+									self.studiengangsleiter = api.response;
+									var i;
+									for(i = 0; i<self.studiengangsleiter.length; i++) {
+										if (self.studiengangsleiter[i].id === self.kurs.studiengangsleiterID) {
+											self.selectedStudiengangsleiter = i;
+											break;
+										}
+									}
+									if(deepRuns === 2) {
+										totalDeepRuns++
+										if(totalDeepRuns === 2) {
+											self.disableToggle = false;
+										}
+									}
+								}
+								else{
+									console.log(JSON.stringify(api));
+									self.toasts.error.show();
+								}
+							});
+							//Get all available Modulplaene
+							model.webService.getAllModulplaene(function(api){
+								if (!api.isError) {	
+									deepRuns++;
+									self.modulplaene = api.response;
+									var i;
+									for(i = 0; i<self.modulplaene.length; i++) {
+										if (self.modulplaene[i].id === self.kurs.modulplanID) {
+											self.selectedModulplan = i;
+											break;
+										}
+									}
+									if(deepRuns === 2) {
+										totalDeepRuns++
+										if(totalDeepRuns === 2) {
+											self.disableToggle = false;
+										}
+									}
+								}
+								else{
+									console.log(JSON.stringify(api));
+									self.toasts.error.show();
+								}
+							});
+							//Initialize input fields and make them display correctly
+							self.job('update-labels-ready', function() {
+								self.$.kursname.inputAction();
+								self.$.sekretariatName.inputAction();
+								self.$.studentenAnzahl.inputAction();
+								self.$.kurssprecherName.inputAction();
+								self.$.kurssprecherVorname.inputAction();
+								self.$.kurssprecherTelefon.inputAction();
+								self.$.kurssprecherMail.inputAction();
+								self.$.kursmail.inputAction();
+							},100);
+						}					
+						else{
+							console.log(JSON.stringify(api));
+							self.toasts.error.show();
+						}					
+					});
+    				//Get all available Blocklagen des Kurses
+					model.webService.getAllKursBlocklagen(showKurs, function(api) {
+						if(!api.isError) {
+							totalDeepRuns++;
+							self.blocklagen = api.response;
+							while(self.blocklagen.length < 6) {
+								self.blocklagen.push(new model.templates.Blocklage());
+							}
+							if(totalDeepRuns === 2) {
+								self.disableToggle = false;
+							}
+						}
+						else{
+							console.log(JSON.stringify(api));
+							self.toasts.error.show();
+						}
+					});
+    			}
+    		},
+    		//create a new Kurs
+    		create: function()
+    		{
+    			var self = this;
+    			if(!this.checkInputs()) {
+    				return;
+    			}
+    			//Disable everything
+    			self.disableToggle = true;
+    			//Create Kurs
+    			//Set IDs of Studiengangsleiter and Modulplan
+    			self.kurs.studiengangsleiterID = self.studiengangsleiter[self.selectedStudiengangsleiter].id;
+    			self.kurs.modulplanID = self.modulplaene[self.selectedModulplan].id;
+    			if(!self.kurs.studentenAnzahl) {
+    				self.kurs.studentenAnzahl = 0
+    			}
+    			model.webService.createKurs(self.kurs, function(api) {
+	   				if (!api.isError)
+					{
+						self.kurs = api.response;
+						//Maybe studentenAnzahl changes
+						self.job('update-labels-create', function() {
+							self.$.studentenAnzahl.inputAction();
+						},100);
+						//Tell the outside world about the new ID
+						self.pageLoaded.stammdaten = false;
+						window.history.replaceState({}, '', '#!kurs-'+self.kurs.id);
+						self.updateBlocklagen();
+					}
+					else
+					{
+						console.log(JSON.stringify(api));
+						self.toasts.error.show();
+					}
+	    		});
+    			
+    		},
+    		//Update a Kurs
+    		update: function() {
+       			var self = this;
+				if(!this.checkInputs()) {
+    				return;
+    			}
+    			//Disable everything
+    			self.disableToggle = true;
+    			//Update Kurs
+    			//Set IDs of Studiengangsleiter and Modulplan
+    			self.kurs.studiengangsleiterID = self.studiengangsleiter[self.selectedStudiengangsleiter].id;
+    			self.kurs.modulplanID = self.modulplaene[self.selectedModulplan].id;
+    			if(!self.kurs.studentenAnzahl) {
+    				self.kurs.studentenAnzahl = 0
+    			}
+    			model.webService.updateKurs(self.kurs, function(api) {
+	   				if (!api.isError)
+					{
+						self.updateBlocklagen();
+					}
+					else
+					{
+						console.log(JSON.stringify(api));
+						self.toasts.error.show();
+					}
+	    		});
+    		},
+    		updateBlocklagen: function() {
+    			var self = this;
+    			var i;
+				var deepRuns = 0;
+				//Create connection between Kurs and Blocklagen
+				for (i = 0; i < self.blocklagen.length; i++)
+				{
+					self.blocklagen[i].kursID = self.kurs.id;
+					self.blocklagen[i].semester = i + 1;
+					model.webService.setKursBlocklage(self.blocklagen[i], function(api) {
+						if (!api.isError)
+						{
+							deepRuns++;
+							//Enable buttons and display new button bar after last webservice call
+							if(deepRuns === self.blocklagen.length) {
+								self.disableToggle = false;
+								self.creationMode = false;
+		    					self.toasts.success.show();
+							}
+						}
+						else
+						{
+							console.log(JSON.stringify(api));
+							self.toasts.error.show();
+						}
+					});
+				}
+				//Enable buttons and display new button bar after last webservice call
+				if (deepRuns === 0 && self.blocklagen.length === 0) {
+					self.disableToggle = false;
+					self.creationMode = false;
+					self.toasts.success.show();
+				}
+    		},
+    		// Show Action Dialog for Deletion
+    		initDelete: function() {
+	    		this.$.delete_kurs_dialog.toggle();
+	    	},
+	    	//Delete a kurs
+			doDelete: function()
+			{
+				var self = this;
+				//Disable inputs
+				self.disableToggle = true;
+				//Delete the Kurs
+	    		model.webService.deleteKurs(self.kurs, function(api) {
+					if(!api.isError) {
+						//Update variables and switch display of button bar
+						self.kurs = new model.templates.Kurs();
+						//Tell the outside world the new ID
+						self.pageLoaded.stammdaten = false;
+						window.history.replaceState({}, '', '#!kurs');
+		    			self.blocklagen = [new model.templates.Blocklage(), 
+		    			                   new model.templates.Blocklage(), 
+		    			                   new model.templates.Blocklage(), 
+		    			                   new model.templates.Blocklage(), 
+		    			                   new model.templates.Blocklage(), 
+		    			                   new model.templates.Blocklage()];
+		    			self.disableToggle = false;
+		    			self.selectedModulplan = 0;
+		    			self.selectedStudiengangsleiter = 0;
+		    			self.selectedDate = this.today();
+		    			self.lastDatePickerSender = null;
+		    			self.creationMode = true;
+    					self.invalid.kursname = true; 
+						self.job('update-labels-delete', function() {
+							self.$.kursname.inputAction();
+							self.$.sekretariatName.inputAction();
+							self.$.studentenAnzahl.inputAction();
+							self.$.kurssprecherName.inputAction();
+							self.$.kurssprecherVorname.inputAction();
+							self.$.kurssprecherTelefon.inputAction();
+							self.$.kurssprecherMail.inputAction();
+							self.$.kursmail.inputAction();
+						}, 100);
+						self.toasts.success.show();
+					} else {
+						console.log(JSON.stringify(api));
+						self.toasts.error.show();
+					}
+	    		});
+			},
+    		//Navigate backwards and force a reload
+	    	cancel: function()
+	    	{
+	    		this.pageLoaded.kurs = false;
+	    		window.history.back();
+	    	},
+			//Print Vorlesungsplan
+			print: function (e, detail, sender) {
+				// TODO
+			},
+			//Show DatePicker
+			toggleDatePicker: function(e, detail, sender) {
+				if(this.disableToggle === true) {
+					return;
+				}
+				this.lastDatePickerSender = sender;
+				//Init if empty or show correct value
+				if(sender.classList[0] === "s") {
+					if(sender.input.value) {
+						this.selectedDate = sender.templateInstance.model.item.startDatum;
+					} else {
+						sender.templateInstance.model.item.startDatum = this.selectedDate;		
+					}
+				} else if (sender.classList[0] === "e" && !sender.input.value) {
+					if(sender.input.value) {
+						this.selectedDate = sender.templateInstance.model.item.endDatum;
+					} else {
+						sender.templateInstance.model.item.endDatum = this.selectedDate;	
+					}
+				}
+				//Wait until the date picker potentially auto closed to reopen it
+				this.job('open-date-picker', function() {
+					sender.inputAction();
+					this.$.datePicker.relatedTarget = sender;
+					this.$.datePicker.open();	
+				}, 100);
+			},
+			//Close date picker
+			selectedDateChanged: function() {
+				if(this.lastDatePickerSender !== null) {
+					//Read date
+					if(this.lastDatePickerSender.classList[0] === "s") {
+						this.lastDatePickerSender.templateInstance.model.item.startDatum = this.selectedDate;	
+					} else if (this.lastDatePickerSender.classList[0] === "e") {
+						this.lastDatePickerSender.templateInstance.model.item.endDatum = this.selectedDate;	
+					}
+					//Update UI
+					this.$.datePicker.close();
+					this.job('label-date-picker', function() {
+						this.lastDatePickerSender.inputAction();
+					}, 100);
+				}
+			},
+			//Calculate date of today
+			today: function() {
+			    var date = new Date();
+				var year = date.getFullYear();
+			    var month = '0' + (date.getMonth() + 1);
+			    month = month.slice(-2, (month.length - 2) + 3);
+			    var day = '0' + date.getDate();
+			    day = day.slice(-2, (day.length - 2) + 3);
+			    return year + '-' + month + '-' + day;
+			},
+	    	//Validate a phone number using phone.js
+	    	validatePhone: function(e, detail, sender) {
+	    		if(sender.input.value === "") {
+	    			sender.isInvalid = false;
+	    			return;
+	    		}
+				sender.isInvalid = !isValidNumber(sender.input.value, null);
+			},
+			//Check all invalid properties
+			checkInputs : function() {
+				for(var property in this.invalid) {
+					if(this.invalid.hasOwnProperty(property)) {
+						if(this.invalid[property] === true) {
+							return false;
+						}
+					}
+				}
+				return true;
+			}
+ 		});
+	 </script>
+</polymer-element>

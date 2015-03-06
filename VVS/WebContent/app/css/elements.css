@@ -1,0 +1,101 @@
+.shadow {
+	margin-bottom: 30px;
+	padding-bottom: 50px;
+	background-color: #FFF;
+	border-radius: 5px;
+}
+
+.inner-shadow {
+	background-color: #EEEEEE;
+	border-radius: 5px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+.inner-inner-shadow {
+	background-color: #FFF;
+	border-radius: 3px;
+	margin-bottom: 10px;
+	padding-left: 5px;
+	padding-right: 5px
+}
+
+.highlight {
+	background-color: rgba(226,0,26,0.5);
+}
+
+.vertical-input {
+	margin-top: 30px;
+}
+
+.headline {
+	font-size: 20pt;
+	font-weight: 475;
+	margin-left: 20px;
+	margin-right: 10px;
+}
+
+.small-headline {
+	font-size: 16pt;
+	font-weight: 350;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.horizontal-input {
+	margin-left: 20px;
+}
+
+.horizontal-verticalizable > * {
+	margin-bottom: 10px;
+}
+
+.horizontal-input > * {
+	margin-right: 20px;
+	margin-top: 0px;
+}
+
+.horizontal-list {
+	margin-top: 20px;
+	margin-left: 20px;
+}
+
+.horizontal-list > * {
+	margin-right: 20px;
+}
+
+.horizontal-button-bar {
+	margin-top: 20px
+}
+
+.horizontal-button-bar > * {
+	margin-right: 20px;
+}
+
+.input-padding paper-input-decorator {
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+.hide {
+	display: hidden;
+}
+
+paper-button {
+	background: #E2001A;
+	color: #FFFFFF;
+}
+
+paper-icon-button::shadow #ripple {
+  color: #D32B18;
+  opacity: 0.25;
+}
+
+paper-checkbox::shadow #ink[checked] {
+	color: #D32B18;
+}
+			
+paper-checkbox::shadow #checkbox.checked {
+	background-color: #D32B18;
+	border-color: #D32B18;
+}

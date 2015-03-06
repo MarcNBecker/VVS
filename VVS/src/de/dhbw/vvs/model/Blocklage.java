@@ -31,8 +31,8 @@ public class Blocklage {
 			Blocklage b = new Blocklage();
 			b.kursID = result.getInt("kurs");
 			b.semester = result.getInt("semester");
-			b.startDatum = (Date) result.get("startDatum");
-			b.endDatum = (Date) result.get("endDatum");
+			b.startDatum = result.get("startDatum") != null ? (Date) result.get("startDatum") : null;
+			b.endDatum = result.get("endDatum") != null ? (Date) result.get("endDatum") : null;
 			b.raum = result.getString("raum");
 			blocklageList.add(b);
 		}
@@ -68,16 +68,7 @@ public class Blocklage {
 		if (semester <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_NUMBER);
 		}
-		if (startDatum == null) {
-			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_DATE);
-		}
-		if (endDatum == null) {
-			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_DATE);
-		}
-		if (startDatum.compareTo(endDatum) > 0) { //end is not after
-			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_DATE);
-		}
-		if (raum == null || (raum = raum.trim()).isEmpty()) {
+		if (raum == null) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_STRING);
 		}
 	}

@@ -87,9 +87,9 @@ public class ModulInstanz {
 	}
 	
 	public ModulInstanz create() throws WebServiceException {
-		if (id != 0) {
+		/*if (id != 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
-		}
+		}*/
 		if(modul.getID() == 0) {
 			modul.create();
 		}
@@ -99,7 +99,11 @@ public class ModulInstanz {
 		fieldValues.add(modul.getID());
 		fieldValues.add(modulplanID);
 		fieldValues.add(credits);
-		this.id = db.doQuery("INSERT INTO modulinstanz (modul, modulplan, credits) VALUES (?, ?, ?)", fieldValues);
+		fieldValues.add(credits);
+		int newID = db.doQuery("INSERT INTO modulinstanz (modul, modulplan, credits) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE credits = ?", fieldValues);
+		if(id <= 0) {
+			id = newID;
+		}
 		return this;
 	}
 	
@@ -135,6 +139,10 @@ public class ModulInstanz {
 	
 	public int getID() {
 		return id;
+	}
+	
+	public void setID(int id) {
+		this.id = id;
 	}
 	
 	public void setModulplanID(int modulplanID) {

@@ -68,6 +68,22 @@ public class Modulplan {
 		return this;
 	}
 	
+	public void enhance(int vorlageID) throws WebServiceException {
+		Modulplan vorlage = new Modulplan(vorlageID).getDirectAttributes();
+		ArrayList<ModulInstanz> modulInstanzList = vorlage.getModulList();
+		for(ModulInstanz modulInstanz: modulInstanzList) {
+			ArrayList<FachInstanz> fachInstanzList = FachInstanz.getAll(modulInstanz);
+			modulInstanz.setModulplanID(id);
+			modulInstanz.setID(0);
+			modulInstanz.create();
+			for(FachInstanz fachInstanz: fachInstanzList) {
+				fachInstanz.setModulInstanzID(modulInstanz.getID());
+				fachInstanz.setID(0);
+				fachInstanz.create();
+			}
+		}
+	}
+	
 	public Modulplan update() throws WebServiceException {
 		if (id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);

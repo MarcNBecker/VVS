@@ -3,6 +3,7 @@ package de.dhbw.vvs.resources;
 import java.io.IOException;
 
 import org.json.JSONException;
+import org.restlet.data.CacheDirective;
 import org.restlet.data.MediaType;
 import org.restlet.data.Status;
 import org.restlet.ext.json.JsonRepresentation;
@@ -35,6 +36,8 @@ public abstract class SecureServerResource extends ServerResource {
 		super.doInit();
 		setNegotiated(false);
 		setConditional(false);
+		//Don't allow caching
+		getResponse().getCacheDirectives().add(CacheDirective.noCache());
 	}
 	
 	/**

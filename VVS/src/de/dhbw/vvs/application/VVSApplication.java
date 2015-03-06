@@ -34,6 +34,7 @@ import de.dhbw.vvs.resources.ModulplanFachResource;
 import de.dhbw.vvs.resources.ModulplanFaecherResource;
 import de.dhbw.vvs.resources.ModulplanModulResource;
 import de.dhbw.vvs.resources.ModulplanModuleResource;
+import de.dhbw.vvs.resources.ModulplanQuickDeleteFachInstanzResource;
 import de.dhbw.vvs.resources.ModulplanResource;
 import de.dhbw.vvs.resources.StudiengangsleiterDashboardResource;
 import de.dhbw.vvs.resources.StudiengangsleiterKollektionResource;
@@ -77,7 +78,7 @@ public class VVSApplication extends Application {
 		router.attach(VERSION_ONE + "/studiengangsleiter", StudiengangsleiterKollektionResource.class); //GET, POST
 		router.attach(VERSION_ONE + "/studiengangsleiter/{studiengangsleiterID}", StudiengangsleiterResource.class); //GET, PUT, DELETE
 		
-		router.attach(VERSION_ONE + "/user", UserKollektionResource.class); //POST
+		router.attach(VERSION_ONE + "/user", UserKollektionResource.class); //GET, POST
 		router.attach(VERSION_ONE + "/user/{name}", UserResource.class); //POST, PUT, DELETE
 		
 		//Feiertage
@@ -93,6 +94,7 @@ public class VVSApplication extends Application {
 		router.attach(VERSION_ONE + "/modulplaene/{modulplanID}/module/{modulID}", ModulplanModulResource.class); //PUT, DELETE
 		router.attach(VERSION_ONE + "/modulplaene/{modulplanID}/module/{modulID}/faecher", ModulplanFaecherResource.class); //GET, POST
 		router.attach(VERSION_ONE + "/modulplaene/{modulplanID}/module/{modulID}/faecher/{fachID}", ModulplanFachResource.class); //PUT, DELETE
+		router.attach(VERSION_ONE + "/modulplaene/quickdelete/faecher/{fachInstanzID}", ModulplanQuickDeleteFachInstanzResource.class); //DELETE
 		
 		//PLANNING FUNCTIONALITY
 		//Dashboards

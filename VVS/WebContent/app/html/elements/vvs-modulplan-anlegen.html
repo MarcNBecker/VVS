@@ -1,0 +1,133 @@
+<polymer-element name="vvs-modulplan-anlegen">
+	<template>
+		<link rel="stylesheet" href="../../css/elements.css" shim-shadowdom>
+		<paper-shadow z="3" class="shadow">
+		<div vertical layout>
+			<div vertical layout class="vertical-input horizontal-verticalizable">
+				<span class="headline">Allgemeine Angaben</span>	
+				<div vertical layout class="horizontal-input">
+					<!-- Main input fields -->
+					<paper-input-decorator label="Studiengang" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.studiengang}}">
+						<input is="core-input" value={{modulplan.studiengang}} maxlength="100" required disabled?="{{toggleDisabled}}">
+					</paper-input-decorator>
+					<paper-input-decorator label="Vertiefungsrichtung" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.vertiefungsrichtung}}">
+						<input is="core-input" value={{modulplan.vertiefungsrichtung}} maxlength="100" required disabled?="{{toggleDisabled}}">
+					</paper-input-decorator>	
+				</div>
+				<div horizontal layout center>
+					<span class="headline">Vorlage</span>
+					<paper-checkbox checked="{{vorlageChecked}}" self-center disabled?="{{toggleDisabled}}"></paper-checkbox>
+				</div>
+				<div vertical layout class="horizontal-input">
+					<paper-dropdown-menu label="Vorlage" hidden?="{{!vorlageChecked}}" disabled?="{{toggleDisabled}}">
+						<paper-dropdown class="dropdown">
+							<core-menu selected="{{selectedVorlage}}" class="menu">
+								<template  repeat="{{item in vorlagen}}">
+									<paper-item>{{item.studiengang}} - {{item.vertiefungsrichtung}}</paper-item>
+								</template>
+							</core-menu>
+						</paper-dropdown>
+					</paper-dropdown-menu>
+				</div>
+				<!-- Button Bar -->
+				<div horizontal layout center class="horizontal-input horizontal-button-bar">
+					<paper-button on-click="{{create}}" raised disabled?="{{toggleDisabled}}">Modulplan anlegen</paper-button>
+					<paper-button on-click="{{cancel}}" raised disabled?="{{toggleDisabled}}">Abbrechen</paper-button>
+					<paper-spinner active?="{{toggleDisabled}}" self-center></paper-spinner>
+				</div>
+			</div>
+		</div>
+		</paper-shadow>
+	</template>
+	<script>
+		Polymer("vvs-modulplan-anlegen", {
+			//Initializing
+			modulplan: new model.templates.Modulplan(),
+			vorlagen: [],
+			vorlageChecked: false,
+			toggleDisabled: true,
+			selectedVorlage: 0,
+			invalid: {},
+			publish: {
+				pageLoaded: {},
+				toasts: {}
+			},
+			//Initialize the screen
+			ready: function()
+			{
+				var self = this;
+				self.modulplan = new model.templates.Modulplan();
+				self.vorlagen = [];
+				self.vorlageChecked = false;
+				self.toggleDisabled = true;
+				self.selectedVorlage = 0;
+				self.invalid = {};
+				//Load available Modulplaene
+				model.webService.getAllModulplaene(function(api)
+				{
+					if (!api.isError)
+					{
+						self.vorlagen = api.response;
+						//Init required fields
+						self.invalid.studiengang = true;
+						self.invalid.vertiefungsrichtung = true;
+						self.toggleDisabled = false;
+					}
+					else
+					{
+						console.log(JSON.stringify(api));
+						self.toasts.error.show();
+					}
+				});
+			},
+			//create a new Modulplan
+			create: function()
+			{
+    			var self = this;
+    			if(!self.checkInputs()) {
+    				return;
+    			}
+    			self.toggleDisabled = true;
+    			// If Vorlage is selected, set ID
+    			if (self.vorlageChecked === true && (self.selectedVorlage !== null && self.vorlagen.length > 0))
+				{
+    				self.modulplan.vorlage = self.vorlagen[self.selectedVorlage].id;
+				}
+    			//Create Modulplan
+    			model.webService.createModulplan(self.modulplan, function(api) {
+					if (!api.isError)
+					{
+						self.modulplan = api.response;
+						self.toasts.success.show();
+						self.pageLoaded.stammdaten = false;
+						self.pageLoaded.modulplanAnlegen = false;
+						self.pageLoaded.modulplanPflegen = false;
+						location.href = '#!modulplanPflegen-'+self.modulplan.id;
+					}
+					else
+					{
+    					console.log(JSON.stringify(api));
+    					self.toasts.error.show();
+					}
+				});
+			},			
+			//Navigate backwards and force a reload
+	    	cancel: function()
+	    	{
+	    		this.pageLoaded.modulplanAnlegen = false;
+	    		window.history.back();
+	    	},
+			//Check all invalid properties
+			checkInputs : function() {
+				for(var property in this.invalid) {
+					if(this.invalid.hasOwnProperty(property)) {
+						if(this.invalid[property] === true) {
+							return false;
+						}
+					}
+				}
+				return true;
+			}
+		});
+	</script>
+</polymer-element>

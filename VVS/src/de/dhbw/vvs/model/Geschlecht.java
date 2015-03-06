@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 public enum Geschlecht implements WebServiceEnum {
 	
-	MALE(0), FEMALE(1);
+	HERR(0), FRAU(1);
 	
 	private static HashMap<Integer, Geschlecht> mapping = new HashMap<Integer, Geschlecht>();
 

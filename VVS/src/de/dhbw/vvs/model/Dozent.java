@@ -1,5 +1,6 @@
 package de.dhbw.vvs.model;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import de.dhbw.vvs.application.ExceptionStatus;
@@ -28,6 +29,10 @@ public class Dozent {
 	private String fax;
 	private String arbeitgeber;
 	private Status status;
+	@SuppressWarnings("unused")
+	private Timestamp angelegt;
+	@SuppressWarnings("unused")
+	private Timestamp geaendert;
 	
 	public static ArrayList<Dozent> getAll() throws WebServiceException {
 		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
@@ -97,7 +102,7 @@ public class Dozent {
 		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
 		ArrayList<Object> fieldValues = new ArrayList<Object>();
 		fieldValues.add(id);
-		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT titel, name, vorname, geschlecht, strasse, wohnort, postleitzahl, mail, telefonPrivat, telefonMobil, telefonGeschaeftlich, fax, arbeitgeber, status FROM dozent WHERE id = ?", fieldValues);
+		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT titel, name, vorname, geschlecht, strasse, wohnort, postleitzahl, mail, telefonPrivat, telefonMobil, telefonGeschaeftlich, fax, arbeitgeber, status, angelegt, geaendert FROM dozent WHERE id = ?", fieldValues);
 		if(resultList.isEmpty()) {
 			throw new WebServiceException(ExceptionStatus.OBJECT_NOT_FOUND);
 		}
@@ -116,6 +121,8 @@ public class Dozent {
 		fax = result.getString("fax");
 		arbeitgeber = result.getString("arbeitgeber");
 		status = Status.getFromOrdinal(result.getInt("status"));
+		angelegt = (Timestamp) result.get("angelegt");
+		geaendert = (Timestamp) result.get("geaendert");
 		return this;
 	}
 	
@@ -149,7 +156,7 @@ public class Dozent {
 		fieldValues.add(arbeitgeber);
 		fieldValues.add(status);
 		this.id = db.doQuery("INSERT INTO dozent (titel, name, vorname, geschlecht, strasse, wohnort, postleitzahl, mail, telefonPrivat, telefonMobil, telefonGeschaeftlich, fax, arbeitgeber, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", fieldValues);
-		return this;
+		return this.getDirectAttributes(); //Get Timestamps
 	}
 	
 	public Dozent update() throws WebServiceException {
@@ -178,7 +185,7 @@ public class Dozent {
 		if(affectedRows == 0) {
 			throw new WebServiceException(ExceptionStatus.OBJECT_NOT_FOUND);
 		} else {
-			return this;	
+			return this.getDirectAttributes(); //Get Timestamps
 		}
 	}
 	
@@ -194,7 +201,7 @@ public class Dozent {
 		ArrayList<Object> fieldValues = new ArrayList<Object>();
 		fieldValues.add(id);
 		fieldValues.add(fach.getID());
-		db.doQuery("INSERT INTO dozentfach (dozent, fach) VALUES (?, ?)", fieldValues);
+		db.doQuery("INSERT INTO dozentfach (dozent, fach) VALUES (?, ?) ON DUPLICATE KEY UPDATE dozent = dozent, fach = fach", fieldValues);
 		return fach;
 	}
 	
@@ -236,7 +243,7 @@ public class Dozent {
 	}
 	
 	private void checkDirectAttributes() throws WebServiceException {
-		if (titel == null || (titel = titel.trim()).isEmpty()) {
+		if (titel == null) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_STRING);
 		}
 		if (name == null || (name = name.trim()).isEmpty()) {
@@ -248,31 +255,31 @@ public class Dozent {
 		if (geschlecht == null) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ENUM);
 		}
-		if (strasse == null || (strasse = strasse.trim()).isEmpty()) {
+		if (strasse == null) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_STRING);
 		}
-		if (wohnort == null || (wohnort = wohnort.trim()).isEmpty()) {
+		if (wohnort == null) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_STRING);
 		}
-		if (postleitzahl == null || (postleitzahl = postleitzahl.trim()).isEmpty() || !Utility.checkNumeric(postleitzahl)) {
+		if (postleitzahl == null || (!(postleitzahl = postleitzahl.trim()).isEmpty() && !Utility.checkNumeric(postleitzahl))) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_NUMBER);
 		}
-		if (mail == null || (mail = mail.trim()).isEmpty() || !Utility.checkEmail(mail)) {
+		if (mail == null || (!(mail = mail.trim()).isEmpty() && !Utility.checkEmail(mail))) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_MAIL);
 		}
-		if (telefonPrivat == null || (telefonPrivat = telefonPrivat.trim()).isEmpty() || !Utility.checkPhone(telefonPrivat)) {
+		if (telefonPrivat == null || (!(telefonPrivat = telefonPrivat.trim()).isEmpty() && !Utility.checkPhone(telefonPrivat))) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_PHONE);
 		}
-		if (telefonMobil == null || (telefonMobil = telefonMobil.trim()).isEmpty() || !Utility.checkPhone(telefonMobil)) {
+		if (telefonMobil == null || (!(telefonMobil = telefonMobil.trim()).isEmpty() && !Utility.checkPhone(telefonMobil))) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_PHONE);
 		}
-		if (telefonGeschaeftlich == null || (telefonGeschaeftlich = telefonGeschaeftlich.trim()).isEmpty() || !Utility.checkPhone(telefonGeschaeftlich)) {
+		if (telefonGeschaeftlich == null || (!(telefonGeschaeftlich = telefonGeschaeftlich.trim()).isEmpty() && !Utility.checkPhone(telefonGeschaeftlich))) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_PHONE);
 		}
-		if (fax == null || (fax = fax.trim()).isEmpty()) {
+		if (fax == null || (!(fax = fax.trim()).isEmpty() && !Utility.checkPhone(fax))) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_PHONE);
 		}
-		if (arbeitgeber == null || (arbeitgeber = arbeitgeber.trim()).isEmpty()) {
+		if (arbeitgeber == null) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_STRING);
 		}
 		if (status == null) {

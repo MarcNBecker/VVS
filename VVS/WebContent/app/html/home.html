@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <title>wi.schedule</title>
+  <!-- Imports -->
+  <script src="../polymer/webcomponentsjs/webcomponents.js"></script>
+  <link rel="import" href="../polymer/polymer/polymer.html">
+  <link rel="import" href="../polymer/core-elements/core-elements.html">
+  <link rel="import" href="../polymer/paper-elements/paper-elements.html">
+  <link rel="stylesheet" href="../css/styles.css" shim-shadowdom>
+  <script type="text/javascript" src="../js/model.js"></script>
+  <script type="text/javascript" src="../js/phone.js"></script>
+  <link rel="import" href="elements/vvs-elements.html">
+  <link rel="import" href="../polymer/font-roboto/roboto.html">
+</head>
+<body unresolved fullbleed>
+<template is="auto-binding" id="home">
+  <core-scaffold id="home-scaffold">
+    <nav>
+      <core-toolbar>
+        <span>wi.schedule</span>
+      </core-toolbar>
+      <!-- Navigation Drawer -->
+      <core-menu id="drawer-menu" valueattr="hash" selected="{{route}}" on-core-select="{{menuItemSelected}}">
+        <template repeat="{{page in drawerPages}}">
+          <paper-item hash="{{page.hash}}" on-click="{{navigateFromDrawer}}">
+            <span>{{page.name}}</span>
+          </paper-item>
+        </template>
+      </core-menu>
+    </nav>
+    <core-toolbar tool flex>
+      <div flex>{{selectedPage.page.name}}</div>
+      <div>admin</div>
+      <paper-icon-button icon="account-circle" on-click=""></paper-icon-button>
+      <paper-icon-button icon="refresh" on-click="{{refresh}}"></paper-icon-button>
+    </core-toolbar>
+    <!-- Main pages are loaded here -->
+    <div fit id="page-wrapper">
+	    <core-pages id="home-pages" valueattr="hash" selected="{{route}}" selectedModel={{selectedPage}}>
+	      <template repeat="{{page in homePages}}">
+	        <section id="home-pages-{{page.hash}}" hash="{{page.hash}}">
+	        	<div>{{page.name}}</div>
+	        </section>
+	      </template>
+	    </core-pages>
+    </div>
+  </core-scaffold>
+  <!-- Toasts -->
+  <paper-toast id="toast_success" text="Erfolgreich ausgef&uuml;hrt"></paper-toast>
+  <paper-toast id="toast_constraint" text="Das Objekt wird noch verwendet! Vorgang abgebrochen." duration="7000"></paper-toast>
+  <paper-toast id="toast_error" text="Leider ist ein Fehler aufgetreten. Bitte laden Sie die Seite neu!" duration="15000">
+	<div class="refresh" on-click={{refresh}}>REFRESH</div>
+  </paper-toast>
+</template>
+<script src="../js/home.js"></script>
+</body>
+</html>

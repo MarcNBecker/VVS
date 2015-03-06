@@ -111,6 +111,11 @@
 		modulplanNew.studiengang = "Wirtschaftsinformatik";
 		modulplanNew.vertiefungsrichtung = "Software Engineering";
 		
+		var modulplanNewVorlage = new model.templates.Modulplan();
+		modulplanNewVorlage.studiengang = "WI 2.0";
+		modulplanNewVorlage.vertiefungsrichtung = "SE 2.0";
+		modulplanNewVorlage.vorlage = 1;
+		
 		var modulplan = new model.templates.Modulplan();
 		modulplan.id = 1;
 		modulplan.studiengang = "Wirtschaftsinformatik";
@@ -234,6 +239,7 @@
 <input type="button" onclick="model.webService.deleteStudiengangsleiter(studiengangsleiter, c)" value="Delete Studiengangsleiter" /><br />
 
 <!-- User -->
+<input type="button" onclick="model.webService.getAllUser(c)" value="Get All User" />
 <input type="button" onclick="model.webService.createUser(userNew, c)" value="Create User" />
 <input type="button" onclick="model.webService.authenticateUser(userNew, c)" value="Authenticate User" />
 <input type="button" onclick="model.webService.updateUser(user, c)" value="Update User" />
@@ -265,6 +271,9 @@
 <input type="button" onclick="model.webService.getModulplan(modulplan, c)" value="Get Modulplan" />
 <input type="button" onclick="model.webService.updateModulplan(modulplan, c)" value="Update Modulplan" />
 <input type="button" onclick="model.webService.deleteModulplan(modulplan, c)" value="Delete Modulplan" /><br />
+
+<!-- Modulplan With Vorlage -->
+<input type="button" onclick="model.webService.createModulplan(modulplanNewVorlage, c)" value="Create Modulplan With Vorlage" /><br />
 
 <!-- Modulinstanzen -->
 <input type="button" onclick="model.webService.getAllModulInstanzen(modulplan, c)" value="Get All ModulInstanzen" />

@@ -1,0 +1,567 @@
+<polymer-element name="vvs-dozent">
+	<template>
+ 		<link rel="stylesheet" href="../../css/elements.css" shim-shadowdom>
+		<core-media-query query="max-width: 1400px" queryMatches="{{smallScreen}}"></core-media-query>
+		<!-- Main DIV -->
+		<paper-shadow z="3" class="shadow">
+		<div vertical?="{{smallScreen}}" horizontal?="{{!smallScreen}}" layout>
+			<!-- Main input fields -->
+			<div auto-vertical?="{{smallScreen}}" flex?="{{!smallScreen}}" two?="{{!smallScreen}}">
+				<!-- Input Fields -->
+				<div vertical layout class="vertical-input">
+					<span class="headline">Informationen</span>
+					<div horizontal start layout class="horizontal-input">
+						<paper-dropdown-menu label="Anrede" disabled?="{{disableToggle}}" self-center flex>
+							<paper-dropdown class="dropdown">
+								<core-menu class="menu" selected={{dozent.geschlecht}}>
+									<template  repeat="{{item in geschlecht}}">
+										<paper-item>{{item}}</paper-item>
+									</template>
+								</core-menu>
+							</paper-dropdown>
+						</paper-dropdown-menu>
+						<paper-input-decorator id="titel" label="Titel" floatingLabel flex>
+							<input is="core-input" type="text" value={{dozent.titel}} maxlength="100" disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+						<paper-input-decorator id="vorname" label="Vorname" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.vorname}}" flex>
+							<input is="core-input" type="text" value={{dozent.vorname}} maxlength="100" required disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+						<paper-input-decorator id="name" label="Name" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.name}}" flex>
+							<input is="core-input" type="text" value={{dozent.name}} maxlength="100" required disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+					</div>
+					<div horizontal start layout class="horizontal-input">
+						<paper-input-decorator id="strasse" label="Stra&szlig;e" floatingLabel flex>
+							<input is="core-input" type="text" value={{dozent.strasse}} maxlength="100" disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+						<paper-input-decorator id="postleitzahl" label="Postleitzahl" error="Keine g&uuml;ltige Postleitzahl" floatingLabel autoValidate isInvalid="{{invalid.postleitzahl}}" flex>
+							<input is="core-input" type="text" pattern="[0-9]+" value={{dozent.postleitzahl}} disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+						<paper-input-decorator id="wohnort" label="Wohnort" floatingLabel flex>
+							<input is="core-input" type="text" value={{dozent.wohnort}} maxlength="100" disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+					</div>
+					<div horizontal start layout class="horizontal-input">
+						<paper-input-decorator id="mail" label="E-Mail" error="Keine g&uuml;ltige E-Mail" floatingLabel autoValidate isInvalid="{{invalid.mail}}" flex>
+							<input is="core-input" type="email" pattern="[^@]+@[^@]+\.[a-zA-Z]{2,6}" value={{dozent.mail}} maxlength="255" disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+						<paper-input-decorator id="telefonMobil" label="Telefon (mobil)" error="Keine g&uuml;ltige Nummer (Beispiel: +49 234 56789)" floatingLabel on-input="{{validatePhone}}" isInvalid="{{invalid.telefonMobil}}" flex>
+							<input is="core-input" type="tel" value={{dozent.telefonMobil}} maxlength="100" disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+					</div>
+					<div horizontal start layout class="horizontal-input">
+						<paper-input-decorator id="telefonPrivat" label="Telefon (privat)" error="Keine g&uuml;ltige Nummer (Beispiel: +49 234 56789)" floatingLabel on-input="{{validatePhone}}" isInvalid="{{invalid.telefonPrivat}}" flex>
+							<input is="core-input" type="tel" value={{dozent.telefonPrivat}} maxlength="100" disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+						<paper-input-decorator id="fax" label="Fax" error="Keine g&uuml;ltige Nummer (Beispiel: +49 234 56789)" floatingLabel on-input="{{validatePhone}}" isInvalid={{invalid.fax}} flex>
+							<input is="core-input" type="tel" value={{dozent.fax}} maxlength="100" disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+					</div>
+					<div horizontal start layout class="horizontal-input">
+						<paper-input-decorator id="arbeitgeber" label="Arbeitgeber" floatingLabel flex>
+							<input is="core-input" type="text" value={{dozent.arbeitgeber}} maxlength="100" disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+						<paper-input-decorator id="telefonGeschaeftlich" label="Telefon (gesch&auml;ftlich)" error="Keine g&uuml;ltige Nummer (Beispiel: +49 234 56789)" floatingLabel on-input="{{validatePhone}}" isInvalid="{{invalid.telefonGeschaeftlich}}" flex>
+							<input is="core-input" type="tel" value={{dozent.telefonGeschaeftlich}} maxlength="100" disabled?="{{disableToggle}}">
+						</paper-input-decorator>
+					</div>
+					<div horizontal start layout class="horizontal-input">
+						<paper-dropdown-menu label="Status" floatingLabel disabled?="{{disableToggle}}" self-center>
+							<paper-dropdown class="dropdown">
+								<core-menu class="menu" selected={{dozent.status}}>
+									<template  repeat="{{item in status}}">
+										<paper-item>{{item}}</paper-item>
+									</template>
+								</core-menu>
+							</paper-dropdown>
+						</paper-dropdown-menu>
+					</div>
+					<!-- History Fields -->
+					<div horizontal start layout hidden?="{{creationMode}}" class="horizontal-input">
+						<paper-input-decorator id="angelegt" label="angelegt am" floatingLabel flex>
+							<input is="core-input" value="{{dozent.angelegt}}" disabled>
+						</paper-input-decorator>
+						<paper-input-decorator id="bearbeitet" label="bearbeitet am" floatingLabel flex>
+							<input is="core-input" value="{{dozent.geaendert}}" disabled>
+						</paper-input-decorator>
+					</div>
+				</div>
+			</div>
+			<!-- Add/Delete Faecher -->
+			<div auto-vertical?="{{smallScreen}}" flex?="{{!smallScreen}}">
+				<div vertical layout class="vertical-input">
+					<span class="headline">Kompetenzf&auml;cher</span>
+					<template  repeat="{{item in dozentenFaecher}}">
+						<div horizontal layout center class="horizontal-list">
+							<paper-item>{{item.name}}</paper-item>
+							<paper-icon-button icon="clear" on-click={{deleteFach}} disabled?="{{disableToggle}}"></paper-icon-button>
+						</div>
+					</template>
+					<div horizontal layout center class="horizontal-list">
+						<paper-dropdown-menu label="Kompetenzfach" disabled?="{{disableToggle}}">
+							<paper-dropdown id="fachDropdown" class="dropdown">
+								<core-menu id="fach" class="menu">
+									<template  repeat="{{item in faecher}}">
+										<paper-item>{{item.name}}</paper-item>
+									</template>
+								</core-menu>
+							</paper-dropdown>
+						</paper-dropdown-menu>
+						<paper-button on-click={{addFach}} raised disabled?="{{disableToggle}}">+</paper-button>
+					</div>
+					<!-- Button Bar -->
+					<div horizontal layout center class="horizontal-input">
+						<div hidden?={{creationMode}} horizontal layout center class="horizontal-button-bar">
+							<paper-button on-click={{update}} raised disabled?="{{disableToggle}}">Speichern</paper-button>
+							<paper-button on-click={{initDelete}} raised disabled?="{{disableToggle}}">L&ouml;schen</paper-button>
+							<paper-button on-click={{cancel}} raised disabled?="{{disableToggle}}">Abbrechen</paper-button>				
+							<paper-spinner active?={{disableToggle}} self-center></paper-spinner>
+						</div>
+						<div hidden?="{{!creationMode}}" horizontal layout center class="horizontal-button-bar">
+							<paper-button on-click={{create}} raised disabled?="{{disableToggle}}">Anlegen</paper-button>
+							<paper-button on-click={{cancel}} raised disabled?="{{disableToggle}}">Abbrechen</paper-button>
+							<paper-spinner active?={{disableToggle}} self-center></paper-spinner>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		</paper-shadow>
+		<paper-action-dialog id="delete_dozent_dialog" heading="{{dozent.name}}, {{dozent.vorname}} wirklich l&ouml;schen?">
+			<paper-button affirmative>Nein</paper-button>
+			<paper-button on-click="{{doDelete}}" affirmative autofocus>L&ouml;schen</paper-button>
+		</paper-action-dialog>
+	</template>
+	<script type="text/javascript">
+		Polymer('vvs-dozent', {
+			//Initializing
+			dozent: new model.templates.Dozent(),
+			geschlecht: [],
+			status: [],
+			dozentenFaecher: [],
+			faecher: [],
+			invalid: {},
+			disableToggle: true,
+			creationMode: true,
+			allFaecher: [],
+			deletedFaecher: [],
+			//Publish those attributes to home
+			publish: {
+				pageParameter: {},
+				pageLoaded: {},
+				toasts: {}
+			},
+			//Initialize the screen
+    		ready: function()
+    		{
+    			var self = this;
+    			var showDozent = new model.templates.Dozent();
+    			showDozent.id = self.pageParameter.dozent.id;
+    			self.dozent = new model.templates.Dozent();
+    			self.geschlecht = showDozent.GeschlechtEnum.all;
+    			self.status = showDozent.StatusEnum.all;
+    			self.dozentenFaecher = [];
+    			self.faecher = [];
+    			self.invalid = {};
+    			self.creationMode = true;
+    			self.hideHistory = true;
+    			self.allFaecher = [];
+    			self.deletedFaecher = [];
+    			//Go to creation mode
+    			if (showDozent.id === 0)
+    			{
+    				//Load available Faecher
+    				model.webService.getAllFaecher(function(api) {
+    					if (!api.isError)
+    					{
+    						self.faecher = api.response;
+    						self.allFaecher = api.response.slice();
+    						//Enable buttons and force correct input label display
+    						self.disableToggle = false;
+    						self.invalid.name = true;
+    						self.invalid.vorname = true;
+    					}
+    					else
+    					{
+    						console.log(JSON.stringify(api));
+    						self.toasts.error.show();
+    					}
+    				});
+    			}
+    			//Go to edit mode
+    			else
+    			{
+    				self.creationMode = false;
+    				var deepRuns = 0;
+    				model.webService.getDozent(showDozent, function(api) {
+    					if (!api.isError)
+    					{
+    						deepRuns++;
+    						//Initialize input fields and make them display correctly
+    						self.dozent = api.response;
+    						self.job('update-labels-ready', function() {
+    							self.$.titel.inputAction();
+        						self.$.name.inputAction();
+       							self.$.vorname.inputAction();
+       							self.$.strasse.inputAction();	
+       							self.$.postleitzahl.inputAction();	
+       							self.$.wohnort.inputAction();	
+       							self.$.mail.inputAction();	
+       							self.$.telefonPrivat.inputAction();	
+       							self.$.telefonGeschaeftlich.inputAction();	
+       							self.$.telefonMobil.inputAction();	
+       							self.$.fax.inputAction();	
+       							self.$.arbeitgeber.inputAction();	
+        						self.$.angelegt.inputAction();
+        						self.$.bearbeitet.inputAction();
+    						}, 100);
+    						self.invalid.name = false;
+    						self.invalid.vorname = false;
+    						//Enable inputs after last webservice call
+    						if(deepRuns === 2) {
+    							self.disableToggle = false;
+    						}
+    					}
+    					else
+    					{
+    						console.log(JSON.stringify(api));
+    						self.toasts.error.show();
+    					}
+    				});
+    				//First read the Faecher of a Dozent..
+    				model.webService.getAllDozentFaecher(showDozent, function(api) {
+    					if (!api.isError)
+    					{
+    						self.dozentenFaecher = api.response;
+    						//..then read all Faecher
+    						model.webService.getAllFaecher(function(api) {
+    	    					if (!api.isError)
+    	    					{
+    	    						deepRuns++;
+    	    						//Fill dropdown boxes correctly to avoid seeing Faecher twice (in the upper list and the dropdown)
+    								self.faecher = api.response;
+    	    						self.allFaecher = self.faecher.slice();
+    	    						var i;
+    	    						for (i = 0; i < self.dozentenFaecher.length; i++)
+    	    						{
+    	        						var ii;
+    	    							for (ii = 0; ii < self.faecher.length; ii++)
+    	    							{
+    	    								if (self.dozentenFaecher[i].id === self.faecher[ii].id)
+    	    								{
+    	    									self.faecher.splice(ii, 1);
+    	    									break;
+    	    								}
+    	    							}
+    	    						}
+    	    						//Enable inputs after last webservice call
+    	    						if(deepRuns === 2) {
+    	    							self.disableToggle = false;
+    	    						}
+    	    					}
+    	    					else
+    	    					{
+    	    						console.log(JSON.stringify(api));
+    	    						self.toasts.error.show();
+    	    					}
+    	    				});	
+    					}
+    					else
+    					{
+    						console.log(JSON.stringify(api));
+    						self.toasts.error.show();
+    					}
+    				});
+    			}
+    		},
+    		//create a new Dozent
+    		create: function()
+    		{
+    			if(!this.checkInputs()) {
+    				return;
+    			}
+    			var self = this;
+    			//Disable everything
+    			self.disableToggle = true;
+    			//Create Dozent
+    			model.webService.createDozent(self.dozent, function(api) {
+	   				if (!api.isError)
+					{
+						self.dozent = api.response;
+						//Tell the outside world about the new ID
+						self.pageLoaded.stammdaten = false;
+						window.history.replaceState({}, '', '#!dozent-'+self.dozent.id);
+						var i;
+						var deepRuns = 0;
+						//Create connection between Dozent and subjects
+						for (i = 0; i < self.dozentenFaecher.length; i++)
+						{
+							model.webService.setDozentFach(self.dozent, self.dozentenFaecher[i], function(api) {
+								if (!api.isError)
+								{
+									deepRuns++;
+									//Enable buttons and display new button bar and history after last webservice call
+									if(deepRuns === self.dozentenFaecher.length) {
+										self.disableToggle = false;
+										self.creationMode = false;
+				    					self.toasts.success.show();	    					
+				    					self.job('update-labels-create', function() {
+											self.$.angelegt.inputAction();
+					    					self.$.bearbeitet.inputAction();
+				    					}, 100);
+									}
+								}
+								else
+								{
+									console.log(JSON.stringify(api));
+									self.toasts.error.show();
+								}
+							});
+						}
+						//Enable buttons and display new button bar and history after last webservice call
+						if (deepRuns === 0 && self.dozentenFaecher.length === 0) {
+							self.disableToggle = false;
+							self.creationMode = false;
+	    					self.toasts.success.show();
+	    					self.job('update-labels-create', function() {
+								self.$.angelegt.inputAction();
+		    					self.$.bearbeitet.inputAction();
+	    					}, 100);
+						}
+					}
+					else
+					{
+						console.log(JSON.stringify(api));
+						self.toasts.error.show();
+					}
+	    		});
+    			
+    		},
+    		//Adds a Fach to the upper list and notes to add it to the webservice when submitting
+			addFach: function()
+			{
+				var self = this;
+				if (self.$.fach.selected !== null && self.faecher.length > 0)
+				{
+					//Remove fach from dropdown after adding it to the webservice list
+					self.dozentenFaecher.push(self.faecher[self.$.fach.selected]);
+					self.faecher = self.allFaecher.slice();
+					var i;
+					for (i = 0; i < self.dozentenFaecher.length; i++)
+					{
+						var ii;
+						for (ii = 0; ii < self.faecher.length; ii++)
+						{
+							if (self.dozentenFaecher[i].id === self.faecher[ii].id)
+							{
+								self.faecher.splice(ii, 1);
+								break;
+							}
+						}
+					}
+					//Reset Dropdown height/width
+			        self.$.fachDropdown.$.scroller.style.height = "";
+			       	self.$.fachDropdown.$.scroller.style.width = "";
+				}
+			},
+			//Deletes a fach from the list and adds it to the dropdown
+			deleteFach: function(e)
+			{
+				var self = this;
+				var fach = e.target.templateInstance.model.item;
+				self.deletedFaecher.push(fach);
+				var i;
+				//Delete the Fach from the list
+				for (i = 0; i < self.dozentenFaecher.length; i++)
+				{
+					if (self.dozentenFaecher[i].id === fach.id)
+					{
+						self.dozentenFaecher.splice(i, 1 );
+						break;
+					}
+				}
+				//Rebuilt dropdown in alphabetical order
+				self.faecher = self.allFaecher.slice();
+				for (i = 0; i < self.dozentenFaecher.length; i++)
+				{
+					var ii;
+					for (ii = 0; ii < self.faecher.length; ii++)
+					{
+						if (self.dozentenFaecher[i].id === self.faecher[ii].id)
+						{
+							self.faecher.splice(ii, 1);
+							break;
+						}
+					}
+				}
+				//Reset Dropdown height/width
+		        self.$.fachDropdown.$.scroller.style.height = "";
+		       	self.$.fachDropdown.$.scroller.style.width = "";
+			},
+			//Updates a Dozent
+	    	update: function()
+	    	{
+    			if(!this.checkInputs()) {
+    				return;
+    			}
+	    		var self = this;
+	    		//Disable inputs
+	    		self.disableToggle = true;
+	    		//Update Dozent
+	    		model.webService.updateDozent(self.dozent, function(api) {
+	    			if (!api.isError)
+					{
+						var i;
+						var deepRuns = 0;
+						//Delete all deleted Faecher
+						for (i = 0; i < self.deletedFaecher.length; i++)
+						{
+							model.webService.deleteDozentFach(self.dozent, self.deletedFaecher[i], function(api) {
+								if(!api.isError) {
+									deepRuns++;
+									//After last deletion move to adding the added Faecher
+									if(deepRuns === self.deletedFaecher.length) {
+										self.deletedFaecher = [];
+										var veryDeepRuns = 0;
+										//Add Faecher
+										for (i = 0; i < self.dozentenFaecher.length; i++)
+										{
+											model.webService.setDozentFach(self.dozent, self.dozentenFaecher[i], function(api) {
+												if(!api.isError) {
+													veryDeepRuns++;
+													//Enable inputs after last webservice call
+													if (veryDeepRuns === self.dozentenFaecher.length) {
+														self.disableToggle = false;
+														self.toasts.success.show();
+													}
+												} else {
+													console.log(JSON.stringify(api));
+													self.toasts.error.show();
+												}
+											});
+										}
+										//Enable inputs after last webservice call
+										if(veryDeepRuns === 0 && self.dozentenFaecher.length === 0) {
+											self.disableToggle = false;
+											self.toasts.success.show();
+										}
+									}
+								} else {
+									console.log(JSON.stringify(api));
+									self.toasts.error.show();
+								}
+							});
+						}
+						//Also add new Faecher when no Fach was deleted
+						if(deepRuns === 0 && self.deletedFaecher.length === 0) {
+							for (i = 0; i < self.dozentenFaecher.length; i++)
+							{
+								model.webService.setDozentFach(self.dozent, self.dozentenFaecher[i], function(api) {
+									if(!api.isError) {
+										deepRuns++;
+										//Enable inputs after last webservice call
+										if (deepRuns === self.dozentenFaecher.length) {
+											self.disableToggle = false;
+											self.toasts.success.show();
+										}
+									} else {
+										console.log(JSON.stringify(api));
+										self.toasts.error.show();
+									}
+								});
+							}
+							//Enable inputs after last webservice call
+							if(deepRuns === 0 && self.dozentenFaecher.length === 0) {
+								self.disableToggle = false;
+								self.toasts.success.show();
+							}
+						}
+
+					}
+					else
+					{
+						console.log(JSON.stringify(api));
+						self.toasts.error.show();
+					}
+	    		});
+	    	},
+	    	initDelete: function() {
+	    		this.$.delete_dozent_dialog.toggle();
+	    	},
+	    	//Delete a dozent
+			doDelete: function()
+			{
+				var self = this;
+				//Disable inputs
+				self.disableToggle = true;
+				//Delete the Dozent
+	    		model.webService.deleteDozent(self.dozent, function(api) {
+					if(!api.isError) {
+						//Update variables and switch display of button bar
+						self.dozent = new model.templates.Dozent();
+						//Tell the outside world the new ID
+						self.pageLoaded.stammdaten = false;
+						window.history.replaceState({}, '', '#!dozent');
+						self.faecher = self.allFaecher.slice();
+						self.dozentenFaecher = [];
+						self.geloeschteFaecher = [];
+						self.disableToggle = false;
+						self.creationMode = true;
+    					self.invalid.name = true;
+						self.invalid.vorname = true;
+						self.job('update-labels-delete', function() {
+							self.$.titel.inputAction();
+    						self.$.name.inputAction();
+   							self.$.vorname.inputAction();
+   							self.$.strasse.inputAction();	
+   							self.$.postleitzahl.inputAction();	
+   							self.$.wohnort.inputAction();	
+   							self.$.mail.inputAction();	
+   							self.$.telefonPrivat.inputAction();	
+   							self.$.telefonGeschaeftlich.inputAction();	
+   							self.$.telefonMobil.inputAction();	
+   							self.$.fax.inputAction();	
+   							self.$.arbeitgeber.inputAction();	
+    						self.$.angelegt.inputAction();
+    						self.$.bearbeitet.inputAction();
+						}, 100);
+						self.toasts.success.show();
+					} else {
+						console.log(JSON.stringify(api));
+						if(api.status === 4) {
+							self.disableToggle = false;
+							self.toasts.constraint.show();
+						} else {
+							self.toasts.error.show();	
+						}
+					}
+	    		});
+			},
+			//Navigate backwards and force a reload
+	    	cancel: function()
+	    	{
+	    		this.pageLoaded.dozent = false;
+	    		window.history.back();
+	    	},
+	    	//Validate a phone number using phone.js
+	    	validatePhone: function(e, detail, sender) {
+	    		if(sender.input.value === "") {
+	    			sender.isInvalid = false;
+	    			return;
+	    		}
+				sender.isInvalid = !isValidNumber(sender.input.value, null);
+			},
+			//Check all invalid properties
+			checkInputs : function() {
+				for(var property in this.invalid) {
+					if(this.invalid.hasOwnProperty(property)) {
+						if(this.invalid[property] === true) {
+							return false;
+						}
+					}
+				}
+				return true;
+			}
+ 		});	
+	 </script>
+</polymer-element>

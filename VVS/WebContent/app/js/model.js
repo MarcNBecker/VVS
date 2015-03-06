@@ -1,35 +1,22 @@
+"use strict";
 var model = new function() {
 	/*
 	 * Helper functions
 	 */
 	this.helper = new function() {
-		var FachInstanzComplete = function() { //Use this only with ModulplanComplete and ModulInstanzComplete
-			this.id = 0;
-			this.fach = new model.templates.Fach();
-			this.semester = 0;
-			this.stunden = 0;
-		};
-		
-		var ModulInstanzComplete = function() { //Use this only with ModulplanComplete to store FachInstanzen with a ModulInstanz
-			this.id = 0;
-			this.modul = new model.templates.Modul();
-			this.credits = 0;
-			this.fachInstanzList = [];
-		};
-		
-		var ModulplanComplete = function() {
+		this.ModulplanComplete = function() {
 			this.id = 0;
 			this.studiengang = "";
 			this.vertiefungsrichtung = "";
 			this.modulInstanzList = [];
 		};
 		
-		this.getModulplanComplete = function(m, c) {
+		this.getModulplanComplete = function(m, c, e) {
 			//Read basic modulplan information
 			model.webService.getModulplan(m, function(api1) {
 				//Modulplan exists
 				if(!api1.isError) {
-					var modulplan = new ModulplanComplete();
+					var modulplan = new model.helper.ModulplanComplete();
 					modulplan.id = api1.response.id;
 					modulplan.studiengang = api1.response.studiengang;
 					modulplan.vertiefungsrichtung = api1.response.vertiefungsrichtung;
@@ -43,51 +30,65 @@ var model = new function() {
 								return;
 							}
 							var deepRuns = 0;
+							var fachInstanzError = false;
 							//Parse list of ModulInstanz
 							for(var i=0; i<api2.response.length; i++) {
 								var currentModulInstanz = api2.response[i];
-								var completeModulInstanz = new ModulInstanzComplete();
-								completeModulInstanz.id = currentModulInstanz.id;
-								completeModulInstanz.modul = currentModulInstanz.modul;
-								completeModulInstanz.credits = currentModulInstanz.credits;
+								currentModulInstanz.fachInstanzList = [];
 								//Add ModulInstanz to Modulplan
-								modulplan.modulInstanzList.push(completeModulInstanz);
+								modulplan.modulInstanzList.push(currentModulInstanz);
 								//Read FachInstanzen
 								model.webService.getAllFachInstanzen(currentModulInstanz, function(api3) {
 									//FachInstanzList can be read
-									if(!api3.isError) {
-										for(var ii=0; ii<api3.response.length; ii++) {
-											var currentFachInstanz = api3.response[ii];
-											var completeFachInstanz = new FachInstanzComplete();
-											completeFachInstanz.id = currentFachInstanz.id;
-											completeFachInstanz.fach = currentFachInstanz.fach;
-											completeFachInstanz.semester = currentFachInstanz.semester;
-											completeFachInstanz.stunden = currentFachInstanz.stunden;
-											//Search correct completeModulInstanz; can't rely on outer scope
-											for(var iii=0; iii<modulplan.modulInstanzList.length; iii++) {
-												if(modulplan.modulInstanzList[iii].id === currentFachInstanz.modulInstanzID) {
-													modulplan.modulInstanzList[iii].fachInstanzList.push(completeFachInstanz);			
-													break;
+									if(!fachInstanzError) {
+										if(!api3.isError) {
+											for(var ii=0; ii<api3.response.length; ii++) {
+												var currentFachInstanz = api3.response[ii];
+												//Search correct ModulInstanz; can't rely on outer scope
+												for(var iii=0; iii<modulplan.modulInstanzList.length; iii++) {
+													if(modulplan.modulInstanzList[iii].id === currentFachInstanz.modulInstanzID) {
+														modulplan.modulInstanzList[iii].fachInstanzList.push(currentFachInstanz);			
+														break;
+													}
 												}
 											}
+										} else {
+											fachInstanzError = true;
+											e(modulplan); //Reading some FachInstanzList failed, return Modulplan, but to error callback
 										}
-									}
-									//Every ModulInstanz triggers a FachInstanzList call (deepRun)
-									deepRuns++;
-									//Last call is triggered, then go to callback
-									if(api2.response.length === deepRuns) {
-										c(modulplan);
+										//Every ModulInstanz triggers a FachInstanzList call (deepRun)
+										deepRuns++;
+										//Last call is triggered, then go to callback
+										if(api2.response.length === deepRuns) {
+											c(modulplan);
+										}
 									}
 								});
 							}
-						} else { //Reading ModulInstanzList failed, return Modulplan
-							c(modulplan);
+						} else { //Reading ModulInstanzList failed, return Modulplan, but to error callback
+							e(modulplan);
 						}
 					});
 				} else { //Reading Modulplan failed, return null
-					c(null);
+					e(null);
 				}
 			});
+		};
+
+		this.setModulInstanz = function(mi, c, cd) {
+			if(mi.modul.id === 0) {
+				model.webService.createModulInstanzWithModul(mi, c, cd);
+			} else {
+				model.webService.createModulInstanz(mi, c, cd);
+			}
+		};
+		
+		this.setFachInstanz = function(mi, fi, c, cd) {
+			if(fi.fach.id === 0) {
+				model.webService.createFachInstanzWithFach(mi, fi, c, cd);
+			} else {
+				model.webService.createFachInstanz(mi, fi, c, cd);
+			}
 		};
 		
 	};
@@ -108,7 +109,7 @@ var model = new function() {
 			this.titel = "";
 			this.name = "";
 			this.vorname = "";
-			this.geschlecht = -1; //GeschlechtEnum
+			this.geschlecht = 0; //GeschlechtEnum
 			this.strasse = "";
 			this.wohnort = "";
 			this.postleitzahl = ""; //Numeric string
@@ -119,32 +120,36 @@ var model = new function() {
 			this.fax = ""; //Valid phone
 			this.arbeitgeber = "";
 			this.status = 0; //StatusEnum
+			this.angelegt = null; //yyyy-MM-dd
+			this.geaendert = null; //yyyy-MM-dd
 		};
 		
 		this.Dozent.prototype.StatusEnum = {
 				neu: {
-					ordinal : 1,
+					ordinal : 0,
 					string : "Neu"
 				},
 				aktiv: {
-					ordinal: 2,
+					ordinal: 1,
 					string: "Aktiv"
 				},
 				inaktiv: {
-					ordinal: 3,
+					ordinal: 2,
 					string: "Inaktiv"
-				}
+				},
+				all: ["Neu", "Aktiv", "Inaktiv"]
 		};
 
 		this.Dozent.prototype.GeschlechtEnum = {
 				m: {
 					ordinal : 0,
-					string: "M"
+					string: "Herr"
 				},
 				f: {
 					ordinal: 1,
-					string: "F"
-				}
+					string: "Frau"
+				},
+				all: ["Herr", "Frau"]
 		};
 		
 		this.Fach = function() {
@@ -157,8 +162,8 @@ var model = new function() {
 			this.id = 0;
 			this.fach = new model.templates.Fach();
 			this.modulInstanzID = 0;
-			this.semester = 0;
-			this.stunden = 0;
+			this.semester = ""; //number
+			this.stunden = ""; //number
 		};
 
 		this.Feiertag = function() {
@@ -179,7 +184,7 @@ var model = new function() {
 			this.kursname = "";
 			this.kursmail = ""; //Valid mail
 			this.modulplanID = 0;
-			this.studentenAnzahl = 0;
+			this.studentenAnzahl = ""; //number
 			this.kurssprecherVorname = "";
 			this.kurssprecherName = "";
 			this.kurssprecherMail = ""; //Valid mail
@@ -198,13 +203,14 @@ var model = new function() {
 			this.id = 0;
 			this.modul = new model.templates.Modul();
 			this.modulplanID = 0;
-			this.credits = 0;
+			this.credits = ""; //number
 		};
 
 		this.Modulplan = function() {
 			this.id = 0;
 			this.studiengang = "";
 			this.vertiefungsrichtung = "";
+			this.vorlage = 0;
 		};
 
 		this.Studiengangsleiter = function() {
@@ -278,6 +284,7 @@ var model = new function() {
 		var modulInstanzURI = "/modulplaene/{modulplanID}/module/{modulID}";
 		var fachInstanzenURI = "/modulplaene/{modulplanID}/module/{modulID}/faecher";
 		var fachInstanzURI = "/modulplaene/{modulplanID}/module/{modulID}/faecher/{fachID}";
+		var quickDeleteFachInstanzURI = "/modulplaene/quickdelete/faecher/{fachInstanzID}";
 		
 		var kursVorlesungen = "/kurse/{kursID}/vorlesungen";
 		var kursVorlesungenOffen = "/kurse/{kursID}/vorlesungen/offen";
@@ -384,6 +391,10 @@ var model = new function() {
 			self.doRequest(studiengangsleiterURI.replace("{studiengangsleiterID}", s.id), "DELETE", null, c);
 		};
 		
+		this.getAllUser = function(c) {
+			self.doRequest(userAllURI, "GET", null, c);
+		};
+		
 		this.createUser = function(u, c) {
 			self.doRequest(userAllURI, "POST", u, c);
 		};
@@ -444,12 +455,12 @@ var model = new function() {
 			self.doRequest(modulInstanzenURI.replace("{modulplanID}", m.id), "GET", null, c);
 		};
 		
-		this.createModulInstanzWithModul = function(mi, c) {
-			self.doRequest(modulInstanzenURI.replace("{modulplanID}", mi.modulplanID), "POST", mi, c);	
+		this.createModulInstanzWithModul = function(mi, c, cd) {
+			self.doRequest(modulInstanzenURI.replace("{modulplanID}", mi.modulplanID), "POST", mi, c, cd);	
 		};
 		
-		this.createModulInstanz = function(mi, c) {
-			self.doRequest(modulInstanzURI.replace("{modulplanID}", mi.modulplanID).replace("{modulID}", mi.modul.id), "PUT", mi, c);
+		this.createModulInstanz = function(mi, c, cd) {
+			self.doRequest(modulInstanzURI.replace("{modulplanID}", mi.modulplanID).replace("{modulID}", mi.modul.id), "PUT", mi, c, cd);
 		};
 		
 		this.deleteModulInstanz = function(mi, c) {
@@ -460,18 +471,22 @@ var model = new function() {
 			self.doRequest(fachInstanzenURI.replace("{modulplanID}", mi.modulplanID).replace("{modulID}", mi.modul.id), "GET", null, c);
 		};
 		
-		this.createFachInstanzWithFach = function(mi, fi, c) {
-			self.doRequest(fachInstanzenURI.replace("{modulplanID}", mi.modulplanID).replace("{modulID}", mi.modul.id), "POST", fi, c);	
+		this.createFachInstanzWithFach = function(mi, fi, c, cd) {
+			self.doRequest(fachInstanzenURI.replace("{modulplanID}", mi.modulplanID).replace("{modulID}", mi.modul.id), "POST", fi, c, cd);	
 		};
 		
-		this.createFachInstanz = function(mi, fi, c) {
-			self.doRequest(fachInstanzURI.replace("{modulplanID}", mi.modulplanID).replace("{modulID}", mi.modul.id).replace("{fachID}", fi.fach.id), "PUT", fi, c);	
+		this.createFachInstanz = function(mi, fi, c, cd) {
+			self.doRequest(fachInstanzURI.replace("{modulplanID}", mi.modulplanID).replace("{modulID}", mi.modul.id).replace("{fachID}", fi.fach.id), "PUT", fi, c, cd);	
 		};
 		
 		this.deleteFachInstanz = function(mi, fi, c) {
 			self.doRequest(fachInstanzURI.replace("{modulplanID}", mi.modulplanID).replace("{modulID}", mi.modul.id).replace("{fachID}", fi.fach.id), "DELETE", null, c);	
 		};
 		
+		this.quickDeleteFachInstanz = function(fi, c) {
+			self.doRequest(quickDeleteFachInstanzURI.replace("{fachInstanzID}", fi.id), "DELETE", null, c);
+		};
+
 		this.getAllVorlesungen = function(k, c) {
 			self.doRequest(kursVorlesungen.replace("{kursID}", k.id), "GET", null, c);	
 		};
@@ -529,7 +544,7 @@ var model = new function() {
 				api.isError = true;
 				api.status = "0";
 				api.response = "";
-				callback(api);
+				callback(api, callbackData);
 			}
 			var xhr = new XMLHttpRequest();
 			xhr.onreadystatechange = function() {
@@ -559,7 +574,7 @@ var model = new function() {
 							}
 						}
 					}
-					callback(api); //GO TO CALLBACK
+					callback(api, callbackData); //GO TO CALLBACK
 				}
 			};
 			//NETWORK ERROR
@@ -567,7 +582,7 @@ var model = new function() {
 				api.isError = true;
 				api.status = "0";
 				api.response = "";
-				callback(api);
+				callback(api, callbackData);
 			};
 			xhr.open(method, rootURI+uri, true);
 			if(data !== undefined && data !== null && (method === "POST" || method === "PUT")) {
