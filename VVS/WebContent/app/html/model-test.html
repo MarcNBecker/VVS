@@ -174,6 +174,40 @@
 		fachInstanz.semester = 6;
 		fachInstanz.stunden = 30;
 		
+		var semester = 1;
+		
+		var vorlesungNew = new model.templates.Vorlesung();
+		vorlesungNew.kursID = 1;
+		vorlesungNew.fachInstanz = fachInstanz;
+		vorlesungNew.dozentID = 1;
+		vorlesungNew.semester = 1;
+		
+		var vorlesung = new model.templates.Vorlesung();
+		vorlesung.id = 1;
+		vorlesung.kursID = 1;
+		vorlesung.fachInstanz = fachInstanz;
+		vorlesung.dozentID = 1;
+		vorlesung.semester = 2;
+		
+		var terminNew = new model.templates.Termin();
+		terminNew.vorlesungID = 1;
+		terminNew.datum = "2015-02-25";
+		terminNew.startUhrzeit = "08:00:00";
+		terminNew.endUhrzeit = "09:00:00";
+		terminNew.pause = 10;
+		terminNew.raum = "240B";
+		terminNew.klausur = false;
+		
+		var termin = new model.templates.Termin();
+		termin.id = 1;		
+		termin.vorlesungID = 1;
+		termin.datum = "2015-02-25";
+		termin.startUhrzeit = "08:00:00";
+		termin.endUhrzeit = "09:30:00";
+		termin.pause = 15;
+		termin.raum = "242B";
+		termin.klausur = false;
+		
 	</script>
 	<title>WebService Test File</title>
 </head>
@@ -189,7 +223,8 @@
 <!-- Dozent Fach -->
 <input type="button" onclick="model.webService.getAllDozentFaecher(dozent, c)" value="Get All Dozent Faecher" />
 <input type="button" onclick="model.webService.setDozentFach(dozent, fach, c)" value="Set Dozent Fach" />
-<input type="button" onclick="model.webService.deleteDozentFach(dozent, fach, c)" value="Delete Dozent Fach" /><br />
+<input type="button" onclick="model.webService.deleteDozentFach(dozent, fach, c)" value="Delete Dozent Fach" />
+<input type="button" onclick="model.webService.getAllDozentenFach(fach, c)" value="Get All Dozenten Fach" /><br />
 
 <!-- Dozent Kommentar -->
 <input type="button" onclick="model.webService.getAllDozentKommentare(dozent, c)" value="Get All Dozent Kommentare" />
@@ -254,6 +289,27 @@
 
 <!-- Modulplan Helper -->
 <input type="button" onclick="model.helper.getModulplanComplete(modulplan, c)" value="Get Complete Modulplan" /><br />
+
+<!-- Vorlesung und Vorlesung Offen -->
+<input type="button" onclick="model.webService.getAllVorlesungen(kurs, c)" value="Get All Vorlesungen For Kurs" />
+<input type="button" onclick="model.webService.getAllVorlesungenOffen(kurs, c)" value="Get All Vorlesungen Offen For Kurs" /><br />
+
+<!-- Vorlesung -->
+<input type="button" onclick="model.webService.getAllVorlesungenSemester(kurs, semester, c)" value="Get All Vorlesungen For Kurs Semester" />
+<input type="button" onclick="model.webService.createVorlesung(vorlesungNew, c)" value="Create Vorlesung" />
+<input type="button" onclick="model.webService.getVorlesung(vorlesung, c)" value="Get Vorlesung" />
+<input type="button" onclick="model.webService.updateVorlesung(vorlesung, c)" value="Update Vorlesung" />
+<input type="button" onclick="model.webService.deleteVorlesung(vorlesung, c)" value="Delete Vorlesung" /><br />
+
+<!-- Vorlesung Dozent -->
+<input type="button" onclick="model.webService.getVorlesungDozenten(vorlesung, c)" value="Get All Dozenten Vorlesung" /><br />
+
+<!-- Vorlesung Termin -->
+<input type="button" onclick="model.webService.getAllVorlesungTermine(vorlesung, c)" value="Get All Vorlesung Termine" />
+<input type="button" onclick="model.webService.createVorlesungTermin(vorlesung, terminNew, c)" value="Create Vorlesung Termin" />
+<input type="button" onclick="model.webService.getVorlesungTermin(vorlesung, termin, c)" value="Get Vorlesung Termin" />
+<input type="button" onclick="model.webService.updateVorlesungTermin(vorlesung, termin, c)" value="Update Vorlesung Termin" />
+<input type="button" onclick="model.webService.deleteVorlesungTermin(vorlesung, termin, c)" value="Delete Vorlesung Termin" /><br />
 
 </body>
 </html>

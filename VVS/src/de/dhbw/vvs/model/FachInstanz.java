@@ -36,6 +36,28 @@ public class FachInstanz {
 		return fachInstanzList;
 	}
 	
+	public static ArrayList<FachInstanz> getAllMissingForKurs(Kurs kurs) throws WebServiceException {
+		if (kurs == null) {
+			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT);
+		}
+		kurs.getDirectAttributes(); //check existance
+		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
+		ArrayList<Object> fieldValues = new ArrayList<Object>();
+		fieldValues.add(kurs.getID());
+		fieldValues.add(kurs.getModulplanID());
+		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT id, fach, modulInstanz, semester, stunden FROM fachinstanz WHERE id NOT IN (SELECT fachInstanz FROM vorlesung WHERE kurs = ?) AND modulInstanz IN (SELECT id FROM modulInstanz WHERE modulplan = ?)", fieldValues);
+		ArrayList<FachInstanz> fachInstanzList = new ArrayList<FachInstanz>();
+		for(TypeHashMap<String, Object> result : resultList) {
+			FachInstanz f = new FachInstanz(result.getInt("id"));
+			f.fach = new Fach(result.getInt("fach")).getDirectAttributes();
+			f.modulInstanzID = result.getInt("modulInstanz");
+			f.semester = result.getInt("semester");
+			f.stunden = result.getInt("stunden");
+			fachInstanzList.add(f);
+		}
+		return fachInstanzList;
+	}
+	
 	public static FachInstanz getSingle(ModulInstanz modulInstanz, int fachID) throws WebServiceException {
 		if (modulInstanz.getID() <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -118,7 +140,7 @@ public class FachInstanz {
 		ArrayList<Object> fieldValues = new ArrayList<Object>();
 		fieldValues.add(id);
 		db.doQuery("DELETE FROM fachinstanz WHERE id = ?", fieldValues);
-		if (fach.getInstanzenCount() == 0) {
+		if (fach.getInstanzenCount() == 0 && Dozent.getAllForFach(fach).isEmpty()) {
 			fach.delete();	
 		}
 	}
@@ -148,6 +170,10 @@ public class FachInstanz {
 	
 	public void setModulInstanzID(int modulInstanzID) {
 		this.modulInstanzID = modulInstanzID;
+	}
+	
+	public int getID() {
+		return id;
 	}
 	
 	/**

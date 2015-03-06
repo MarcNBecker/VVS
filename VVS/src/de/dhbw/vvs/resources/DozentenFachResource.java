@@ -9,12 +9,12 @@ import org.restlet.resource.ResourceException;
 
 import de.dhbw.vvs.application.ExceptionStatus;
 import de.dhbw.vvs.application.WebServiceException;
-import de.dhbw.vvs.model.Kurs;
-import de.dhbw.vvs.model.Vorlesung;
+import de.dhbw.vvs.model.Dozent;
+import de.dhbw.vvs.model.Fach;
 
-public class KursVorlesungenResource extends SecureServerResource {
+public class DozentenFachResource extends SecureServerResource {
 	
-	private int kursID;
+	private int fachID;
 	
 	@Override
 	protected void doInit() throws ResourceException {
@@ -22,7 +22,7 @@ public class KursVorlesungenResource extends SecureServerResource {
 		super.allowGet();
 		ConcurrentMap<String, Object> urlAttributes = getRequest().getAttributes();
 		try {
-			 this.kursID = Integer.parseInt(URLDecoder.decode(urlAttributes.get("kursID").toString(), "UTF-8"));
+			 this.fachID = Integer.parseInt(URLDecoder.decode(urlAttributes.get("fachID").toString(), "UTF-8"));
 		} catch (NumberFormatException | NullPointerException e) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT).toResourceException();
 		} catch (UnsupportedEncodingException e) {
@@ -32,12 +32,12 @@ public class KursVorlesungenResource extends SecureServerResource {
 	
 	@Override
 	protected Object receiveGet() throws WebServiceException {
-		Kurs kurs = new Kurs(getKursID());
-		return Vorlesung.getAllForKurs(kurs);
+		Fach fach = new Fach(getFachID());
+		return Dozent.getAllForFach(fach);
 	}
 	
-	public int getKursID() {
-		return this.kursID;
+	public int getFachID() {
+		return fachID;
 	}
 	
 }

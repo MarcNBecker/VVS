@@ -183,6 +183,10 @@ public class Kurs {
 		return id;
 	}
 	
+	public int getModulplanID() {
+		return modulplanID;
+	}
+	
 	public void setID(int id) {
 		this.id = id;
 	}
