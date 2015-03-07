@@ -262,13 +262,13 @@
     		},
     		createUser: function() {
     			var self = this;
-    			location.href = "#!" + self.pageDescriptor.userAnlegen.hash;
+    			location.href = "#!" + self.pageDescriptor.user.hash;
     		},
     		updateUser: function() {
     			var self = this;
     			if (self.$.user.selected !== null && self.users.length > 0)
     			{
-					location.href = "#!" + self.pageDescriptor.userPflegen.hash + "-" + self.users[self.$.user.selected].id;
+					location.href = "#!" + self.pageDescriptor.user.hash + "-" + self.users[self.$.user.selected].name;
     			}
     		},
     		updateFeiertage: function() {

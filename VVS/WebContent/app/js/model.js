@@ -366,6 +366,10 @@ var model = new function() {
 			self.doRequest(userAllURI, "POST", u, c);
 		};
 		
+		this.getUser = function(u, c) {
+			self.doRequest(userURI.replace("{name}", u.name), "GET", null, c);
+		};
+		
 		this.authenticateUser = function(u, c) {
 			self.doRequest(userURI.replace("{name}", u.name), "POST", u, c);
 		};
