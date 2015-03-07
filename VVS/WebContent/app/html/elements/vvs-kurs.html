@@ -429,7 +429,12 @@
 						self.toasts.success.show();
 					} else {
 						console.log(JSON.stringify(api));
-						self.toasts.error.show();
+						if(api.status === 4) {
+							self.disableToggle = false;
+							self.toasts.constraint.show();
+						} else {
+							self.toasts.error.show();	
+						}
 					}
 	    		});
 			},
