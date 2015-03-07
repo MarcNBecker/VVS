@@ -21,6 +21,7 @@ public class UserResource extends SecureServerResource {
 	@Override
 	protected void doInit() throws ResourceException {
 		super.doInit();
+		super.allowGet();
 		super.allowPost();
 		super.allowPut();
 		super.allowDelete();
@@ -32,6 +33,11 @@ public class UserResource extends SecureServerResource {
 		} catch (UnsupportedEncodingException e) {
 			throw new ResourceException(Status.SERVER_ERROR_INTERNAL);
 		}
+	}
+	
+	@Override
+	protected Object receiveGet() throws WebServiceException {
+		return new User(getName()).getDirectAttributes();
 	}
 	
 	@Override

@@ -56,7 +56,7 @@ public class User {
 	}
 	
 	public User create() throws WebServiceException {
-		checkDirectAttributes();
+		checkDirectAttributes(false);
 		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
 		ArrayList<Object> fieldValues = new ArrayList<Object>();
 		fieldValues.add(name);
@@ -67,14 +67,35 @@ public class User {
 		return this;
 	}
 	
-	public User update() throws WebServiceException {
-		checkDirectAttributes();
+	public User getDirectAttributes() throws WebServiceException {
+		if (name == null || (name = name.trim()).isEmpty()) {
+			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_STRING);
+		}
 		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
 		ArrayList<Object> fieldValues = new ArrayList<Object>();
-		fieldValues.add(Utility.sha256(passwort));
+		fieldValues.add(name);
+		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT repraesentiert FROM user WHERE name = ?", fieldValues);
+		if(resultList.isEmpty()) {
+			throw new WebServiceException(ExceptionStatus.OBJECT_NOT_FOUND);
+		}
+		TypeHashMap<String, Object> result = resultList.get(0);
+		repraesentiert = result.getInt("repraesentiert");
+		passwort = "";
+		return this;
+	}
+	
+	public User update() throws WebServiceException {
+		checkDirectAttributes(true);
+		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
+		ArrayList<Object> fieldValues = new ArrayList<Object>();
+		String passwortString = "";
+		if(passwort != null) {
+			fieldValues.add(Utility.sha256(passwort));
+			passwortString = "passwort = ?,";
+		}
 		fieldValues.add(repraesentiert);
 		fieldValues.add(name);
-		int affectedRows = db.doQuery("UPDATE user SET passwort = ?, repraesentiert = ? WHERE name = ?", fieldValues);
+		int affectedRows = db.doQuery("UPDATE user SET " + passwortString + " repraesentiert = ? WHERE name = ?", fieldValues);
 		passwort = "";
 		if(affectedRows == 0) {
 			throw new WebServiceException(ExceptionStatus.OBJECT_NOT_FOUND);
@@ -106,12 +127,16 @@ public class User {
 		}
 	}
 	
-	public void checkDirectAttributes() throws WebServiceException {
+	public void checkDirectAttributes(boolean update) throws WebServiceException {
 		if (name == null || (name = name.trim()).isEmpty()) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_STRING);
 		}
 		if (passwort == null || (passwort = passwort.trim()).isEmpty()) {
-			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_STRING);
+			if(update) {
+				passwort = null;
+			} else {
+				throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_STRING);
+			}
 		}
 		if (repraesentiert <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);

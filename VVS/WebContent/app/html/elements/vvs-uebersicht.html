@@ -262,12 +262,13 @@
     		},
     		createUser: function() {
     			var self = this;
-    			//TODO navigate to User pflegen with ID = 0
+    			location.href = "#!" + self.pageDescriptor.user.hash;
     		},
     		updateUser: function() {
     			var self = this;
-    			if (self.$.user.selected !== null && self.users.length > 0) {
-    				//TODO navigate to User pflegen with ID = self.users[self.$.user.selected].id;
+    			if (self.$.user.selected !== null && self.users.length > 0)
+    			{
+					location.href = "#!" + self.pageDescriptor.user.hash + "-" + self.users[self.$.user.selected].name;
     			}
     		},
     		updateFeiertage: function() {

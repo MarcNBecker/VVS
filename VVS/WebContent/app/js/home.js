@@ -24,6 +24,9 @@ template.pageParameter = {
 	kurs: {
 		id: 0
 	},
+	user: {
+		id: 0
+	},
 	feiertage: {
 		id: 0 //is a year, name id is necessary for correct handling by other functions
 	}
@@ -36,6 +39,7 @@ template.pageLoaded = {
 	modulplanAnlegen: false,
 	modulplanPflegen: false,
 	kurs: false,
+	user: false,
 	feiertage: false
 };
 
@@ -46,6 +50,7 @@ template.pageDescriptor = {
 	modulplanAnlegen: {name: 'Modulplan anlegen', hash: 'modulplanAnlegen', html: '<vvs-modulplan-anlegen pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-modulplan-anlegen>'},
 	modulplanPflegen: {name: 'Modulplan pflegen', hash: 'modulplanPflegen', html: '<vvs-modulplan-pflegen pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-modulplan-pflegen>'},
 	kurs: {name: 'Kurs pflegen', hash: 'kurs', html: '<vvs-kurs pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-kurs>'},
+	user: {name: 'User pflegen', hash: 'user', html: '<vvs-user pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-user>'},
 	feiertage: {name: 'Feiertage pflegen', hash: 'feiertage', html: '<vvs-feiertage pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-feiertage>'}
 };
 
@@ -53,7 +58,7 @@ template.pageDescriptor = {
 template.drawerPages = [template.pageDescriptor.stammdaten];
 
 //Pages that can be displayed in the home main div
-template.homePages = [template.pageDescriptor.stammdaten, template.pageDescriptor.dozent, template.pageDescriptor.kurs, template.pageDescriptor.modulplanAnlegen, template.pageDescriptor.modulplanPflegen, template.pageDescriptor.feiertage];
+template.homePages = [template.pageDescriptor.stammdaten, template.pageDescriptor.dozent, template.pageDescriptor.kurs, template.pageDescriptor.modulplanAnlegen, template.pageDescriptor.modulplanPflegen, template.pageDescriptor.user, template.pageDescriptor.feiertage];
 
 //Is called whenever the url hash is changed and navigates the app
 function handleHashChange(refresh) {
