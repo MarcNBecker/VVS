@@ -275,7 +275,8 @@
     			var self = this;
 				if (self.$.jahr.selected !== null && self.jahre.length > 0)
 				{
-					//TODO navigate to Feiertag pflegen with ID = self.jahre[self.$.jahr.selected];
+					self.pageLoaded.feiertage = false;
+					location.href = "#!" + self.pageDescriptor.feiertage.hash + "-" + self.jahre[self.$.jahr.selected];
 				}
     		}
  		});

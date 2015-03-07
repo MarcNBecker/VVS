@@ -68,7 +68,7 @@ public class Blocklage {
 		if (semester <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_NUMBER);
 		}
-		if (raum == null || (raum = raum.trim()).isEmpty()) {
+		if (raum == null) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_STRING);
 		}
 	}

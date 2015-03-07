@@ -48,6 +48,46 @@ public class Dozent {
 		return dozentList;
 	}
 	
+	public static ArrayList<Dozent> getAllForFach(Fach fach) throws WebServiceException {
+		if(fach == null || fach.getID() <= 0) {
+			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
+		}
+		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
+		ArrayList<Object> fieldValues = new ArrayList<Object>();
+		fieldValues.add(fach.getID());
+		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT id, titel, name, vorname FROM dozent INNER join dozentfach ON dozent.id = dozentfach.dozent WHERE fach = ? ORDER BY name ASC", fieldValues);
+		ArrayList<Dozent> dozentList = new ArrayList<Dozent>();
+		for(TypeHashMap<String, Object> result : resultList) {
+			Dozent d = new Dozent(result.getInt("id"));
+			d.titel = result.getString("titel");
+			d.name = result.getString("name");
+			d.vorname = result.getString("vorname");
+			dozentList.add(d);
+		}
+		return dozentList;
+	}
+	
+	public static ArrayList<Dozent> getAllForVorlesung(Vorlesung vorlesung) throws WebServiceException {
+		if(vorlesung == null || vorlesung.getID() <= 0) {
+			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
+		}
+		vorlesung.getDirectAttributes();
+		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
+		ArrayList<Object> fieldValues = new ArrayList<Object>();
+		fieldValues.add(vorlesung.getKursID());
+		fieldValues.add(vorlesung.getFachInstanz().getFach().getID());
+		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT id, titel, name, vorname FROM dozent WHERE id IN (SELECT dozent FROM vorlesung WHERE kurs IN (SELECT id FROM kurs WHERE studiengangsleiter = (SELECT studiengangsleiter FROM kurs WHERE id = ?)) AND fachInstanz IN (SELECT id FROM fachInstanz WHERE fach = ?)) ORDER BY name ASC", fieldValues);
+		ArrayList<Dozent> dozentList = new ArrayList<Dozent>();
+		for(TypeHashMap<String, Object> result : resultList) {
+			Dozent d = new Dozent(result.getInt("id"));
+			d.titel = result.getString("titel");
+			d.name = result.getString("name");
+			d.vorname = result.getString("vorname");
+			dozentList.add(d);
+		}
+		return dozentList;
+	}
+	
 	public Dozent(int id) throws WebServiceException {
 		if (id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -192,6 +232,9 @@ public class Dozent {
 		fieldValues.add(id);
 		fieldValues.add(fach.getID());
 		db.doQuery("DELETE FROM dozentfach WHERE dozent = ? AND fach = ?", fieldValues);
+		if (fach.getInstanzenCount() == 0 && Dozent.getAllForFach(fach).isEmpty()) {
+			fach.delete();	
+		}
 	}
 	
 	public void deleteKommentar(Kommentar kommentar) throws WebServiceException {

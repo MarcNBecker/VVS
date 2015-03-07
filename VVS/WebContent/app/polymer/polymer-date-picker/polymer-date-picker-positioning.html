@@ -42,11 +42,11 @@
         if (this.opened == "true") {
           var picker = this;
           var bound = this.relatedTarget.getBoundingClientRect();
-          picker.style.position = "fixed";
-          picker.style.top = (bound.bottom) + "px";
-          if (this.halign == "right") picker.style.left = (bound.right) + "px";
-          else if (this.halign == "left") picker.style.left = (bound.left) + "px";
-          else picker.style.left = ((bound.left + bound.right) / 2) + "px";
+          picker.style.position = "absolute";
+          picker.style.top = (this.relatedTarget.offsetTop + (bound.height === undefined ? bound.bottom - bound.top : bound.height)) + "px";
+          if (this.halign == "right") picker.style.right = (this.relatedTarget.offsetRight) + "px";
+          else if (this.halign == "left") picker.style.left = (this.relatedTarget.offsetLeft) + "px";
+          else picker.style.left = ((this.relatedTarget.offsetLeft + this.relatedTarget.offsetRight) / 2) + "px";
         }
       },
       toggle: function() {
