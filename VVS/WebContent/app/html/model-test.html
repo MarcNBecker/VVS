@@ -69,6 +69,11 @@
 		user.passwort = "passwort";
 		user.repraesentiert = 1;
 		
+		var admin = new model.templates.User();
+		admin.name = "admin";
+		admin.passwort = "admin";
+		admin.repraesentiert = 1;
+		
 		var kursNew = new model.templates.Kurs();
 		kursNew.kursname = "WWI12SEA";
 		kursNew.kursmail = "wwi12sea@googlemail.com";
@@ -212,6 +217,9 @@
 	<title>WebService Test File</title>
 </head>
 <body>
+
+<!--  -->
+<input type="button" onclick="model.webService.createStudiengangsleiter(studiengangsleiterNew, function() {model.webService.createUser(admin, function() {alert('User admin with password admin created')});}); " value="Create admin / admin (Username / Password) user" /><br /><br />
 
 <!-- Dozent -->
 <input type="button" onclick="model.webService.getAllDozenten(c)" value="Get All Dozenten" />

@@ -5,6 +5,8 @@ var DEFAULT_ROUTE = 'stammdaten';
 
 var template = document.querySelector('#home');
 
+template.user = JSON.parse(localStorage.getItem("user"));
+
 //Home toasts: intialized on template bound
 template.toasts = {
 	success: null,
@@ -131,6 +133,12 @@ function findPage(hash) {
 window.addEventListener('hashchange', handleHashChange);
 
 template.addEventListener('template-bound', function(e) {
+	//Reject access, if no user is set
+	//This is obviously not secure, but more security than this was not desired
+	if(!template.user) {
+		location.href = "../../login.html";
+		return;
+	}
 	//Init toasts
 	template.toasts.success = template.$.toast_success;
 	template.toasts.error = template.$.toast_error;
@@ -158,6 +166,15 @@ template.navigateFromDrawer = function(e, detail, sender) {
 //Force a refresh for the current page
 template.refresh = function(e, detail, sender) {
 	handleHashChange(true);
+};
+
+//Navigate to User overview
+template.navigateToUser = function() {
+	location.href = "#!" + template.pageDescriptor.user.hash + "-" + template.user.name;
+};
+
+template.logout = function() {
+	location.href = "../../login.html";
 };
 
 //handle redirects

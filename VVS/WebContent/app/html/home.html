@@ -9,7 +9,7 @@
   <link rel="import" href="../polymer/polymer/polymer.html">
   <link rel="import" href="../polymer/core-elements/core-elements.html">
   <link rel="import" href="../polymer/paper-elements/paper-elements.html">
-  <link rel="stylesheet" href="../css/styles.css" shim-shadowdom>
+  <link rel="stylesheet" href="../css/home.css" shim-shadowdom>
   <script type="text/javascript" src="../js/model.js"></script>
   <script type="text/javascript" src="../js/phone.js"></script>
   <link rel="import" href="elements/vvs-elements.html">
@@ -33,9 +33,10 @@
     </nav>
     <core-toolbar tool flex>
       <div flex>{{selectedPage.page.name}}</div>
-      <div>admin</div>
-      <paper-icon-button icon="account-circle" on-click=""></paper-icon-button>
+      <div>{{user.name}}</div>
+      <paper-icon-button icon="account-circle" on-click="{{navigateToUser}}"></paper-icon-button>
       <paper-icon-button icon="refresh" on-click="{{refresh}}"></paper-icon-button>
+      <paper-icon-button icon="exit-to-app" on-click="{{logout}}"></paper-icon-button>
     </core-toolbar>
     <!-- Main pages are loaded here -->
     <div fit id="page-wrapper">

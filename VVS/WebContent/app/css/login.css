@@ -1,0 +1,23 @@
+body {
+  font-family: "RobotoDraft", "Arial";
+  font-weight: 300;
+}
+
+#login {
+	background-color: #5C6971;
+}
+
+paper-shadow {
+	background-color: #EEEEEE;
+	border-radius: 10px;
+	padding: 50px 50px 50px 50px;
+}
+
+input {
+	text-align: center;
+}
+
+paper-button {
+	background: #E2001A;
+	color: #FFFFFF;
+}
