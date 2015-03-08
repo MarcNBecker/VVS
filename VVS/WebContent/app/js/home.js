@@ -52,7 +52,7 @@ template.pageDescriptor = {
 	modulplanAnlegen: {name: 'Modulplan anlegen', hash: 'modulplanAnlegen', html: '<vvs-modulplan-anlegen pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-modulplan-anlegen>'},
 	modulplanPflegen: {name: 'Modulplan pflegen', hash: 'modulplanPflegen', html: '<vvs-modulplan-pflegen pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-modulplan-pflegen>'},
 	kurs: {name: 'Kurs pflegen', hash: 'kurs', html: '<vvs-kurs pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-kurs>'},
-	user: {name: 'User pflegen', hash: 'user', html: '<vvs-user pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-user>'},
+	user: {name: 'User pflegen', hash: 'user', html: '<vvs-user currentUser="{{user}}" pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-user>'},
 	feiertage: {name: 'Feiertage pflegen', hash: 'feiertage', html: '<vvs-feiertage pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-feiertage>'}
 };
 

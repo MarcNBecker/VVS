@@ -62,6 +62,7 @@
 			creationMode: true,
 			invalid: {},
 			publish: {
+				currentUser: {},
 				pageParameter: {},
 				pageLoaded: {},
 				toasts: {}
@@ -199,6 +200,11 @@
 	    		model.webService.updateUser(self.user, function(api) {
 	    			if(!api.isError) {
 	    				self.user = api.response;
+	    				//Set storage user and update current session app user
+	    				if(self.user.name === self.currentUser.name) {
+	    					localStorage.setItem("user", JSON.stringify(self.user));
+		    				self.currentUser = self.user;	
+	    				}
 	    				self.toggleDisabled = false;
 						self.toasts.success.show();
 						self.job('update-labels-update', function() {
