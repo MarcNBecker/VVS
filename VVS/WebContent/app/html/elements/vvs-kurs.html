@@ -313,6 +313,7 @@
 						},100);
 						//Tell the outside world about the new ID
 						self.pageLoaded.stammdaten = false;
+						self.pageParameter.kurs.id = self.kurs.id;
 						window.history.replaceState({}, '', '#!kurs-'+self.kurs.id);
 						self.updateBlocklagen();
 					}

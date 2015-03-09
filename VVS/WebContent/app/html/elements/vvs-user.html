@@ -168,6 +168,7 @@
 					if (!api.isError) {
 						self.user = api.response;
 						self.pageLoaded.stammdaten = false;
+						self.pageParameter.user.id = self.user.name;
 						window.history.replaceState({}, '', '#!user-'+self.user.name);
 						self.toggleDisabled = false;
 						self.creationMode = false;

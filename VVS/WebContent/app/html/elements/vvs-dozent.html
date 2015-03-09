@@ -291,6 +291,7 @@
 						self.dozent = api.response;
 						//Tell the outside world about the new ID
 						self.pageLoaded.stammdaten = false;
+						self.pageParameter.dozent.id = self.dozent.id;
 						window.history.replaceState({}, '', '#!dozent-'+self.dozent.id);
 						var i;
 						var deepRuns = 0;
