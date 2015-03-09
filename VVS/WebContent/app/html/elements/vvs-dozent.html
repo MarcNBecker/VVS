@@ -94,7 +94,7 @@
 					<template  repeat="{{item in dozentenFaecher}}">
 						<div horizontal layout center class="horizontal-list">
 							<paper-item>{{item.name}}</paper-item>
-							<paper-icon-button icon="clear" on-click={{deleteFach}} disabled?="{{disableToggle}}"></paper-icon-button>
+							<paper-icon-button icon="delete" on-click={{deleteFach}} disabled?="{{disableToggle}}"></paper-icon-button>
 						</div>
 					</template>
 					<div horizontal layout center class="horizontal-list">
