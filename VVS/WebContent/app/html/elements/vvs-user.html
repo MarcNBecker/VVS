@@ -7,8 +7,11 @@
 					<span class="headline">User</span>
 					<div vertical layout class="horizontal-input">
 						<!-- Main input fields -->
-						<paper-input-decorator id="name" label="Username" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.name}}">
-							<input is="core-input" value={{user.name}} maxlength="100" required disabled?="{{toggleDisabled || !creationMode}}">
+						<paper-input-decorator id="name" label="Username" error="Pflichtfeld: Kein g&uuml;ltiger Username" floatingLabel autoValidate isInvalid="{{invalid.name}}">
+							<input is="core-input" value={{user.name}} pattern="[0-9a-zA-Z]+" maxlength="100" required disabled?="{{toggleDisabled || !creationMode}}">
+						</paper-input-decorator>
+						<paper-input-decorator id="name" label="Vollst&auml;ndiger Name" floatingLabel hidden?="{{!creationMode}}">
+							<input is="core-input" value={{user.nameLong}} maxlength="100" disabled?="{{toggleDisabled}}">
 						</paper-input-decorator>
 						<paper-input-decorator id="passwort" label="Neues Passwort" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.passwort}}">
 							<input is="core-input" value={{user.passwort}} type="password" required?="{{creationMode}}" maxlength="100" disabled?="{{toggleDisabled}}">
@@ -140,7 +143,11 @@
 				} else {
 					//Create a Studiengangsleiter for the user
 					var userStudiengangsleiter = new model.templates.Studiengangsleiter();
-					userStudiengangsleiter.name = self.user.name;
+					if(self.user.nameLong) {
+						userStudiengangsleiter.name = self.user.nameLong;
+					} else {
+						userStudiengangsleiter.name = self.user.name;
+					}
 					model.webService.createStudiengangsleiter(userStudiengangsleiter, function(api) {
 						if(!api.isError) {
 							self.user.repraesentiert = api.response.id;
