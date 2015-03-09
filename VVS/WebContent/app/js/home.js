@@ -135,8 +135,10 @@ window.addEventListener('hashchange', handleHashChange);
 template.addEventListener('template-bound', function(e) {
 	//Reject access, if no user is set
 	//This is obviously not secure, but more security than this was not desired
+	sessionStorage.removeItem("targetHash");
 	if(!template.user) {
 		location.href = "../../login.html";
+		sessionStorage.setItem("targetHash", location.hash);
 		return;
 	}
 	//Init toasts
