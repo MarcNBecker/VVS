@@ -5,7 +5,7 @@ var DEFAULT_ROUTE = 'stammdaten';
 
 var template = document.querySelector('#home');
 
-template.user = JSON.parse(localStorage.getItem("user"));
+template.user = JSON.parse(sessionStorage.getItem("user"));
 
 //Home toasts: intialized on template bound
 template.toasts = {

@@ -2,7 +2,7 @@
 "use strict";
 
 //Logout
-localStorage.removeItem("user");
+sessionStorage.removeItem("user");
 
 var template = document.querySelector('#login');
 
@@ -15,7 +15,7 @@ template.login = function() {
 		model.webService.authenticateUser(user, function(api) {
 			if(!api.isError) {
 				//Set LocalStorage cookie and navigate to home
-				localStorage.setItem("user", JSON.stringify(api.response));
+				sessionStorage.setItem("user", JSON.stringify(api.response));
 				location.href = 'app/html/home.html';
 			} else {
 				if(api.status === 31) {

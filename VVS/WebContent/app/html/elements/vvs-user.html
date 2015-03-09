@@ -210,7 +210,7 @@
 	    				self.user = api.response;
 	    				//Set storage user and update current session app user
 	    				if(self.user.name === self.currentUser.name) {
-	    					localStorage.setItem("user", JSON.stringify(self.user));
+	    					sessionStorage.setItem("user", JSON.stringify(self.user));
 		    				self.currentUser = self.user;	
 	    				}
 	    				self.toggleDisabled = false;
