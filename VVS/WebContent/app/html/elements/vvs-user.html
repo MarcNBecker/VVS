@@ -22,6 +22,7 @@
 						<paper-checkbox checked="{{sekretaerinChecked}}" disabled?="{{toggleDisabled}}"></paper-checkbox>
 					</div>
 					<div horizontal layout center class="{{creationMode ? 'horizontal-input' : 'horizontal-input horizontal-button-bar'}}" hidden?="{{!sekretaerinChecked && creationMode}}">
+						<span>Repr&auml;sentiert</span>
 						<paper-dropdown-menu label="Studiengangsleiter" disabled?="{{toggleDisabled}}" self-center flex>
 							<paper-dropdown class="dropdown">
 								<core-menu selected="{{selectedStudiengangsleiter}}" class="menu">
@@ -152,6 +153,7 @@
 						if(!api.isError) {
 							self.user.repraesentiert = api.response.id;
 							self.studiengangsleiter.push(api.response);
+							self.selectedStudiengangsleiter = self.studiengangsleiter.length - 1;
 							self.createUser();
 						} else {
 							console.log(JSON.stringify(api));
