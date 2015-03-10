@@ -25,7 +25,6 @@
 							</paper-dropdown>
 						</paper-dropdown-menu>					
 						<paper-button on-click={{updateDozent}} raised disabled?="{{toggleDisableDozent}}" auto-vertical?="{{verySmallScreen}}">anzeigen/bearbeiten/l&ouml;schen</paper-button>
-						<paper-button on-click={{printPlanDozent}} raised disabled?="{{toggleDisableDozent}}" auto-vertical?="{{verySmallScreen}}">Dozentenplan drucken</paper-button>
 					</div>
 					<div horizontal layout start class="horizontal-input horizontal-button-bar">
 						<paper-button on-click={{createDozent}} raised>neuen Dozenten anlegen</paper-button>
@@ -226,13 +225,6 @@
 				{
 					self.pageLoaded.dozent = false;
 					location.href = "#!" + self.pageDescriptor.dozent.hash + "-" + self.dozenten[self.$.dozent.selected].id;
-				}
-    		},
-    		printPlanDozent: function() {
-    			var self = this;
-				if (self.$.dozent.selected !== null && self.dozenten.length > 0)
-				{
-					//TODO navigate to Dozent Plan with ID = self.dozenten[self.$.dozent.selected].id;
 				}
     		},
     		createKurs: function() {
