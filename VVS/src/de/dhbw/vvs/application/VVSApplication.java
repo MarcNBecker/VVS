@@ -17,6 +17,7 @@ import de.dhbw.vvs.resources.FaecherResource;
 import de.dhbw.vvs.resources.FeiertagResource;
 import de.dhbw.vvs.resources.FeiertageResource;
 import de.dhbw.vvs.resources.KursBlocklagenResource;
+import de.dhbw.vvs.resources.KursBlocklagenSemesterDozentenResource;
 import de.dhbw.vvs.resources.KursBlocklagenSemesterResource;
 import de.dhbw.vvs.resources.KursDashboardResource;
 import de.dhbw.vvs.resources.KursResource;
@@ -73,6 +74,7 @@ public class VVSApplication extends Application {
 		router.attach(VERSION_ONE + "/kurse/{kursID}", KursResource.class); //GET, PUT, DELETE
 		router.attach(VERSION_ONE + "/kurse/{kursID}/blocklagen", KursBlocklagenResource.class); //GET
 		router.attach(VERSION_ONE + "/kurse/{kursID}/blocklagen/{semester}", KursBlocklagenSemesterResource.class); //PUT
+		router.attach(VERSION_ONE + "/kurse/{kursID}/blocklagen/{semester}/dozenten", KursBlocklagenSemesterDozentenResource.class); //GET
 		
 		//Studiengangsleiter
 		router.attach(VERSION_ONE + "/studiengangsleiter", StudiengangsleiterKollektionResource.class); //GET, POST

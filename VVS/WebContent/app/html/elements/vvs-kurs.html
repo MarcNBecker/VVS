@@ -82,7 +82,7 @@
 							<paper-input-decorator label="Raum" floatingLabel flex>
 								<input is="core-input" type="text" value={{item.raum}} maxlength="100" disabled?="{{disableToggle}}">
 							</paper-input-decorator>
-							<paper-icon-button on-click="{{print}}" icon="print" self-center disabled?="{{disableToggle}}"></paper-icon-button>
+							<paper-icon-button on-click="{{toggleExport}}" icon="file-download" self-center disabled?="{{disableToggle}}" hidden?="{{creationMode}}"></paper-icon-button>
 						</div>
 					</template>
 					<polymer-date-picker id="datePicker" relatedTarget="{{$.s1}}" halign="left" style="z-index:99" selectedDate="{{selectedDate}}" opened="false"></polymer-date-picker>
@@ -108,6 +108,7 @@
 			<paper-button affirmative>Nein</paper-button>
 			<paper-button on-click="{{doDelete}}" affirmative autofocus>L&ouml;schen</paper-button>
 		</paper-action-dialog>
+		<vvs-export-overlay id="exportOverlay" kurs="{{kurs}}" semester="{{selectedSemester}}"></vvs-export-overlay>
 	</template>
 	<script type="text/javascript">
 		"use strict";
@@ -125,6 +126,7 @@
 			selectedStudiengangsleiter : 0,
 			selectedDate: '2000-01-01',
 			lastDatePickerSender: null,
+			selectedSemester: 0,
 			creationMode: true,
 			disableToggle: true,
 			invalid: {},
@@ -150,6 +152,7 @@
     			self.selectedStudiengangsleiter = 0;
     			self.selectedDate = this.today();
     			self.lastDatePickerSender = null;
+    			self.selectedSemester = 0;
     			self.creationMode = true;
     			self.disableToggle = true;
     			self.invalid = {};
@@ -445,9 +448,10 @@
 	    		this.pageLoaded.kurs = false;
 	    		window.history.back();
 	    	},
-			//Print Vorlesungsplan
-			print: function (e, detail, sender) {
-				// TODO
+			//Open Export overlay
+			toggleExport: function (e, detail, sender) {
+				this.selectedSemester = sender.templateInstance.model.i + 1;
+				this.$.exportOverlay.toggle();
 			},
 			//Show DatePicker
 			toggleDatePicker: function(e, detail, sender) {
