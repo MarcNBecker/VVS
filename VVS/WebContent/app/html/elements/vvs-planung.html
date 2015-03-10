@@ -1,0 +1,193 @@
+<polymer-element name="vvs-planung" noscript>
+	<template>
+		<link rel="stylesheet" type="text/css" href="../../css/elements.css" shim-shadowdom>
+		<core-media-query query="max-width: 1400px" queryMatches="{{smallScreen}}"></core-media-query>
+		<paper-shadow z="3" class="shadow">
+			<div vertical layout>
+				<div horizontal layout>
+					<span class="headline vertical-input">Vorlesung 1</span>
+					<paper-progress class="headline vertical-input" value="15" style="height:30px; margin-left: 100px;" ></paper-progress>
+				</div>
+				<div horizontal?="{{!smallScreen}}" vertical?="{{smallScreen}}" layout class="horizontal-input vertical-input">
+					<div auto-vertical?="{{smallScreen}}" vertical layout flex?="{{!smallScreen}}" one?="{{!smallScreen}}" class="vertical-input">
+						<paper-shadow z="2" class="inner-shadow">
+							<div horizontal layout>
+								<span horizontal layout center-center class="small-headline" flex>Datum</span>
+								<span horizontal layout center-center class="small-headline" flex>Von</span>
+								<span horizontal layout center-center class="small-headline" flex>Bis</span>
+								<span horizontal layout center-center class="small-headline" flex>Dauer</span>
+								<span horizontal layout center-center class="small-headline" flex>Pause</span>
+								<span horizontal layout center-center class="small-headline" flex>Raum</span>
+								<paper-icon-button class="hide"></paper-icon-button>
+								<paper-icon-button class="hide"></paper-icon-button>
+							</div>
+							<template repeat="{{modulInstanz in modulplan.modulInstanzList}}">
+								<template repeat="{{fachInstanz in modulInstanz.fachInstanzList}}">
+									<paper-shadow z="1" class="{{(inputModulInstanz.id === modulInstanz.id && (inputFachInstanz.id === fachInstanz.id || (selectedFach < 0 && (invalid.fname && invalid.fkurzbeschreibung && invalid.semester && invalid.stunden)))) ? 'inner-inner-shadow highlight' : 'inner-inner-shadow'}}">
+										<div horizontal layout center>
+											<span horizontal layout center-center flex>{{modulInstanz.modul.name}} ({{modulInstanz.credits}} Credits)</span>
+											<span horizontal layout center-center flex>{{fachInstanz.fach.name}}</span>
+											<span horizontal layout center-center flex>{{fachInstanz.semester}}</span>
+											<span horizontal layout center-center flex>{{fachInstanz.stunden}}</span>
+											<paper-icon-button on-click="{{edit}}" icon="create" disabled?="{{disableToggle}}" self-center></paper-icon-button>
+											<paper-icon-button on-click="{{initDoDelete}}" icon="delete" disabled?="{{disableToggle}}" self-center></paper-icon-button>
+										</div>
+									</paper-shadow>
+								</template>
+							</template>
+						</paper-shadow>
+					</div>
+				</div>
+				<div auto-vertical?="{{smallScreen}}" flex?="{{!smallScreen}}" class="vertical-input">
+					<div horizontal layout class="horizontal-input" flex>
+						<div vertical layout class="vertical-input" flex>
+							<div horizontal start layout class="horizontal-input">
+								<polymer-date-picker id="datePicker" relatedTarget="{{$.datum}}" halign="left" style="z-index:99" selectedDate="{{selectedDate}}" opened="false"></polymer-date-picker>
+								<paper-input-decorator id="datum" label="Datum"  on-click="{{toggleDatePicker}}" autoValidate isInvalid="{{invalid.datum}}" floatingLabel flex>
+									<input is="core-input" pattern="{{jahr}}-[0-9]{2}-[0-9]{2}" preventInvalidInput="true" value="{{feiertag.datum}}">
+								</paper-input-decorator>						
+							</div>
+							<div horizontal start layout class="horizontal-input">
+								<paper-input-decorator id="uhrzeitVon" label="Uhrzeit von" error="Keine g&uuml;ltige Uhrzeit" autoValidate isInvalid="{{invalid.studentenAnzahl}}" floatingLabel flex>
+									<input is="core-input" type="text" pattern="[0-9]{2}:[0-9]{2}" value={{kurs.studentenAnzahl}} maxlength="100" disabled?="{{disableToggle}}">
+								</paper-input-decorator>		
+								<paper-input-decorator id="uhrzeitBis" label="Uhrzeit bis" error="Keine g&uuml;ltige Uhrzeit" autoValidate isInvalid="{{invalid.studentenAnzahl}}" floatingLabel flex>
+									<input is="core-input" type="text" pattern="[0-9]{2}:[0-9]{2}" value={{kurs.studentenAnzahl}} maxlength="100" disabled?="{{disableToggle}}">
+								</paper-input-decorator>			
+							</div>
+							<div horizontal start layout class="horizontal-input">
+								<paper-input-decorator id="pause" label="Pause" floatingLabel flex>
+									<input is="core-input" type="text" pattern="[0-9]{2}:[0-9]{2}" value={{kurs.studentenAnzahl}} maxlength="100" disabled?="{{disableToggle}}">
+								</paper-input-decorator>	
+								<paper-input-decorator id="raum" label="Raum" floatingLabel flex>
+									<input is="core-input" type="text" pattern="[0-9]{2}:[0-9]{2}" value={{kurs.studentenAnzahl}} maxlength="100" disabled?="{{disableToggle}}">
+								</paper-input-decorator>
+							</div>
+							<div horizontal start layout class="horizontal-input">
+								<span>Klausur</span>
+								<paper-checkbox checked="{{klausurChecked}}" self-center disabled?="{{toggleDisabled}}"></paper-checkbox>
+							</div>
+						</div>
+						<div vertical layout class="vertical-input" flex>
+							<div horizontal start layout class="horizontal-input">
+								<paper-input-decorator id="mname" label="Modulname" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.mname}}" flex>
+									<input is="core-input" type="text" value="{{inputModulInstanz.modul.name}}" maxlength="100" disabled?="{{disableToggle || selectedModul >= 0}}" required>
+								</paper-input-decorator>
+								<paper-input-decorator id="mname" label="Modulname2" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.mname}}" flex>
+									<input is="core-input" type="text" value="{{inputModulInstanz.modul.name}}" maxlength="100" disabled?="{{disableToggle || selectedModul >= 0}}" required>
+								</paper-input-decorator>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div horizontal layout center class="horizontal-button-bar horizontal-input horizontal-verticalizable">
+					<paper-button on-click={{save}} raised disabled?="{{disableToggle}}">Speichern</paper-button>
+					<paper-button on-click={{initDeleteModulplan}} raised disabled?="{{disableToggle}}">L&ouml;schen</paper-button>
+					<paper-button on-click={{cancel}} raised disabled?="{{disableToggle}}">Abbrechen</paper-button>				
+					<paper-spinner active?={{disableToggle}} self-center></paper-spinner>
+				</div>
+			</div>
+		</paper-shadow>
+		<paper-toast id="toast_forbidden_fachinstanz" text="Ein Fach darf nicht mehreren Modulen zugeordnet werden" duration="7000"></paper-toast>
+		<paper-action-dialog id="delete_modulplan_dialog" heading="{{modulplan.studiengang}} - {{modulplan.vertiefungsrichtung}} wirklich l&ouml;schen?">
+			<paper-button affirmative>Nein</paper-button>
+			<paper-button on-click="{{deleteModulplan}}" affirmative autofocus>L&ouml;schen</paper-button>
+		</paper-action-dialog>
+		<paper-action-dialog id="delete_fach_dialog" heading="{{modulInstanzToDelete.modul.name}} - {{fachInstanzToDelete.fach.name}} wirklich l&ouml;schen?">
+			<paper-button affirmative>Nein</paper-button>
+			<paper-button on-click="{{doDelete}}" affirmative autofocus>L&ouml;schen</paper-button>
+		</paper-action-dialog>
+	</template>
+	<!--  
+	<script type="text/javascript">
+	"use strict";
+	Polymer('vvs-planung',
+		{
+			feiertag: new model.templates.Feiertag(),
+			feiertage: [],
+			feiertagToDelete: null,
+			selectedDate: '2000-01-01',
+			jahr: new Date().getFullYear(),
+			datePickerOpened: false,
+			disableToggle: true,
+			invalid : {},
+			//Publish those attributes to home
+			publish: {
+				pageParameter: {},
+				pageLoaded: {},
+				toasts: {}
+			},
+			//Initialize the screen
+			ready : function() {
+				var self = this;
+				self.feiertag = new model.templates.Feiertag();
+				self.feiertage = [];
+				self.feiertagToDelete = null;
+				self.selectedDate = self.today();
+				self.datePickerOpened = false;
+				self.disableToggle = true;
+				self.invalid = {};
+			},
+			//Navigate backwards and force a reload
+	    	cancel: function()
+	    	{
+	    		this.pageLoaded.dozent = false;
+	    		window.history.back();
+	    	},
+			//Show DatePicker
+			toggleDatePicker: function(e, detail, sender) {
+				if(this.disableToggle === true) {
+					return;
+				}
+				//Init or set selected date
+				if(this.$.datum.input.value) {
+					this.selectedDate = this.feiertag.datum;
+				} else {
+					
+				}	
+				//Wait until the date picker potentially auto closed to reopen it
+				this.job('open-date-picker', function() {
+					this.$.datum.inputAction();
+					this.$.datePicker.open();
+					this.datePickerOpened = true;
+				}, 100);
+			},
+			//Close date picker
+			selectedDateChanged: function() {
+				if(!this.datePickerOpened) {
+					return;
+				}
+				//Read date
+				this.feiertag.datum = this.selectedDate;
+				//Update UI
+				this.$.datePicker.close();
+				this.datePickerOpened = false;
+				this.job('label-date-picker', function() {
+					this.$.datum.inputAction();
+				}, 100);
+			},
+			//Calculate date of today
+			today: function() {
+			    var date = new Date();
+				var year = date.getFullYear();
+			    var month = '0' + (date.getMonth() + 1);
+			    month = month.slice(-2, (month.length - 2) + 3);
+			    var day = '0' + date.getDate();
+			    day = day.slice(-2, (day.length - 2) + 3);
+			    return year + '-' + month + '-' + day;
+			},
+			//Check all invalid properties
+			checkInputs : function() {
+				for ( var property in this.invalid) {
+					if (this.invalid.hasOwnProperty(property)) {
+						if (this.invalid[property] === true) {
+							return false;
+						}
+					}
+				}
+				return true;
+			}
+	});
+	</script>
+	-->
+</polymer-element>
