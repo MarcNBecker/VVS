@@ -55,7 +55,6 @@
 			{
 				feiertag: new model.templates.Feiertag(),
 				feiertage: [],
-				feiertageVorjahr: [],
 				feiertagToDelete: null,
 				selectedDate: '2000-01-01',
 				jahr: new Date().getFullYear(),
@@ -73,7 +72,6 @@
 					var self = this;
 					self.feiertag = new model.templates.Feiertag();
 					self.feiertage = [];
-					self.feiertageVorjahr = [];
 					self.feiertagToDelete = null;
 					self.selectedDate = self.today();
 					self.datePickerOpened = false;
@@ -180,17 +178,18 @@
 					model.webService.getAllFeiertage(vorjahr, function(api) {
 						if (!api.isError)
 	   					{
-	   						self.feiertageVorjahr = api.response;
+	   						var feiertageVorjahr = api.response;
 							var i;
-							var feiertag;
-	   						for (i = 0; i < self.feiertageVorjahr.length; i++)
+							var deepRuns = 0;
+	   						for (i = 0; i < feiertageVorjahr.length; i++)
 	   						{
-	   							feiertag = self.feiertageVorjahr[i];
+	   							var feiertag = feiertageVorjahr[i];
 	   							//Change year next year
 								feiertag.datum = feiertag.datum.replace(vorjahr, self.jahr);
 	   							model.webService.setFeiertag(feiertag, function(api) {
 	   								if (!api.isError)
 	   			   					{
+	   									deepRuns++;
 	   									var i;
 	   									var found = false;
 	   									var newFeiertag = api.response;
@@ -208,9 +207,11 @@
 	   									if(!found) {
 	   			    						self.feiertage.push(newFeiertag);	
 	   									}
-	   			   						//Enable everything
-	   			   		    			self.disableToggle = false;
-	   			   						self.toasts.success.show();
+	   									if(deepRuns === feiertageVorjahr.length) {
+		   			   						//Enable everything
+		   			   		    			self.disableToggle = false;
+		   			   						self.toasts.success.show();
+	   									}
 	   			   					}
 	   			   					else
 	   			   					{
@@ -218,7 +219,11 @@
 	   			   						self.toasts.error.show();
 	   			   					}
 	   							});
-	   						
+	   						}
+	   						if(deepRuns === 0 && feiertageVorjahr.length === 0) {
+		   						//Enable everything
+		   		    			self.disableToggle = false;
+		   						self.toasts.success.show();
 	   						}
 	   					}
 	   					else
