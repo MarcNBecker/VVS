@@ -24,7 +24,7 @@
 								</core-menu>
 							</paper-dropdown>
 						</paper-dropdown-menu>					
-						<paper-button on-click={{updateDozent}} raised disabled?="{{toggleDisableDozent}}" auto-vertical?="{{verySmallScreen}}">anzeigen/bearbeiten/l&ouml;schen</paper-button>
+						<paper-button on-click={{updateDozent}} raised disabled?="{{toggleDisableDozent}}" auto-vertical?="{{verySmallScreen}}" flex?="{{!verySmallScreen}}">anzeigen/bearbeiten/l&ouml;schen</paper-button>
 					</div>
 					<div horizontal layout start class="horizontal-input horizontal-button-bar">
 						<paper-button on-click={{createDozent}} raised>neuen Dozenten anlegen</paper-button>
