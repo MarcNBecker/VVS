@@ -37,6 +37,7 @@
 						</paper-input-decorator>
 						<paper-button on-click="{{add}}" disabled?="{{disableToggle}}" self-center raised>Feiertag speichern</paper-button>
 						<paper-button on-click="{{cancel}}" disabled?="{{disableToggle}}" self-center raised>Abbrechen</paper-button>
+						<paper-button on-click="{{copy}}" disabled?="{{disableToggle}}" self-center raised>Feiertage aus Vorjahr &uuml;bernehmen</paper-button>
 						<paper-spinner active?={{disableToggle}} self-center></paper-spinner>
 					</div>
 				</div>
@@ -54,6 +55,7 @@
 			{
 				feiertag: new model.templates.Feiertag(),
 				feiertage: [],
+				feiertageVorjahr: [],
 				feiertagToDelete: null,
 				selectedDate: '2000-01-01',
 				jahr: new Date().getFullYear(),
@@ -71,6 +73,7 @@
 					var self = this;
 					self.feiertag = new model.templates.Feiertag();
 					self.feiertage = [];
+					self.feiertageVorjahr = [];
 					self.feiertagToDelete = null;
 					self.selectedDate = self.today();
 					self.datePickerOpened = false;
@@ -106,7 +109,7 @@
 	   					{
 							var i;
 							var found = false;
-							var newFeiertag = api.response
+							var newFeiertag = api.response;
 							//Update Feiertag
 							for(i=0; i<self.feiertage.length; i++) {
 								if(self.feiertage[i].datum === newFeiertag.datum) {
@@ -158,6 +161,64 @@
 	   								self.toasts.success.show();
 	   								break;
 	   							}
+	   						}
+	   					}
+	   					else
+	   					{
+	   						console.log(JSON.stringify(api));
+	   						self.toasts.error.show();
+	   					}
+					});
+				},
+				//Copy feiertage from previous year
+				copy: function()
+				{
+					var self = this;
+					var vorjahr = self.jahr - 1;
+					//Disable everything
+	    			self.disableToggle = true;
+					model.webService.getAllFeiertage(vorjahr, function(api) {
+						if (!api.isError)
+	   					{
+	   						self.feiertageVorjahr = api.response;
+							var i;
+							var feiertag;
+	   						for (i = 0; i < self.feiertageVorjahr.length; i++)
+	   						{
+	   							feiertag = self.feiertageVorjahr[i];
+	   							//Change year next year
+								feiertag.datum = feiertag.datum.replace(vorjahr, self.jahr);
+	   							model.webService.setFeiertag(feiertag, function(api) {
+	   								if (!api.isError)
+	   			   					{
+	   									var i;
+	   									var found = false;
+	   									var newFeiertag = api.response;
+	   									//Update Feiertag
+	   									for (i = 0; i <self.feiertage.length; i++)
+	   									{
+	   										if(self.feiertage[i].datum === newFeiertag.datum)
+	   										{
+	   											self.feiertage[i] = newFeiertag;
+	   											found = true;
+	   											break;
+	   										}
+	   									}
+	   									//Add new Feiertag
+	   									if(!found) {
+	   			    						self.feiertage.push(newFeiertag);	
+	   									}
+	   			   						//Enable everything
+	   			   		    			self.disableToggle = false;
+	   			   						self.toasts.success.show();
+	   			   					}
+	   			   					else
+	   			   					{
+	   			   						console.log(JSON.stringify(api));
+	   			   						self.toasts.error.show();
+	   			   					}
+	   							});
+	   						
 	   						}
 	   					}
 	   					else
