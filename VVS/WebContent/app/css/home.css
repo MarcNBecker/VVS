@@ -21,6 +21,18 @@ body /deep/ core-toolbar {
   background: #E2001A;
 }
 
+#logo {
+	background-color: white; 
+	bottom: 0px; 
+	position: absolute; 
+	width: 100%;
+}
+
+#logo img {
+	padding: 10px; 
+	width: 90%;
+}
+
 #page-wrapper {
 	margin: 20px 20px auto 20px;
 }

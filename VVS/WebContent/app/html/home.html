@@ -26,12 +26,15 @@
       </core-toolbar>
       <!-- Navigation Drawer -->
       <core-menu id="drawer-menu" valueattr="hash" selected="{{route}}" on-core-select="{{menuItemSelected}}">
-        <template repeat="{{page in drawerPages}}">
+      	<template repeat="{{page in drawerPages}}">
           <paper-item hash="{{page.hash}}" on-click="{{navigateFromDrawer}}">
             <span>{{page.name}}</span>
           </paper-item>
         </template>
       </core-menu>
+      <div id="logo">
+    	  <img src="../img/dhbw-ma.svg" alt="DHBW Mannheim">
+      </div>
     </nav>
     <core-toolbar tool flex>
       <div flex>{{selectedPage.page.name}}</div>
