@@ -34,8 +34,14 @@
 										</div>
 									</paper-shadow>
 								</template>
-							</template>
+							</template>							
 						</paper-shadow>
+						<div horizontal layout center class="horizontal-button-bar horizontal-input horizontal-verticalizable">
+							<paper-button on-click={{save}} raised disabled?="{{disableToggle}}">Speichern</paper-button>
+							<paper-button on-click={{initDeleteModulplan}} raised disabled?="{{disableToggle}}">L&ouml;schen</paper-button>
+							<paper-button on-click={{cancel}} raised disabled?="{{disableToggle}}">Abbrechen</paper-button>				
+							<paper-spinner active?={{disableToggle}} self-center></paper-spinner>
+						</div>
 					</div>
 				</div>
 				<div auto-vertical?="{{smallScreen}}" flex?="{{!smallScreen}}" class="vertical-input">
@@ -67,24 +73,19 @@
 								<span>Klausur</span>
 								<paper-checkbox checked="{{klausurChecked}}" self-center disabled?="{{toggleDisabled}}"></paper-checkbox>
 							</div>
+							<div horizontal start layout class="horizontal-button-bar horizontal-input">
+								<paper-button on-click={{add}} raised disabled?="{{disableToggle}}" flex>&Uuml;bernehmen</paper-button>
+								<paper-button on-click={{reject}} raised disabled?="{{disableToggle}}" flex>Verwerfen</paper-button>
+							</div>
 						</div>
 						<div vertical layout class="vertical-input" flex>
 							<div horizontal start layout class="horizontal-input">
-								<paper-input-decorator id="mname" label="Modulname" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.mname}}" flex>
-									<input is="core-input" type="text" value="{{inputModulInstanz.modul.name}}" maxlength="100" disabled?="{{disableToggle || selectedModul >= 0}}" required>
-								</paper-input-decorator>
-								<paper-input-decorator id="mname" label="Modulname2" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.mname}}" flex>
+								<paper-input-decorator id="mname" label="Platzhalter Kalender" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.mname}}" flex>
 									<input is="core-input" type="text" value="{{inputModulInstanz.modul.name}}" maxlength="100" disabled?="{{disableToggle || selectedModul >= 0}}" required>
 								</paper-input-decorator>
 							</div>
 						</div>
 					</div>
-				</div>
-				<div horizontal layout center class="horizontal-button-bar horizontal-input horizontal-verticalizable">
-					<paper-button on-click={{save}} raised disabled?="{{disableToggle}}">Speichern</paper-button>
-					<paper-button on-click={{initDeleteModulplan}} raised disabled?="{{disableToggle}}">L&ouml;schen</paper-button>
-					<paper-button on-click={{cancel}} raised disabled?="{{disableToggle}}">Abbrechen</paper-button>				
-					<paper-spinner active?={{disableToggle}} self-center></paper-spinner>
 				</div>
 			</div>
 		</paper-shadow>
