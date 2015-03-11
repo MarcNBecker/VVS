@@ -22,7 +22,7 @@ body /deep/ core-toolbar {
 }
 
 #logo {
-	background-color: white; 
+	background-color: #EEEEEE; 
 	bottom: 0px; 
 	position: absolute; 
 	width: 100%;
@@ -31,6 +31,13 @@ body /deep/ core-toolbar {
 #logo img {
 	padding: 10px; 
 	width: 90%;
+}
+
+#logo span {
+	display: inline-block;
+	font-size: 10pt;
+	padding-left: 10px;
+	padding-bottom: 10px;
 }
 
 #page-wrapper {
