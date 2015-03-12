@@ -1,19 +1,14 @@
-<polymer-element name="vvs-planung" noscript>
+<polymer-element name="vvs-planung">
 	<template>
 		<link rel="stylesheet" type="text/css" href="../../css/elements.css" shim-shadowdom>
-		<style>
-			paper-progress::shadow #activeProgress {
-				background-color: #D32B18;
-			}
-		</style>
 		<core-media-query query="max-width: 1400px" queryMatches="{{smallScreen}}"></core-media-query>
 		<paper-shadow z="3" class="shadow">
 			<div vertical layout>
 				<!-- Name der Vorlesung und Progress-Balken -->
 				<div horizontal layout>
-					<span class="headline vertical-input">Vorlesung 1</span>
-					<paper-progress class="headline vertical-input" value="50%" style="height:30px; margin-left: 100px;" ></paper-progress>
-					<span class="headline vertical-input">50 / 100</span>
+					<span class="headline vertical-input">{{vorlesung.fachInstanz.fach.name}}</span>
+					<paper-progress class="headline vertical-input progress" value="{{progress / vorlesung.fachInstanz.stunden}}"></paper-progress>
+					<span class="headline vertical-input">{{progress}} / {{vorlesung.fachInstanz.stunden}}</span>
 				</div>
 				<!-- Hauptscreen -->
 				<div horizontal?="{{!smallScreen}}" vertical?="{{smallScreen}}" layout class="horizontal-input vertical-input">
@@ -29,24 +24,24 @@
 								<paper-icon-button class="hide"></paper-icon-button>
 								<paper-icon-button class="hide"></paper-icon-button>
 							</div>
-							<template repeat="{{modulInstanz in modulplan.modulInstanzList}}">
-								<template repeat="{{fachInstanz in modulInstanz.fachInstanzList}}">
-									<paper-shadow z="1" class="{{(inputModulInstanz.id === modulInstanz.id && (inputFachInstanz.id === fachInstanz.id || (selectedFach < 0 && (invalid.fname && invalid.fkurzbeschreibung && invalid.semester && invalid.stunden)))) ? 'inner-inner-shadow highlight' : 'inner-inner-shadow'}}">
-										<div horizontal layout center>
-											<span horizontal layout center-center flex>{{modulInstanz.modul.name}} ({{modulInstanz.credits}} Credits)</span>
-											<span horizontal layout center-center flex>{{fachInstanz.fach.name}}</span>
-											<span horizontal layout center-center flex>{{fachInstanz.semester}}</span>
-											<span horizontal layout center-center flex>{{fachInstanz.stunden}}</span>
-											<paper-icon-button on-click="{{edit}}" icon="create" disabled?="{{disableToggle}}" self-center></paper-icon-button>
-											<paper-icon-button on-click="{{initDoDelete}}" icon="delete" disabled?="{{disableToggle}}" self-center></paper-icon-button>
-										</div>
-									</paper-shadow>
-								</template>
+							<template repeat="{{item in vorlesungstermine}}">
+								<paper-shadow z="1" class="{{(inputModulInstanz.id === modulInstanz.id && (inputFachInstanz.id === fachInstanz.id || (selectedFach < 0 && (invalid.fname && invalid.fkurzbeschreibung && invalid.semester && invalid.stunden)))) ? 'inner-inner-shadow highlight' : 'inner-inner-shadow'}}">
+									<div horizontal layout center>
+										<span horizontal layout center-center flex>{{item.datum}}<paper-icon-button icon="assignment" hidden?="{{!item.klausur}}"></paper-icon-button></span>
+										<span horizontal layout center-center flex>{{item.startUhrzeit}}</span>
+										<span horizontal layout center-center flex>{{item.endUhrzeit}}</span>
+										<span horizontal layout center-center flex>{{item.dauer}}</span>
+										<span horizontal layout center-center flex>{{item.pause}}</span>
+										<span horizontal layout center-center flex>{{item.raum}}</span>
+										<paper-icon-button on-click="{{edit}}" icon="create" disabled?="{{disableToggle}}" self-center></paper-icon-button>
+										<paper-icon-button on-click="{{initDoDelete}}" icon="delete" disabled?="{{disableToggle}}" self-center></paper-icon-button>
+									</div>
+								</paper-shadow>
 							</template>
 						</paper-shadow>
 						<div horizontal layout center class="horizontal-button-bar horizontal-input horizontal-verticalizable">
-							<paper-button on-click={{save}} raised disabled?="{{disableToggle}}">Speichern</paper-button>
-							<paper-button on-click={{initDeleteModulplan}} raised disabled?="{{disableToggle}}">L&ouml;schen</paper-button>
+							<paper-button on-click={{update} raised disabled?="{{disableToggle}}">Speichern</paper-button>
+							<paper-button on-click={{initDeleteVorlesung}} raised disabled?="{{disableToggle}}">L&ouml;schen</paper-button>
 							<paper-button on-click={{cancel}} raised disabled?="{{disableToggle}}">Abbrechen</paper-button>				
 							<paper-spinner active?={{disableToggle}} self-center></paper-spinner>
 						</div>
@@ -57,28 +52,28 @@
 								<div horizontal start layout class="horizontal-input">
 									<polymer-date-picker id="datePicker" relatedTarget="{{$.datum}}" halign="left" style="z-index:99" selectedDate="{{selectedDate}}" opened="false"></polymer-date-picker>
 									<paper-input-decorator id="datum" label="Datum"  on-click="{{toggleDatePicker}}" autoValidate isInvalid="{{invalid.datum}}" floatingLabel flex>
-										<input is="core-input" pattern="{{jahr}}-[0-9]{2}-[0-9]{2}" preventInvalidInput="true" value="{{termin.datum}}">
+										<input is="core-input" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" preventInvalidInput="true" value="{{vorlesungstermin.datum}}">
 									</paper-input-decorator>						
 								</div>
 								<div horizontal start layout class="horizontal-input">
 									<paper-input-decorator id="startUhrzeit" label="Uhrzeit von" error="Keine g&uuml;ltige Uhrzeit" autoValidate isInvalid="{{invalid.startUhrzeit}}" floatingLabel flex>
-										<input is="core-input" type="text" pattern="[0-9]{2}:[0-9]{2}" value={{termin.startUhrzeit}} maxlength="100" disabled?="{{disableToggle}}">
+										<input is="core-input" type="text" pattern="[0-9]{2}:[0-9]{2}:[0-9]{2}" value={{vorlesungstermin.startUhrzeit}} maxlength="100" disabled?="{{disableToggle}}">
 									</paper-input-decorator>		
 									<paper-input-decorator id="endUhrzeit" label="Uhrzeit bis" error="Keine g&uuml;ltige Uhrzeit" autoValidate isInvalid="{{invalid.endUhrzeit}}" floatingLabel flex>
-										<input is="core-input" type="text" pattern="[0-9]{2}:[0-9]{2}" value={{termin.endUhrzeit}} maxlength="100" disabled?="{{disableToggle}}">
+										<input is="core-input" type="text" pattern="[0-9]{2}:[0-9]{2}:[0-9]{2}" value={{vorlesungstermin.endUhrzeit}} maxlength="100" disabled?="{{disableToggle}}">
 									</paper-input-decorator>			
 								</div>
 								<div horizontal start layout class="horizontal-input">
-									<paper-input-decorator id="pause" label="Pause" floatingLabel flex>
-										<input is="core-input" type="text" pattern="[0-9]+" value={{termin.pause}} maxlength="100" disabled?="{{disableToggle}}">
+									<paper-input-decorator id="pause" label="Pause" autoValidate isInvalid="{{invalid.pause}}" floatingLabel flex>
+										<input is="core-input" type="text" pattern="[0-9]+" value={{vorlesungstermin.pause}} maxlength="100" disabled?="{{disableToggle}}">
 									</paper-input-decorator>	
-									<paper-input-decorator id="raum" label="Raum" floatingLabel flex>
-										<input is="core-input" type="text" value={{termin.raum}} maxlength="100" disabled?="{{disableToggle}}">
+									<paper-input-decorator id="raum" label="Raum" autoValidate isInvalid="{{invalid.raum}}" floatingLabel flex>
+										<input is="core-input" type="text" pattern="[0-9]{3}[A-Z]" value={{vorlesungstermin.raum}} maxlength="100" disabled?="{{disableToggle}}">
 									</paper-input-decorator>
 								</div>
 								<div horizontal start layout class="horizontal-input">
 									<span>Klausur</span>
-									<paper-checkbox checked="{{klausurChecked}}" self-center disabled?="{{toggleDisabled}}"></paper-checkbox>
+									<paper-checkbox checked="{{vorlesungstermin.klausur}}" self-center disabled?="{{toggleDisabled}}"></paper-checkbox>
 								</div>
 								<div horizontal start layout class="horizontal-button-bar horizontal-input">
 									<paper-button on-click={{add}} raised disabled?="{{disableToggle}}" flex>&Uuml;bernehmen</paper-button>
@@ -92,6 +87,7 @@
 										<input is="core-input" type="text" value="{{inputModulInstanz.modul.name}}" maxlength="100" disabled?="{{disableToggle || selectedModul >= 0}}" required>
 									</paper-input-decorator>
 								</div>
+								<!-- Kalender-Übersicht Ende -->
 							</div>
 						</div>
 					</div>
@@ -115,14 +111,13 @@
 								<span horizontal layout center-center class="small-headline" flex>Vergangene Dozenten</span>
 								<paper-icon-button class="hide"></paper-icon-button>
 							</div>
-							<template repeat="{{modulInstanz in modulplan.modulInstanzList}}">
-								<template repeat="{{fachInstanz in modulInstanz.fachInstanzList}}">
-									<paper-shadow z="1" class="{{(inputModulInstanz.id === modulInstanz.id && (inputFachInstanz.id === fachInstanz.id || (selectedFach < 0 && (invalid.fname && invalid.fkurzbeschreibung && invalid.semester && invalid.stunden)))) ? 'inner-inner-shadow highlight' : 'inner-inner-shadow'}}">
-										<div horizontal layout center>
-											<span horizontal layout center-center flex>Name Dozenten</span>
-										</div>
-									</paper-shadow>
-								</template>
+							<template repeat="{{item in vergangeneDozenten}}">
+								<paper-shadow z="1" class="inner-inner-shadow">
+									<div horizontal layout center>
+										<span horizontal layout center-center flex>{{item.name}}, {{item.vorname}}</span>
+										<paper-checkbox self-center disabled?="{{toggleDisabled}}"></paper-checkbox>
+									</div>
+								</paper-shadow>
 							</template>
 						</paper-shadow>
 					</div>
@@ -132,15 +127,13 @@
 								<span horizontal layout center-center class="small-headline" flex>Alle Dozenten</span>
 								<paper-icon-button class="hide"></paper-icon-button>
 							</div>
-							<template repeat="{{modulInstanz in modulplan.modulInstanzList}}">
-								<template repeat="{{fachInstanz in modulInstanz.fachInstanzList}}">
-									<paper-shadow z="1" class="{{(inputModulInstanz.id === modulInstanz.id && (inputFachInstanz.id === fachInstanz.id || (selectedFach < 0 && (invalid.fname && invalid.fkurzbeschreibung && invalid.semester && invalid.stunden)))) ? 'inner-inner-shadow highlight' : 'inner-inner-shadow'}}">
-										<div horizontal layout center>
-											<span horizontal layout center-center flex>Name Dozenten</span>
-											<paper-checkbox checked="{{VergDozentenChecked}}" self-center disabled?="{{toggleDisabled}}"></paper-checkbox>
-										</div>
-									</paper-shadow>
-								</template>
+							<template repeat="{{item in dozenten}}">
+								<paper-shadow z="1" class="inner-inner-shadow">
+									<div horizontal layout center>
+										<span horizontal layout center-center flex>{{item.name}}, {{item.vorname}}</span>
+										<paper-checkbox self-center disabled?="{{toggleDisabled}}"></paper-checkbox>
+									</div>
+								</paper-shadow>
 							</template>
 						</paper-shadow>
 					</div>
@@ -154,106 +147,326 @@
 				-->
 			</div>
 		</paper-shadow>
-		<paper-toast id="toast_forbidden_fachinstanz" text="Ein Fach darf nicht mehreren Modulen zugeordnet werden" duration="7000"></paper-toast>
-		<paper-action-dialog id="delete_modulplan_dialog" heading="{{modulplan.studiengang}} - {{modulplan.vertiefungsrichtung}} wirklich l&ouml;schen?">
-			<paper-button affirmative>Nein</paper-button>
-			<paper-button on-click="{{deleteModulplan}}" affirmative autofocus>L&ouml;schen</paper-button>
-		</paper-action-dialog>
-		<paper-action-dialog id="delete_fach_dialog" heading="{{modulInstanzToDelete.modul.name}} - {{fachInstanzToDelete.fach.name}} wirklich l&ouml;schen?">
+		<paper-action-dialog id="delete_vorlesungstermin_dialog" heading="Die Vorlesung am {{vorlesungsterminToDelete.datum}} wirklich l&ouml;schen?">
 			<paper-button affirmative>Nein</paper-button>
 			<paper-button on-click="{{doDelete}}" affirmative autofocus>L&ouml;schen</paper-button>
 		</paper-action-dialog>
+		<paper-action-dialog id="delete_vorlesung_dialog" heading="Die Vorlesung {{vorlesung.fachInstanz.fach.name}} wirklich l&ouml;schen?">
+			<paper-button affirmative>Nein</paper-button>
+			<paper-button on-click="{{deleteVorlesung}}" affirmative autofocus>L&ouml;schen</paper-button>
+		</paper-action-dialog>
 	</template>
-	<!--  
 	<script type="text/javascript">
 	"use strict";
 	Polymer('vvs-planung',
-		{
-			feiertag: new model.templates.Feiertag(),
-			feiertage: [],
-			feiertagToDelete: null,
-			selectedDate: '2000-01-01',
-			jahr: new Date().getFullYear(),
-			datePickerOpened: false,
-			disableToggle: true,
-			invalid : {},
-			//Publish those attributes to home
-			publish: {
-				pageParameter: {},
-				pageLoaded: {},
-				toasts: {}
-			},
-			//Initialize the screen
-			ready : function() {
-				var self = this;
-				self.feiertag = new model.templates.Feiertag();
-				self.feiertage = [];
-				self.feiertagToDelete = null;
-				self.selectedDate = self.today();
-				self.datePickerOpened = false;
-				self.disableToggle = true;
-				self.invalid = {};
-			},
-			//Navigate backwards and force a reload
-	    	cancel: function()
-	    	{
-	    		this.pageLoaded.dozent = false;
-	    		window.history.back();
-	    	},
-			//Show DatePicker
-			toggleDatePicker: function(e, detail, sender) {
-				if(this.disableToggle === true) {
-					return;
-				}
-				//Init or set selected date
-				if(this.$.datum.input.value) {
-					this.selectedDate = this.feiertag.datum;
-				} else {
-					
-				}	
-				//Wait until the date picker potentially auto closed to reopen it
-				this.job('open-date-picker', function() {
-					this.$.datum.inputAction();
-					this.$.datePicker.open();
-					this.datePickerOpened = true;
-				}, 100);
-			},
-			//Close date picker
-			selectedDateChanged: function() {
-				if(!this.datePickerOpened) {
-					return;
-				}
-				//Read date
-				this.feiertag.datum = this.selectedDate;
-				//Update UI
-				this.$.datePicker.close();
-				this.datePickerOpened = false;
-				this.job('label-date-picker', function() {
-					this.$.datum.inputAction();
-				}, 100);
-			},
-			//Calculate date of today
-			today: function() {
-			    var date = new Date();
-				var year = date.getFullYear();
-			    var month = '0' + (date.getMonth() + 1);
-			    month = month.slice(-2, (month.length - 2) + 3);
-			    var day = '0' + date.getDate();
-			    day = day.slice(-2, (day.length - 2) + 3);
-			    return year + '-' + month + '-' + day;
-			},
-			//Check all invalid properties
-			checkInputs : function() {
-				for ( var property in this.invalid) {
-					if (this.invalid.hasOwnProperty(property)) {
-						if (this.invalid[property] === true) {
-							return false;
+	{
+		vorlesung: new model.templates.Vorlesung(),
+		vorlesungstermin: new model.templates.Termin(),
+		vorlesungstermine: [],
+		vorlesungsterminToDelete: null,
+		vergangeneDozenten: [],
+		dozenten: [],
+		deletedVorlesungstermine: [],
+		raum: null,
+		progress: 0,
+		nextVorlesungsterminID: -1,
+		selectedDate: '2000-01-01',
+		datePickerOpened: false,
+		disableToggle: true,
+		invalid : {},
+		//Publish those attributes to home
+		publish: {
+			pageParameter: {},
+			pageLoaded: {},
+			toasts: {}
+		},
+		//Initialize the screen
+		ready : function() {
+			var self = this;
+			self.vorlesung = new model.templates.Vorlesung();
+			self.vorlesungstermin = new model.templates.Termin();
+			self.vorlesungstermine = [];
+			self.vorlesungsterminToDelete = null;
+			self.vergangeneDozenten = [];
+			self.dozenten = [];
+			self.deletedVorlesungstermine = [];
+			self.raum = null;
+			self.progress = 0;
+			self.nextVorlesungsterminID = -1;
+			self.selectedDate = self.today();
+			self.datePickerOpened = false;
+			self.disableToggle = true;
+			self.invalid = {};
+			var showVorlesung = new model.templates.Vorlesung();
+			showVorlesung.id = 1;
+			//TODO showVorlesung.id = self.pageParameter.vorlesung.id;
+			//Load selected Vorlesung
+			//TODO Deeprun erforderlich???????????????????????????????????????????????????????????????????????????
+			model.webService.getVorlesung(showVorlesung, function(api) {
+				if (!api.isError)
+				{
+					self.vorlesung = api.response;
+					//Load available Vorlesungstermine
+					model.webService.getAllVorlesungTermine(self.vorlesung, function(api) {
+						if (!api.isError)
+						{
+							self.vorlesungstermine = api.response;
+							self.calculateProgress();
 						}
+						else
+						{
+							console.log(JSON.stringify(api));
+							self.toasts.error.show();
+						}
+					});
+					//TODO Load default Kursraum
+					
+					//Load vergangene Dozenten
+					model.webService.getVorlesungDozenten(self.vorlesung, function(api) {
+						if (!api.isError)
+						{
+							self.vergangeneDozenten = api.response;
+							//Load alle Dozenten
+							model.webService.getAllDozenten(function(api) {
+								if (!api.isError)
+								{
+									self.dozenten = api.response;
+									var i;
+    	    						for (i = 0; i < self.vergangeneDozenten.length; i++)
+    	    						{
+    	        						var ii;
+    	    							for (ii = 0; ii < self.dozenten.length; ii++)
+    	    							{
+    	    								if (self.vergangeneDozenten[i].id === self.dozenten[ii].id)
+    	    								{
+    	    									self.dozenten.splice(ii, 1);
+    	    									break;
+    	    								}
+    	    							}
+    	    						}
+    	    						//Enable inputs
+    	    						self.disableToggle = false;
+    	    						//Set inputs to invalid
+    								self.invalid.datum = true;
+    								self.invalid.startUhrzeit = true;
+    								self.invalid.endUhrzeit = true;
+    								self.invalid.pause = true;
+    								self.invalid.raum = true;
+								}
+								else
+								{
+									console.log(JSON.stringify(api));
+									self.toasts.error.show();
+								}
+							});
+							
+						}
+						else
+						{
+							console.log(JSON.stringify(api));
+							self.toasts.error.show();
+						}
+					});
+				}
+				else
+				{
+					console.log(JSON.stringify(api));
+					self.toasts.error.show();
+				}
+			});
+			
+		},
+		//Add Vorlesungstermin
+		add: function() {
+			var self = this;
+			if(!this.checkInputs()) {
+				return;
+			}	
+			//The Vorlesungstermin is completely new, we need to set an internal ID and add it to the Vorlesung
+			if(self.vorlesungstermin.id <= 0)
+			{
+				self.vorlesungstermin.id = self.nextVorlesungsterminID;
+				self.nextVorlesungsterminID--;
+				self.vorlesungstermine.push(self.vorlesungstermin);
+			}
+			//We are referencing a Vorlesungstermin which is already in the Vorlesung
+			else
+			{ 
+				var i;
+				for (i = 0; i < self.vorlesungstermin.length; i++)
+				{
+					if (self.vorlesungstermin.id === self.vorlesungstermine[i].id)
+					{
+						self.vorlesungstermine[i] = self.vorlesungstermin;
+						self.reject();
+						break;
 					}
 				}
-				return true;
 			}
+			this.calculateProgress();
+			this.reject();
+	    },
+	    //Reject input fields
+		reject: function() {
+			this.vorlesungstermin = new model.templates.Termin();
+			this.vorlesungstermin.raum = this.raum;
+		},
+		//Edit Vorlesungstermin
+		edit: function(e, detail, sender) {
+			this.vorlesungstermin = this.vorlesungstermine[this.vorlesungstermine.indexOf(e.target.templateInstance.model.item)];
+			this.job('update-labels-edit', function() {
+				this.$.datum.inputAction();
+				this.$.startUhrzeit.inputAction();
+				this.$.endUhrzeit.inputAction();
+				this.$.pause.inputAction();
+				this.$.raum.inputAction();
+			}, 100);
+		},
+		//Show Action Dialog for Deletion of Vorlesungstermin
+		initDoDelete: function(e, detail, sender) {
+			this.vorlesungsterminToDelete = e.target.templateInstance.model.item;
+			this.$.delete_vorlesungstermin_dialog.toggle();
+		},
+		//Delete a Vorlesungstermin
+		doDelete: function() {
+			var self = this;
+			var i;
+			for (i = 0; i < self.vorlesungstermine.length; i++)
+			{
+				if (self.vorlesungstermine[i].id === self.vorlesungsterminToDelete.id)
+				{
+					self.deletedVorlesungstermine.push(self.vorlesungstermine[i]);
+					self.vorlesungstermine.splice(i, 1);
+					self.calculateProgress();
+					break;
+				}
+			}
+			this.reject();
+		},
+		//Show Action Dialog for Deletion of Vorlesung
+		initDeleteVorlesung: function()
+		{
+			this.$.delete_vorlesung_dialog.toggle();
+		},
+		//Delete a Vorlesung
+		deleteVorlesung: function()
+		{
+			var self = this;
+			//Disable inputs
+			self.disableToggle = true;
+			model.webService.deleteVorlesung(self.vorlesung, function(api) {
+				if(!api.isError)
+				{
+					self.toasts.success.show();
+					self.cancel();
+				}
+				else
+				{
+					self.toasts.error.show();	
+				}	
+			});
+		},
+		//Update Vorlesung with all Vorlesungstermine
+		update: function() {
+			//Disable inputs
+			this.disableToggle = true;
+			//TODO
+			//delete Vorlesungstermine aus deletedVorlesungstermine
+			//update Vorlesungstermine aus vorlesungstermine
+			//update dozent
+			//Enable inputs
+			this.disableToggle = false;
+		},
+		//Navigate backwards and force a reload
+    	cancel: function()
+    	{
+    		this.pageLoaded.planung = false;
+    		window.history.back();
+    	},
+    	//Calculate Progress for progress-bar
+    	calculateProgress: function()
+    	{
+    		var stunden = 0;
+    		var dauer = 0;
+    		var i;
+    		for (i = 0; i < this.vorlesungstermine.length; i++)
+    		{
+    			dauer = this.calculateDauer(this.vorlesungstermine[i].startUhrzeit, this.vorlesungstermine[i].endUhrzeit, this.vorlesungstermine[i].pause);
+    			stunden = stunden + dauer;
+    		}
+    		self.progress = stunden;
+    	},
+    	//Calculate dauer
+    	calculateDauer: function(start, ende, pause)
+    	{
+    		var dauer = 0;
+    		//TODO calculation
+    			// ende - start ausrechnen und in minuten umwandeln
+    			// vom Ergebnis pause abziehen
+    			// Ergebnis durch 45 teilen --> dauer
+    		return dauer;
+    	},
+    	//Calculate pause
+    	calculatePause: function(start, ende)
+    	{
+    		// TODO
+    		// ende - start ausrechnen und in minuten umwandeln
+    		// <= 90 Minuten keine Pause, Vorlesungsstunde = 45 Minuten
+    		// ab 91 Minuten pro 50 Minuten 5 Minuten Pause
+    	},
+		//Show DatePicker
+		toggleDatePicker: function(e, detail, sender) {
+			if(this.disableToggle === true) {
+				return;
+			}
+			//Init or set selected date
+			if(this.$.datum.input.value) {
+				this.selectedDate = this.vorlesung.datum;
+			} else {
+				
+			}	
+			//Wait until the date picker potentially auto closed to reopen it
+			this.job('open-date-picker', function() {
+				this.$.datum.inputAction();
+				this.$.datePicker.open();
+				this.datePickerOpened = true;
+			}, 100);
+		},
+		//Close date picker
+		selectedDateChanged: function() {
+			if(!this.datePickerOpened) {
+				return;
+			}
+			//Read date
+			this.vorlesungstermin.datum = this.selectedDate;
+			//Update UI
+			this.$.datePicker.close();
+			this.datePickerOpened = false;
+			this.job('label-date-picker', function() {
+				this.$.datum.inputAction();
+			}, 100);
+		},
+		//Calculate date of today
+		today: function() {
+		    var date = new Date();
+			var year = date.getFullYear();
+		    var month = '0' + (date.getMonth() + 1);
+		    month = month.slice(-2, (month.length - 2) + 3);
+		    var day = '0' + date.getDate();
+		    day = day.slice(-2, (day.length - 2) + 3);
+		    return year + '-' + month + '-' + day;
+		},
+		//Check all invalid properties
+		checkInputs : function() {
+			for ( var property in this.invalid) {
+				if (this.invalid.hasOwnProperty(property)) {
+					if (this.invalid[property] === true) {
+						return false;
+					}
+				}
+			}
+			return true;
+		}
 	});
 	</script>
-	-->
 </polymer-element>
