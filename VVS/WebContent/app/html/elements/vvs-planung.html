@@ -1,13 +1,21 @@
 <polymer-element name="vvs-planung" noscript>
 	<template>
 		<link rel="stylesheet" type="text/css" href="../../css/elements.css" shim-shadowdom>
+		<style>
+			paper-progress::shadow #activeProgress {
+				background-color: #D32B18;
+			}
+		</style>
 		<core-media-query query="max-width: 1400px" queryMatches="{{smallScreen}}"></core-media-query>
 		<paper-shadow z="3" class="shadow">
 			<div vertical layout>
+				<!-- Name der Vorlesung und Progress-Balken -->
 				<div horizontal layout>
 					<span class="headline vertical-input">Vorlesung 1</span>
-					<paper-progress class="headline vertical-input" value="15" style="height:30px; margin-left: 100px;" ></paper-progress>
+					<paper-progress class="headline vertical-input" value="50%" style="height:30px; margin-left: 100px;" ></paper-progress>
+					<span class="headline vertical-input">50 / 100</span>
 				</div>
+				<!-- Hauptscreen -->
 				<div horizontal?="{{!smallScreen}}" vertical?="{{smallScreen}}" layout class="horizontal-input vertical-input">
 					<div auto-vertical?="{{smallScreen}}" vertical layout flex?="{{!smallScreen}}" one?="{{!smallScreen}}" class="vertical-input">
 						<paper-shadow z="2" class="inner-shadow">
@@ -34,7 +42,7 @@
 										</div>
 									</paper-shadow>
 								</template>
-							</template>							
+							</template>
 						</paper-shadow>
 						<div horizontal layout center class="horizontal-button-bar horizontal-input horizontal-verticalizable">
 							<paper-button on-click={{save}} raised disabled?="{{disableToggle}}">Speichern</paper-button>
@@ -43,50 +51,106 @@
 							<paper-spinner active?={{disableToggle}} self-center></paper-spinner>
 						</div>
 					</div>
-				</div>
-				<div auto-vertical?="{{smallScreen}}" flex?="{{!smallScreen}}" class="vertical-input">
-					<div horizontal layout class="horizontal-input" flex>
-						<div vertical layout class="vertical-input" flex>
-							<div horizontal start layout class="horizontal-input">
-								<polymer-date-picker id="datePicker" relatedTarget="{{$.datum}}" halign="left" style="z-index:99" selectedDate="{{selectedDate}}" opened="false"></polymer-date-picker>
-								<paper-input-decorator id="datum" label="Datum"  on-click="{{toggleDatePicker}}" autoValidate isInvalid="{{invalid.datum}}" floatingLabel flex>
-									<input is="core-input" pattern="{{jahr}}-[0-9]{2}-[0-9]{2}" preventInvalidInput="true" value="{{feiertag.datum}}">
-								</paper-input-decorator>						
+					<div auto-vertical?="{{smallScreen}}" flex?="{{!smallScreen}}" class="vertical-input">
+						<div horizontal layout class="horizontal-input" flex>
+							<div vertical layout class="vertical-input" flex>
+								<div horizontal start layout class="horizontal-input">
+									<polymer-date-picker id="datePicker" relatedTarget="{{$.datum}}" halign="left" style="z-index:99" selectedDate="{{selectedDate}}" opened="false"></polymer-date-picker>
+									<paper-input-decorator id="datum" label="Datum"  on-click="{{toggleDatePicker}}" autoValidate isInvalid="{{invalid.datum}}" floatingLabel flex>
+										<input is="core-input" pattern="{{jahr}}-[0-9]{2}-[0-9]{2}" preventInvalidInput="true" value="{{termin.datum}}">
+									</paper-input-decorator>						
+								</div>
+								<div horizontal start layout class="horizontal-input">
+									<paper-input-decorator id="startUhrzeit" label="Uhrzeit von" error="Keine g&uuml;ltige Uhrzeit" autoValidate isInvalid="{{invalid.startUhrzeit}}" floatingLabel flex>
+										<input is="core-input" type="text" pattern="[0-9]{2}:[0-9]{2}" value={{termin.startUhrzeit}} maxlength="100" disabled?="{{disableToggle}}">
+									</paper-input-decorator>		
+									<paper-input-decorator id="endUhrzeit" label="Uhrzeit bis" error="Keine g&uuml;ltige Uhrzeit" autoValidate isInvalid="{{invalid.endUhrzeit}}" floatingLabel flex>
+										<input is="core-input" type="text" pattern="[0-9]{2}:[0-9]{2}" value={{termin.endUhrzeit}} maxlength="100" disabled?="{{disableToggle}}">
+									</paper-input-decorator>			
+								</div>
+								<div horizontal start layout class="horizontal-input">
+									<paper-input-decorator id="pause" label="Pause" floatingLabel flex>
+										<input is="core-input" type="text" pattern="[0-9]+" value={{termin.pause}} maxlength="100" disabled?="{{disableToggle}}">
+									</paper-input-decorator>	
+									<paper-input-decorator id="raum" label="Raum" floatingLabel flex>
+										<input is="core-input" type="text" value={{termin.raum}} maxlength="100" disabled?="{{disableToggle}}">
+									</paper-input-decorator>
+								</div>
+								<div horizontal start layout class="horizontal-input">
+									<span>Klausur</span>
+									<paper-checkbox checked="{{klausurChecked}}" self-center disabled?="{{toggleDisabled}}"></paper-checkbox>
+								</div>
+								<div horizontal start layout class="horizontal-button-bar horizontal-input">
+									<paper-button on-click={{add}} raised disabled?="{{disableToggle}}" flex>&Uuml;bernehmen</paper-button>
+									<paper-button on-click={{reject}} raised disabled?="{{disableToggle}}" flex>Verwerfen</paper-button>
+								</div>
 							</div>
-							<div horizontal start layout class="horizontal-input">
-								<paper-input-decorator id="uhrzeitVon" label="Uhrzeit von" error="Keine g&uuml;ltige Uhrzeit" autoValidate isInvalid="{{invalid.studentenAnzahl}}" floatingLabel flex>
-									<input is="core-input" type="text" pattern="[0-9]{2}:[0-9]{2}" value={{kurs.studentenAnzahl}} maxlength="100" disabled?="{{disableToggle}}">
-								</paper-input-decorator>		
-								<paper-input-decorator id="uhrzeitBis" label="Uhrzeit bis" error="Keine g&uuml;ltige Uhrzeit" autoValidate isInvalid="{{invalid.studentenAnzahl}}" floatingLabel flex>
-									<input is="core-input" type="text" pattern="[0-9]{2}:[0-9]{2}" value={{kurs.studentenAnzahl}} maxlength="100" disabled?="{{disableToggle}}">
-								</paper-input-decorator>			
-							</div>
-							<div horizontal start layout class="horizontal-input">
-								<paper-input-decorator id="pause" label="Pause" floatingLabel flex>
-									<input is="core-input" type="text" pattern="[0-9]{2}:[0-9]{2}" value={{kurs.studentenAnzahl}} maxlength="100" disabled?="{{disableToggle}}">
-								</paper-input-decorator>	
-								<paper-input-decorator id="raum" label="Raum" floatingLabel flex>
-									<input is="core-input" type="text" pattern="[0-9]{2}:[0-9]{2}" value={{kurs.studentenAnzahl}} maxlength="100" disabled?="{{disableToggle}}">
-								</paper-input-decorator>
-							</div>
-							<div horizontal start layout class="horizontal-input">
-								<span>Klausur</span>
-								<paper-checkbox checked="{{klausurChecked}}" self-center disabled?="{{toggleDisabled}}"></paper-checkbox>
-							</div>
-							<div horizontal start layout class="horizontal-button-bar horizontal-input">
-								<paper-button on-click={{add}} raised disabled?="{{disableToggle}}" flex>&Uuml;bernehmen</paper-button>
-								<paper-button on-click={{reject}} raised disabled?="{{disableToggle}}" flex>Verwerfen</paper-button>
-							</div>
-						</div>
-						<div vertical layout class="vertical-input" flex>
-							<div horizontal start layout class="horizontal-input">
-								<paper-input-decorator id="mname" label="Platzhalter Kalender" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.mname}}" flex>
-									<input is="core-input" type="text" value="{{inputModulInstanz.modul.name}}" maxlength="100" disabled?="{{disableToggle || selectedModul >= 0}}" required>
-								</paper-input-decorator>
+							<div vertical layout class="vertical-input" flex>
+								<!-- TODO: Hier kommt die Kalender-Übersicht -->
+								<div horizontal start layout class="horizontal-input">
+									<paper-input-decorator id="mname" label="Platzhalter Kalender" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.mname}}" flex>
+										<input is="core-input" type="text" value="{{inputModulInstanz.modul.name}}" maxlength="100" disabled?="{{disableToggle || selectedModul >= 0}}" required>
+									</paper-input-decorator>
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
+				<br/><br/>
+				<!-- Dozentensuche -->
+				<div horizontal layout>
+					<core-field style="border: 1px solid #FF0000; margin-left: 30px; height: 40px; width: 400px;">
+						<input placeholder="Dozentensuche" flex>
+					</core-field>
+					<paper-button on-click={{search}} style="height: 42px; margin-left: 0px;"><core-icon icon="search"></core-icon></paper-button>
+					<span class="headline" style="margin-left: 50px; margin-top: 5px;">Ausgew&auml;hlter Dozent: {{Dozent}}</span>
+				</div>
+				<br/><br/>
+				<div horizontal layout class="horizontal-input">
+					<div vertical layout flex>
+						<paper-shadow z="2" class="inner-shadow">
+							<div horizontal layout>
+								<span horizontal layout center-center class="small-headline" flex>Vergangene Dozenten</span>
+								<paper-icon-button class="hide"></paper-icon-button>
+							</div>
+							<template repeat="{{modulInstanz in modulplan.modulInstanzList}}">
+								<template repeat="{{fachInstanz in modulInstanz.fachInstanzList}}">
+									<paper-shadow z="1" class="{{(inputModulInstanz.id === modulInstanz.id && (inputFachInstanz.id === fachInstanz.id || (selectedFach < 0 && (invalid.fname && invalid.fkurzbeschreibung && invalid.semester && invalid.stunden)))) ? 'inner-inner-shadow highlight' : 'inner-inner-shadow'}}">
+										<div horizontal layout center>
+											<span horizontal layout center-center flex>Name Dozenten</span>
+											<paper-checkbox checked="{{VergDozentenChecked}}" self-center disabled?="{{toggleDisabled}}"></paper-checkbox>
+										</div>
+									</paper-shadow>
+								</template>
+							</template>
+						</paper-shadow>
+					</div>
+					<div vertical layout flex>
+						<paper-shadow z="2" class="inner-shadow">
+							<div horizontal layout>
+								<span horizontal layout center-center class="small-headline" flex>Alle Dozenten</span>
+								<paper-icon-button class="hide"></paper-icon-button>
+							</div>
+							<template repeat="{{modulInstanz in modulplan.modulInstanzList}}">
+								<template repeat="{{fachInstanz in modulInstanz.fachInstanzList}}">
+									<paper-shadow z="1" class="{{(inputModulInstanz.id === modulInstanz.id && (inputFachInstanz.id === fachInstanz.id || (selectedFach < 0 && (invalid.fname && invalid.fkurzbeschreibung && invalid.semester && invalid.stunden)))) ? 'inner-inner-shadow highlight' : 'inner-inner-shadow'}}">
+										<div horizontal layout center>
+											<span horizontal layout center-center flex>Name Dozenten</span>
+											<paper-checkbox checked="{{VergDozentenChecked}}" self-center disabled?="{{toggleDisabled}}"></paper-checkbox>
+										</div>
+									</paper-shadow>
+								</template>
+							</template>
+						</paper-shadow>
+					</div>
+				</div>
+				<!-- Buttons werden vermutlich nicht benötigt 
+				<div horizontal layout center-center class="horizontal-button-bar horizontal-input horizontal-verticalizable">
+					<paper-button on-click={{ok}} raised disabled?="{{disableToggle}}">OK</paper-button>
+					<paper-button on-click={{cancel}} raised disabled?="{{disableToggle}}">Abbrechen</paper-button>	
+					<paper-spinner active?={{disableToggle}} self-center></paper-spinner>
+				</div>
+				-->
 			</div>
 		</paper-shadow>
 		<paper-toast id="toast_forbidden_fachinstanz" text="Ein Fach darf nicht mehreren Modulen zugeordnet werden" duration="7000"></paper-toast>
