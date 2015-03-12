@@ -23,15 +23,15 @@
 					</div>
 					<div horizontal layout center class="{{creationMode ? 'horizontal-input' : 'horizontal-input horizontal-button-bar'}}" hidden?="{{!sekretaerinChecked && creationMode}}">
 						<span>Repr&auml;sentiert</span>
-						<paper-dropdown-menu label="Studiengangsleiter" disabled?="{{toggleDisabled}}" self-center flex>
-							<paper-dropdown class="dropdown">
+						<paper-dropdown-menu-searchable label="Studiengangsleiter" disabled?="{{toggleDisabled}}" self-center flex>
+							<paper-dropdown-searchable class="dropdown" arrayName="studiengangsleiter" searchProperties="name" hideProperty="hidden">
 								<core-menu selected="{{selectedStudiengangsleiter}}" class="menu">
 									<template repeat="{{item in studiengangsleiter}}">
-										<paper-item>{{item.name}}</paper-item>
+										<paper-item hidden?="{{item.hidden}}">{{item.name}}</paper-item>
 									</template>
 								</core-menu>
-							</paper-dropdown>
-						</paper-dropdown-menu>
+							</paper-dropdown-searchable>
+						</paper-dropdown-menu-searchable>
 					</div>
 					<!-- Button Bar -->
 					<div hidden?={{!creationMode}} horizontal layout center class="horizontal-input horizontal-button-bar">

@@ -89,6 +89,7 @@ Style the background color of the dropdown with these selectors:
     #search-box {
     	padding: 10px 10px 0px 10px;
     	margin-bottom: -10px;
+    	min-width: 250px;
     }
     
     #search-input {
@@ -159,8 +160,14 @@ Style the background color of the dropdown with these selectors:
     				var keyword = keywords[ii];
         			var iii;
         			for(iii=0; iii<this.properties.length; iii++) { //properties
-        				var value = this.array[i][this.properties[iii]];
-        				if(typeof value === 'string' && value.toUpperCase().indexOf(keyword.trim().toUpperCase()) === 0) {
+        				var value;
+        				if(this.properties[iii].indexOf(".") === -1) {
+            				value = this.array[i][this.properties[iii]];	
+        				} else {
+        					var splittedProperties = this.properties[iii].split(".");
+        					value = this.array[i][splittedProperties[0]][splittedProperties[1]];
+        				}
+        				if(typeof value === 'string' && value.toUpperCase().indexOf(keyword.trim().toUpperCase()) !== -1) {
         					contains++;
         					break;
         				}

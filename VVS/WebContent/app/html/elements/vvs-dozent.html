@@ -98,15 +98,15 @@
 						</div>
 					</template>
 					<div horizontal layout center class="horizontal-list">
-						<paper-dropdown-menu id="fachDropdownMenu" label="Kompetenzfach" disabled?="{{disableToggle}}">
-							<paper-dropdown id="fachDropdown" class="dropdown">
+						<paper-dropdown-menu-searchable id="fachDropdownMenu" label="Kompetenzfach" disabled?="{{disableToggle}}">
+							<paper-dropdown-searchable id="fachDropdown" class="dropdown" arrayName="faecher" searchProperties="name" hideProperty="hidden">
 								<core-menu id="fach" class="menu">
 									<template  repeat="{{item in faecher}}">
-										<paper-item on-click="{{addFach}}">{{item.name}}</paper-item>
+										<paper-item hidden?="{{item.hidden}}" on-click="{{addFach}}">{{item.name}}</paper-item>
 									</template>
 								</core-menu>
-							</paper-dropdown>
-						</paper-dropdown-menu>
+							</paper-dropdown-searchable>
+						</paper-dropdown-menu-searchable>
 					</div>
 					<!-- Button Bar -->
 					<div horizontal layout center class="horizontal-input">

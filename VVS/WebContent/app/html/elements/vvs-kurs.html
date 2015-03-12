@@ -14,26 +14,24 @@
 						<paper-input-decorator id="kursname" label="Kursname" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.kursname}}" flex>
 							<input is="core-input" type="text" value={{kurs.kursname}} maxlength="100" required disabled?="{{disableToggle}}">
 						</paper-input-decorator>						
-						<paper-dropdown-menu label="Studiengangsleiter" disabled?="{{disableToggle}}" self-center flex>
-							<paper-dropdown class="dropdown">
+						<paper-dropdown-menu-searchable label="Studiengangsleiter" disabled?="{{disableToggle}}" self-center flex>
+							<paper-dropdown-searchable class="dropdown" arrayName="studiengangsleiter" searchProperties="name" hideProperty="hidden">
 								<core-menu class="menu" selected="{{selectedStudiengangsleiter}}">
 								<template repeat="{{item in studiengangsleiter}}">
-									<paper-item>{{item.name}}</paper-item>
+									<paper-item hidden?="{{item.hidden}}">{{item.name}}</paper-item>
 								</template>
 							</core-menu>
-							</paper-dropdown>
-						</paper-dropdown-menu>						
-						<paper-dropdown-menu label="Modulplan" disabled?="{{disableToggle}}" self-center flex>
-							<paper-dropdown class="dropdown">
+							</paper-dropdown-searchable>
+						</paper-dropdown-menu-searchable>						
+						<paper-dropdown-menu-searchable label="Modulplan" disabled?="{{disableToggle}}" self-center flex>
+							<paper-dropdown-searchable class="dropdown" arrayName="modulplaene" searchProperties="studiengang vertiefungsrichtung" hideProperty="hidden">
 								<core-menu class="menu" selected="{{selectedModulplan}}">
 								<template repeat="{{item in modulplaene}}">
-									<paper-item>
-										{{item.studiengang}} - {{item.vertiefungsrichtung}}
-									</paper-item>
+									<paper-item hidden?="{{item.hidden}}">{{item.studiengang}} - {{item.vertiefungsrichtung}}</paper-item>
 								</template>
 							</core-menu>
-							</paper-dropdown>
-						</paper-dropdown-menu>
+							</paper-dropdown-searchable>
+						</paper-dropdown-menu-searchable>
 					</div>
 					<div horizontal start layout class="horizontal-input">
 						<paper-input-decorator id="studentenAnzahl" label="Anzahl Studenten" error="Keine g&uuml;ltige Studentenanzahl" autoValidate isInvalid="{{invalid.studentenAnzahl}}" floatingLabel flex>
