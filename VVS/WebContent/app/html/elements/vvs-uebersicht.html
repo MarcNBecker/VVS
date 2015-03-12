@@ -15,15 +15,15 @@
 						<paper-spinner active?="{{toggleDisableDozent}}" self-center></paper-spinner>
 					</div>
 					<div vertical?="{{verySmallScreen}}" horizontal?="{{!verySmallScreen}}" layout center-center?="{{!verySmallScreen}}" start?="{{verySmallScreen}}" class="horizontal-verticalizable horizontal-input horizontal-button-bar">
-						<paper-dropdown-menu label="Dozent" disabled?="{{toggleDisableDozent}}" auto-vertical?="{{verySmallScreen}}" flex?="{{!verySmallScreen}}">
-							<paper-dropdown class="dropdown">
+						<paper-dropdown-menu-searchable label="Dozent" disabled?="{{toggleDisableDozent}}" auto-vertical?="{{verySmallScreen}}" flex?="{{!verySmallScreen}}">
+							<paper-dropdown-searchable class="dropdown" arrayName="dozenten" searchProperties="name vorname" hideProperty="hidden">
 								<core-menu id="dozent" class="menu">
 									<template repeat="{{item in dozenten}}">
-										<paper-item>{{item.name}}, {{item.vorname}}</paper-item>
+										<paper-item hidden?="{{item.hidden}}">{{item.name}}, {{item.vorname}}</paper-item>
 									</template>
 								</core-menu>
-							</paper-dropdown>
-						</paper-dropdown-menu>					
+							</paper-dropdown-searchable>
+						</paper-dropdown-menu-searchable>					
 						<paper-button on-click={{updateDozent}} raised disabled?="{{toggleDisableDozent}}" auto-vertical?="{{verySmallScreen}}" flex?="{{!verySmallScreen}}">anzeigen/bearbeiten/l&ouml;schen</paper-button>
 					</div>
 					<div horizontal layout start class="horizontal-input horizontal-button-bar">
