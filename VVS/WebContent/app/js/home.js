@@ -31,6 +31,9 @@ template.pageParameter = {
 	},
 	feiertage: {
 		id: 0 //is a year, name id is necessary for correct handling by other functions
+	},
+	vorlesung: {
+		id: 0
 	}
 };
 
@@ -55,7 +58,7 @@ template.pageDescriptor = {
 	kurs: {name: 'Kurs pflegen', hash: 'kurs', html: '<vvs-kurs pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-kurs>'},
 	user: {name: 'User pflegen', hash: 'user', html: '<vvs-user currentUser="{{user}}" pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-user>'},
 	feiertage: {name: 'Feiertage pflegen', hash: 'feiertage', html: '<vvs-feiertage pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-feiertage>'},
-	planung: {name: 'Planung', hash: 'planung', html: '<vvs-planung></vvs-planung>'}
+	planung: {name: 'Planung', hash: 'planung', html: '<vvs-planung pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-planung>'}
 };
 
 //Pages to display in the navigation drawer
