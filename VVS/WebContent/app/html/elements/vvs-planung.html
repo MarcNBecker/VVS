@@ -103,7 +103,9 @@
 						<input placeholder="Dozentensuche" flex>
 					</core-field>
 					<paper-button on-click={{search}} style="height: 42px; margin-left: 0px;"><core-icon icon="search"></core-icon></paper-button>
-					<span class="headline" style="margin-left: 50px; margin-top: 5px;">Ausgew&auml;hlter Dozent: {{Dozent}}</span>
+				</div>
+				<div horizontal layout class="horizontal-input ">	
+					<span class="headline" style="margin-top: 20px;">Ausgew&auml;hlter Dozent: {{Dozent}}</span>
 				</div>
 				<br/><br/>
 				<div horizontal layout class="horizontal-input">
@@ -118,7 +120,6 @@
 									<paper-shadow z="1" class="{{(inputModulInstanz.id === modulInstanz.id && (inputFachInstanz.id === fachInstanz.id || (selectedFach < 0 && (invalid.fname && invalid.fkurzbeschreibung && invalid.semester && invalid.stunden)))) ? 'inner-inner-shadow highlight' : 'inner-inner-shadow'}}">
 										<div horizontal layout center>
 											<span horizontal layout center-center flex>Name Dozenten</span>
-											<paper-checkbox checked="{{VergDozentenChecked}}" self-center disabled?="{{toggleDisabled}}"></paper-checkbox>
 										</div>
 									</paper-shadow>
 								</template>
