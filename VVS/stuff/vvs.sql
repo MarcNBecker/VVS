@@ -34,6 +34,7 @@ CREATE TABLE `vvs`.`Modulplan` (
   `ID` INT unsigned NOT NULL AUTO_INCREMENT,
   `Studiengang` VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL,
   `Vertiefungsrichtung` VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL,
+  `GueltigAb` INT unsigned NOT NULL,
   PRIMARY KEY (`ID`) 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
