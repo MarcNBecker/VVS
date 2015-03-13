@@ -255,8 +255,6 @@ CREATE TABLE `vvs`.`Vorlesung` (
   INDEX `INDEX_Vorlesung_Kurs` (`Kurs` ASC),
   INDEX `INDEX_Vorlesung_FachInstanz` (`FachInstanz` ASC),
   INDEX `INDEX_Vorlesung_Dozent` (`Dozent` ASC),  
-  CONSTRAINT `UNIQUE_Vorlesung` 
-  	UNIQUE (`Kurs`, `FachInstanz`),
   CONSTRAINT `FK_Vorlesung_Kurs`
     FOREIGN KEY (`Kurs`)
     REFERENCES `vvs`.`Kurs` (`ID`)
