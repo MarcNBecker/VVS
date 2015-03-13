@@ -51,16 +51,16 @@
 							<div vertical layout class="vertical-input" flex>
 								<div horizontal start layout class="horizontal-input">
 									<polymer-date-picker id="datePicker" relatedTarget="{{$.datum}}" halign="left" style="z-index:99" selectedDate="{{selectedDate}}" opened="false"></polymer-date-picker>
-									<paper-input-decorator id="datum" label="Datum"  on-click="{{toggleDatePicker}}" error="Pflichtfeld: ung&uuml;ltiges Datum" autoValidate isInvalid="{{invalid.datum}}" floatingLabel flex>
+									<paper-input-decorator id="datum" label="Datum" on-click="{{toggleDatePicker}}" error="Pflichtfeld: ung&uuml;ltiges Datum" autoValidate isInvalid="{{invalid.datum}}" floatingLabel flex>
 										<input is="core-input" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" preventInvalidInput="true" value="{{vorlesungstermin.datum}}" required>
 									</paper-input-decorator>						
 								</div>
 								<div horizontal start layout class="horizontal-input">
 									<paper-input-decorator id="startUhrzeit" label="Uhrzeit von" error="Pflichtfeld: ung&uuml;ltige Uhrzeit" autoValidate isInvalid="{{invalid.startUhrzeit}}" floatingLabel flex>
-										<input is="core-input" type="text" pattern="[0-9]{2}:[0-9]{2}:[0-9]{2}" value={{vorlesungstermin.startUhrzeit}} maxlength="100" disabled?="{{disableToggle}}" required>
+										<input id="startInput" is="core-input" type="text" pattern="[0-9]{2}:[0-9]{2}:[0-9]{2}" value={{vorlesungstermin.startUhrzeit}} maxlength="100" disabled?="{{disableToggle}}" required>
 									</paper-input-decorator>		
 									<paper-input-decorator id="endUhrzeit" label="Uhrzeit bis" error="Pflichtfeld: ung&uuml;ltige Uhrzeit" autoValidate isInvalid="{{invalid.endUhrzeit}}" floatingLabel flex>
-										<input is="core-input" type="text" pattern="[0-9]{2}:[0-9]{2}:[0-9]{2}" value={{vorlesungstermin.endUhrzeit}} maxlength="100" disabled?="{{disableToggle}}" required>
+										<input id="endInput" is="core-input" type="text" pattern="[0-9]{2}:[0-9]{2}:[0-9]{2}" value={{vorlesungstermin.endUhrzeit}} maxlength="100" disabled?="{{disableToggle}}" required>
 									</paper-input-decorator>			
 								</div>
 								<div horizontal start layout class="horizontal-input">
@@ -99,9 +99,9 @@
 						<input placeholder="Dozentensuche" flex>
 					</core-field>
 					<paper-button on-click={{search}} style="height: 42px; margin-left: 0px;"><core-icon icon="search"></core-icon></paper-button>
+					<div horizontal layout class="horizontal-input ">	
+					<span class="small-headline">Ausgew&auml;hlter Dozent: {{dozent.name}}, {{dozent.vorname}}</span>
 				</div>
-				<div horizontal layout class="horizontal-input ">	
-					<span class="headline" style="margin-top: 20px;">Ausgew&auml;hlter Dozent: {{Dozent}}</span>
 				</div>
 				<br/><br/>
 				<div horizontal layout class="horizontal-input">
@@ -112,10 +112,10 @@
 								<paper-icon-button class="hide"></paper-icon-button>
 							</div>
 							<template repeat="{{item in vergangeneDozenten}}">
-								<paper-shadow z="1" class="inner-inner-shadow">
+								<paper-shadow z="1" class="{{item.id === dozent.id ? 'inner-inner-shadow highlight' : 'inner-inner-shadow'}}">
 									<div horizontal layout center>
-										<span horizontal layout center-center flex>{{item.name}}, {{item.vorname}}</span>
-										<paper-checkbox self-center disabled?="{{toggleDisabled}}"></paper-checkbox>
+										<span on-click="{{setDozent}}" horizontal layout center-center flex>{{item.name}}, {{item.vorname}}</span>
+										<!--<paper-checkbox self-center disabled?="{{toggleDisabled}}"></paper-checkbox>-->
 									</div>
 								</paper-shadow>
 							</template>
@@ -128,10 +128,10 @@
 								<paper-icon-button class="hide"></paper-icon-button>
 							</div>
 							<template repeat="{{item in dozenten}}">
-								<paper-shadow z="1" class="inner-inner-shadow">
+								<paper-shadow z="1" class="{{item.id === dozent.id ? 'inner-inner-shadow highlight' : 'inner-inner-shadow'}}">
 									<div horizontal layout center>
-										<span horizontal layout center-center flex>{{item.name}}, {{item.vorname}}</span>
-										<paper-checkbox self-center disabled?="{{toggleDisabled}}"></paper-checkbox>
+										<span on-click="{{setDozent}}" horizontal layout center-center flex>{{item.name}}, {{item.vorname}}</span>
+										<!--<paper-checkbox self-center disabled?="{{toggleDisabled}}"></paper-checkbox>-->
 									</div>
 								</paper-shadow>
 							</template>
@@ -157,6 +157,7 @@
 		vorlesungstermin: new model.templates.Termin(),
 		vorlesungstermine: [],
 		vorlesungsterminToDelete: null,
+		dozent: new model.templates.Dozent(),
 		vergangeneDozenten: [],
 		dozenten: [],
 		deletedVorlesungstermine: [],
@@ -182,6 +183,7 @@
 			self.vorlesungstermine = [];
 			self.vorlesungsterminToDelete = null;
 			self.vergangeneDozenten = [];
+			self.dozent = new model.templates.Dozent();
 			self.dozenten = [];
 			self.deletedVorlesungstermine = [];
 			self.raum = null;
@@ -194,19 +196,45 @@
 			self.invalid = {};
 			var showVorlesung = new model.templates.Vorlesung();
 			showVorlesung.id = 1;
-			//TODO showVorlesung.id = self.pageParameter.vorlesung.id;
-			//Load selected Vorlesung
-			//TODO Deeprun erforderlich???????????????????????????????????????????????????????????????????????????
+			//TODO showVorlesung.id = self.pageParameter.vorlesung.id;	
+			//Add event listener to time-inputs to start calculation of Pause
+			self.$.startInput.addEventListener('keyup', function(event) {
+    			if (!self.invalid.startUhrzeit && !self.invalid.endUhrzeit)
+    			{
+    				self.vorlesungstermin.pause = self.calculatePause(self.vorlesungstermin.startUhrzeit, self.vorlesungstermin.endUhrzeit);
+    			}
+  			});
+			self.$.endInput.addEventListener('keyup', function(event) {
+				if (!self.invalid.startUhrzeit && !self.invalid.endUhrzeit)
+    			{
+    				self.vorlesungstermin.pause = self.calculatePause(self.vorlesungstermin.startUhrzeit, self.vorlesungstermin.endUhrzeit);
+    			}
+			});			
+			//TODO Deep-run
+			//Load selected Vorlesung	
 			model.webService.getVorlesung(showVorlesung, function(api) {
 				if (!api.isError)
 				{
 					self.vorlesung = api.response;
+					//Load Dozent of Vorlesung
+					self.dozent.id = self.vorlesung.dozentID;
+					model.webService.getDozent(self.dozent, function(api) {
+						if (!api.isError)
+						{
+							self.dozent = api.response;
+						}
+						else
+						{
+							console.log(JSON.stringify(api));
+							self.toasts.error.show();
+						}
+					});
 					//Load available Vorlesungstermine
 					model.webService.getAllVorlesungTermine(self.vorlesung, function(api) {
 						if (!api.isError)
 						{
 							self.vorlesungstermine = api.response;
-							//TODO dauer berechnen
+							//Dauer of Vorlesungstermine berechnen
 							var i;
 							for (i = 0; i < self.vorlesungstermine.length; i++)
 							{
@@ -395,6 +423,7 @@
     		//Disable inputs
     		self.disableToggle = true;
     		//Update Vorlesung
+    		self.vorlesung.dozentID = self.dozent.id;
     		model.webService.updateVorlesung(self.vorlesung, function(api) {
     			if (!api.isError)
 				{
@@ -523,6 +552,11 @@
     	{
     		this.pageLoaded.planung = false;
     		window.history.back();
+    	},
+    	//Set selected Dozent for Vorlesung
+    	setDozent: function(e, detail, sender)
+    	{
+    		this.dozent = e.target.templateInstance.model.item;
     	},
     	//Calculate Progress for progress-bar
     	calculateProgress: function()
