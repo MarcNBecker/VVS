@@ -3,6 +3,7 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+		<link rel="icon" href="favicon.ico" type="image/x-icon" />
 		<title>Login</title>
 		<!-- Imports -->
 		<script src="app/polymer/webcomponentsjs/webcomponents.js"></script>
@@ -18,8 +19,8 @@
 			<core-a11y-keys keys="enter" on-keys-pressed="{{login}}"></core-a11y-keys>
 			<div horizontal layout center-center fit id="login">
 				<div flex one></div>
-				<div flex two one>
-					<paper-shadow z="3">
+				<div flex two>
+					<paper-shadow id="login-shadow" z="3">
 						<div vertical layout>
 							<paper-input-decorator label="Username">
 								<input is="core-input" type="text" value="{{name}}" maxlength="100" autofocus>

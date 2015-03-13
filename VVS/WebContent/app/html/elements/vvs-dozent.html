@@ -94,20 +94,19 @@
 					<template  repeat="{{item in dozentenFaecher}}">
 						<div horizontal layout center class="horizontal-list">
 							<paper-item>{{item.name}}</paper-item>
-							<paper-icon-button icon="clear" on-click={{deleteFach}} disabled?="{{disableToggle}}"></paper-icon-button>
+							<paper-icon-button icon="delete" on-click={{deleteFach}} disabled?="{{disableToggle}}"></paper-icon-button>
 						</div>
 					</template>
 					<div horizontal layout center class="horizontal-list">
-						<paper-dropdown-menu label="Kompetenzfach" disabled?="{{disableToggle}}">
-							<paper-dropdown id="fachDropdown" class="dropdown">
+						<paper-dropdown-menu-searchable id="fachDropdownMenu" label="Kompetenzfach" disabled?="{{disableToggle}}">
+							<paper-dropdown-searchable id="fachDropdown" class="dropdown" arrayName="faecher" searchProperties="name" hideProperty="hidden">
 								<core-menu id="fach" class="menu">
 									<template  repeat="{{item in faecher}}">
-										<paper-item>{{item.name}}</paper-item>
+										<paper-item hidden?="{{item.hidden}}" on-click="{{addFach}}">{{item.name}}</paper-item>
 									</template>
 								</core-menu>
-							</paper-dropdown>
-						</paper-dropdown-menu>
-						<paper-button on-click={{addFach}} raised disabled?="{{disableToggle}}">+</paper-button>
+							</paper-dropdown-searchable>
+						</paper-dropdown-menu-searchable>
 					</div>
 					<!-- Button Bar -->
 					<div horizontal layout center class="horizontal-input">
@@ -340,13 +339,23 @@
     			
     		},
     		//Adds a Fach to the upper list and notes to add it to the webservice when submitting
-			addFach: function()
+			addFach: function(e, detail, sender)
 			{
 				var self = this;
-				if (self.$.fach.selected !== null && self.faecher.length > 0)
+				var selectedFach = null;
+				var i;
+				for (i = 0; i < self.faecher.length; i++)
+				{
+					if (self.faecher[i].id === sender.templateInstance.model.item.id)
+					{
+						selectedFach = i;
+						break;
+					}
+				}
+				if (selectedFach !== null && self.faecher.length > 0)
 				{
 					//Remove fach from dropdown after adding it to the webservice list
-					self.dozentenFaecher.push(self.faecher[self.$.fach.selected]);
+					self.dozentenFaecher.push(self.faecher[selectedFach]);
 					self.faecher = self.allFaecher.slice();
 					var i;
 					for (i = 0; i < self.dozentenFaecher.length; i++)
@@ -364,6 +373,8 @@
 					//Reset Dropdown height/width
 			        self.$.fachDropdown.$.scroller.style.height = "";
 			       	self.$.fachDropdown.$.scroller.style.width = "";
+			       	//Close Dropdown
+			       	self.$.fachDropdownMenu.opened = false;
 				}
 			},
 			//Deletes a fach from the list and adds it to the dropdown
