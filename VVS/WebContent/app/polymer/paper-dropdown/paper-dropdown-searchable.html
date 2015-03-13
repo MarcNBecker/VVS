@@ -92,7 +92,7 @@ Style the background color of the dropdown with these selectors:
     	min-width: 250px;
     }
     
-    #search-input {
+    #search_input {
     	padding: 10px;
     }
     
@@ -109,7 +109,7 @@ Style the background color of the dropdown with these selectors:
 
   <div id="scroller" relative>
   	<div horizontal layout center id="search-box">
-		<paper-input-decorator id="search-input" label="Suche" flex>
+		<paper-input-decorator id="search_input" label="Suche" flex>
 			<input is="core-input" value="{{searchString}}" type="text">
 		</paper-input-decorator>
 		<paper-icon-button icon="search" on-click="{{search}}"></paper-icon-button>
@@ -181,12 +181,21 @@ Style the background color of the dropdown with these selectors:
     		}
     	}
     	//Reset Dropdown height/width
-        this.sizingTarget.style.height = "";
+       	this.sizingTarget.style.height = "";
        	this.sizingTarget.style.width = "";
     },
     
-    searchStringChanged: function() {
-    	this.search();
+    searchStringChanged: function(oldVal, newVal) {
+       	this.search();
+       	if(!newVal) {
+           	var self = this;
+           	this.job('update-searchable-dropdown', function() {
+           		//Reset Dropdown height/width
+    	       	self.sizingTarget.style.height = "";
+    	       	self.sizingTarget.style.width = "";
+    	       	self.$.search_input.inputAction();
+           	}, 25);	
+       	}
     }
 
   });

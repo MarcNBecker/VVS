@@ -111,6 +111,9 @@ should be a `core-dropdown` or other overlay element.
       if(e.target.parentElement.classList[0] === 'dropdown' || e.target.classList[0] === 'dropdown') {
     	  return;
       }
+      if(e.target.children[0] && e.target.children[0].searchString) {
+    	  e.target.children[0].searchString = "";
+      }
       this.opened = !this.opened;
     }
 
