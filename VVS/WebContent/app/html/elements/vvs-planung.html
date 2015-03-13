@@ -7,7 +7,7 @@
 				<!-- Name der Vorlesung und Progress-Balken -->
 				<div horizontal layout>
 					<span class="headline vertical-input">{{vorlesung.fachInstanz.fach.name}}</span>
-					<paper-progress class="headline vertical-input progress" value="{{progress / vorlesung.fachInstanz.stunden}}"></paper-progress>
+					<paper-progress class="headline vertical-input progress" value="{{progressProzent}}"></paper-progress>
 					<span class="headline vertical-input">{{progress}} / {{vorlesung.fachInstanz.stunden}}</span>
 				</div>
 				<!-- Hauptscreen -->
@@ -25,7 +25,7 @@
 								<paper-icon-button class="hide"></paper-icon-button>
 							</div>
 							<template repeat="{{item in vorlesungstermine}}">
-								<paper-shadow z="1" class="{{(inputModulInstanz.id === modulInstanz.id && (inputFachInstanz.id === fachInstanz.id || (selectedFach < 0 && (invalid.fname && invalid.fkurzbeschreibung && invalid.semester && invalid.stunden)))) ? 'inner-inner-shadow highlight' : 'inner-inner-shadow'}}">
+								<paper-shadow z="1" class="{{item.id === vorlesungstermin.id ? 'inner-inner-shadow highlight' : 'inner-inner-shadow'}}">
 									<div horizontal layout center>
 										<span horizontal layout center-center flex>{{item.datum}}<paper-icon-button icon="assignment" hidden?="{{!item.klausur}}"></paper-icon-button></span>
 										<span horizontal layout center-center flex>{{item.startUhrzeit}}</span>
@@ -51,23 +51,23 @@
 							<div vertical layout class="vertical-input" flex>
 								<div horizontal start layout class="horizontal-input">
 									<polymer-date-picker id="datePicker" relatedTarget="{{$.datum}}" halign="left" style="z-index:99" selectedDate="{{selectedDate}}" opened="false"></polymer-date-picker>
-									<paper-input-decorator id="datum" label="Datum"  on-click="{{toggleDatePicker}}" autoValidate isInvalid="{{invalid.datum}}" floatingLabel flex>
+									<paper-input-decorator id="datum" label="Datum"  on-click="{{toggleDatePicker}}" error="Pflichtfeld: ung&uuml;ltiges Datum" autoValidate isInvalid="{{invalid.datum}}" floatingLabel flex>
 										<input is="core-input" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" preventInvalidInput="true" value="{{vorlesungstermin.datum}}">
 									</paper-input-decorator>						
 								</div>
 								<div horizontal start layout class="horizontal-input">
-									<paper-input-decorator id="startUhrzeit" label="Uhrzeit von" error="Keine g&uuml;ltige Uhrzeit" autoValidate isInvalid="{{invalid.startUhrzeit}}" floatingLabel flex>
+									<paper-input-decorator id="startUhrzeit" label="Uhrzeit von" error="Pflichtfeld: ung&uuml;ltige Uhrzeit" autoValidate isInvalid="{{invalid.startUhrzeit}}" floatingLabel flex>
 										<input is="core-input" type="text" pattern="[0-9]{2}:[0-9]{2}:[0-9]{2}" value={{vorlesungstermin.startUhrzeit}} maxlength="100" disabled?="{{disableToggle}}">
 									</paper-input-decorator>		
-									<paper-input-decorator id="endUhrzeit" label="Uhrzeit bis" error="Keine g&uuml;ltige Uhrzeit" autoValidate isInvalid="{{invalid.endUhrzeit}}" floatingLabel flex>
+									<paper-input-decorator id="endUhrzeit" label="Uhrzeit bis" error="Pflichtfeld: ung&uuml;ltige Uhrzeit" autoValidate isInvalid="{{invalid.endUhrzeit}}" floatingLabel flex>
 										<input is="core-input" type="text" pattern="[0-9]{2}:[0-9]{2}:[0-9]{2}" value={{vorlesungstermin.endUhrzeit}} maxlength="100" disabled?="{{disableToggle}}">
 									</paper-input-decorator>			
 								</div>
 								<div horizontal start layout class="horizontal-input">
-									<paper-input-decorator id="pause" label="Pause" autoValidate isInvalid="{{invalid.pause}}" floatingLabel flex>
+									<paper-input-decorator id="pause" label="Pause" error="Ung&uuml;tige Pause" autoValidate isInvalid="{{invalid.pause}}" floatingLabel flex>
 										<input is="core-input" type="text" pattern="[0-9]+" value={{vorlesungstermin.pause}} maxlength="100" disabled?="{{disableToggle}}">
 									</paper-input-decorator>	
-									<paper-input-decorator id="raum" label="Raum" autoValidate isInvalid="{{invalid.raum}}" floatingLabel flex>
+									<paper-input-decorator id="raum" label="Raum" error="Ung&uuml;ltiger Raum" autoValidate isInvalid="{{invalid.raum}}" floatingLabel flex>
 										<input is="core-input" type="text" pattern="[0-9]{3}[A-Z]" value={{vorlesungstermin.raum}} maxlength="100" disabled?="{{disableToggle}}">
 									</paper-input-decorator>
 								</div>
@@ -138,13 +138,6 @@
 						</paper-shadow>
 					</div>
 				</div>
-				<!-- Buttons werden vermutlich nicht benötigt 
-				<div horizontal layout center-center class="horizontal-button-bar horizontal-input horizontal-verticalizable">
-					<paper-button on-click={{ok}} raised disabled?="{{disableToggle}}">OK</paper-button>
-					<paper-button on-click={{cancel}} raised disabled?="{{disableToggle}}">Abbrechen</paper-button>	
-					<paper-spinner active?={{disableToggle}} self-center></paper-spinner>
-				</div>
-				-->
 			</div>
 		</paper-shadow>
 		<paper-action-dialog id="delete_vorlesungstermin_dialog" heading="Die Vorlesung am {{vorlesungsterminToDelete.datum}} wirklich l&ouml;schen?">
@@ -169,6 +162,7 @@
 		deletedVorlesungstermine: [],
 		raum: null,
 		progress: 0,
+		progressProzent: 0,
 		nextVorlesungsterminID: -1,
 		selectedDate: '2000-01-01',
 		datePickerOpened: false,
@@ -192,6 +186,7 @@
 			self.deletedVorlesungstermine = [];
 			self.raum = null;
 			self.progress = 0;
+			self.progressProzent = 0;
 			self.nextVorlesungsterminID = -1;
 			self.selectedDate = self.today();
 			self.datePickerOpened = false;
@@ -211,6 +206,12 @@
 						if (!api.isError)
 						{
 							self.vorlesungstermine = api.response;
+							//TODO dauer berechnen
+							var i;
+							for (i = 0; i < self.vorlesungstermine.length; i++)
+							{
+								self.vorlesungstermine[i].dauer = self.calculateDauer(self.vorlesungstermine[i].startUhrzeit, self.vorlesungstermine[i].endUhrzeit, self.vorlesungstermine[i].pause);
+							}
 							self.calculateProgress();
 						}
 						else
@@ -219,8 +220,29 @@
 							self.toasts.error.show();
 						}
 					});
-					//TODO Load default Kursraum
-					
+					//Load default Kursraum
+					var kurs = new model.templates.Kurs();
+					kurs.id = self.vorlesung.kursID;
+					model.webService.getAllKursBlocklagen(kurs, function(api) {
+						if (!api.isError)
+						{
+							var i;
+							for (i = 0; i < api.response.length; i++)
+							{
+								if (api.response[i].semester === self.vorlesung.semester)
+								{
+									self.raum = api.response[i].raum;
+									self.vorlesungstermin.raum = self.raum;
+									break;
+								}
+							}
+						}
+						else
+						{
+							console.log(JSON.stringify(api));
+							self.toasts.error.show();
+						}
+					});
 					//Load vergangene Dozenten
 					model.webService.getVorlesungDozenten(self.vorlesung, function(api) {
 						if (!api.isError)
@@ -250,8 +272,6 @@
     								self.invalid.datum = true;
     								self.invalid.startUhrzeit = true;
     								self.invalid.endUhrzeit = true;
-    								self.invalid.pause = true;
-    								self.invalid.raum = true;
 								}
 								else
 								{
@@ -274,14 +294,14 @@
 					self.toasts.error.show();
 				}
 			});
-			
 		},
 		//Add Vorlesungstermin
 		add: function() {
 			var self = this;
 			if(!this.checkInputs()) {
 				return;
-			}	
+			}
+			self.vorlesungstermin.dauer = self.calculateDauer(self.vorlesungstermin.startUhrzeit, self.vorlesungstermin.endUhrzeit, self.vorlesungstermin.pause);
 			//The Vorlesungstermin is completely new, we need to set an internal ID and add it to the Vorlesung
 			if(self.vorlesungstermin.id <= 0)
 			{
@@ -362,20 +382,142 @@
 				}
 				else
 				{
+					//Enable inputs
+					self.disableToggle = false;
 					self.toasts.error.show();	
 				}	
 			});
 		},
 		//Update Vorlesung with all Vorlesungstermine
 		update: function() {
-			//Disable inputs
-			this.disableToggle = true;
-			//TODO
+			var self = this;
 			//delete Vorlesungstermine aus deletedVorlesungstermine
-			//update Vorlesungstermine aus vorlesungstermine
-			//update dozent
-			//Enable inputs
-			this.disableToggle = false;
+    		var self = this;
+    		//Disable inputs
+    		self.disableToggle = true;
+    		//Update Vorlesung
+    		model.webService.updateVorlesung(self.vorlesung, function(api) {
+    			if (!api.isError)
+				{
+					var i;
+					var deepRuns = 0;
+					//Delete all deleted Vorlesungstermine
+					for (i = 0; i < self.deletedVorlesungstermine.length; i++)
+					{
+						model.webService.deleteVorlesungTermin(self.vorlesung, self.deletedVorlesungstermine[i], function(api) {
+							if(!api.isError) {
+								deepRuns++;
+								//After last deletion move to adding the added Vorlesungstermine
+								if(deepRuns === self.deletedVorlesungstermine.length) {
+									self.deletedFaecher = [];
+									var veryDeepRuns = 0;
+									//Add Vorlesungstermine
+									for (i = 0; i < self.vorlesungstermine.length; i++)
+									{
+										//Create new Vorlesungstermine
+										if (self.vorlesungstermine[i].id <= 0)
+										{
+											model.webService.createVorlesungTermin(self.vorlesung, self.vorlesungstermine[i], function(api) {
+												if(!api.isError)
+												{
+													veryDeepRuns++;
+												}
+												else
+												{
+													console.log(JSON.stringify(api));
+													self.toasts.error.show();
+												}
+											});
+										}
+										//Update existing Vorlesungstermine
+										else
+										{
+											model.webService.updateVorlesungTermin(self.vorlesung, self.vorlesungstermine[i], function(api) {
+												if(!api.isError)
+												{
+													veryDeepRuns++;													
+												}
+												else
+												{
+													console.log(JSON.stringify(api));
+													self.toasts.error.show();
+												}
+											});
+										}
+										//Enable inputs after last webservice call
+										if (veryDeepRuns === self.dozentenFaecher.length) {
+											self.disableToggle = false;
+											self.toasts.success.show();
+										}
+									}
+									//Enable inputs after last webservice call
+									if(veryDeepRuns === 0 && self.dozentenFaecher.length === 0) {
+										self.disableToggle = false;
+										self.toasts.success.show();
+									}
+								}
+							} else {
+								console.log(JSON.stringify(api));
+								self.toasts.error.show();
+							}
+						});
+					}
+					//Also add new Vorlesungstermine when no Vorlesungstermin was deleted
+					if(deepRuns === 0 && self.deletedVorlesungstermine.length === 0) {
+						for (i = 0; i < self.dozentenFaecher.length; i++)
+						{
+							//Create new Vorlesungstermine
+							if (self.vorlesungstermine[i].id <= 0)
+							{
+								model.webService.createVorlesungTermin(self.vorlesung, self.vorlesungstermine[i], function(api) {
+									if(!api.isError)
+									{
+										deepRuns++;
+									}
+									else
+									{
+										console.log(JSON.stringify(api));
+										self.toasts.error.show();
+									}
+								});
+							}
+							//Update existing Vorlesungstermine
+							else
+							{
+								model.webService.updateVorlesungTermin(self.vorlesung, self.vorlesungstermine[i], function(api) {
+									if(!api.isError)
+									{
+										deepRuns++;												
+									}
+									else
+									{
+										console.log(JSON.stringify(api));
+										self.toasts.error.show();
+									}
+								});
+							}
+							//Enable inputs after last webservice call
+							if (deepRuns === self.dozentenFaecher.length)
+							{
+								self.disableToggle = false;
+								self.toasts.success.show();
+							}
+						}
+						//Enable inputs after last webservice call
+						if(deepRuns === 0 && self.dozentenFaecher.length === 0)
+						{
+							self.disableToggle = false;
+							self.toasts.success.show();
+						}
+					}
+
+				}
+				else
+				{
+					console.log(JSON.stringify(api));
+					self.toasts.error.show();
+				}
+    		});
 		},
 		//Navigate backwards and force a reload
     	cancel: function()
@@ -394,16 +536,27 @@
     			dauer = this.calculateDauer(this.vorlesungstermine[i].startUhrzeit, this.vorlesungstermine[i].endUhrzeit, this.vorlesungstermine[i].pause);
     			stunden = stunden + dauer;
     		}
-    		self.progress = stunden;
+    		this.progress = stunden;
+    		this.progressProzent = this.progress / this.vorlesung.fachInstanz.stunden * 100;
     	},
     	//Calculate dauer
     	calculateDauer: function(start, ende, pause)
     	{
     		var dauer = 0;
-    		//TODO calculation
-    			// ende - start ausrechnen und in minuten umwandeln
-    			// vom Ergebnis pause abziehen
-    			// Ergebnis durch 45 teilen --> dauer
+    		var startStunden = 0;
+    		var startMinuten = 0;
+    		var endeStunden = 0;
+    		var endeMinuten = 0;
+    		var stunden;
+    		var minuten;
+    		startStunden = parseInt(start.substr(0,2));
+    		startMinuten = parseInt(start.substr(3,2));
+    		endeStunden = parseInt(ende.substr(0,2));
+    		endeMinuten = parseInt(ende.substr(3,2));
+    		stunden = endeStunden - startStunden;
+    		minuten = endeMinuten - startMinuten;
+    		dauer = ((stunden * 60) + minuten - pause) / 45;
+    		dauer = +(Math.round(dauer + "e+1")  + "e-1");
     		return dauer;
     	},
     	//Calculate pause
