@@ -1,10 +1,9 @@
-<polymer-element  name="vvs-vorlesungsauswahl">
+<polymer-element name="vvs-vorlesungsauswahl">
 	<template>
 		<link rel="stylesheet" href="../../css/elements.css" shim-shadowdom>
-		<paper-shadow z="3" class="shadow">
+		<paper-dialog id="vorlesungsauswahl_overlay" style="width: 50%; height:70%" backdrop="true" layered="true" heading="Vorlesungsauswahl f&uuml;r das {{kurs.kursname}} {{semester}}. Semester">
 			<div vertical layout>
 				<div vertical layout class="vertical-input">
-					<span class="headline">Vorlesungsauswahl</span>
 					<div vertical layout>
 						<div horizontal start layout class="horizontal-input vertical-input">
 							<paper-input-decorator id="vorlesungSuchenInputDecorater" label="Vorlesung suchen" floatingLabel flex>
@@ -12,34 +11,32 @@
 							</paper-input-decorator>
 						</div>
 					</div>
-					<div vertical layout class="horizontal-input vertical-input">
-						<span class="headline">Vorlesungen des aktuellen Studienjahres</span>
+					<div vertical layout class="vertical-input">
+						<span class="headline">Vorlesungen des aktuellen Semesters</span>
 						<paper-shadow z="2" class="inner-shadow">
 							<div horizontal layout>
 								<span horizontal layout center-center class="small-headline" flex>Name</span>
-								<paper-icon-button class="hide"></paper-icon-button>
 							</div>
 							<template repeat="{{item in aktuelleFaecher}}"> 
 								<paper-shadow z="1" class="inner-inner-shadow">
 									<div horizontal layout center>
-										<paper-checkbox on-click="{{checkboxChecked1}}" checked="{{item.checked}}" style="margin: 2px 5px;" ></paper-checkbox>
+										<paper-checkbox id="aktuell" on-click="{{checkboxChecked}}" style="margin: 2px 5px;" ></paper-checkbox>
 										<span horizontal layout center-center flex>{{item.fach.name}}</span>
 									</div>
 								</paper-shadow>
 							</template>
 						</paper-shadow>
 					</div>
-					<div vertical layout class="horizontal-input vertical-input">
+					<div vertical layout class="vertical-input">
 						<span class="headline">Verbleibende Vorlesungen</span>
 						<paper-shadow z="2" class="inner-shadow">
 							<div horizontal layout>
 								<span horizontal layout center-center class="small-headline" flex>Name</span>
-								<paper-icon-button class="hide"></paper-icon-button>
 							</div>
 							<template repeat="{{item in verbleibendeFaecher}}"> 
 								<paper-shadow z="1" class="inner-inner-shadow">
 									<div horizontal layout center>
-										<paper-checkbox on-click="{{checkboxChecked2}}" checked="{{item.checked}}" style="margin: 2px 5px;" ></paper-checkbox>
+										<paper-checkbox id="verbleibend" on-click="{{checkboxChecked}}" style="margin: 2px 5px;" ></paper-checkbox>
 										<span horizontal layout center-center flex>{{item.fach.name}}</span>
 									</div>
 								</paper-shadow>
@@ -47,7 +44,7 @@
 						</paper-shadow>
 					</div>
 					<div vertical layout>
-						<div horizontal start layout class="horizontal-input vertical-input">
+						<div horizontal start layout class="horizontal-input">
 							<paper-button on-click="{{save}}" disabled?="{{disableToggle}}" self-center raised>speichern</paper-button>
 							<paper-button on-click="{{cancel}}" disabled?="{{disableToggle}}" self-center raised>abbrechen</paper-button>
 							<paper-spinner active?={{disableToggle}} self-center></paper-spinner>
@@ -55,81 +52,111 @@
 					</div>
 				</div>
 			</div>
-		</paper-shadow>
+		</paper-dialog>
 	</template>
 	<script>
 		Polymer("vvs-vorlesungsauswahl",{
 			aktuelleFaecher:[],
 			verbleibendeFaecher:[],
-			selectedAktuelleFaecher:[],
-			selectedVerbleibendeFaecher:[],
+			selectedFaecher:[],
 			searchTerm:"",
-			checkedFachNew: -1,
-			checkedVerbleibendeFachOld: -1,
-			checkedAktuelleFachOld: -1,
+			checkedFach: new model.templates.FachInstanz(),
 			boolSuchenFachIsEmpty: true,
-			
+			disableToggle: true,
+			//Publish those attributes to home
+			publish: {
+				kurs: {},
+				semester: 0
+			},
+			//Initialize the screen
 			ready: function (){
-				var that = this;
-				this.init();
+				var self = this;
+				self.aktuelleFaecher = [];
+				self.verbleibendeFaecher = [];
+				self.selectedFaecher = [];
+				self.searchTerm = "";
+				self.checkedFach = new model.templates.FachInstanz();
+				self.boolSuchenFachIsEmpty = true;
+				self.disableToggle = true;
+				//TODO später löschen
+				self.kurs = new model.templates.Kurs();
+				self.kurs.id = 1;
+				self.semester = 1;
+				//Load offene Vorlesungen
+				model.webService.getAllVorlesungenOffen(self.kurs, function(api) {
+					if (!api.isError)
+					{
+						var i;
+						for (i = 0; i < api.response.length; i++)
+						{
+							//All offene Vorlesungen of selected Semester
+							if (api.response[i].semester === self.semester)
+							{
+								self.aktuelleFaecher.push(api.response[i]);
+							}
+							//All offene Vorlesungen of other semesters
+							else
+							{
+								self.verbleibendeFaecher.push(api.response[i]);
+							}
+						}
+					}
+					else
+					{
+						console.log(JSON.stringify(api));
+					}
+				});
+				//Enable buttons
+				self.disableToggle = false;
+				//TODO später löschen
+				self.toggle();
 			},
-	
-			init: function init(){
-			//Testdaten
-				this.selectedAktuelleFaecher = [
-				   {id: "1", name: "Datenbanken", kurzbeschreibung: "Beschreib Db"},
-				   {id: "2", name: "ITS", kurzbeschreibung: "Beschreib ITS"},
-				   {id: "2", name: "B", kurzbeschreibung: "Beschreib B"},
-		        ];
-		
-				this.selectedVerbleibendeFaecher = [
-				    {id: "1", name: "C", kurzbeschreibung: "Beschreib C"},
-				    {id: "2", name: "D", kurzbeschreibung: "Beschreib D"},
-				    {id: "2", name: "E", kurzbeschreibung: "Beschreib E"},
-				];
-				this.initLists();
+			//Show paper-action-dialog
+			toggle: function() {
+				this.$.vorlesungsauswahl_overlay.toggle();
 			},
-		
-			initLists: function(){
-				for (i = 0; i<this.selectedAktuelleFaecher.length; i++){
-					this.aktuelleFaecher.splice(0, 0, {
-						fach: this.selectedAktuelleFaecher[i],
-						checked: false
-					});
-				}
-		
-				for (i = 0; i<this.selectedVerbleibendeFaecher.length; i++){
-					this.verbleibendeFaecher.splice(0, 0, {
-						fach: this.selectedVerbleibendeFaecher[i],
-						checked: false
-					});
-				}
-			},
-		
-			checkboxChecked1: function(e, detail, sender) {
-				this.checkedFachNew = this.aktuelleFaecher.indexOf(e.target.templateInstance.model.item);
-				for (i = 0; i<this.verbleibendeFaecher.length; i++){
-					if (this.verbleibendeFaecher[i].checked == true){
-						this.verbleibendeFaecher[i].checked = false;
+			//Vorlesung selected
+			checkboxChecked: function(e, detail, sender) {
+				//Vorlesung of List aktuelle Vorlesungen selected or deselected
+				if (sender.getAttribute("id") === "aktuell")
+				{
+					//Selected
+					if (!sender.checked)
+					{
+						this.selectedFaecher.push(this.aktuelleFaecher[this.aktuelleFaecher.indexOf(e.target.templateInstance.model.item)]);
+					}
+					//Deselected
+					else
+					{
+						var i = 0;
+						for (i = 0; i < this.selectedFaecher.length; i++)
+						{
+							if (this.selectedFaecher[i].id === this.aktuelleFaecher[this.aktuelleFaecher.indexOf(e.target.templateInstance.model.item)].id)
+							{
+								this.selectedFaecher.splice(1, i);
+							}
+						}
 					}
 				}
-				for(i = 0; i<this.aktuelleFaecher.length; i++){
-					if(this.aktuelleFaecher[i].checked == true && i != this.checkedFachNew){
-						this.aktuelleFaecher[i].checked = false;
+				//Vorlesung of List verbleibende Vorlesungen selected or deselected
+				else if (sender.getAttribute("id") === "verbleibend")
+				{
+					//Selected
+					if (!sender.checked)
+					{
+						this.selectedFaecher.push(this.verbleibendeFaecher[this.verbleibendeFaecher.indexOf(e.target.templateInstance.model.item)]);
 					}
-				}
-			},
-	
-			checkboxChecked2: function(e, detail, sender) {
-				this.checkedFachNew = this.verbleibendeFaecher.indexOf(e.target.templateInstance.model.item);
-				for (i = 0; i<this.verbleibendeFaecher.length; i++){
-					if (this.verbleibendeFaecher[i].checked == true && i != this.checkedFachNew){
-						this.verbleibendeFaecher[i].checked = false;
-					}
-				}
-				for(i = 0; i<this.aktuelleFaecher.length; i++){
-					if(this.aktuelleFaecher[i].checked == true){
-						this.aktuelleFaecher[i].checked = false;
+					//Deselected
+					else
+					{
+						var i = 0;
+						for (i = 0; i < this.selectedFaecher.length; i++)
+						{
+							if (this.selectedFaecher[i].id === this.verbleibendeFaecher[this.verbleibendeFaecher.indexOf(e.target.templateInstance.model.item)].id)
+							{
+								this.selectedFaecher.splice(i, 1);
+							}
+						}
 					}
 				}
 			},
