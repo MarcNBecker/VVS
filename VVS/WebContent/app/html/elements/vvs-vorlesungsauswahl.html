@@ -1,0 +1,180 @@
+<polymer-element  name="vvs-vorlesungsauswahl">
+	<template>
+		<link rel="stylesheet" href="../../css/elements.css" shim-shadowdom>
+		<paper-shadow z="3" class="shadow">
+			<div vertical layout>
+				<div vertical layout class="vertical-input">
+					<span class="headline">Vorlesungsauswahl</span>
+					<div vertical layout>
+						<div horizontal start layout class="horizontal-input vertical-input">
+							<paper-input-decorator id="vorlesungSuchenInputDecorater" label="Vorlesung suchen" floatingLabel flex>
+								<input is="core-input"  type="text" value={{searchTerm}} maxlength="100" on-keyup="{{suchenEingabe}}">
+							</paper-input-decorator>
+						</div>
+					</div>
+					<div vertical layout class="horizontal-input vertical-input">
+						<span class="headline">Vorlesungen des aktuellen Studienjahres</span>
+						<paper-shadow z="2" class="inner-shadow">
+							<div horizontal layout>
+								<span horizontal layout center-center class="small-headline" flex>Name</span>
+								<paper-icon-button class="hide"></paper-icon-button>
+							</div>
+							<template repeat="{{item in aktuelleFaecher}}"> 
+								<paper-shadow z="1" class="inner-inner-shadow">
+									<div horizontal layout center>
+										<paper-checkbox on-click="{{checkboxChecked1}}" checked="{{item.checked}}" style="margin: 2px 5px;" ></paper-checkbox>
+										<span horizontal layout center-center flex>{{item.fach.name}}</span>
+									</div>
+								</paper-shadow>
+							</template>
+						</paper-shadow>
+					</div>
+					<div vertical layout class="horizontal-input vertical-input">
+						<span class="headline">Verbleibende Vorlesungen</span>
+						<paper-shadow z="2" class="inner-shadow">
+							<div horizontal layout>
+								<span horizontal layout center-center class="small-headline" flex>Name</span>
+								<paper-icon-button class="hide"></paper-icon-button>
+							</div>
+							<template repeat="{{item in verbleibendeFaecher}}"> 
+								<paper-shadow z="1" class="inner-inner-shadow">
+									<div horizontal layout center>
+										<paper-checkbox on-click="{{checkboxChecked2}}" checked="{{item.checked}}" style="margin: 2px 5px;" ></paper-checkbox>
+										<span horizontal layout center-center flex>{{item.fach.name}}</span>
+									</div>
+								</paper-shadow>
+							</template>
+						</paper-shadow>
+					</div>
+					<div vertical layout>
+						<div horizontal start layout class="horizontal-input vertical-input">
+							<paper-button on-click="{{save}}" disabled?="{{disableToggle}}" self-center raised>speichern</paper-button>
+							<paper-button on-click="{{cancel}}" disabled?="{{disableToggle}}" self-center raised>abbrechen</paper-button>
+							<paper-spinner active?={{disableToggle}} self-center></paper-spinner>
+						</div>
+					</div>
+				</div>
+			</div>
+		</paper-shadow>
+	</template>
+	<script>
+		Polymer("vvs-vorlesungsauswahl",{
+			aktuelleFaecher:[],
+			verbleibendeFaecher:[],
+			selectedAktuelleFaecher:[],
+			selectedVerbleibendeFaecher:[],
+			searchTerm:"",
+			checkedFachNew: -1,
+			checkedVerbleibendeFachOld: -1,
+			checkedAktuelleFachOld: -1,
+			boolSuchenFachIsEmpty: true,
+			
+			ready: function (){
+				var that = this;
+				this.init();
+			},
+	
+			init: function init(){
+			//Testdaten
+				this.selectedAktuelleFaecher = [
+				   {id: "1", name: "Datenbanken", kurzbeschreibung: "Beschreib Db"},
+				   {id: "2", name: "ITS", kurzbeschreibung: "Beschreib ITS"},
+				   {id: "2", name: "B", kurzbeschreibung: "Beschreib B"},
+		        ];
+		
+				this.selectedVerbleibendeFaecher = [
+				    {id: "1", name: "C", kurzbeschreibung: "Beschreib C"},
+				    {id: "2", name: "D", kurzbeschreibung: "Beschreib D"},
+				    {id: "2", name: "E", kurzbeschreibung: "Beschreib E"},
+				];
+				this.initLists();
+			},
+		
+			initLists: function(){
+				for (i = 0; i<this.selectedAktuelleFaecher.length; i++){
+					this.aktuelleFaecher.splice(0, 0, {
+						fach: this.selectedAktuelleFaecher[i],
+						checked: false
+					});
+				}
+		
+				for (i = 0; i<this.selectedVerbleibendeFaecher.length; i++){
+					this.verbleibendeFaecher.splice(0, 0, {
+						fach: this.selectedVerbleibendeFaecher[i],
+						checked: false
+					});
+				}
+			},
+		
+			checkboxChecked1: function(e, detail, sender) {
+				this.checkedFachNew = this.aktuelleFaecher.indexOf(e.target.templateInstance.model.item);
+				for (i = 0; i<this.verbleibendeFaecher.length; i++){
+					if (this.verbleibendeFaecher[i].checked == true){
+						this.verbleibendeFaecher[i].checked = false;
+					}
+				}
+				for(i = 0; i<this.aktuelleFaecher.length; i++){
+					if(this.aktuelleFaecher[i].checked == true && i != this.checkedFachNew){
+						this.aktuelleFaecher[i].checked = false;
+					}
+				}
+			},
+	
+			checkboxChecked2: function(e, detail, sender) {
+				this.checkedFachNew = this.verbleibendeFaecher.indexOf(e.target.templateInstance.model.item);
+				for (i = 0; i<this.verbleibendeFaecher.length; i++){
+					if (this.verbleibendeFaecher[i].checked == true && i != this.checkedFachNew){
+						this.verbleibendeFaecher[i].checked = false;
+					}
+				}
+				for(i = 0; i<this.aktuelleFaecher.length; i++){
+					if(this.aktuelleFaecher[i].checked == true){
+						this.aktuelleFaecher[i].checked = false;
+					}
+				}
+			},
+	
+			emptyLists: function(){
+				if (this.aktuelleFaecher.length > 0){
+					this.aktuelleFaecher.splice(0,this.aktuelleFaecher.length);		
+				}
+				if(this.verbleibendeFaecher.length > 0){
+					this.verbleibendeFaecher.splice(0,this.verbleibendeFaecher.length);
+				}
+			},
+	
+			suchenEingabe: function(){
+				if(this.searchTerm ==""){
+					if(this.boolSuchenFachIsEmpty != true){
+						this.emptyLists();
+						this.initLists();
+						this.boolSuchenFachIsEmpty = true;
+					}
+				}else{
+					this.emptyLists();
+					for (i= 0; i<this.selectedAktuelleFaecher.length; i++){
+						var searchTermUC = this.searchTerm.toUpperCase();
+						var fachnameUC = this.selectedAktuelleFaecher[i].name.toUpperCase();
+						if(fachnameUC.match(searchTermUC)){
+							this.aktuelleFaecher.splice(0, 0, {
+								fach: this.selectedAktuelleFaecher[i],
+								checked: false
+							});
+						}
+					}
+					for (i= 0; i<this.selectedVerbleibendeFaecher.length; i++){
+						var searchTermUC = this.searchTerm.toUpperCase();
+						var fachnameUC = this.selectedVerbleibendeFaecher[i].name.toUpperCase();
+						if(fachnameUC.match(searchTermUC)){
+							this.verbleibendeFaecher.splice(0, 0, {
+								fach: this.selectedVerbleibendeFaecher[i],
+								checked: false
+							});
+						}
+					}
+					this.boolSuchenFachIsEmpty = false;
+				}
+			},
+		});
+	</script>
+</polymer-element>
