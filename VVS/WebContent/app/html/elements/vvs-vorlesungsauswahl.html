@@ -1,0 +1,253 @@
+<polymer-element name="vvs-vorlesungsauswahl">
+	<template>
+		<link rel="stylesheet" type="text/css" href="../../css/elements.css" shim-shadowdom>
+		<paper-action-dialog id="vorlesungsauswahl_overlay" style="width: 50%; height:70%" backdrop="true" layered="true" heading="Vorlesungsauswahl f&uuml;r das {{kurs.kursname}} {{semester}}. Semester">
+			<div vertical layout>
+				<div vertical layout class="overlay-vertical-input">
+					<div vertical layout>
+						<div horizontal start layout class="overlay-horizontal-input">
+							<paper-input-decorator id="vorlesungSuchenInputDecorater" label="Vorlesung suchen" floatingLabel flex>
+								<input is="core-input" type="text" value={{searchTerm}} maxlength="100" on-keyup="{{search}}">
+							</paper-input-decorator>
+						</div>
+					</div>
+					<div vertical layout class="overlay-vertical-input">
+						<span class="overlay-headline">Vorlesungen des aktuellen Semesters</span>
+						<paper-shadow z="2" class="overlay-inner-shadow">
+							<div horizontal layout>
+								<span horizontal layout center-center class="overlay-small-headline" flex>Name</span>
+							</div>
+							<template repeat="{{item in aktuelleVorlesungen}}"> 
+								<paper-shadow z="1" class="overlay-inner-inner-shadow">
+									<div horizontal layout center>
+										<paper-checkbox id="aktuell" on-click="{{checkboxChecked}}" checked="{{aktuellChecked}}"></paper-checkbox>
+										<span horizontal layout center-center flex>{{item.fach.name}}</span>
+									</div>
+								</paper-shadow>
+							</template>
+						</paper-shadow>
+					</div>
+					<div vertical layout class="overlay-vertical-input">
+						<span class="overlay-headline">Verbleibende Vorlesungen</span>
+						<paper-shadow z="2" class="overlay-inner-shadow">
+							<div horizontal layout>
+								<span horizontal layout center-center class="overlay-small-headline" flex>Name</span>
+							</div>
+							<template repeat="{{item in verbleibendeVorlesungen}}"> 
+								<paper-shadow z="1" class="overlay-inner-inner-shadow">
+									<div horizontal layout center>
+										<paper-checkbox id="verbleibend" on-click="{{checkboxChecked}}"></paper-checkbox>
+										<span horizontal layout center-center flex>{{item.fach.name}}</span>
+									</div>
+								</paper-shadow>
+							</template>
+						</paper-shadow>
+					</div>
+					<br />					
+				</div>
+			</div>
+			<paper-button affirmative>Abbrechen</paper-button>
+			<paper-button on-click="{{create}}" affirmative autofocus>&Uuml;bernehmen</paper-button>
+		</paper-dialog>
+	</template>
+	<script>
+		Polymer("vvs-vorlesungsauswahl",{
+			alleVorlesungen: [],
+			aktuelleVorlesungen:[],
+			verbleibendeVorlesungen:[],
+			selectedVorlesungen:[],
+			aktuellChecked: false,
+			searchTerm:"",
+			checkedVorlesung: new model.templates.FachInstanz(),
+			boolSuchenVorlesungIsEmpty: true,
+			//Publish those attributes to home
+			publish: {
+				kurs: {},
+				semester: 0,
+				toasts: {}
+			},
+			//Initialize the screen
+			ready: function (){
+				var self = this;
+				self.alleVorlesungen = [];
+				self.aktuelleVorlesungen = [];
+				self.verbleibendeVorlesungen = [];
+				self.selectedVorlesungen = [];
+				self.aktuellChecked = false;
+				self.searchTerm = "";
+				self.checkedVorlesung = new model.templates.FachInstanz();
+				self.boolSuchenVorlesungIsEmpty = true;
+				//TODO später löschen, müssen von aufrufendem Element übergeben werden
+				self.kurs = new model.templates.Kurs();
+				self.kurs.id = 1;
+				self.semester = 1;
+				//Load offene Vorlesungen
+				model.webService.getAllVorlesungenOffen(self.kurs, function(api) {
+					if (!api.isError)
+					{
+						self.alleVorlesungen = api.response;
+						var i;
+						for (i = 0; i < api.response.length; i++)
+						{
+							//All offene Vorlesungen of selected Semester
+							if (api.response[i].semester === self.semester)
+							{
+								self.aktuelleVorlesungen.push(api.response[i]);
+							}
+							//All offene Vorlesungen of other semesters
+							else
+							{
+								self.verbleibendeVorlesungen.push(api.response[i]);
+							}
+						}
+						//Set checkbox of aktuelleVorlesungen to checked
+						self.aktuellChecked = true;
+						//TODO später löschen
+						self.toggle();
+					}
+					else
+					{
+						console.log(JSON.stringify(api));
+						self.toasts.error.show();
+					}
+				});
+			},
+			//Create Vorlesungen for selected Vorlesungen
+			create: function() {
+				var self = this;
+				var error = false;
+				var i;
+				for (i = 0; i < self.selectedVorlesungen.length; i++)
+				{
+					var vorlesung = new model.templates.Vorlesung();
+					vorlesung.kursID = self.kurs.id;
+					vorlesung.fachInstanz = self.selectedVorlesungen[i];
+					//vorlesung.dozentID = 1;
+					vorlesung.semester = self.semester;
+					console.log(vorlesung);
+					model.webService.createVorlesung(vorlesung, function(api) {
+						if (api.isError)
+						{
+							error = true;
+							console.log(JSON.stringify(api));
+							self.toasts.error.show();
+						}
+					});
+				}
+				if (!error)
+				{
+					self.toasts.success.show();
+				}
+				else
+				{
+					self.toasts.error.show();
+				}
+			},
+			//Show paper-action-dialog
+			toggle: function() {
+				this.$.vorlesungsauswahl_overlay.toggle();
+			},
+			//Vorlesung selected
+			checkboxChecked: function(e, detail, sender) {
+				//Vorlesung of List aktuelle Vorlesungen selected or deselected
+				if (sender.getAttribute("id") === "aktuell")
+				{
+					//Selected
+					if (!sender.checked)
+					{
+						this.selectedVorlesungen.push(this.aktuelleVorlesungen[this.aktuelleVorlesungen.indexOf(e.target.templateInstance.model.item)]);
+					}
+					//Deselected
+					else
+					{
+						var i = 0;
+						for (i = 0; i < this.selectedVorlesungen.length; i++)
+						{
+							if (this.selectedVorlesungen[i].id === this.aktuelleVorlesungen[this.aktuelleVorlesungen.indexOf(e.target.templateInstance.model.item)].id)
+							{
+								this.selectedVorlesungen.splice(1, i);
+							}
+						}
+					}
+				}
+				//Vorlesung of List verbleibende Vorlesungen selected or deselected
+				else if (sender.getAttribute("id") === "verbleibend")
+				{
+					//Selected
+					if (!sender.checked)
+					{
+						this.selectedVorlesungen.push(this.verbleibendeVorlesungen[this.verbleibendeVorlesungen.indexOf(e.target.templateInstance.model.item)]);
+					}
+					//Deselected
+					else
+					{
+						var i = 0;
+						for (i = 0; i < this.selectedVorlesungen.length; i++)
+						{
+							if (this.selectedVorlesungen[i].id === this.verbleibendeVorlesungen[this.verbleibendeVorlesungen.indexOf(e.target.templateInstance.model.item)].id)
+							{
+								this.selectedVorlesungen.splice(i, 1);
+							}
+						}
+					}
+				}
+			},
+			//Reset aktuelleVorlesungen und verbleibendeVorlesungen
+			resetLists: function(){
+				this.aktuelleVorlesungen = [];
+				this.verbleibendeVorlesungen = [];
+				var i;
+				for (i = 0; i < this.alleVorlesungen.length; i++)
+				{
+					//All offene Vorlesungen of selected Semester
+					if (this.alleVorlesungen[i].semester === this.semester)
+					{
+						this.aktuelleVorlesungen.push(this.alleVorlesungen[i]);
+					}
+					//All offene Vorlesungen of other semesters
+					else
+					{
+						this.verbleibendeVorlesungen.push(this.alleVorlesungen[i]);
+					}
+				}
+			},
+			//Search
+			search: function(){
+				if(this.searchTerm === "")
+				{
+					if(!this.boolSuchenVorlesungIsEmpty)
+					{
+						this.resetLists();
+						this.boolSuchenVorlesungIsEmpty = true;
+					}
+				}
+				else
+				{
+					this.resetLists();
+					var i;
+					for (i = 0; i < this.aktuelleVorlesungen.length; i++)
+					{
+						var searchTermUC = this.searchTerm.toUpperCase();
+						var vorlesungsnameUC = this.aktuelleVorlesungen[i].fach.name.toUpperCase();
+						if(!vorlesungsnameUC.match(searchTermUC))
+						{
+							this.aktuelleVorlesungen.splice(i, 1)
+						}
+					}
+					var i;
+					for (i = 0; i < this.verbleibendeVorlesungen.length; i++)
+					{
+						var searchTermUC = this.searchTerm.toUpperCase();
+						var vorlesungsnameUC = this.verbleibendeVorlesungen[i].fach.name.toUpperCase();
+						console.log(vorlesungsnameUC);
+						if(!vorlesungsnameUC.match(searchTermUC))
+						{
+							this.verbleibendeVorlesungen.splice(i, 1)
+						}
+					}
+					this.boolSuchenVorlesungIsEmpty = false;
+				}
+			},
+		});
+	</script>
+</polymer-element>

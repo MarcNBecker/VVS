@@ -58,14 +58,18 @@ template.pageDescriptor = {
 	kurs: {name: 'Kurs pflegen', hash: 'kurs', html: '<vvs-kurs pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-kurs>'},
 	user: {name: 'User pflegen', hash: 'user', html: '<vvs-user currentUser="{{user}}" pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-user>'},
 	feiertage: {name: 'Feiertage pflegen', hash: 'feiertage', html: '<vvs-feiertage pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-feiertage>'},
-	planung: {name: 'Planung', hash: 'planung', html: '<vvs-planung pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-planung>'}
+	planung: {name: 'Planung', hash: 'planung', html: '<vvs-planung pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-planung>'},
+	//TODO wieder löschen
+	vorlesungsauswahl: {name: 'Vorlesungsauswahl', hash: 'vorlesungsauswahl', html: '<vvs-vorlesungsauswahl toasts="{{toasts}}"></vvs-vorlesungsauswahl>'}
 };
 
 //Pages to display in the navigation drawer
-template.drawerPages = [template.pageDescriptor.stammdaten, template.pageDescriptor.planung];
+//TODO vorlesungsauswahl wieder löschen
+template.drawerPages = [template.pageDescriptor.stammdaten, template.pageDescriptor.planung, template.pageDescriptor.vorlesungsauswahl];
 
 //Pages that can be displayed in the home main div
-template.homePages = [template.pageDescriptor.stammdaten, template.pageDescriptor.dozent, template.pageDescriptor.kurs, template.pageDescriptor.modulplanAnlegen, template.pageDescriptor.modulplanPflegen, template.pageDescriptor.user, template.pageDescriptor.feiertage, template.pageDescriptor.planung];
+//TODO vorlesungsauswahl wieder löschen
+template.homePages = [template.pageDescriptor.stammdaten, template.pageDescriptor.dozent, template.pageDescriptor.kurs, template.pageDescriptor.modulplanAnlegen, template.pageDescriptor.modulplanPflegen, template.pageDescriptor.user, template.pageDescriptor.feiertage, template.pageDescriptor.planung, template.pageDescriptor.vorlesungsauswahl];
 
 //Is called whenever the url hash is changed and navigates the app
 function handleHashChange(refresh) {
