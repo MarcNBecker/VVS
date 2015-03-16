@@ -20,7 +20,7 @@
 							<template repeat="{{item in aktuelleVorlesungen}}"> 
 								<paper-shadow z="1" class="overlay-inner-inner-shadow">
 									<div horizontal layout center>
-										<paper-checkbox id="aktuell" on-click="{{checkboxChecked}}"></paper-checkbox>
+										<paper-checkbox id="aktuell" on-click="{{checkboxChecked}}" checked="{{aktuellChecked}}"></paper-checkbox>
 										<span horizontal layout center-center flex>{{item.fach.name}}</span>
 									</div>
 								</paper-shadow>
@@ -56,6 +56,7 @@
 			aktuelleVorlesungen:[],
 			verbleibendeVorlesungen:[],
 			selectedVorlesungen:[],
+			aktuellChecked: false,
 			searchTerm:"",
 			checkedVorlesung: new model.templates.FachInstanz(),
 			boolSuchenVorlesungIsEmpty: true,
@@ -72,6 +73,7 @@
 				self.aktuelleVorlesungen = [];
 				self.verbleibendeVorlesungen = [];
 				self.selectedVorlesungen = [];
+				self.aktuellChecked = false;
 				self.searchTerm = "";
 				self.checkedVorlesung = new model.templates.FachInstanz();
 				self.boolSuchenVorlesungIsEmpty = true;
@@ -98,6 +100,8 @@
 								self.verbleibendeVorlesungen.push(api.response[i]);
 							}
 						}
+						//Set checkbox of aktuelleVorlesungen to checked
+						self.aktuellChecked = true;
 						//TODO später löschen
 						self.toggle();
 					}
