@@ -25,10 +25,10 @@
 				semester: 0
 			},
 			semesterChanged: function() {
-				if(semester === 0 || kurs.id === undefined) {
+				var self = this;
+				if(self.semester === 0 || self.kurs.id === undefined) {
 					return;
 				}
-				var self = this;
 				self.toggleDisabled = true;
 				var blocklage = new model.templates.Blocklage();
 				blocklage.kursID = self.kurs.id;
