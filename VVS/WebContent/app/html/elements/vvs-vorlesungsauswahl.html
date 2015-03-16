@@ -5,39 +5,37 @@
 			<div vertical layout>
 				<div vertical layout class="overlay-vertical-input">
 					<div vertical layout>
-						<div horizontal start layout class="overlay-horizontal-input">
+						<div horizontal start layout class="overlay-horizontal-input overlay-vertical-input">
 							<paper-input-decorator id="vorlesungSuchenInputDecorater" label="Vorlesung suchen" floatingLabel flex>
 								<input is="core-input" type="text" value={{searchTerm}} maxlength="100" on-keyup="{{search}}">
 							</paper-input-decorator>
 						</div>
 					</div>
-					<div vertical layout class="overlay-vertical-input">
+					<div vertical layout class="overlay-horizontal-input overlay-vertical-input overlay-bottom">
 						<span class="overlay-headline">Vorlesungen des aktuellen Semesters</span>
 						<paper-shadow z="2" class="overlay-inner-shadow">
 							<div horizontal layout>
 								<span horizontal layout center-center class="overlay-small-headline" flex>Name</span>
 							</div>
 							<template repeat="{{item in aktuelleVorlesungen}}"> 
-								<paper-shadow z="1" class="overlay-inner-inner-shadow">
+								<paper-shadow z="1" class="{{item.checked ? 'overlay-inner-inner-shadow overlay-highlight' : 'overlay-inner-inner-shadow'}}">
 									<div horizontal layout center>
-										<paper-checkbox id="aktuell" on-click="{{checkboxChecked}}" checked="{{aktuellChecked}}"></paper-checkbox>
-										<span horizontal layout center-center flex>{{item.fach.name}}</span>
+										<span on-click="{{checked}}" class="overlay-inner-inner-shadow-text" horizontal layout center-center flex>{{item.fach.name}}</span>
 									</div>
 								</paper-shadow>
 							</template>
 						</paper-shadow>
 					</div>
-					<div vertical layout class="overlay-vertical-input">
+					<div vertical layout class="overlay-horizontal-input overlay-vertical-input overlay-bottom">
 						<span class="overlay-headline">Verbleibende Vorlesungen</span>
 						<paper-shadow z="2" class="overlay-inner-shadow">
 							<div horizontal layout>
 								<span horizontal layout center-center class="overlay-small-headline" flex>Name</span>
 							</div>
 							<template repeat="{{item in verbleibendeVorlesungen}}"> 
-								<paper-shadow z="1" class="overlay-inner-inner-shadow">
-									<div horizontal layout center>
-										<paper-checkbox id="verbleibend" on-click="{{checkboxChecked}}"></paper-checkbox>
-										<span horizontal layout center-center flex>{{item.fach.name}}</span>
+								<paper-shadow z="1" class="{{item.checked ? 'overlay-inner-inner-shadow overlay-highlight' : 'overlay-inner-inner-shadow'}}">
+									<div horizontal layout center >
+										<span on-click="{{checked}}" class="overlay-inner-inner-shadow-text" horizontal layout center-center flex>{{item.fach.name}}</span>
 									</div>
 								</paper-shadow>
 							</template>
@@ -55,10 +53,7 @@
 			alleVorlesungen: [],
 			aktuelleVorlesungen:[],
 			verbleibendeVorlesungen:[],
-			selectedVorlesungen:[],
-			aktuellChecked: false,
 			searchTerm:"",
-			checkedVorlesung: new model.templates.FachInstanz(),
 			boolSuchenVorlesungIsEmpty: true,
 			//Publish those attributes to home
 			publish: {
@@ -72,10 +67,7 @@
 				self.alleVorlesungen = [];
 				self.aktuelleVorlesungen = [];
 				self.verbleibendeVorlesungen = [];
-				self.selectedVorlesungen = [];
-				self.aktuellChecked = false;
 				self.searchTerm = "";
-				self.checkedVorlesung = new model.templates.FachInstanz();
 				self.boolSuchenVorlesungIsEmpty = true;
 				//TODO später löschen, müssen von aufrufendem Element übergeben werden
 				self.kurs = new model.templates.Kurs();
@@ -92,16 +84,16 @@
 							//All offene Vorlesungen of selected Semester
 							if (api.response[i].semester === self.semester)
 							{
+								api.response[i].checked = true;
 								self.aktuelleVorlesungen.push(api.response[i]);
 							}
 							//All offene Vorlesungen of other semesters
 							else
 							{
+								api.response[i].checked = false;
 								self.verbleibendeVorlesungen.push(api.response[i]);
 							}
 						}
-						//Set checkbox of aktuelleVorlesungen to checked
-						self.aktuellChecked = true;
 						//TODO später löschen
 						self.toggle();
 					}
@@ -115,31 +107,51 @@
 			//Create Vorlesungen for selected Vorlesungen
 			create: function() {
 				var self = this;
-				var error = false;
+				var selectedVorlesungen = [];
+				//Push selected Vorlesungen to new array
 				var i;
-				for (i = 0; i < self.selectedVorlesungen.length; i++)
+				for (i = 0; i < self.aktuelleVorlesungen.length; i++)
+				{
+					if (self.aktuelleVorlesungen[i].checked)
+					{
+						selectedVorlesungen.push(self.aktuelleVorlesungen[i]);
+					}
+				}
+				var ii;
+				for (ii = 0; ii < self.verbleibendeVorlesungen.length; ii++)
+				{
+					if (self.verbleibendeVorlesungen[ii].checked)
+					{
+						selectedVorlesungen.push(self.verbleibendeVorlesungen[ii]);
+					}
+				}	
+				var deepRuns = 0;
+				var iii;
+				for (iii = 0; iii < selectedVorlesungen.length; iii++)
 				{
 					var vorlesung = new model.templates.Vorlesung();
 					vorlesung.kursID = self.kurs.id;
-					vorlesung.fachInstanz = self.selectedVorlesungen[i];
+					vorlesung.fachInstanz = selectedVorlesungen[iii];
 					vorlesung.semester = self.semester;
-					console.log(vorlesung);
 					model.webService.createVorlesung(vorlesung, function(api) {
-						if (api.isError)
+						if (!api.isError)
 						{
-							error = true;
+							deepRuns++;
+							if (deepRuns === selectedVorlesungen.length)
+							{
+									self.toasts.success.show();
+							}
+						}
+						else
+						{
 							console.log(JSON.stringify(api));
 							self.toasts.error.show();
 						}
 					});
 				}
-				if (!error)
+				if (deepRuns === 0 && selectedVorlesungen.length === 0)
 				{
 					self.toasts.success.show();
-				}
-				else
-				{
-					self.toasts.error.show();
 				}
 			},
 			//Show paper-action-dialog
@@ -147,49 +159,8 @@
 				this.$.vorlesungsauswahl_overlay.toggle();
 			},
 			//Vorlesung selected
-			checkboxChecked: function(e, detail, sender) {
-				//Vorlesung of List aktuelle Vorlesungen selected or deselected
-				if (sender.getAttribute("id") === "aktuell")
-				{
-					//Selected
-					if (!sender.checked)
-					{
-						this.selectedVorlesungen.push(this.aktuelleVorlesungen[this.aktuelleVorlesungen.indexOf(e.target.templateInstance.model.item)]);
-					}
-					//Deselected
-					else
-					{
-						var i = 0;
-						for (i = 0; i < this.selectedVorlesungen.length; i++)
-						{
-							if (this.selectedVorlesungen[i].id === this.aktuelleVorlesungen[this.aktuelleVorlesungen.indexOf(e.target.templateInstance.model.item)].id)
-							{
-								this.selectedVorlesungen.splice(1, i);
-							}
-						}
-					}
-				}
-				//Vorlesung of List verbleibende Vorlesungen selected or deselected
-				else if (sender.getAttribute("id") === "verbleibend")
-				{
-					//Selected
-					if (!sender.checked)
-					{
-						this.selectedVorlesungen.push(this.verbleibendeVorlesungen[this.verbleibendeVorlesungen.indexOf(e.target.templateInstance.model.item)]);
-					}
-					//Deselected
-					else
-					{
-						var i = 0;
-						for (i = 0; i < this.selectedVorlesungen.length; i++)
-						{
-							if (this.selectedVorlesungen[i].id === this.verbleibendeVorlesungen[this.verbleibendeVorlesungen.indexOf(e.target.templateInstance.model.item)].id)
-							{
-								this.selectedVorlesungen.splice(i, 1);
-							}
-						}
-					}
-				}
+			checked: function(e, detail, sender) {
+				e.target.templateInstance.model.item.checked = !e.target.templateInstance.model.item.checked;
 			},
 			//Reset aktuelleVorlesungen und verbleibendeVorlesungen
 			resetLists: function(){
