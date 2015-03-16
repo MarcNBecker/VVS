@@ -144,9 +144,10 @@ public class Vorlesung {
 		} else {
 			fachInstanz.getDirectAttributes(); //check existance
 		}
-		if (dozentID <= 0) {
+		//allow dozent ID 0
+		if (dozentID < 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
-		} else {
+		} else if (dozentID != 0) {
 			new Dozent(dozentID).getDirectAttributes(); //check existance
 		}
 		if (semester <= 0) {
