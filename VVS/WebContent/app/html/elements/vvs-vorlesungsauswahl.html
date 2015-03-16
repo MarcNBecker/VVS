@@ -122,7 +122,6 @@
 					var vorlesung = new model.templates.Vorlesung();
 					vorlesung.kursID = self.kurs.id;
 					vorlesung.fachInstanz = self.selectedVorlesungen[i];
-					//vorlesung.dozentID = 1;
 					vorlesung.semester = self.semester;
 					console.log(vorlesung);
 					model.webService.createVorlesung(vorlesung, function(api) {
