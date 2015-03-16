@@ -1,0 +1,67 @@
+<polymer-element name="vvs-export-overlay"> 
+	<template>
+		<paper-dialog id="export_overlay" backdrop="true" layered="true" heading="Exporte f&uuml;r {{kurs.kursname}} {{semester}}. Blocklage">
+			<div vertical layout class="test">
+				<span class="overlay-headline">Kurspl&auml;ne</span>
+				<paper-button on-click="{{print}}" raised disabled?="{{toggleDisabled}}" >Vorlesungsplan drucken</paper-button>
+				<paper-button on-click="{{csvExport}}" raised disabled?="{{toggleDisabled}}">GROUP-E CSV Export</paper-button>
+				<span class="overlay-headline">Dozentenpl&auml;ne</span>
+				<template repeat="{{item in dozenten}}">
+					<div horizontal layout center>
+						<paper-item flex>{{item.name}}, {{item.vorname}}</paper-item>
+						<paper-icon-button self-center icon="print" on-click="{{printDozent}}" raised disabled?="{{toggleDisabled}}"></paper-icon-button>
+					</div>
+				</template>
+			</div>
+		</paper-dialog>
+	</template>
+	<script type="text/javascript">
+		"use strict";
+		Polymer('vvs-export-overlay', {
+			dozenten: [],
+			toggleDisabled: true,
+			publish: {
+				kurs: {},
+				semester: 0
+			},
+			semesterChanged: function() {
+				var self = this;
+				if(self.semester === 0 || self.kurs.id === undefined) {
+					return;
+				}
+				self.toggleDisabled = true;
+				var blocklage = new model.templates.Blocklage();
+				blocklage.kursID = self.kurs.id;
+				blocklage.semester = self.semester;
+				model.webService.getAllKursBlocklageDozenten(blocklage, function(api) {
+					if (!api.isError)
+					{
+						self.dozenten = api.response;
+						self.toggleDisabled = false;
+					}
+					else
+					{
+						console.log(JSON.stringify(api));
+					}
+				})
+			},
+			ready: function() {
+				var self = this;
+				self.dozenten = [];
+				self.toggleDisabled = false;
+			},
+			toggle: function() {
+				this.$.export_overlay.toggle();
+			},
+			print: function() {
+				//TODO print Kursplan
+			},
+			csvExport: function() {
+				//TODO csv export
+			},
+			printDozent: function() {
+				//TODO print Dozentenplan
+			}
+		});
+	</script> 
+</polymer-element>

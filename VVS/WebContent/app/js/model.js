@@ -266,6 +266,7 @@ var model = new function() {
 		var kursURI = "/kurse/{kursID}";
 		var kursBlocklagenURI = "/kurse/{kursID}/blocklagen";
 		var kursBlocklageURI = "/kurse/{kursID}/blocklagen/{semester}";
+		var kursBlocklageDozentenURI = "/kurse/{kursID}/blocklagen/{semester}/dozenten";
 		
 		var studiengangsleiterAllURI = "/studiengangsleiter";
 		var studiengangsleiterURI = "/studiengangsleiter/{studiengangsleiterID}";
@@ -369,6 +370,10 @@ var model = new function() {
 		
 		this.setKursBlocklage = function(b, c) {
 			self.doRequest(kursBlocklageURI.replace("{kursID}", b.kursID).replace("{semester}", b.semester), "PUT", b, c);
+		};
+		
+		this.getAllKursBlocklageDozenten = function(b, c) {
+			self.doRequest(kursBlocklageDozentenURI.replace("{kursID}", b.kursID).replace("{semester}", b.semester), "GET", null, c);
 		};
 		
 		this.getAllStudiengangsleiter = function(c) {

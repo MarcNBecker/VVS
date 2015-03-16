@@ -9,8 +9,8 @@
 					<div auto-vertical?="{{smallScreen}}" vertical layout flex?="{{!smallScreen}}" two?="{{!smallScreen}}">
 						<paper-shadow z="2" class="inner-shadow">
 							<div horizontal layout>
-								<span horizontal layout center-center class="small-headline" flex>Modul</span>
-								<span horizontal layout center-center class="small-headline" flex>Fach</span>
+								<span horizontal layout center-center class="small-headline" flex two>Modul</span>
+								<span horizontal layout center-center class="small-headline" flex three>Fach</span>
 								<span horizontal layout center-center class="small-headline" flex>Semester</span>
 								<span horizontal layout center-center class="small-headline" flex>Stunden</span>
 								<paper-icon-button class="hide"></paper-icon-button>
@@ -20,8 +20,8 @@
 								<template repeat="{{fachInstanz in modulInstanz.fachInstanzList}}">
 									<paper-shadow z="1" class="{{(inputModulInstanz.id === modulInstanz.id && (inputFachInstanz.id === fachInstanz.id || (selectedFach < 0 && (invalid.fname && invalid.fkurzbeschreibung && invalid.semester && invalid.stunden)))) ? 'inner-inner-shadow highlight' : 'inner-inner-shadow'}}">
 										<div horizontal layout center>
-											<span horizontal layout center-center flex>{{modulInstanz.modul.name}} ({{modulInstanz.credits}} Credits)</span>
-											<span horizontal layout center-center flex>{{fachInstanz.fach.name}}</span>
+											<span horizontal layout center-center flex two>{{modulInstanz.modul.name}} ({{modulInstanz.credits}} Credits)</span>
+											<span horizontal layout center-center flex four>{{fachInstanz.fach.name}}</span>
 											<span horizontal layout center-center flex>{{fachInstanz.semester}}</span>
 											<span horizontal layout center-center flex>{{fachInstanz.stunden}}</span>
 											<paper-icon-button on-click="{{edit}}" icon="create" disabled?="{{disableToggle}}" self-center></paper-icon-button>
@@ -41,15 +41,15 @@
 					<div auto-vertical?="{{smallScreen}}" vertical layout flex?="{{!smallScreen}}" class="input-padding">			
 						<span class="small-headline">Modulplan bearbeiten</span>
 						<div horizontal layout center>
-							<paper-dropdown-menu label="Neues Modul anlegen oder eines ausw&auml;hlen" disabled?="{{disableToggle || selectedFach >= 0}}" on-core-select="{{setModulIsInvalid}}" flex>
-								<paper-dropdown id="modulDropdown" class="dropdown">
+							<paper-dropdown-menu-searchable label="Neues Modul anlegen oder eines ausw&auml;hlen" disabled?="{{disableToggle || selectedFach >= 0}}" on-core-select="{{setModulIsInvalid}}" flex>
+								<paper-dropdown-searchable id="modulDropdown" class="dropdown" arrayName="module" searchProperties="modul.name" hideProperty="hidden">
 									<core-menu class="menu" selected="{{selectedModul}}">
-										<template  repeat="{{item in module}}">
-											<paper-item>{{item.modul.name}}</paper-item>
+										<template repeat="{{item in module}}">
+											<paper-item hidden?="{{item.hidden}}">{{item.modul.name}}</paper-item>
 										</template>
 									</core-menu>
-								</paper-dropdown>
-							</paper-dropdown-menu>
+								</paper-dropdown-searchable>
+							</paper-dropdown-menu-searchable>
 							<paper-icon-button icon="clear" on-click="{{resetModul}}" disabled?="{{disableToggle || selectedFach >= 0}}" hidden?="{{!(selectedModul >= 0)}}" self-center></paper-icon-button>
 							<paper-icon-button icon="info" on-click="{{switchModulInfo}}" disabled?="{{disableToggle}}" hidden?="{{!(selectedModul >= 0) || toggleModulInfo}}" self-center></paper-icon-button>
 							<paper-icon-button icon="expand-less" on-click="{{switchModulInfo}}" disabled?="{{disableToggle}}" hidden?="{{!(selectedModul >= 0) || !toggleModulInfo}}" self-center></paper-icon-button>
@@ -68,15 +68,15 @@
 							<input is="core-input" type="text" pattern="[0-9]+" value="{{inputModulInstanz.credits}}" disabled?="{{disableToggle}}" required>
 						</paper-input-decorator>
 						<div horizontal layout center>
-							<paper-dropdown-menu label="Neues Fach anlegen oder eines ausw&auml;hlen" disabled?="{{disableToggle || (selectedModul < 0 && (invalid.mname || invalid.mkurzbeschreibung || invalid.credits))}}" on-core-select="{{setFachIsInvalid}}" flex>
-								<paper-dropdown id="fachDropdown" class="dropdown">
+							<paper-dropdown-menu-searchable label="Neues Fach anlegen oder eines ausw&auml;hlen" disabled?="{{disableToggle || (selectedModul < 0 && (invalid.mname || invalid.mkurzbeschreibung || invalid.credits))}}" on-core-select="{{setFachIsInvalid}}" flex>
+								<paper-dropdown-searchable id="fachDropdown" class="dropdown" arrayName="faecher" searchProperties="fach.name" hideProperty="hidden">
 									<core-menu class="menu" selected="{{selectedFach}}">
-										<template  repeat="{{item in faecher}}">
-											<paper-item>{{item.fach.name}}</paper-item>
+										<template repeat="{{item in faecher}}">
+											<paper-item hidden?="{{item.hidden}}">{{item.fach.name}}</paper-item>
 										</template>
 									</core-menu>
-								</paper-dropdown>
-							</paper-dropdown-menu>
+								</paper-dropdown-searchable>
+							</paper-dropdown-menu-searchable>
 							<paper-icon-button icon="clear" on-click="{{resetFach}}" disabled?="{{disableToggle}}" hidden?="{{!(selectedFach >= 0)}}" self-center></paper-icon-button>
 							<paper-icon-button icon="info" on-click="{{switchFachInfo}}" disabled?="{{disableToggle}}" hidden?="{{!(selectedFach >= 0) || toggleFachInfo}}" self-center></paper-icon-button>
 							<paper-icon-button icon="expand-less" on-click="{{switchFachInfo}}" disabled?="{{disableToggle}}" hidden?="{{!(selectedFach >= 0) || !toggleFachInfo}}" self-center></paper-icon-button>

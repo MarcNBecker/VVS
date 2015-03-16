@@ -1,0 +1,17 @@
+body /deep/ paper-button[autofocus] {
+	font-weight: 500;
+	color: #E2001A;
+}
+
+body /deep/ #export_overlay /deep/ paper-button {
+	background: #E2001A;
+	color: #FFFFFF;
+	margin-bottom: 10px;
+}
+
+body /deep/ .overlay-headline {
+	font-size: 16pt;
+	font-weight: 350;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}

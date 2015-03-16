@@ -5,7 +5,7 @@ var DEFAULT_ROUTE = 'stammdaten';
 
 var template = document.querySelector('#home');
 
-template.user = JSON.parse(localStorage.getItem("user"));
+template.user = JSON.parse(sessionStorage.getItem("user"));
 
 //Home toasts: intialized on template bound
 template.toasts = {
@@ -73,6 +73,8 @@ template.homePages = [template.pageDescriptor.stammdaten, template.pageDescripto
 
 //Is called whenever the url hash is changed and navigates the app
 function handleHashChange(refresh) {
+	//move to top
+	document.querySelector('body /deep/ #mainContainer').scrollTop = 0;
 	template.route = location.hash.substring(2, location.hash.length);
 	if (!template.route) { //No hash exists
 		template.route = DEFAULT_ROUTE;
@@ -144,8 +146,10 @@ window.addEventListener('hashchange', handleHashChange);
 template.addEventListener('template-bound', function(e) {
 	//Reject access, if no user is set
 	//This is obviously not secure, but more security than this was not desired
+	sessionStorage.removeItem("targetHash");
 	if(!template.user) {
 		location.href = "../../login.html";
+		sessionStorage.setItem("targetHash", location.hash);
 		return;
 	}
 	//Init toasts

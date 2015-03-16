@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
   <title>wi.schedule</title>
+  <link rel="icon" href="../../favicon.ico" type="image/x-icon" />
   <!-- Imports -->
   <script src="../polymer/webcomponentsjs/webcomponents.js"></script>
   <link rel="import" href="../polymer/polymer/polymer.html">
@@ -12,6 +13,7 @@
   <link rel="stylesheet" href="../css/home.css" shim-shadowdom>
     <!-- TODO vorlesungsauswahl.css in overlay.css integrieren -->
   <link rel="stylesheet" href="../css/vorlesungsauswahl.css" shim-shadowdom>
+  <link rel="stylesheet" href="../css/overlays.css" shim-shadowdom>
   <script type="text/javascript" src="../js/model.js"></script>
   <script type="text/javascript" src="../js/phone.js"></script>
   <link rel="import" href="elements/vvs-elements.html">
@@ -26,12 +28,16 @@
       </core-toolbar>
       <!-- Navigation Drawer -->
       <core-menu id="drawer-menu" valueattr="hash" selected="{{route}}" on-core-select="{{menuItemSelected}}">
-        <template repeat="{{page in drawerPages}}">
+      	<template repeat="{{page in drawerPages}}">
           <paper-item hash="{{page.hash}}" on-click="{{navigateFromDrawer}}">
             <span>{{page.name}}</span>
           </paper-item>
         </template>
       </core-menu>
+      <div id="logo">
+    	  <img src="../img/dhbw-ma.svg" alt="DHBW Mannheim">
+    	  <span>&copy; 2015 - BEST OF WWI12SEA</span>
+      </div>
     </nav>
     <core-toolbar tool flex>
       <div flex>{{selectedPage.page.name}}</div>
@@ -44,7 +50,7 @@
     <div fit id="page-wrapper">
 	    <core-pages id="home-pages" valueattr="hash" selected="{{route}}" selectedModel={{selectedPage}}>
 	      <template repeat="{{page in homePages}}">
-	        <section id="home-pages-{{page.hash}}" hash="{{page.hash}}">
+	        <section id="home-pages-{{page.hash}}" hash="{{page.hash}}" hidden?="{{page.hash !== route}}">
 	        	<div>{{page.name}}</div>
 	        </section>
 	      </template>

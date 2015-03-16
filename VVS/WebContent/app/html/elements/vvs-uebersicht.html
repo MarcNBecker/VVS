@@ -15,17 +15,16 @@
 						<paper-spinner active?="{{toggleDisableDozent}}" self-center></paper-spinner>
 					</div>
 					<div vertical?="{{verySmallScreen}}" horizontal?="{{!verySmallScreen}}" layout center-center?="{{!verySmallScreen}}" start?="{{verySmallScreen}}" class="horizontal-verticalizable horizontal-input horizontal-button-bar">
-						<paper-dropdown-menu label="Dozent" disabled?="{{toggleDisableDozent}}" auto-vertical?="{{verySmallScreen}}" flex?="{{!verySmallScreen}}">
-							<paper-dropdown class="dropdown">
+						<paper-dropdown-menu-searchable label="Dozent" disabled?="{{toggleDisableDozent}}" auto-vertical?="{{verySmallScreen}}" flex?="{{!verySmallScreen}}">
+							<paper-dropdown-searchable class="dropdown" arrayName="dozenten" searchProperties="name vorname" hideProperty="hidden">
 								<core-menu id="dozent" class="menu">
 									<template repeat="{{item in dozenten}}">
-										<paper-item>{{item.name}}, {{item.vorname}}</paper-item>
+										<paper-item hidden?="{{item.hidden}}">{{item.name}}, {{item.vorname}}</paper-item>
 									</template>
 								</core-menu>
-							</paper-dropdown>
-						</paper-dropdown-menu>					
-						<paper-button on-click={{updateDozent}} raised disabled?="{{toggleDisableDozent}}" auto-vertical?="{{verySmallScreen}}">anzeigen/bearbeiten/l&ouml;schen</paper-button>
-						<paper-button on-click={{printPlanDozent}} raised disabled?="{{toggleDisableDozent}}" auto-vertical?="{{verySmallScreen}}">Dozentenplan drucken</paper-button>
+							</paper-dropdown-searchable>
+						</paper-dropdown-menu-searchable>					
+						<paper-button on-click={{updateDozent}} raised disabled?="{{toggleDisableDozent}}" auto-vertical?="{{verySmallScreen}}" flex?="{{!verySmallScreen}}">anzeigen/bearbeiten/l&ouml;schen</paper-button>
 					</div>
 					<div horizontal layout start class="horizontal-input horizontal-button-bar">
 						<paper-button on-click={{createDozent}} raised>neuen Dozenten anlegen</paper-button>
@@ -38,15 +37,15 @@
 						<paper-spinner active?="{{toggleDisableKurs}}" self-center></paper-spinner>
 					</div>
 					<div vertical?="{{verySmallScreen}}" horizontal?="{{!verySmallScreen}}" layout center-center?="{{!verySmallScreen}}" start?="{{verySmallScreen}}" class="horizontal-verticalizable horizontal-input horizontal-button-bar">
-						<paper-dropdown-menu label="Kurs" disabled?="{{toggleDisableKurs}}" auto-vertical?="{{verySmallScreen}}" flex?="{{!verySmallScreen}}">
-							<paper-dropdown class="dropdown">
+						<paper-dropdown-menu-searchable label="Kurs" disabled?="{{toggleDisableKurs}}" auto-vertical?="{{verySmallScreen}}" flex?="{{!verySmallScreen}}">
+							<paper-dropdown-searchable class="dropdown" arrayName="kurse" searchProperties="kursname" hideProperty="hidden">
 								<core-menu id="kurs" class="menu">
 									<template repeat="{{item in kurse}}">
-										<paper-item>{{item.kursname}}</paper-item>
+										<paper-item hidden?="{{item.hidden}}">{{item.kursname}}</paper-item>
 									</template>
 								</core-menu>
-							</paper-dropdown>
-						</paper-dropdown-menu>						
+							</paper-dropdown-searchable>
+						</paper-dropdown-menu-searchable>						
 						<paper-button on-click={{updateKurs}} raised disabled?="{{toggleDisableKurs}}" auto-vertical?="{{verySmallScreen}}" flex?="{{!verySmallScreen}}">anzeigen/bearbeiten/l&ouml;schen</paper-button>
 					</div>
 					<div horizontal layout start class="horizontal-input horizontal-list">
@@ -63,15 +62,15 @@
 						<paper-spinner active?="{{toggleDisableModulplan}}" self-center></paper-spinner>
 					</div>
 					<div vertical?="{{verySmallScreen}}" horizontal?="{{!verySmallScreen}}" layout center-center?="{{!verySmallScreen}}" start?="{{verySmallScreen}}" class="horizontal-verticalizable horizontal-input horizontal-button-bar">
-						<paper-dropdown-menu label="Modulplan" disabled?="{{toggleDisableModulplan}}" auto-vertical?="{{verySmallScreen}}" flex?="{{!verySmallScreen}}">
-							<paper-dropdown class="dropdown">
+						<paper-dropdown-menu-searchable label="Modulplan" disabled?="{{toggleDisableModulplan}}" auto-vertical?="{{verySmallScreen}}" flex?="{{!verySmallScreen}}">
+							<paper-dropdown-searchable class="dropdown" arrayName="modulplaene" searchProperties="studiengang vertiefungsrichtung" hideProperty="hidden">
 								<core-menu id="modulplan" class="menu">
 									<template repeat="{{item in modulplaene}}">
-										<paper-item>{{item.studiengang}} - {{item.vertiefungsrichtung}}</paper-item>
+										<paper-item hidden?="{{item.hidden}}">{{item.studiengang}} - {{item.vertiefungsrichtung}}</paper-item>
 									</template>
 								</core-menu>
-							</paper-dropdown>
-						</paper-dropdown-menu>					
+							</paper-dropdown-searchable>
+						</paper-dropdown-menu-searchable>					
 						<paper-button on-click={{updateModulplan}} raised disabled?="{{toggleDisableModulplan}}" auto-vertical?="{{verySmallScreen}}" flex?="{{!verySmallScreen}}">anzeigen/bearbeiten/l&ouml;schen</paper-button>
 					</div>
 					<div horizontal layout start class="horizontal-list">
@@ -107,15 +106,15 @@
 						<paper-spinner active?="{{toggleDisableUser}}" self-center></paper-spinner>
 					</div>
 					<div vertical?="{{verySmallScreen}}" horizontal?="{{!verySmallScreen}}" layout center-center?="{{!verySmallScreen}}" start?="{{verySmallScreen}}" class="horizontal-verticalizable horizontal-input horizontal-button-bar">
-						<paper-dropdown-menu label="User" disabled?="{{toggleDisableUser}}" auto-vertical?="{{verySmallScreen}}" flex?="{{!verySmallScreen}}">
-							<paper-dropdown class="dropdown">
+						<paper-dropdown-menu-searchable label="User" disabled?="{{toggleDisableUser}}" auto-vertical?="{{verySmallScreen}}" flex?="{{!verySmallScreen}}">
+							<paper-dropdown-searchable class="dropdown" arrayName="users" searchProperties="name" hideProperty="hidden">
 								<core-menu id="user" class="menu">
 									<template repeat="{{item in users}}">
-										<paper-item>{{item.name}}</paper-item>
+										<paper-item hidden?="{{item.hidden}}">{{item.name}}</paper-item>
 									</template>
 								</core-menu>
-							</paper-dropdown>
-						</paper-dropdown-menu>					
+							</paper-dropdown-searchable>
+						</paper-dropdown-menu-searchable>					
 						<paper-button on-click={{updateUser}} raised disabled?="{{toggleDisableUser}}" auto-vertical?="{{verySmallScreen}}" flex?="{{!verySmallScreen}}">anzeigen/bearbeiten/l&ouml;schen</paper-button>
 					</div>
 					<div horizontal layout start class="horizontal-list">
@@ -226,13 +225,6 @@
 				{
 					self.pageLoaded.dozent = false;
 					location.href = "#!" + self.pageDescriptor.dozent.hash + "-" + self.dozenten[self.$.dozent.selected].id;
-				}
-    		},
-    		printPlanDozent: function() {
-    			var self = this;
-				if (self.$.dozent.selected !== null && self.dozenten.length > 0)
-				{
-					//TODO navigate to Dozent Plan with ID = self.dozenten[self.$.dozent.selected].id;
 				}
     		},
     		createKurs: function() {

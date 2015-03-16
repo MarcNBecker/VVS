@@ -22,15 +22,16 @@
 						<paper-checkbox checked="{{sekretaerinChecked}}" disabled?="{{toggleDisabled}}"></paper-checkbox>
 					</div>
 					<div horizontal layout center class="{{creationMode ? 'horizontal-input' : 'horizontal-input horizontal-button-bar'}}" hidden?="{{!sekretaerinChecked && creationMode}}">
-						<paper-dropdown-menu label="Studiengangsleiter" disabled?="{{toggleDisabled}}" self-center flex>
-							<paper-dropdown class="dropdown">
+						<span>Repr&auml;sentiert</span>
+						<paper-dropdown-menu-searchable label="Studiengangsleiter" disabled?="{{toggleDisabled}}" self-center flex>
+							<paper-dropdown-searchable class="dropdown" arrayName="studiengangsleiter" searchProperties="name" hideProperty="hidden">
 								<core-menu selected="{{selectedStudiengangsleiter}}" class="menu">
 									<template repeat="{{item in studiengangsleiter}}">
-										<paper-item>{{item.name}}</paper-item>
+										<paper-item hidden?="{{item.hidden}}">{{item.name}}</paper-item>
 									</template>
 								</core-menu>
-							</paper-dropdown>
-						</paper-dropdown-menu>
+							</paper-dropdown-searchable>
+						</paper-dropdown-menu-searchable>
 					</div>
 					<!-- Button Bar -->
 					<div hidden?={{!creationMode}} horizontal layout center class="horizontal-input horizontal-button-bar">
@@ -152,6 +153,7 @@
 						if(!api.isError) {
 							self.user.repraesentiert = api.response.id;
 							self.studiengangsleiter.push(api.response);
+							self.selectedStudiengangsleiter = self.studiengangsleiter.length - 1;
 							self.createUser();
 						} else {
 							console.log(JSON.stringify(api));
@@ -210,7 +212,7 @@
 	    				self.user = api.response;
 	    				//Set storage user and update current session app user
 	    				if(self.user.name === self.currentUser.name) {
-	    					localStorage.setItem("user", JSON.stringify(self.user));
+	    					sessionStorage.setItem("user", JSON.stringify(self.user));
 		    				self.currentUser = self.user;	
 	    				}
 	    				self.toggleDisabled = false;
