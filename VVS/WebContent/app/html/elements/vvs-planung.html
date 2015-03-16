@@ -57,10 +57,10 @@
 								</div>
 								<div horizontal start layout class="horizontal-input">
 									<paper-input-decorator id="startUhrzeit" label="Uhrzeit von" error="Pflichtfeld: ung&uuml;ltige Uhrzeit" autoValidate isInvalid="{{invalid.startUhrzeit}}" floatingLabel flex>
-										<input id="startInput" is="core-input" type="text" pattern="[0-9]{2}:[0-9]{2}:[0-9]{2}" value={{vorlesungstermin.startUhrzeit}} maxlength="100" disabled?="{{disableToggle}}" required>
+										<input id="startInput" is="core-input" type="text" on-keyup="{{calculate}}" pattern="[0-9]{2}:[0-9]{2}:[0-9]{2}" value={{vorlesungstermin.startUhrzeit}} maxlength="100" disabled?="{{disableToggle}}" required>
 									</paper-input-decorator>		
 									<paper-input-decorator id="endUhrzeit" label="Uhrzeit bis" error="Pflichtfeld: ung&uuml;ltige Uhrzeit" autoValidate isInvalid="{{invalid.endUhrzeit}}" floatingLabel flex>
-										<input id="endInput" is="core-input" type="text" pattern="[0-9]{2}:[0-9]{2}:[0-9]{2}" value={{vorlesungstermin.endUhrzeit}} maxlength="100" disabled?="{{disableToggle}}" required>
+										<input id="endInput" is="core-input" type="text" on-keyup="{{calculate}}" pattern="[0-9]{2}:[0-9]{2}:[0-9]{2}" value={{vorlesungstermin.endUhrzeit}} maxlength="100" disabled?="{{disableToggle}}" required>
 									</paper-input-decorator>			
 								</div>
 								<div horizontal start layout class="horizontal-input">
@@ -196,20 +196,7 @@
 			self.invalid = {};
 			var showVorlesung = new model.templates.Vorlesung();
 			showVorlesung.id = 1;
-			//TODO showVorlesung.id = self.pageParameter.vorlesung.id;	
-			//Add event listener to time-inputs to start calculation of Pause
-			self.$.startInput.addEventListener('keyup', function(event) {
-    			if (!self.invalid.startUhrzeit && !self.invalid.endUhrzeit)
-    			{
-    				self.vorlesungstermin.pause = self.calculatePause(self.vorlesungstermin.startUhrzeit, self.vorlesungstermin.endUhrzeit);
-    			}
-  			});
-			self.$.endInput.addEventListener('keyup', function(event) {
-				if (!self.invalid.startUhrzeit && !self.invalid.endUhrzeit)
-    			{
-    				self.vorlesungstermin.pause = self.calculatePause(self.vorlesungstermin.startUhrzeit, self.vorlesungstermin.endUhrzeit);
-    			}
-			});			
+			//TODO showVorlesung.id = self.pageParameter.vorlesung.id;			
 			//TODO Deep-run
 			//Load selected Vorlesung	
 			model.webService.getVorlesung(showVorlesung, function(api) {
@@ -546,6 +533,15 @@
 					self.toasts.error.show();
 				}
     		});
+		},
+		//Calculate Pause if inputs are valid
+		calculate: function()
+		{
+			var self = this;
+			if (!self.invalid.startUhrzeit && !self.invalid.endUhrzeit)
+			{
+				self.vorlesungstermin.pause = self.calculatePause(self.vorlesungstermin.startUhrzeit, self.vorlesungstermin.endUhrzeit);
+			}
 		},
 		//Navigate backwards and force a reload
     	cancel: function()
