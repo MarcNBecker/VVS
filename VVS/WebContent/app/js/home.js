@@ -64,6 +64,8 @@ template.homePages = [template.pageDescriptor.stammdaten, template.pageDescripto
 
 //Is called whenever the url hash is changed and navigates the app
 function handleHashChange(refresh) {
+	//move to top
+	document.querySelector('body /deep/ #mainContainer').scrollTop = 0;
 	template.route = location.hash.substring(2, location.hash.length);
 	if (!template.route) { //No hash exists
 		template.route = DEFAULT_ROUTE;
