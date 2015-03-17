@@ -8,7 +8,7 @@
 				<div horizontal layout class="headline horizontal-input vertical-input">
 					<span>Terminplanung &quot;{{vorlesung.fachInstanz.fach.name}}&quot; - {{vorlesung.semester}}. Semester - {{kurs.kursname}}</span>
 					<paper-progress class="progress" value="{{progressProzent}}"></paper-progress>
-					<span>{{progress}} / {{vorlesung.fachInstanz.stunden}} Stunden geplant</span>
+					<span>{{progress}} / {{vorlesung.fachInstanz.stunden}} {{vorlesung.fachInstanz.stunden === 1 ? 'Stunde' : 'Stunden'}} geplant</span>
 				</div>
 				<!-- Hauptscreen -->
 				<div horizontal?="{{!smallScreen}}" vertical?="{{smallScreen}}" layout class="horizontal-input vertical-input">
@@ -33,7 +33,7 @@
 										</span>
 										<span horizontal layout center-center flex>{{item.startUhrzeit}} Uhr</span>
 										<span horizontal layout center-center flex>{{item.endUhrzeit}} Uhr</span>
-										<span horizontal layout center-center flex>{{item.dauer}} Stunden</span>
+										<span horizontal layout center-center flex>{{item.dauer}} {{item.dauer === 1 ? 'Stunde' : 'Stunden'}}</span>
 										<span horizontal layout center-center flex>{{item.pause}} min</span>
 										<span horizontal layout center-center flex>{{item.raum}}</span>
 										<paper-icon-button on-click="{{edit}}" icon="create" disabled?="{{disableToggle}}" self-center></paper-icon-button>
