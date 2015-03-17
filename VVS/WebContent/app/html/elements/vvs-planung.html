@@ -53,8 +53,8 @@
 						<span class="small-headline" horizontal layout center>Termin bearbeiten</span>
 						<div horizontal layout start>
 							<polymer-date-picker id="datePicker" relatedTarget="{{$.datum}}" halign="left" style="z-index:99" selectedDate="{{selectedDate}}" opened="false"></polymer-date-picker>
-							<paper-input-decorator id="datum" label="Datum" on-click="{{toggleDatePicker}}" error="Pflichtfeld: Ung&uuml;ltiges Datum" autoValidate isInvalid="{{invalid.datum}}" floatingLabel flex>
-								<input is="core-input" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" preventInvalidInput="true" value="{{vorlesungsterminToEdit.datum}}" disabled?="{{disableToggle}}" required>
+							<paper-input-decorator id="datum" label="Datum" error="Pflichtfeld: Ung&uuml;ltiges Datum" autoValidate isInvalid="{{invalid.datum}}" floatingLabel flex>
+								<input is="core-input" on-focus="{{toggleDatePicker}}" on-click="{{toggleDatePicker}}" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" preventInvalidInput="true" value="{{vorlesungsterminToEdit.datum}}" disabled?="{{disableToggle}}" required>
 							</paper-input-decorator>						
 						</div>
 						<div horizontal layout start>
@@ -88,7 +88,7 @@
 								<template repeat="{{item in topDozenten}}">
 									<paper-shadow z="1" class="{{item.id === dozent.id ? 'inner-inner-shadow highlight' : 'inner-inner-shadow'}}">
 										<div horizontal layout center>
-											<span on-click="{{setListDozent}}" horizontal layout center-center flex class="self-click">{{item.name}}, {{item.vorname}}</span>
+											<paper-item on-click="{{setListDozent}}" horizontal layout center-center flex class="self-click">{{item.name}}, {{item.vorname}}</paper-item>
 											<paper-icon-button icon="info" on-click="{{navigateToDozent}}"></paper-icon-button>
 										</div>
 									</paper-shadow>
@@ -97,7 +97,7 @@
 								<template repeat="{{item in skilledDozenten}}">
 									<paper-shadow z="1" class="{{item.id === dozent.id ? 'inner-inner-shadow highlight' : 'inner-inner-shadow'}}">
 										<div horizontal layout center>
-											<span on-click="{{setListDozent}}" horizontal layout center-center flex class="self-click">{{item.name}}, {{item.vorname}}</span>
+											<paper-item on-click="{{setListDozent}}" horizontal layout center-center flex class="self-click">{{item.name}}, {{item.vorname}}</paper-item>
 											<paper-icon-button icon="info" on-click="{{navigateToDozent}}"></paper-icon-button>
 										</div>
 									</paper-shadow>
@@ -117,7 +117,7 @@
 								<template repeat="{{item in otherDozenten}}">
 									<paper-shadow z="1" class="{{item.id === dozent.id ? 'inner-inner-shadow highlight' : 'inner-inner-shadow'}}">
 										<div horizontal layout center>
-											<span on-click="{{setListDozent}}" horizontal layout center-center flex class="self-click">{{item.name}}, {{item.vorname}}</span>
+											<paper-item on-click="{{setListDozent}}" horizontal layout center-center flex class="self-click">{{item.name}}, {{item.vorname}}</paper-item>
 											<paper-icon-button icon="info" on-click="{{navigateToDozent}}"></paper-icon-button>
 										</div>
 									</paper-shadow>
@@ -623,6 +623,7 @@
 			if(this.disableToggle === true) {
 				return;
 			}
+			this.$.datePicker.close(); //force close
 			//Init or set selected date
 			if(this.$.datum.input.value) {
 				this.selectedDate = this.vorlesungsterminToEdit.datum;

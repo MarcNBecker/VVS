@@ -21,9 +21,11 @@
 }
 
 .inner-inner-shadow .self-click {
-	padding-top: 8px;
-	padding-bottom: 8px;
 	cursor: pointer;
+}
+
+.inner-inner-shadow /deep/ #ripple {
+  color: #D32B18;
 }
 
 .highlight {
