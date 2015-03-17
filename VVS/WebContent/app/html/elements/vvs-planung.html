@@ -6,7 +6,7 @@
 			<div vertical layout>
 				<!-- Name der Vorlesung und Progress-Balken -->
 				<div horizontal layout class="headline horizontal-input vertical-input">
-					<span>Terminplanung &quot;{{vorlesung.fachInstanz.fach.name}}&quot; - {{vorlesung.semester}}. Semester</span>
+					<span>Terminplanung &quot;{{vorlesung.fachInstanz.fach.name}}&quot; - {{vorlesung.semester}}. Semester - {{kurs.kursname}}</span>
 					<paper-progress class="progress" value="{{progressProzent}}"></paper-progress>
 					<span>{{progress}} / {{vorlesung.fachInstanz.stunden}} Stunden geplant</span>
 				</div>
@@ -84,14 +84,25 @@
 						<div vertical layout class="vertical-input">
 							<span class="small-headline" horizontal layout center>Dozent ausw&auml;hlen</span>
 							<paper-shadow z="2" class="inner-shadow">
-								<span horizontal layout center-center class="small-headline" flex>Dozentenvorschl&auml;ge</span>
+								<span horizontal layout center-center class="small-headline" flex>Vorherhige Dozenten</span>
 								<template repeat="{{item in topDozenten}}">
 									<paper-shadow z="1" class="{{item.id === dozent.id ? 'inner-inner-shadow highlight' : 'inner-inner-shadow'}}">
-										<span on-click="{{setTopDozent}}" horizontal layout center-center flex class="self-click">{{item.name}}, {{item.vorname}}</span>
+										<div horizontal layout center>
+											<span on-click="{{setListDozent}}" horizontal layout center-center flex class="self-click">{{item.name}}, {{item.vorname}}</span>
+											<paper-icon-button icon="info" on-click="{{navigateToDozent}}"></paper-icon-button>
+										</div>
+									</paper-shadow>
+								</template>
+								<span horizontal layout center-center class="small-headline" flex>Dozenten mit Fachkompetenz</span>
+								<template repeat="{{item in skilledDozenten}}">
+									<paper-shadow z="1" class="{{item.id === dozent.id ? 'inner-inner-shadow highlight' : 'inner-inner-shadow'}}">
+										<div horizontal layout center>
+											<span on-click="{{setListDozent}}" horizontal layout center-center flex class="self-click">{{item.name}}, {{item.vorname}}</span>
+											<paper-icon-button icon="info" on-click="{{navigateToDozent}}"></paper-icon-button>
+										</div>
 									</paper-shadow>
 								</template>
 								<span horizontal layout center-center class="small-headline" flex>Weitere Dozenten suchen</span>
-								
 								<div horizontal layout center-center flex>
 									<paper-dropdown-menu-searchable label="Dozent suchen" disabled?="{{disableToggle}}" flex on-core-select="{{setOtherDozent}}">
 										<paper-dropdown-searchable class="dropdown" arrayName="dozenten" searchProperties="name vorname" hideProperty="hidden">
@@ -103,6 +114,14 @@
 										</paper-dropdown-searchable>
 									</paper-dropdown-menu-searchable>
 								</div>
+								<template repeat="{{item in otherDozenten}}">
+									<paper-shadow z="1" class="{{item.id === dozent.id ? 'inner-inner-shadow highlight' : 'inner-inner-shadow'}}">
+										<div horizontal layout center>
+											<span on-click="{{setListDozent}}" horizontal layout center-center flex class="self-click">{{item.name}}, {{item.vorname}}</span>
+											<paper-icon-button icon="info" on-click="{{navigateToDozent}}"></paper-icon-button>
+										</div>
+									</paper-shadow>
+								</template>
 							</paper-shadow>
 						</div>
 					</div>
@@ -129,6 +148,9 @@
 		dozent: new model.templates.Dozent(),
 		dozenten: [],
 		topDozenten: [],
+		skilledDozenten: [],
+		otherDozenten: [],
+		kurs: new model.templates.Kurs(),
 		raum: null,
 		progress: 0,
 		progressProzent: 0,
@@ -154,6 +176,9 @@
 			self.dozent = new model.templates.Dozent();
 			self.dozenten = [];
 			self.topDozenten = [];
+			self.skilledDozenten = [];
+			self.otherDozenten = [];
+			self.kurs = new model.templates.Kurs();
 			self.raum = null;
 			self.progress = 0;
 			self.progressProzent = 0;
@@ -187,7 +212,7 @@
     							self.$.pause.inputAction();
     						}, 100);
 							deepRuns++;
-							if(deepRuns === 4) {
+							if(deepRuns === 6) {
 	    						//Enable inputs
 	    						self.disableToggle = false;
 							}
@@ -198,9 +223,21 @@
 						}
 					});
 					//Load default Kursraum
-					var kurs = new model.templates.Kurs();
-					kurs.id = self.vorlesung.kursID;
-					model.webService.getAllKursBlocklagen(kurs, function(api) {
+					self.kurs.id = self.vorlesung.kursID;
+					model.webService.getKurs(self.kurs, function(api) {
+						if(!api.isError) {
+							self.kurs = api.response;
+							deepRuns++;
+							if(deepRuns === 6) {
+	    						//Enable inputs
+	    						self.disableToggle = false;
+							}
+						} else {
+							console.log(JSON.stringify(api));
+							self.toasts.error.show();
+						}
+					});
+					model.webService.getAllKursBlocklagen(self.kurs, function(api) {
 						if (!api.isError) {
 							var i;
 							for (i = 0; i < api.response.length; i++) {
@@ -218,7 +255,7 @@
     							self.$.raum.inputAction();
     						}, 100);
 							deepRuns++;
-							if(deepRuns === 4) {
+							if(deepRuns === 6) {
 	    						//Enable inputs
 	    						self.disableToggle = false;
 							}
@@ -240,7 +277,7 @@
 								}
 							}
 							deepRuns++;
-    						if(deepRuns === 4) {
+    						if(deepRuns === 6) {
 	    						//Enable inputs
 	    						self.disableToggle = false;
     						}
@@ -250,12 +287,25 @@
 							self.toasts.error.show();
 						}
 					});
+					model.webService.getAllDozentenFach(self.vorlesung.fachInstanz.fach, function(api) {
+						if(!api.isError) {
+							self.skilledDozenten = api.response;
+							deepRuns++;
+    						if(deepRuns === 6) {
+	    						//Enable inputs
+	    						self.disableToggle = false;
+    						}
+						} else {
+							console.log(JSON.stringify(api));
+							self.toasts.error.show();
+						}
+					})
 					//Load all Dozenten
 					model.webService.getAllDozenten(function(api) {
 						if (!api.isError) {
 							self.dozenten = api.response;
 							deepRuns++;
-    						if(deepRuns === 4) {
+    						if(deepRuns === 6) {
 	    						//Enable inputs
 	    						self.disableToggle = false;
     						}
@@ -470,7 +520,7 @@
 			}
 		},
     	//Set selected Dozent for Vorlesung from top list
-    	setTopDozent: function(e, detail, sender) {
+    	setListDozent: function(e, detail, sender) {
     		if(this.disableToggle === true) {
     			return;
     		}
@@ -487,11 +537,26 @@
         				break;
         			}
         		}
+        		for(i=0; found === false && i<this.skilledDozenten.length; i++) {
+        			if(this.skilledDozenten[i].id === this.dozent.id) {
+        				found = true;
+        				break;
+        			}
+        		}
+        		for(i=0; found === false && i<this.otherDozenten.length; i++) {
+        			if(this.otherDozenten[i].id === this.dozent.id) {
+        				found = true;
+        				break;
+        			}
+        		}
         		if(found === false) {
-            		this.topDozenten.push(this.dozent);	
+            		this.otherDozenten.push(this.dozent);	
         		}
         		e.target.selected = null;
     		}
+    	},
+    	navigateToDozent: function(e, detail, sender) {
+    		location.href = '#!dozent-' + sender.templateInstance.model.item.id;
     	},
     	//Calculate Progress for progress-bar
     	calculateProgress: function() {
