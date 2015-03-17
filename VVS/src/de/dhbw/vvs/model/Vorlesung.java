@@ -112,7 +112,7 @@ public class Vorlesung {
 		ArrayList<Object> fieldValues = new ArrayList<Object>();
 		fieldValues.add(kursID);
 		fieldValues.add(fachInstanz.getID());
-		fieldValues.add(dozentID == 0 ? null: 0);
+		fieldValues.add(dozentID == 0 ? null: dozentID);
 		fieldValues.add(semester);
 		fieldValues.add(id);
 		int affectedRows = db.doQuery("UPDATE vorlesung SET kurs = ?, fachInstanz = ?, dozent = ?, semester = ? WHERE id = ?", fieldValues);

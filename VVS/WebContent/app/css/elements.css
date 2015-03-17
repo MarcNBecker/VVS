@@ -20,6 +20,12 @@
 	padding-right: 5px
 }
 
+.inner-inner-shadow .self-click {
+	padding-top: 8px;
+	padding-bottom: 8px;
+	cursor: pointer;
+}
+
 .highlight {
 	background-color: rgba(226,0,26,0.5);
 }
@@ -77,6 +83,12 @@
 	padding-right: 5px;
 }
 
+.input-padding paper-checkbox {
+	padding-left: 5px;
+	padding-right: 5px;
+	margin-bottom: 0px;
+}
+
 .hide {
 	display: hidden;
 }
@@ -84,6 +96,11 @@
 paper-button {
 	background: #E2001A;
 	color: #FFFFFF;
+}
+
+core-icon {
+	margin-left: 5px;
+	margin-right: 5px;
 }
 
 paper-icon-button::shadow #ripple {

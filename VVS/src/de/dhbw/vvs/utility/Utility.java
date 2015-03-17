@@ -21,7 +21,7 @@ import de.dhbw.vvs.application.WebServiceException;
 public class Utility {
 	
 	public static final String DATE_STRING = "yyyy-MM-dd";
-	public static final String TIME_STRING = "HH:mm:ss";
+	public static final String TIME_STRING = "HH:mm";
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat(DATE_STRING);
 	private static final DateFormat TIME_FORMAT = new SimpleDateFormat(TIME_STRING);
 	
