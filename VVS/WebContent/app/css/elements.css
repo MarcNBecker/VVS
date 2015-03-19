@@ -20,10 +20,6 @@
 	padding-right: 5px
 }
 
-.inner-inner-shadow .self-click {
-	cursor: pointer;
-}
-
 .inner-inner-shadow /deep/ #ripple {
   color: #D32B18;
 }

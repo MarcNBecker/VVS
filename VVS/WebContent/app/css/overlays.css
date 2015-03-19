@@ -3,10 +3,23 @@ body /deep/ paper-button[autofocus] {
 	color: #E2001A;
 }
 
+body /deep/ #export_overlay {
+	top: 10px;
+}
+
 body /deep/ #export_overlay /deep/ paper-button {
 	background: #E2001A;
 	color: #FFFFFF;
 	margin-bottom: 10px;
+}
+
+body /deep/ #vorlesungs_overlay {
+	top: 10px;
+	width: 50%;
+}
+
+body /deep/ #vorlesungs_overlay /deep/ #ripple {
+	color: #D32B18;
 }
 
 body /deep/ .overlay-headline {
@@ -14,4 +27,41 @@ body /deep/ .overlay-headline {
 	font-weight: 350;
 	margin-top: 10px;
 	margin-bottom: 10px;
+}
+
+body /deep/ .overlay-inner-shadow {
+	background-color: #EEEEEE;
+	border-radius: 5px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+body /deep/ .overlay-inner-inner-shadow {
+	background-color: #FFF;
+	border-radius: 3px;
+	margin-bottom: 10px;
+}
+
+body /deep/ .overlay-highlight {
+	background-color: rgba(226,0,26,0.5);
+}
+
+body /deep/ .overlay-small-headline {
+	font-size: 16pt;
+	font-weight: 350;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+body /deep/ .overlay-horizontal-input {
+	margin-left: 20px;
+}
+
+body /deep/ .overlay-horizontal-input > * {
+	margin-right: 20px;
+	margin-top: 0px;
+}
+
+body /deep/ .overlay-bottom {
+	margin-bottom: 20px;
 }

@@ -58,11 +58,11 @@
 							</paper-input-decorator>						
 						</div>
 						<div horizontal layout start>
-							<paper-input-decorator id="startUhrzeit" label="Uhrzeit von" error="Pflichtfeld: Ung&uuml;ltige Uhrzeit (hh:mm)" autoValidate isInvalid="{{invalid.startUhrzeit}}" floatingLabel flex>
-								<input id="startInput" is="core-input" type="text" on-keyup="{{calculate}}" pattern="(2[0-3]|[01][0-9]):[0-5][0-9]" value={{vorlesungsterminToEdit.startUhrzeit}} disabled?="{{disableToggle}}" required>
+							<paper-input-decorator id="startUhrzeit" label="Uhrzeit von" on-input="{{calculate}}" error="Pflichtfeld: Ung&uuml;ltige Uhrzeit (hh:mm)" autoValidate isInvalid="{{invalid.startUhrzeit}}" floatingLabel flex>
+								<input id="startInput" is="core-input" type="text" pattern="(2[0-3]|[01][0-9]):[0-5][0-9]" value={{vorlesungsterminToEdit.startUhrzeit}} disabled?="{{disableToggle}}" required>
 							</paper-input-decorator>		
-							<paper-input-decorator id="endUhrzeit" label="Uhrzeit bis" error="Pflichtfeld: Ung&uuml;ltige Uhrzeit (hh:mm)" autoValidate isInvalid="{{invalid.endUhrzeit}}" floatingLabel flex>
-								<input id="endInput" is="core-input" type="text" on-keyup="{{calculate}}" pattern="(2[0-3]|[01][0-9]):[0-5][0-9]" value={{vorlesungsterminToEdit.endUhrzeit}} disabled?="{{disableToggle}}" required>
+							<paper-input-decorator id="endUhrzeit" label="Uhrzeit bis" on-input="{{calculate}}" error="Pflichtfeld: Ung&uuml;ltige Uhrzeit (hh:mm)" autoValidate isInvalid="{{invalid.endUhrzeit}}" floatingLabel flex>
+								<input id="endInput" is="core-input" type="text" pattern="(2[0-3]|[01][0-9]):[0-5][0-9]" value={{vorlesungsterminToEdit.endUhrzeit}} disabled?="{{disableToggle}}" required>
 							</paper-input-decorator>			
 						</div>
 						<div horizontal layout start>
@@ -88,8 +88,8 @@
 								<template repeat="{{item in topDozenten}}">
 									<paper-shadow z="1" class="{{item.id === dozent.id ? 'inner-inner-shadow highlight' : 'inner-inner-shadow'}}">
 										<div horizontal layout center>
-											<paper-item on-click="{{setListDozent}}" horizontal layout center-center flex class="self-click">{{item.name}}, {{item.vorname}}</paper-item>
-											<paper-icon-button icon="info" on-click="{{navigateToDozent}}"></paper-icon-button>
+											<paper-item on-click="{{setListDozent}}" horizontal layout center-center flex disabled?="{{disableToggle}}">{{item.name}}, {{item.vorname}}</paper-item>
+											<paper-icon-button icon="info" on-click="{{navigateToDozent}}" disabled?="{{disableToggle}}"></paper-icon-button>
 										</div>
 									</paper-shadow>
 								</template>
@@ -97,8 +97,8 @@
 								<template repeat="{{item in skilledDozenten}}">
 									<paper-shadow z="1" class="{{item.id === dozent.id ? 'inner-inner-shadow highlight' : 'inner-inner-shadow'}}">
 										<div horizontal layout center>
-											<paper-item on-click="{{setListDozent}}" horizontal layout center-center flex class="self-click">{{item.name}}, {{item.vorname}}</paper-item>
-											<paper-icon-button icon="info" on-click="{{navigateToDozent}}"></paper-icon-button>
+											<paper-item on-click="{{setListDozent}}" horizontal layout center-center flex disabled?="{{disableToggle}}">{{item.name}}, {{item.vorname}}</paper-item>
+											<paper-icon-button icon="info" on-click="{{navigateToDozent}}" disabled?="{{disableToggle}}"></paper-icon-button>
 										</div>
 									</paper-shadow>
 								</template>
@@ -521,9 +521,6 @@
 		},
     	//Set selected Dozent for Vorlesung from top list
     	setListDozent: function(e, detail, sender) {
-    		if(this.disableToggle === true) {
-    			return;
-    		}
     		this.dozent = e.target.templateInstance.model.item;
     	},
     	setOtherDozent: function(e, detail, sender) {
