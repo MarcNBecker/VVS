@@ -3,11 +3,11 @@ package de.dhbw.vvs.utility;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
+import java.sql.Date;
+import java.sql.Time;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.sql.Date;
-import java.sql.Time;
 
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
@@ -56,7 +56,7 @@ public class Utility {
 	 * @return true if the string is a valid email
 	 */
 	public static boolean checkEmail(String email) {
-		return email.matches(("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?"));
+		return email.matches(("[^@]+@[^@]+\\.[a-zA-Z]{2,6}"));
 	}
 	
 	/**
