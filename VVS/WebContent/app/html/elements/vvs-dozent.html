@@ -99,7 +99,7 @@
 					</template>
 					<div horizontal layout center class="horizontal-list">
 						<paper-dropdown-menu-searchable id="fachDropdownMenu" label="Kompetenzfach" disabled?="{{disableToggle}}">
-							<paper-dropdown-searchable id="fachDropdown" class="dropdown" arrayName="faecher" searchProperties="name" hideProperty="hidden">
+							<paper-dropdown-searchable id="fachDropdown" class="dropdown" arrayName="faecher" searchProperties="name kurzbeschreibung" hideProperty="hidden">
 								<core-menu id="fach" class="menu">
 									<template  repeat="{{item in faecher}}">
 										<paper-item hidden?="{{item.hidden}}" on-click="{{addFach}}">{{item.name}}</paper-item>
