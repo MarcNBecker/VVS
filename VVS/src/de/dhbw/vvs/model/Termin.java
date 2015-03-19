@@ -174,4 +174,20 @@ public class Termin {
 		this.vorlesungID = vorlesungID;
 	}
 	
+	public Time getStartUhrzeit() {
+		return startUhrzeit;
+	}
+	
+	public Time getEndUhrzeit() {
+		return endUhrzeit;
+	}
+	
+	public int getPause() {
+		return pause;
+	}
+	
+	public boolean getKlausur() {
+		return klausur;
+	}
+	
 }
