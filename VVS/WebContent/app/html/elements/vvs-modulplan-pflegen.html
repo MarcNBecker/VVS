@@ -20,7 +20,7 @@
 								<template repeat="{{fachInstanz in modulInstanz.fachInstanzList}}">
 									<paper-shadow z="1" class="{{(inputModulInstanz.id === modulInstanz.id && (inputFachInstanz.id === fachInstanz.id || (selectedFach < 0 && (invalid.fname && invalid.fkurzbeschreibung && invalid.semester && invalid.stunden)))) ? 'inner-inner-shadow highlight' : 'inner-inner-shadow'}}">
 										<div horizontal layout center>
-											<span horizontal layout center-center flex two>{{modulInstanz.modul.name}} ({{modulInstanz.credits}} Credits)</span>
+											<span horizontal layout center-center flex two>{{modulInstanz.modul.kurzbeschreibung}} ({{modulInstanz.credits}} Credits)</span>
 											<span horizontal layout center-center flex four>{{fachInstanz.fach.name}}</span>
 											<span horizontal layout center-center flex>{{fachInstanz.semester}}</span>
 											<span horizontal layout center-center flex>{{fachInstanz.stunden}}</span>
@@ -42,10 +42,10 @@
 						<span class="small-headline">Modulplan bearbeiten</span>
 						<div horizontal layout center>
 							<paper-dropdown-menu-searchable label="Neues Modul anlegen oder eines ausw&auml;hlen" disabled?="{{disableToggle || selectedFach >= 0}}" on-core-select="{{setModulIsInvalid}}" flex>
-								<paper-dropdown-searchable id="modulDropdown" class="dropdown" arrayName="module" searchProperties="modul.name" hideProperty="hidden">
+								<paper-dropdown-searchable id="modulDropdown" class="dropdown" arrayName="module" searchProperties="modul.name modul.kurzbeschreibung" hideProperty="hidden">
 									<core-menu class="menu" selected="{{selectedModul}}">
 										<template repeat="{{item in module}}">
-											<paper-item hidden?="{{item.hidden}}">{{item.modul.name}}</paper-item>
+											<paper-item hidden?="{{item.hidden}}">{{item.modul.name}} ({{item.modul.kurzbeschreibung}})</paper-item>
 										</template>
 									</core-menu>
 								</paper-dropdown-searchable>
@@ -69,7 +69,7 @@
 						</paper-input-decorator>
 						<div horizontal layout center>
 							<paper-dropdown-menu-searchable label="Neues Fach anlegen oder eines ausw&auml;hlen" disabled?="{{disableToggle || (selectedModul < 0 && (invalid.mname || invalid.mkurzbeschreibung || invalid.credits))}}" on-core-select="{{setFachIsInvalid}}" flex>
-								<paper-dropdown-searchable id="fachDropdown" class="dropdown" arrayName="faecher" searchProperties="fach.name" hideProperty="hidden">
+								<paper-dropdown-searchable id="fachDropdown" class="dropdown" arrayName="faecher" searchProperties="fach.name fach.kurzbeschreibung" hideProperty="hidden">
 									<core-menu class="menu" selected="{{selectedFach}}">
 										<template repeat="{{item in faecher}}">
 											<paper-item hidden?="{{item.hidden}}">{{item.fach.name}}</paper-item>

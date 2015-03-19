@@ -3,11 +3,11 @@ package de.dhbw.vvs.utility;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
+import java.sql.Date;
+import java.sql.Time;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.sql.Date;
-import java.sql.Time;
 
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
@@ -21,7 +21,7 @@ import de.dhbw.vvs.application.WebServiceException;
 public class Utility {
 	
 	public static final String DATE_STRING = "yyyy-MM-dd";
-	public static final String TIME_STRING = "HH:mm:ss";
+	public static final String TIME_STRING = "HH:mm";
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat(DATE_STRING);
 	private static final DateFormat TIME_FORMAT = new SimpleDateFormat(TIME_STRING);
 	
@@ -56,7 +56,7 @@ public class Utility {
 	 * @return true if the string is a valid email
 	 */
 	public static boolean checkEmail(String email) {
-		return email.matches(("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?"));
+		return email.matches(("[^@]+@[^@]+\\.[a-zA-Z]{2,6}"));
 	}
 	
 	/**

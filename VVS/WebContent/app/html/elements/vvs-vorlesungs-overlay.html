@@ -1,0 +1,184 @@
+<polymer-element name="vvs-vorlesungs-overlay">
+	<template>
+		<paper-action-dialog id="vorlesungs_overlay" backdrop="true" layered="true" heading="Vorlesungsauswahl f&uuml;r {{kurs.kursname}} im {{semester}}. Semester">
+			<div vertical layout class="overlay-horizontal-input overlay-vertical-input">
+				<div horizontal layout center>
+					<paper-input-decorator id="vorlesungSuchenInputDecorater" label="Vorlesung suchen" flex>
+						<input is="core-input" type="text" value={{searchTerm}} disabled?="{{disableToggle}}">
+					</paper-input-decorator>
+					<paper-icon-button icon="search" on-click="{{search}}" self-center></paper-icon-button>
+					<paper-spinner active?={{disableToggle}} self-center></paper-spinner>
+				</div>
+				<div vertical layout class="overlay-bottom">
+					<span class="overlay-headline">Verbleibende Vorlesungen des aktuellen Semesters</span>
+					<paper-shadow z="2" class="overlay-inner-shadow">
+						<span horizontal layout center-center class="overlay-small-headline" flex>Name</span>
+						<template repeat="{{item in aktuelleVorlesungen}}"> 
+							<paper-shadow z="1" class="{{item.checked ? 'overlay-inner-inner-shadow overlay-highlight' : 'overlay-inner-inner-shadow'}}">
+								<paper-item on-click="{{checked}}" horizontal layout center-center flex disabled?="{{disableToggle}}" hidden?="{{item.hidden}}">{{item.fach.name}}</paper-item>
+							</paper-shadow>
+						</template>
+					</paper-shadow>
+				</div>
+				<div vertical layout class="overlay-bottom">
+					<span class="overlay-headline">Sonstige verbleibende Vorlesungen</span>
+					<paper-shadow z="2" class="overlay-inner-shadow">
+						<span horizontal layout center-center class="overlay-small-headline" flex>Name</span>
+						<template repeat="{{item in verbleibendeVorlesungen}}"> 
+							<paper-shadow z="1" class="{{item.checked ? 'overlay-inner-inner-shadow overlay-highlight' : 'overlay-inner-inner-shadow'}}">
+								<paper-item on-click="{{checked}}" horizontal layout center-center flex disabled?="{{disableToggle}}" hidden?="{{item.hidden}}">{{item.fach.name}}</paper-item>
+							</paper-shadow>
+						</template>
+					</paper-shadow>
+				</div>
+			</div>			
+			<paper-button affirmative>Abbrechen</paper-button>
+			<paper-button on-click="{{create}}" affirmative autofocus>&Uuml;bernehmen</paper-button>
+		</paper-action-dialog>
+	</template>
+	<script>
+		Polymer("vvs-vorlesungs-overlay",{
+			alleVorlesungen: [],
+			aktuelleVorlesungen:[],
+			verbleibendeVorlesungen:[],
+			searchTerm: "",
+			boolSuchenVorlesungIsEmpty: true,
+			disableToggle: true,
+			//Publish those attributes to home
+			publish: {
+				kurs: {},
+				semester: 0,
+				toasts: {}
+			},
+			//Initialize the screen
+			ready: function (){
+				var self = this;
+				self.alleVorlesungen = [];
+				self.aktuelleVorlesungen = [];
+				self.verbleibendeVorlesungen = [];
+				self.searchTerm = "";
+				self.boolSuchenVorlesungIsEmpty = true;
+				self.disableToggle = true;
+			},
+			load: function() {
+				var self = this;
+				//Load offene Vorlesungen
+				model.webService.getAllVorlesungenOffen(self.kurs, function(api) {
+					if (!api.isError)
+					{
+						self.alleVorlesungen = api.response;
+						var i;
+						for (i = 0; i < api.response.length; i++) {
+							//All offene Vorlesungen of selected Semester
+							if (api.response[i].semester === self.semester)
+							{
+								api.response[i].checked = true;
+								self.aktuelleVorlesungen.push(api.response[i]);
+							}
+							//All offene Vorlesungen of other semesters
+							else
+							{
+								api.response[i].checked = false;
+								self.verbleibendeVorlesungen.push(api.response[i]);
+							}
+						}
+						self.disableToggle = false;
+					}
+					else
+					{
+						console.log(JSON.stringify(api));
+						self.toasts.error.show();
+					}
+				});
+			},
+			//Create Vorlesungen for selected Vorlesungen
+			create: function() {
+				var self = this;
+				self.disableToggle = true;
+				var selectedVorlesungen = [];
+				//Push selected Vorlesungen to new array
+				var i;
+				for (i = 0; i < self.aktuelleVorlesungen.length; i++)
+				{
+					if (self.aktuelleVorlesungen[i].checked)
+					{
+						selectedVorlesungen.push(self.aktuelleVorlesungen[i]);
+					}
+				}
+				var ii;
+				for (ii = 0; ii < self.verbleibendeVorlesungen.length; ii++)
+				{
+					if (self.verbleibendeVorlesungen[ii].checked)
+					{
+						selectedVorlesungen.push(self.verbleibendeVorlesungen[ii]);
+					}
+				}	
+				var deepRuns = 0;
+				var iii;
+				for (iii = 0; iii < selectedVorlesungen.length; iii++)
+				{
+					var vorlesung = new model.templates.Vorlesung();
+					vorlesung.kursID = self.kurs.id;
+					vorlesung.fachInstanz = selectedVorlesungen[iii];
+					vorlesung.semester = self.semester;
+					model.webService.createVorlesung(vorlesung, function(api) {
+						if (!api.isError)
+						{
+							deepRuns++;
+							if (deepRuns === selectedVorlesungen.length)
+							{
+								self.toasts.success.show();
+							}
+						}
+						else
+						{
+							console.log(JSON.stringify(api));
+							self.toasts.error.show();
+						}
+					});
+				}
+				if (deepRuns === 0 && selectedVorlesungen.length === 0)
+				{
+					self.toasts.success.show();
+				}
+			},
+			//Show paper-action-dialog
+			toggle: function() {
+				this.$.vorlesungs_overlay.toggle();
+				this.load();
+			},
+			//Vorlesung selected
+			checked: function(e, detail, sender) {
+				e.target.templateInstance.model.item.checked = !e.target.templateInstance.model.item.checked;
+			},
+			//Search
+			search: function(){
+		    	var keywords = this.searchTerm.trim().split(" ");
+		    	var i;
+		    	for(i=0; i<this.alleVorlesungen.length; i++) { //items
+		    		if(!this.searchTerm) {
+		    			this.alleVorlesungen[i].hidden = false;
+		    		} else {
+		    			var contains = 0;
+		    			var ii;
+		    			for(ii=0; ii<keywords.length; ii++) { //keywords
+		    				var keyword = keywords[ii];
+	        				var value = this.alleVorlesungen[i].fach.name;
+		    				if(typeof value === 'string' && value.toUpperCase().indexOf(keyword.trim().toUpperCase()) !== -1) {
+	        					contains++;
+	        				}
+		    			}
+		    			if(contains === keywords.length) {
+		    				this.alleVorlesungen[i].hidden = false;
+		    			} else {
+		    				this.alleVorlesungen[i].hidden = true;
+		    			}
+		    		}
+		    	}
+			},
+			searchTermChanged: function() {
+				this.search();
+			}
+		});
+	</script>
+</polymer-element>

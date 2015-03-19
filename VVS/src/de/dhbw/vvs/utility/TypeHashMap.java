@@ -47,7 +47,7 @@ public class TypeHashMap <K, V> extends java.util.HashMap<K, V> {
 	public int getInt(Object key) throws WebServiceException {
 		V value = get(key);
 		if(value == null) {
-			throw new WebServiceException(ExceptionStatus.CASTING_NULL);
+			return 0; //In this project we use int for IDs..any null ID should return 0
 		}
 		if (value instanceof BigInteger) {
 			return ((BigInteger) value).intValue();

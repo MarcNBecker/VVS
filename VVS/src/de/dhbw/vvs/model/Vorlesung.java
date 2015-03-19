@@ -97,7 +97,7 @@ public class Vorlesung {
 		ArrayList<Object> fieldValues = new ArrayList<Object>();
 		fieldValues.add(kursID);
 		fieldValues.add(fachInstanz.getID());
-		fieldValues.add(dozentID);
+		fieldValues.add(dozentID == 0 ? null: 0);
 		fieldValues.add(semester);
 		this.id = db.doQuery("INSERT INTO vorlesung (kurs, fachInstanz, dozent, semester) VALUES (?, ?, ?, ?)", fieldValues);
 		return this;
@@ -112,7 +112,7 @@ public class Vorlesung {
 		ArrayList<Object> fieldValues = new ArrayList<Object>();
 		fieldValues.add(kursID);
 		fieldValues.add(fachInstanz.getID());
-		fieldValues.add(dozentID);
+		fieldValues.add(dozentID == 0 ? null: dozentID);
 		fieldValues.add(semester);
 		fieldValues.add(id);
 		int affectedRows = db.doQuery("UPDATE vorlesung SET kurs = ?, fachInstanz = ?, dozent = ?, semester = ? WHERE id = ?", fieldValues);
@@ -144,9 +144,10 @@ public class Vorlesung {
 		} else {
 			fachInstanz.getDirectAttributes(); //check existance
 		}
-		if (dozentID <= 0) {
+		//allow dozent ID 0
+		if (dozentID < 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
-		} else {
+		} else if (dozentID != 0) {
 			new Dozent(dozentID).getDirectAttributes(); //check existance
 		}
 		if (semester <= 0) {

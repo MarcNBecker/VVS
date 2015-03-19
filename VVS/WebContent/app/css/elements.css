@@ -20,6 +20,10 @@
 	padding-right: 5px
 }
 
+.inner-inner-shadow /deep/ #ripple {
+  color: #D32B18;
+}
+
 .highlight {
 	background-color: rgba(226,0,26,0.5);
 }
@@ -77,6 +81,12 @@
 	padding-right: 5px;
 }
 
+.input-padding paper-checkbox {
+	padding-left: 5px;
+	padding-right: 5px;
+	margin-bottom: 0px;
+}
+
 .hide {
 	display: hidden;
 }
@@ -84,6 +94,11 @@
 paper-button {
 	background: #E2001A;
 	color: #FFFFFF;
+}
+
+core-icon {
+	margin-left: 5px;
+	margin-right: 5px;
 }
 
 paper-icon-button::shadow #ripple {
@@ -98,4 +113,12 @@ paper-checkbox::shadow #ink[checked] {
 paper-checkbox::shadow #checkbox.checked {
 	background-color: #D32B18;
 	border-color: #D32B18;
+}
+
+.progress {
+	height:30px;
+}
+
+paper-progress::shadow #activeProgress {
+	background-color: #D32B18;
 }

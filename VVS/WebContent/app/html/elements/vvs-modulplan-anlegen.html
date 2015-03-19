@@ -19,15 +19,15 @@
 					<paper-checkbox checked="{{vorlageChecked}}" self-center disabled?="{{toggleDisabled}}"></paper-checkbox>
 				</div>
 				<div vertical layout class="horizontal-input">
-					<paper-dropdown-menu label="Vorlage" hidden?="{{!vorlageChecked}}" disabled?="{{toggleDisabled}}">
-						<paper-dropdown class="dropdown">
+					<paper-dropdown-menu-searchable label="Vorlage" hidden?="{{!vorlageChecked}}" disabled?="{{toggleDisabled}}">
+						<paper-dropdown-searchable class="dropdown" arrayName="vorlagen" searchProperties="studiengang vertiefungsrichtung" hideProperty="hidden">
 							<core-menu selected="{{selectedVorlage}}" class="menu">
-								<template  repeat="{{item in vorlagen}}">
-									<paper-item>{{item.studiengang}} - {{item.vertiefungsrichtung}}</paper-item>
+								<template repeat="{{item in vorlagen}}">
+									<paper-item hidden?="{{item.hidden}}">{{item.studiengang}} - {{item.vertiefungsrichtung}}</paper-item>
 								</template>
 							</core-menu>
-						</paper-dropdown>
-					</paper-dropdown-menu>
+						</paper-dropdown-searchable>
+					</paper-dropdown-menu-searchable>
 				</div>
 				<!-- Button Bar -->
 				<div horizontal layout center class="horizontal-input horizontal-button-bar">

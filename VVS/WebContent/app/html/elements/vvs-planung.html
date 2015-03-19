@@ -1,0 +1,674 @@
+<polymer-element name="vvs-planung">
+	<template>
+		<link rel="stylesheet" type="text/css" href="../../css/elements.css" shim-shadowdom>
+		<core-media-query query="max-width: 1400px" queryMatches="{{smallScreen}}"></core-media-query>
+		<paper-shadow z="3" class="shadow">
+			<div vertical layout>
+				<!-- Name der Vorlesung und Progress-Balken -->
+				<div horizontal layout class="headline horizontal-input vertical-input">
+					<span>Terminplanung &quot;{{vorlesung.fachInstanz.fach.name}}&quot; - {{vorlesung.semester}}. Semester - {{kurs.kursname}}</span>
+					<paper-progress class="progress" value="{{progressProzent}}"></paper-progress>
+					<span>{{progress}} / {{vorlesung.fachInstanz.stunden}} {{vorlesung.fachInstanz.stunden === 1 ? 'Stunde' : 'Stunden'}} geplant</span>
+				</div>
+				<!-- Hauptscreen -->
+				<div horizontal?="{{!smallScreen}}" vertical?="{{smallScreen}}" layout class="horizontal-input vertical-input">
+					<div auto-vertical?="{{smallScreen}}" vertical layout flex?="{{!smallScreen}}" two?="{{!smallScreen}}">
+						<paper-shadow z="2" class="inner-shadow">
+							<div horizontal layout>
+								<span horizontal layout center-center class="small-headline" flex>Datum</span>
+								<span horizontal layout center-center class="small-headline" flex>Von</span>
+								<span horizontal layout center-center class="small-headline" flex>Bis</span>
+								<span horizontal layout center-center class="small-headline" flex>Dauer</span>
+								<span horizontal layout center-center class="small-headline" flex>Pause</span>
+								<span horizontal layout center-center class="small-headline" flex>Raum</span>
+								<paper-icon-button class="hide"></paper-icon-button>
+								<paper-icon-button class="hide"></paper-icon-button>
+							</div>
+							<template repeat="{{item in vorlesungstermine}}">
+								<paper-shadow z="1" class="{{item.id !== 0 && item.id === vorlesungsterminToEdit.id ? 'inner-inner-shadow highlight' : 'inner-inner-shadow'}}">
+									<div horizontal layout center>
+										<span horizontal layout center-center flex>
+											{{item.datum}}
+											<core-icon icon="assignment" hidden?="{{!item.klausur}}"></core-icon>
+										</span>
+										<span horizontal layout center-center flex>{{item.startUhrzeit}} Uhr</span>
+										<span horizontal layout center-center flex>{{item.endUhrzeit}} Uhr</span>
+										<span horizontal layout center-center flex>{{item.dauer}} {{item.dauer === 1 ? 'Stunde' : 'Stunden'}}</span>
+										<span horizontal layout center-center flex>{{item.pause}} min</span>
+										<span horizontal layout center-center flex>{{item.raum}}</span>
+										<paper-icon-button on-click="{{edit}}" icon="create" disabled?="{{disableToggle}}" self-center></paper-icon-button>
+										<paper-icon-button on-click="{{initDoDelete}}" icon="delete" disabled?="{{disableToggle}}" self-center></paper-icon-button>
+									</div>
+								</paper-shadow>
+							</template>
+						</paper-shadow>
+						<div horizontal layout center class="horizontal-button-bar horizontal-verticalizable">
+							<paper-button on-click={{update}} raised disabled?="{{disableToggle}}">Speichern</paper-button>
+							<paper-button on-click={{initDeleteVorlesung}} raised disabled?="{{disableToggle}}">L&ouml;schen</paper-button>
+							<paper-button on-click={{cancel}} raised disabled?="{{disableToggle}}">Abbrechen</paper-button>				
+							<paper-spinner active?={{disableToggle}} self-center></paper-spinner>
+						</div>
+					</div>
+					<div auto-vertical?="{{smallScreen}}" flex?="{{!smallScreen}}" class="input-padding">
+						<span class="small-headline" horizontal layout center>Termin bearbeiten</span>
+						<div horizontal layout start>
+							<polymer-date-picker id="datePicker" relatedTarget="{{$.datum}}" halign="left" style="z-index:99" selectedDate="{{selectedDate}}" opened="false"></polymer-date-picker>
+							<paper-input-decorator id="datum" label="Datum" error="Pflichtfeld: Ung&uuml;ltiges Datum" autoValidate isInvalid="{{invalid.datum}}" floatingLabel flex>
+								<input is="core-input" on-focus="{{toggleDatePicker}}" on-click="{{toggleDatePicker}}" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" preventInvalidInput="true" value="{{vorlesungsterminToEdit.datum}}" disabled?="{{disableToggle}}" required>
+							</paper-input-decorator>						
+						</div>
+						<div horizontal layout start>
+							<paper-input-decorator id="startUhrzeit" label="Uhrzeit von" on-input="{{calculate}}" error="Pflichtfeld: Ung&uuml;ltige Uhrzeit (hh:mm)" autoValidate isInvalid="{{invalid.startUhrzeit}}" floatingLabel flex>
+								<input id="startInput" is="core-input" type="text" pattern="(2[0-3]|[01][0-9]):[0-5][0-9]" value={{vorlesungsterminToEdit.startUhrzeit}} disabled?="{{disableToggle}}" required>
+							</paper-input-decorator>		
+							<paper-input-decorator id="endUhrzeit" label="Uhrzeit bis" on-input="{{calculate}}" error="Pflichtfeld: Ung&uuml;ltige Uhrzeit (hh:mm)" autoValidate isInvalid="{{invalid.endUhrzeit}}" floatingLabel flex>
+								<input id="endInput" is="core-input" type="text" pattern="(2[0-3]|[01][0-9]):[0-5][0-9]" value={{vorlesungsterminToEdit.endUhrzeit}} disabled?="{{disableToggle}}" required>
+							</paper-input-decorator>			
+						</div>
+						<div horizontal layout start>
+							<paper-input-decorator id="pause" label="Pause" error="Ung&uuml;tige Pause" autoValidate isInvalid="{{invalid.pause}}" floatingLabel flex>
+								<input is="core-input" type="text" pattern="[0-9]+" value={{vorlesungsterminToEdit.pause}} disabled?="{{disableToggle}}">
+							</paper-input-decorator>	
+							<paper-input-decorator id="raum" label="Raum" floatingLabel flex>
+								<input is="core-input" type="text" value={{vorlesungsterminToEdit.raum}} maxlength="100" disabled?="{{disableToggle}}">
+							</paper-input-decorator>
+						</div>
+						<div horizontal layout center class="horizontal-verticalizable">
+							<paper-checkbox checked="{{vorlesungsterminToEdit.klausur}}" self-center disabled?="{{disableToggle}}"></paper-checkbox>
+							<span class="small-headline" self-center>Klausur</span>
+						</div>
+						<div horizontal layout>
+							<paper-button on-click={{add}} raised disabled?="{{disableToggle}}" flex>&Uuml;bernehmen</paper-button>
+							<paper-button on-click={{reject}} raised disabled?="{{disableToggle}}" flex>Verwerfen</paper-button>
+						</div>
+						<div vertical layout class="vertical-input">
+							<span class="small-headline" horizontal layout center>Dozent ausw&auml;hlen</span>
+							<paper-shadow z="2" class="inner-shadow">
+								<span horizontal layout center-center class="small-headline" flex>Vorherhige Dozenten</span>
+								<template repeat="{{item in topDozenten}}">
+									<paper-shadow z="1" class="{{item.id === dozent.id ? 'inner-inner-shadow highlight' : 'inner-inner-shadow'}}">
+										<div horizontal layout center>
+											<paper-item on-click="{{setListDozent}}" horizontal layout center-center flex disabled?="{{disableToggle}}">{{item.name}}, {{item.vorname}}</paper-item>
+											<paper-icon-button icon="info" on-click="{{navigateToDozent}}" disabled?="{{disableToggle}}"></paper-icon-button>
+										</div>
+									</paper-shadow>
+								</template>
+								<span horizontal layout center-center class="small-headline" flex>Dozenten mit Fachkompetenz</span>
+								<template repeat="{{item in skilledDozenten}}">
+									<paper-shadow z="1" class="{{item.id === dozent.id ? 'inner-inner-shadow highlight' : 'inner-inner-shadow'}}">
+										<div horizontal layout center>
+											<paper-item on-click="{{setListDozent}}" horizontal layout center-center flex disabled?="{{disableToggle}}">{{item.name}}, {{item.vorname}}</paper-item>
+											<paper-icon-button icon="info" on-click="{{navigateToDozent}}" disabled?="{{disableToggle}}"></paper-icon-button>
+										</div>
+									</paper-shadow>
+								</template>
+								<span horizontal layout center-center class="small-headline" flex>Weitere Dozenten suchen</span>
+								<div horizontal layout center-center flex>
+									<paper-dropdown-menu-searchable label="Dozent suchen" disabled?="{{disableToggle}}" flex on-core-select="{{setOtherDozent}}">
+										<paper-dropdown-searchable class="dropdown" arrayName="dozenten" searchProperties="name vorname" hideProperty="hidden">
+											<core-menu id="dozent" class="menu">
+												<template repeat="{{item in dozenten}}">
+													<paper-item hidden?="{{item.hidden}}">{{item.name}}, {{item.vorname}}</paper-item>
+												</template>
+											</core-menu>
+										</paper-dropdown-searchable>
+									</paper-dropdown-menu-searchable>
+								</div>
+								<template repeat="{{item in otherDozenten}}">
+									<paper-shadow z="1" class="{{item.id === dozent.id ? 'inner-inner-shadow highlight' : 'inner-inner-shadow'}}">
+										<div horizontal layout center>
+											<paper-item on-click="{{setListDozent}}" horizontal layout center-center flex class="self-click">{{item.name}}, {{item.vorname}}</paper-item>
+											<paper-icon-button icon="info" on-click="{{navigateToDozent}}"></paper-icon-button>
+										</div>
+									</paper-shadow>
+								</template>
+							</paper-shadow>
+						</div>
+					</div>
+				</div>
+			</div>
+		</paper-shadow>
+		<paper-action-dialog id="delete_vorlesungstermin_dialog" heading="Die Vorlesung am {{vorlesungsterminToDelete.datum}} wirklich l&ouml;schen?">
+			<paper-button affirmative>Nein</paper-button>
+			<paper-button on-click="{{doDelete}}" affirmative autofocus>L&ouml;schen</paper-button>
+		</paper-action-dialog>
+		<paper-action-dialog id="delete_vorlesung_dialog" heading="Die Vorlesung &quot;{{vorlesung.fachInstanz.fach.name}}&quot; wirklich l&ouml;schen?">
+			<paper-button affirmative>Nein</paper-button>
+			<paper-button on-click="{{deleteVorlesung}}" affirmative autofocus>L&ouml;schen</paper-button>
+		</paper-action-dialog>
+	</template>
+	<script type="text/javascript">
+	"use strict";
+	Polymer('vvs-planung', {
+		vorlesung: new model.templates.Vorlesung(),
+		vorlesungstermine: [],
+		vorlesungsterminToEdit: new model.templates.Termin(),
+		vorlesungsterminToDelete: null,
+		deletedVorlesungstermine: [],
+		dozent: new model.templates.Dozent(),
+		dozenten: [],
+		topDozenten: [],
+		skilledDozenten: [],
+		otherDozenten: [],
+		kurs: new model.templates.Kurs(),
+		raum: null,
+		progress: 0,
+		progressProzent: 0,
+		nextVorlesungsterminID: -1,
+		selectedDate: '2000-01-01',
+		datePickerOpened: false,
+		disableToggle: true,
+		invalid: {},
+		//Publish those attributes to home
+		publish: {
+			pageParameter: {},
+			pageLoaded: {},
+			toasts: {}
+		},
+		//Initialize the screen
+		ready: function() {
+			var self = this;
+			self.vorlesung = new model.templates.Vorlesung();
+			self.vorlesungstermine = [];
+			self.vorlesungsterminToEdit = new model.templates.Termin();
+			self.vorlesungsterminToDelete = null;
+			self.deletedVorlesungstermine = [];
+			self.dozent = new model.templates.Dozent();
+			self.dozenten = [];
+			self.topDozenten = [];
+			self.skilledDozenten = [];
+			self.otherDozenten = [];
+			self.kurs = new model.templates.Kurs();
+			self.raum = null;
+			self.progress = 0;
+			self.progressProzent = 0;
+			self.nextVorlesungsterminID = -1;
+			self.selectedDate = self.today();
+			self.datePickerOpened = false;
+			self.disableToggle = true;
+			self.invalid = {};
+			var showVorlesung = new model.templates.Vorlesung();
+			showVorlesung.id = self.pageParameter.planung.id;			
+			var deepRuns = 0;
+			//Load selected Vorlesung	
+			model.webService.getVorlesung(showVorlesung, function(api) {
+				if (!api.isError) {
+					self.vorlesung = api.response;
+					//Load available Vorlesungstermine
+					model.webService.getAllVorlesungTermine(self.vorlesung, function(api) {
+						if (!api.isError) {
+							self.vorlesungstermine = api.response;
+							//Calculate duration of Vorlesungstermine
+							var i;
+							for (i = 0; i < self.vorlesungstermine.length; i++) {
+								self.vorlesungstermine[i].dauer = self.calculateDauer(self.vorlesungstermine[i].startUhrzeit, self.vorlesungstermine[i].endUhrzeit, self.vorlesungstermine[i].pause);
+							}
+							self.calculateProgress();
+    						//Set inputs to invalid
+							self.invalid.datum = true;
+							self.invalid.startUhrzeit = true;
+							self.invalid.endUhrzeit = true;
+							self.job('update-label-pause-ready', function() {
+    							self.$.pause.inputAction();
+    						}, 100);
+							deepRuns++;
+							if(deepRuns === 6) {
+	    						//Enable inputs
+	    						self.disableToggle = false;
+							}
+						}
+						else {
+							console.log(JSON.stringify(api));
+							self.toasts.error.show();
+						}
+					});
+					//Load default Kursraum
+					self.kurs.id = self.vorlesung.kursID;
+					model.webService.getKurs(self.kurs, function(api) {
+						if(!api.isError) {
+							self.kurs = api.response;
+							deepRuns++;
+							if(deepRuns === 6) {
+	    						//Enable inputs
+	    						self.disableToggle = false;
+							}
+						} else {
+							console.log(JSON.stringify(api));
+							self.toasts.error.show();
+						}
+					});
+					model.webService.getAllKursBlocklagen(self.kurs, function(api) {
+						if (!api.isError) {
+							var i;
+							for (i = 0; i < api.response.length; i++) {
+								if (api.response[i].semester === self.vorlesung.semester) {
+									self.raum = api.response[i].raum;
+									//Init date picker with blocklagen start datum
+									if(api.response[i].startDatum) {
+										self.selectedDate = api.response[i].startDatum;
+									}
+									self.vorlesungsterminToEdit.raum = self.raum;
+									break;
+								}
+							}
+    						self.job('update-label-raum-ready', function() {
+    							self.$.raum.inputAction();
+    						}, 100);
+							deepRuns++;
+							if(deepRuns === 6) {
+	    						//Enable inputs
+	    						self.disableToggle = false;
+							}
+						}
+						else {
+							console.log(JSON.stringify(api));
+							self.toasts.error.show();
+						}
+					});
+					//Load previous used Dozenten
+					model.webService.getVorlesungDozenten(self.vorlesung, function(api) {
+						if (!api.isError) {
+							self.topDozenten = api.response;
+							var i;
+							for(i=0; i<self.topDozenten.length; i++) {
+								if(self.topDozenten[i].id === self.vorlesung.dozentID) {
+									self.dozent = self.topDozenten[i];
+									break;
+								}
+							}
+							deepRuns++;
+    						if(deepRuns === 6) {
+	    						//Enable inputs
+	    						self.disableToggle = false;
+    						}
+						}
+						else {
+							console.log(JSON.stringify(api));
+							self.toasts.error.show();
+						}
+					});
+					model.webService.getAllDozentenFach(self.vorlesung.fachInstanz.fach, function(api) {
+						if(!api.isError) {
+							self.skilledDozenten = api.response;
+							deepRuns++;
+    						if(deepRuns === 6) {
+	    						//Enable inputs
+	    						self.disableToggle = false;
+    						}
+						} else {
+							console.log(JSON.stringify(api));
+							self.toasts.error.show();
+						}
+					})
+					//Load all Dozenten
+					model.webService.getAllDozenten(function(api) {
+						if (!api.isError) {
+							self.dozenten = api.response;
+							deepRuns++;
+    						if(deepRuns === 6) {
+	    						//Enable inputs
+	    						self.disableToggle = false;
+    						}
+						}
+						else {
+							console.log(JSON.stringify(api));
+							self.toasts.error.show();
+						}
+					});	
+				}
+				else {
+					console.log(JSON.stringify(api));
+					self.toasts.error.show();
+				}
+			});
+		},
+		//Add Vorlesungstermin
+		add: function() {
+			var self = this;
+			if(!this.checkInputs()) {
+				return;
+			}
+			self.vorlesungsterminToEdit.dauer = self.calculateDauer(self.vorlesungsterminToEdit.startUhrzeit, self.vorlesungsterminToEdit.endUhrzeit, self.vorlesungsterminToEdit.pause);
+			//The Vorlesungstermin is completely new, we need to set an internal ID and add it to the Vorlesung
+			if(self.vorlesungsterminToEdit.id === 0) {
+				self.vorlesungsterminToEdit.id = self.nextVorlesungsterminID;
+				self.nextVorlesungsterminID--;
+				self.vorlesungstermine.push(self.vorlesungsterminToEdit);
+			}
+			//We are referencing a Vorlesungstermin which is already in the Vorlesung
+			else { 
+				var i;
+				for (i = 0; i < self.vorlesungstermine.length; i++) {
+					if (self.vorlesungsterminToEdit.id === self.vorlesungstermine[i].id) {
+						self.vorlesungstermine[i] = self.vorlesungsterminToEdit;
+						break;
+					}
+				}
+			}
+			this.calculateProgress();
+			this.reject();
+	    },
+	    //Reject input fields
+		reject: function() {
+			var self = this;
+			self.vorlesungsterminToEdit = new model.templates.Termin();
+			self.vorlesungsterminToEdit.raum = self.raum;
+			self.invalid.datum = true;
+			self.invalid.startUhrzeit = true;
+			self.invalid.endUhrzeit = true;
+			self.job('update-labels-reject', function() {
+				self.$.datum.inputAction();
+				self.$.startUhrzeit.inputAction();
+				self.$.endUhrzeit.inputAction();
+				self.$.pause.inputAction();
+				self.$.raum.inputAction();
+			}, 100);
+		},
+		//Edit Vorlesungstermin
+		edit: function(e, detail, sender) {
+			var self = this;
+			self.vorlesungsterminToEdit = JSON.parse(JSON.stringify(e.target.templateInstance.model.item));
+			self.job('update-labels-edit', function() {
+				self.$.datum.inputAction();
+				self.$.startUhrzeit.inputAction();
+				self.$.endUhrzeit.inputAction();
+				self.$.pause.inputAction();
+				self.$.raum.inputAction();
+			}, 100);
+		},
+		//Show Action Dialog for Deletion of Vorlesungstermin
+		initDoDelete: function(e, detail, sender) {
+			this.vorlesungsterminToDelete = e.target.templateInstance.model.item;
+			this.$.delete_vorlesungstermin_dialog.toggle();
+		},
+		//Delete a Vorlesungstermin
+		doDelete: function() {
+			var i;
+			for (i = 0; i < this.vorlesungstermine.length; i++) {
+				if (this.vorlesungstermine[i].id === this.vorlesungsterminToDelete.id) {
+					//Only delete if the server knows about the Termin
+					if(this.vorlesungsterminToDelete.id > 0) {
+						this.deletedVorlesungstermine.push(this.vorlesungstermine[i]);
+					}
+					this.vorlesungstermine.splice(i, 1);
+					break;
+				}
+			}
+			this.calculateProgress();
+			this.reject();
+		},
+		//Show Action Dialog for Deletion of Vorlesung
+		initDeleteVorlesung: function() {
+			this.$.delete_vorlesung_dialog.toggle();
+		},
+		//Delete a Vorlesung
+		deleteVorlesung: function() {
+			var self = this;
+			//Disable inputs
+			self.disableToggle = true;
+			model.webService.deleteVorlesung(self.vorlesung, function(api) {
+				if(!api.isError) {
+					self.toasts.success.show();
+					//TODO NAVIGATE TO DASHBOARD
+					self.cancel();
+				}
+				else {
+					self.toasts.error.show();	
+				}	
+			});
+		},
+		//Update Vorlesung with all Vorlesungstermine
+		//Delete Part
+		update: function() {
+    		var self = this;
+    		//Disable inputs
+    		self.disableToggle = true;
+    		//Update Vorlesung
+    		self.vorlesung.dozentID = self.dozent.id;
+    		model.webService.updateVorlesung(self.vorlesung, function(api) {
+    			if (!api.isError) {
+					var i;
+					var deepRuns = 0;
+					//Delete all deleted Vorlesungstermine
+					for (i = 0; i < self.deletedVorlesungstermine.length; i++) {
+						model.webService.deleteVorlesungTermin(self.vorlesung, self.deletedVorlesungstermine[i], function(api) {
+							if(!api.isError) {
+								deepRuns++;
+								//After last deletion move to adding the added Vorlesungstermine
+								if(deepRuns === self.deletedVorlesungstermine.length) {
+									self.deletedVorlesungstermine = [];
+									self.updateAddPart();
+								}
+							} else {
+								console.log(JSON.stringify(api));
+								self.toasts.error.show();
+							}
+						});
+					}
+					//Also add new Vorlesungstermine when no Vorlesungstermin was deleted
+					if(deepRuns === 0 && self.deletedVorlesungstermine.length === 0) {
+						self.updateAddPart();
+					}
+				}
+				else {
+					console.log(JSON.stringify(api));
+					self.toasts.error.show();
+				}
+    		});
+		},
+		//Add Part
+		updateAddPart: function() {
+			var veryDeepRuns = 0;
+			//Add Vorlesungstermine
+			var self = this;
+			var i;
+			for (i = 0; i < self.vorlesungstermine.length; i++) {
+				//Create new Vorlesungstermine
+				if (self.vorlesungstermine[i].id <= 0) {
+					self.vorlesungstermine[i].id = 0;
+					model.webService.createVorlesungTermin(self.vorlesung, self.vorlesungstermine[i], function(api, outerI) {
+						if(!api.isError) {
+							veryDeepRuns++;
+							//Update id
+							self.vorlesungstermine[outerI].id = api.response.id;
+							//Enable inputs after last webservice call
+							if (veryDeepRuns === self.vorlesungstermine.length) {
+								self.disableToggle = false;
+								self.toasts.success.show();
+							}
+						}
+						else {
+							console.log(JSON.stringify(api));
+							self.toasts.error.show();
+						}
+					}, i);
+				}
+				//Update existing Vorlesungstermine
+				else {
+					model.webService.updateVorlesungTermin(self.vorlesung, self.vorlesungstermine[i], function(api) {
+						if(!api.isError) {
+							veryDeepRuns++;	
+							//Enable inputs after last webservice call
+							if (veryDeepRuns === self.vorlesungstermine.length) {
+								self.disableToggle = false;
+								self.toasts.success.show();
+							}
+						}
+						else {
+							console.log(JSON.stringify(api));
+							self.toasts.error.show();
+						}
+					});
+				}
+			}
+			//Enable inputs after last webservice call
+			if(veryDeepRuns === 0 && self.vorlesungstermine.length === 0) {
+				self.disableToggle = false;
+				self.toasts.success.show();
+			}
+		},
+		//Navigate backwards and force a reload
+    	cancel: function() {
+    		this.pageLoaded.planung = false;
+    		window.history.back();
+    	},		
+    	//Calculate Pause if inputs are valid
+		calculate: function() {
+			var self = this;
+			if (!self.invalid.startUhrzeit && !self.invalid.endUhrzeit) {
+				self.vorlesungsterminToEdit.pause = self.calculatePause(self.vorlesungsterminToEdit.startUhrzeit, self.vorlesungsterminToEdit.endUhrzeit);
+			}
+		},
+    	//Set selected Dozent for Vorlesung from top list
+    	setListDozent: function(e, detail, sender) {
+    		this.dozent = e.target.templateInstance.model.item;
+    	},
+    	setOtherDozent: function(e, detail, sender) {
+    		if(detail.isSelected === true) {
+        		this.dozent = detail.item.templateInstance.model.item;
+        		var i;
+        		var found = false;
+        		for(i=0; i<this.topDozenten.length; i++) {
+        			if(this.topDozenten[i].id === this.dozent.id) {
+        				found = true;
+        				break;
+        			}
+        		}
+        		for(i=0; found === false && i<this.skilledDozenten.length; i++) {
+        			if(this.skilledDozenten[i].id === this.dozent.id) {
+        				found = true;
+        				break;
+        			}
+        		}
+        		for(i=0; found === false && i<this.otherDozenten.length; i++) {
+        			if(this.otherDozenten[i].id === this.dozent.id) {
+        				found = true;
+        				break;
+        			}
+        		}
+        		if(found === false) {
+            		this.otherDozenten.push(this.dozent);	
+        		}
+        		e.target.selected = null;
+    		}
+    	},
+    	navigateToDozent: function(e, detail, sender) {
+    		location.href = '#!dozent-' + sender.templateInstance.model.item.id;
+    	},
+    	//Calculate Progress for progress-bar
+    	calculateProgress: function() {
+    		var stunden = 0;
+    		var dauer = 0;
+    		var i;
+    		for (i = 0; i < this.vorlesungstermine.length; i++) {
+    			dauer = this.calculateDauer(this.vorlesungstermine[i].startUhrzeit, this.vorlesungstermine[i].endUhrzeit, this.vorlesungstermine[i].pause);
+    			stunden = stunden + dauer;
+    		}
+    		this.progress = +(Math.round(stunden * 10) / 10);
+    		this.progressProzent = (this.progress / this.vorlesung.fachInstanz.stunden) * 100;
+    	},
+    	//Calculate dauer
+    	calculateDauer: function(start, ende, pause)
+    	{
+    		var dauer = 0;
+    		var startStunden = 0;
+    		var startMinuten = 0;
+    		var endeStunden = 0;
+    		var endeMinuten = 0;
+    		var stunden;
+    		var minuten;
+    		startStunden = parseInt(start.substr(0,2));
+    		startMinuten = parseInt(start.substr(3,2));
+    		endeStunden = parseInt(ende.substr(0,2));
+    		endeMinuten = parseInt(ende.substr(3,2));
+    		stunden = endeStunden - startStunden;
+    		minuten = endeMinuten - startMinuten;
+    		dauer = ((stunden * 60) + minuten - pause) / 45;
+    		dauer = +(Math.round(dauer * 10) / 10);
+    		return dauer;
+    	},
+    	//Calculate pause
+    	calculatePause: function(start, ende)
+    	{
+    		var pause = 0;
+    		var dauer = 0;
+    		var startStunden = 0;
+    		var startMinuten = 0;
+    		var endeStunden = 0;
+    		var endeMinuten = 0;
+    		var stunden;
+    		var minuten;
+    		startStunden = parseInt(start.substr(0,2));
+    		startMinuten = parseInt(start.substr(3,2));
+    		endeStunden = parseInt(ende.substr(0,2));
+    		endeMinuten = parseInt(ende.substr(3,2));
+    		stunden = endeStunden - startStunden;
+    		minuten = endeMinuten - startMinuten;
+    		dauer = (stunden * 60) + minuten;
+    		//No break if Dauer <= 90
+    		if (dauer <= 90) {
+    			pause = 0;
+    		}
+    		//For each 50 minutes break of 5 minutes
+    		else {
+    			pause = parseInt(dauer / 50) * 5;
+    		}
+    		return pause;
+    	},
+		//Show DatePicker
+		toggleDatePicker: function(e, detail, sender) {
+			if(this.disableToggle === true) {
+				return;
+			}
+			this.$.datePicker.close(); //force close
+			//Init or set selected date
+			if(this.$.datum.input.value) {
+				this.selectedDate = this.vorlesungsterminToEdit.datum;
+			} else {
+				this.vorlesungsterminToEdit.datum = this.selectedDate;
+			}	
+			//Wait until the date picker potentially auto closed to reopen it
+			this.job('open-date-picker', function() {
+				this.$.datum.inputAction();
+				this.$.datePicker.open();
+				this.datePickerOpened = true;
+			}, 100);
+		},
+		//Close date picker
+		selectedDateChanged: function() {
+			if(!this.datePickerOpened) {
+				return;
+			}
+			//Read date
+			this.vorlesungsterminToEdit.datum = this.selectedDate;
+			//Update UI
+			this.$.datePicker.close();
+			this.datePickerOpened = false;
+			this.job('label-date-picker', function() {
+				this.$.datum.inputAction();
+			}, 100);
+		},
+		//Calculate date of today
+		today: function() {
+		    var date = new Date();
+			var year = date.getFullYear();
+		    var month = '0' + (date.getMonth() + 1);
+		    month = month.slice(-2, (month.length - 2) + 3);
+		    var day = '0' + date.getDate();
+		    day = day.slice(-2, (day.length - 2) + 3);
+		    return year + '-' + month + '-' + day;
+		},
+		//Check all invalid properties
+		checkInputs : function() {
+			for ( var property in this.invalid) {
+				if (this.invalid.hasOwnProperty(property)) {
+					if (this.invalid[property] === true) {
+						return false;
+					}
+				}
+			}
+			return true;
+		}
+	});
+	</script>
+</polymer-element>

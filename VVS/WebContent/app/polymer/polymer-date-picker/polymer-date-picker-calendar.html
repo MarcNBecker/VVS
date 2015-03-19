@@ -46,6 +46,8 @@
       },
       dateClicked: function(e) {
         var element = e.originalTarget ? e.originalTarget : e.toElement;
+        element = element ? element : e.relatedTarget;
+        element = element ? element : e.target;
         var row = element.getAttribute("row");
         var col = element.getAttribute("col");
         this.selectedDate = this.calendar[row][col].identifier;

@@ -222,8 +222,8 @@ var model = new function() {
 			this.id = 0;
 			this.vorlesungID = 0;
 			this.datum = null; //yyyy-MM-dd
-			this.startUhrzeit = null; //HH:MM:SS
-			this.endUhrzeit = null; //HH:MM:SS
+			this.startUhrzeit = null; //HH:MM
+			this.endUhrzeit = null; //HH:MM
 			this.pause = 0;
 			this.raum = "";
 			this.klausur = false;
@@ -532,8 +532,8 @@ var model = new function() {
 			self.doRequest(vorlesungTermineURI.replace("{kursID}", v.kursID).replace("{semester}", v.semester).replace("{vorlesungsID}", v.id), "GET", null, c);		
 		};
 		
-		this.createVorlesungTermin = function(v, t, c) {
-			self.doRequest(vorlesungTermineURI.replace("{kursID}", v.kursID).replace("{semester}", v.semester).replace("{vorlesungsID}", v.id), "POST", t, c);		
+		this.createVorlesungTermin = function(v, t, c, cd) {
+			self.doRequest(vorlesungTermineURI.replace("{kursID}", v.kursID).replace("{semester}", v.semester).replace("{vorlesungsID}", v.id), "POST", t, c, cd);		
 		};
 		
 		this.getVorlesungTermin = function(v, t, c) {
