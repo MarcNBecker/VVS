@@ -93,12 +93,12 @@
 					<span class="headline">Kompetenzf&auml;cher</span>
 					<template  repeat="{{item in dozentenFaecher}}">
 						<div horizontal layout center class="horizontal-list">
-							<paper-item>{{item.name}}</paper-item>
+							<span>{{item.name}}</span>
 							<paper-icon-button icon="delete" on-click={{deleteFach}} disabled?="{{disableToggle}}"></paper-icon-button>
 						</div>
 					</template>
 					<div horizontal layout center class="horizontal-list">
-						<paper-dropdown-menu-searchable id="fachDropdownMenu" label="Kompetenzfach" disabled?="{{disableToggle}}">
+						<paper-dropdown-menu-searchable id="fachDropdownMenu" label="Kompetenzfach" disabled?="{{disableToggle}}" flex>
 							<paper-dropdown-searchable id="fachDropdown" class="dropdown" arrayName="faecher" searchProperties="name kurzbeschreibung" hideProperty="hidden">
 								<core-menu id="fach" class="menu">
 									<template  repeat="{{item in faecher}}">
