@@ -68,6 +68,11 @@ public class Blocklage {
 		if (semester <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_NUMBER);
 		}
+		if (startDatum == null && endDatum != null || startDatum != null && endDatum == null) {
+			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_DATE);
+		} else if (startDatum != null && endDatum != null && startDatum.after(endDatum)) {
+			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_DATE);
+		}
 		if (raum == null) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_STRING);
 		}

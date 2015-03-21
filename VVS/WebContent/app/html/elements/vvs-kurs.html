@@ -71,11 +71,11 @@
 					<span class="headline">Blocklagen</span>
 					<template repeat="{{item, i in blocklagen}}">
 						<div horizontal start layout class="horizontal-input">
-							<paper-input-decorator class="s" label="{{i + 1}}. Blocklage von" floatingLabel flex>
-								<input is="core-input" on-focus="{{toggleDatePicker}}" on-click="{{toggleDatePicker}}" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" preventInvalidInput="true" value="{{item.startDatum}}" disabled?="{{disableToggle}}">
+							<paper-input-decorator class="s" id="s{{i}}" neighbor="e{{i}}" label="{{i + 1}}. Blocklage von" error="Pflichtfeld: Ung&uuml;ltiges Datum" on-input="{{validateNeighbor}}" autoValidate isInvalid="{{item.invalidS}}" floatingLabel flex>
+								<input is="core-input" on-focus="{{toggleDatePicker}}" on-click="{{toggleDatePicker}}" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" preventInvalidInput="true" value="{{item.startDatum}}" required?="{{item.endDatum ? true : false}}" disabled?="{{disableToggle}}">
 							</paper-input-decorator>
-							<paper-input-decorator class="e" label="{{i + 1}}. Blocklage bis" floatingLabel flex>
-								<input is="core-input" on-focus="{{toggleDatePicker}}" on-click="{{toggleDatePicker}}" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" preventInvalidInput="true" value="{{item.endDatum}}" disabled?="{{disableToggle}}">
+							<paper-input-decorator class="e" id="e{{i}}" neighbor="s{{i}}" label="{{i + 1}}. Blocklage bis" error="Pflichtfeld: Ung&uuml;ltiges Datum" on-input="{{validateNeighbor}}" autoValidate isInvalid="{{item.invalidE}}" floatingLabel flex>
+								<input is="core-input" on-focus="{{toggleDatePicker}}" on-click="{{toggleDatePicker}}" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" preventInvalidInput="true" value="{{item.endDatum}}" required?="{{item.startDatum ? true : false}}" disabled?="{{disableToggle}}">
 							</paper-input-decorator>
 							<paper-input-decorator label="Raum" floatingLabel flex>
 								<input is="core-input" type="text" value={{item.raum}} maxlength="100" disabled?="{{disableToggle}}">
@@ -362,6 +362,8 @@
 				{
 					self.blocklagen[i].kursID = self.kurs.id;
 					self.blocklagen[i].semester = i + 1;
+					self.blocklagen[i].startDatum = self.blocklagen[i].startDatum ? self.blocklagen[i].startDatum : null;
+					self.blocklagen[i].endDatum = self.blocklagen[i].endDatum ? self.blocklagen[i].endDatum : null;
 					model.webService.setKursBlocklage(self.blocklagen[i], function(api) {
 						if (!api.isError)
 						{
@@ -414,11 +416,11 @@
 		    			self.disableToggle = false;
 		    			self.selectedModulplan = 0;
 		    			self.selectedStudiengangsleiter = 0;
-		    			self.selectedDate = this.today();
+		    			self.selectedDate = self.today();
 		    			self.lastDatePickerSender = null;
 		    			self.creationMode = true;
-    					self.invalid.kursname = true; 
-						self.job('update-labels-delete', function() {
+    					self.invalid.kursname = true;
+    					self.job('update-labels-delete', function() {
 							self.$.kursname.inputAction();
 							self.$.sekretariatName.inputAction();
 							self.$.studentenAnzahl.inputAction();
@@ -476,6 +478,8 @@
 				//Wait until the date picker potentially auto closed to reopen it
 				this.job('open-date-picker', function() {
 					sender.inputAction();
+					sender.parentElement.querySelector("#" + sender.getAttribute("neighbor")).validate();
+					this.validateDates(sender.templateInstance.model.i);
 					this.$.datePicker.relatedTarget = sender;
 					this.$.datePicker.open();	
 				}, 100);
@@ -493,7 +497,21 @@
 					this.$.datePicker.close();
 					this.job('label-date-picker', function() {
 						this.lastDatePickerSender.inputAction();
+						this.lastDatePickerSender.parentElement.querySelector("#" + this.lastDatePickerSender.getAttribute("neighbor")).validate();
+						this.validateDates(this.lastDatePickerSender.templateInstance.model.i);
 					}, 100);
+				}
+			},
+			validateNeighbor: function(e, detail, sender) {
+				sender.validate();
+				sender.parentElement.querySelector("#" + sender.getAttribute("neighbor")).validate();
+				this.validateDates(sender.templateInstance.model.i);
+			},
+			validateDates: function(i) {
+				if(!this.blocklagen[i].invalidS && !this.blocklagen[i].invalidE && this.blocklagen[i].startDatum && this.blocklagen[i].endDatum) {
+					if(!(new Date(this.blocklagen[i].startDatum) < new Date(this.blocklagen[i].endDatum))) {
+						this.blocklagen[i].invalidE = true;
+					}
 				}
 			},
 			//Calculate date of today
@@ -521,6 +539,12 @@
 						if(this.invalid[property] === true) {
 							return false;
 						}
+					}
+				}
+				var i;
+				for(i=0; i<this.blocklagen.length; i++) {
+					if(this.blocklagen[i].invalidS || this.blocklagen[i].invalidE) {
+						return false;
 					}
 				}
 				return true;
