@@ -8,7 +8,9 @@ CREATE DATABASE `vvs` DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 CREATE TABLE `vvs`.`Studiengangsleiter` (
   `ID` INT unsigned NOT NULL AUTO_INCREMENT,
   `Name` VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`ID`)
+  `Ist` VARCHAR (100) COLLATE utf8_unicode_ci NULL DEFAULT NULL,
+  PRIMARY KEY (`ID`),
+  INDEX `INDEX_Studiengangsleiter_Ist` (`Ist` ASC)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- -----------------------------------------------------
@@ -17,15 +19,25 @@ CREATE TABLE `vvs`.`Studiengangsleiter` (
 CREATE TABLE `vvs`.`User` (
   `Name` VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL,
   `Passwort` VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL,
-  `Repraesentiert` INT unsigned NOT NULL,
+  `Repraesentiert` INT unsigned NULL,
   PRIMARY KEY (`Name`),
   INDEX `INDEX_User_Repraesentiert` (`Repraesentiert` ASC),
   CONSTRAINT `FK_User_Repraesentiert`
     FOREIGN KEY (`Repraesentiert`)
     REFERENCES `vvs`.`Studiengangsleiter` (`ID`)
-    ON DELETE RESTRICT
+    ON DELETE SET NULL
     ON UPDATE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- -----------------------------------------------------
+-- Foreign referencing `vvs`.`User` in `vvs`.`Studiengangsleiter` on column `Ist`
+-- -----------------------------------------------------
+ALTER TABLE `vvs`.`Studiengangsleiter`
+ADD CONSTRAINT `FK_Studiengangsleiter_Ist`
+    FOREIGN KEY (`Ist`)
+    REFERENCES `vvs`.`User` (`Name`)
+    ON DELETE CASCADE
+    ON UPDATE RESTRICT;
 
 -- -----------------------------------------------------
 -- Table `vvs`.`Modulplan`

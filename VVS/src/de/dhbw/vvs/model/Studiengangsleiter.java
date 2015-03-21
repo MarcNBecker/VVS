@@ -60,6 +60,23 @@ public class Studiengangsleiter {
 		return this;
 	}
 	
+	public void setIst(User user) throws WebServiceException {
+		if (id <= 0) {
+			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
+		}	
+		if (user.getName() == null || user.getName().trim().isEmpty()) {
+			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_STRING);
+		}
+		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
+		ArrayList<Object> fieldValues = new ArrayList<Object>();
+		fieldValues.add(user.getName().trim());
+		fieldValues.add(id);
+		int affectedRows = db.doQuery("UPDATE studiengangsleiter SET ist = ? WHERE id = ?", fieldValues);
+		if(affectedRows == 0) {
+			throw new WebServiceException(ExceptionStatus.OBJECT_NOT_FOUND);
+		}
+	}
+	
 	public Studiengangsleiter update() throws WebServiceException {
 		if (id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);

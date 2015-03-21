@@ -152,6 +152,7 @@
 					model.webService.createStudiengangsleiter(userStudiengangsleiter, function(api) {
 						if(!api.isError) {
 							self.user.repraesentiert = api.response.id;
+							self.user.istStudiengangsleiter = true;
 							self.studiengangsleiter.push(api.response);
 							self.selectedStudiengangsleiter = self.studiengangsleiter.length - 1;
 							self.createUser();
@@ -235,19 +236,10 @@
 	    		model.webService.deleteUser(self.user, function(api) {
 	    			if(!api.isError) {
 	    				//Update variables and switch display of button bar
-						self.user = new model.templates.User();
 						self.pageLoaded.stammdaten = false;
-						window.history.replaceState({}, '', '#!user');
-						self.selectedStudiengangsleiter = 0,
-						self.sekretaerinChecked = false,
-						self.toggleDisabled = false;
-						self.creationMode = true;
-						self.invalid.name = true;
-						self.invalid.passwort = true;
-						self.job('update-labels-delete', function() {
-							self.$.name.inputAction();
-							self.$.passwort.inputAction();
-						}, 100);
+						self.pageLoaded.user = false;
+						window.history.replaceState({redirect: true}, '', '#!user-');
+						location.href = "#!user";
 						self.toasts.success.show();
 	    			} else {
 						console.log(JSON.stringify(api));
