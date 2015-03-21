@@ -74,7 +74,7 @@
 							</paper-input-decorator>
 						</div>
 						<div horizontal layout center class="horizontal-verticalizable">
-							<paper-checkbox checked="{{vorlesungsterminToEdit.klausur}}" self-center disabled?="{{disableToggle}}"></paper-checkbox>
+							<paper-checkbox checked="{{vorlesungsterminToEdit.klausur}}" self-center disabled?="{{disableToggle || disableToggleKlausur}}"></paper-checkbox>
 							<span class="small-headline" self-center>Klausur</span>
 						</div>
 						<div horizontal layout>
@@ -84,7 +84,7 @@
 						<div vertical layout class="vertical-input">
 							<span class="small-headline" horizontal layout center>Dozent ausw&auml;hlen</span>
 							<paper-shadow z="2" class="inner-shadow">
-								<span horizontal layout center-center class="small-headline" flex>Vorherhige Dozenten</span>
+								<span horizontal layout center-center class="small-headline" flex>Vorherige Dozenten</span>
 								<template repeat="{{item in topDozenten}}">
 									<paper-shadow z="1" class="{{item.id === dozent.id ? 'inner-inner-shadow highlight' : 'inner-inner-shadow'}}">
 										<div horizontal layout center>
@@ -114,7 +114,7 @@
 										</paper-dropdown-searchable>
 									</paper-dropdown-menu-searchable>
 								</div>
-								<template repeat="{{item in otherDozenten}}">
+						 		<template repeat="{{item in otherDozenten}}">
 									<paper-shadow z="1" class="{{item.id === dozent.id ? 'inner-inner-shadow highlight' : 'inner-inner-shadow'}}">
 										<div horizontal layout center>
 											<paper-item on-click="{{setListDozent}}" horizontal layout center-center flex class="self-click">{{item.name}}, {{item.vorname}}</paper-item>
@@ -158,6 +158,7 @@
 		selectedDate: '2000-01-01',
 		datePickerOpened: false,
 		disableToggle: true,
+		disableToggleKlausur: false,
 		invalid: {},
 		//Publish those attributes to home
 		publish: {
@@ -186,6 +187,7 @@
 			self.selectedDate = self.today();
 			self.datePickerOpened = false;
 			self.disableToggle = true;
+			self.disableToggleKlausur = false;
 			self.invalid = {};
 			var showVorlesung = new model.templates.Vorlesung();
 			showVorlesung.id = self.pageParameter.planung.id;			
@@ -202,6 +204,11 @@
 							var i;
 							for (i = 0; i < self.vorlesungstermine.length; i++) {
 								self.vorlesungstermine[i].dauer = self.calculateDauer(self.vorlesungstermine[i].startUhrzeit, self.vorlesungstermine[i].endUhrzeit, self.vorlesungstermine[i].pause);
+								//Checkbox Klausur disablen, if vorlesungstermin is a klausur
+								if (self.vorlesungstermine[i].klausur === true)
+								{
+									self.disableToggleKlausur = true;
+								}
 							}
 							self.calculateProgress();
     						//Set inputs to invalid
@@ -331,6 +338,11 @@
 			self.vorlesungsterminToEdit.dauer = self.calculateDauer(self.vorlesungsterminToEdit.startUhrzeit, self.vorlesungsterminToEdit.endUhrzeit, self.vorlesungsterminToEdit.pause);
 			//The Vorlesungstermin is completely new, we need to set an internal ID and add it to the Vorlesung
 			if(self.vorlesungsterminToEdit.id === 0) {
+				//Checkbox Klausur disablen, if new vorlesungstermin is klausur
+				if (self.vorlesungsterminToEdit.klausur === true)
+				{
+					self.disableToggleKlausur = true;
+				}
 				self.vorlesungsterminToEdit.id = self.nextVorlesungsterminID;
 				self.nextVorlesungsterminID--;
 				self.vorlesungstermine.push(self.vorlesungsterminToEdit);
@@ -340,6 +352,16 @@
 				var i;
 				for (i = 0; i < self.vorlesungstermine.length; i++) {
 					if (self.vorlesungsterminToEdit.id === self.vorlesungstermine[i].id) {
+						//Chechbox Klausur enablen, if vorlesungstermin isn´t a klausur anymore
+						if (self.vorlesungstermine[i].klausur === true && self.vorlesungsterminToEdit.klausur === false)
+						{
+							self.disableToggleKlausur = false;
+						}
+						//Chechbox Klausur disablen, if vorlesungstermin is a klausur now
+						else if (self.vorlesungstermine[i].klausur === false && self.vorlesungsterminToEdit.klausur === true)
+						{
+							self.disableToggleKlausur = true;
+						}
 						self.vorlesungstermine[i] = self.vorlesungsterminToEdit;
 						break;
 					}
@@ -386,6 +408,11 @@
 			var i;
 			for (i = 0; i < this.vorlesungstermine.length; i++) {
 				if (this.vorlesungstermine[i].id === this.vorlesungsterminToDelete.id) {
+					//Checkbox Klausur enablen, if delete vorlesungstermin was a klausur
+					if (this.vorlesungsterminToDelete.klausur === true)
+					{
+						this.disableToggleKlausur = false;
+					}
 					//Only delete if the server knows about the Termin
 					if(this.vorlesungsterminToDelete.id > 0) {
 						this.deletedVorlesungstermine.push(this.vorlesungstermine[i]);
