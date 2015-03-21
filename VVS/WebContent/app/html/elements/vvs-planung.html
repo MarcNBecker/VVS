@@ -204,7 +204,7 @@
 							var i;
 							for (i = 0; i < self.vorlesungstermine.length; i++) {
 								self.vorlesungstermine[i].dauer = self.calculateDauer(self.vorlesungstermine[i].startUhrzeit, self.vorlesungstermine[i].endUhrzeit, self.vorlesungstermine[i].pause);
-								//Checkbox Klausur disablen, if vorlesungstermin is a klausur
+								//Disable checkbox Klausur, if vorlesungstermin is a klausur
 								if (self.vorlesungstermine[i].klausur === true)
 								{
 									self.disableToggleKlausur = true;
@@ -338,11 +338,6 @@
 			self.vorlesungsterminToEdit.dauer = self.calculateDauer(self.vorlesungsterminToEdit.startUhrzeit, self.vorlesungsterminToEdit.endUhrzeit, self.vorlesungsterminToEdit.pause);
 			//The Vorlesungstermin is completely new, we need to set an internal ID and add it to the Vorlesung
 			if(self.vorlesungsterminToEdit.id === 0) {
-				//Checkbox Klausur disablen, if new vorlesungstermin is klausur
-				if (self.vorlesungsterminToEdit.klausur === true)
-				{
-					self.disableToggleKlausur = true;
-				}
 				self.vorlesungsterminToEdit.id = self.nextVorlesungsterminID;
 				self.nextVorlesungsterminID--;
 				self.vorlesungstermine.push(self.vorlesungsterminToEdit);
@@ -352,20 +347,15 @@
 				var i;
 				for (i = 0; i < self.vorlesungstermine.length; i++) {
 					if (self.vorlesungsterminToEdit.id === self.vorlesungstermine[i].id) {
-						//Chechbox Klausur enablen, if vorlesungstermin isn´t a klausur anymore
-						if (self.vorlesungstermine[i].klausur === true && self.vorlesungsterminToEdit.klausur === false)
-						{
-							self.disableToggleKlausur = false;
-						}
-						//Chechbox Klausur disablen, if vorlesungstermin is a klausur now
-						else if (self.vorlesungstermine[i].klausur === false && self.vorlesungsterminToEdit.klausur === true)
-						{
-							self.disableToggleKlausur = true;
-						}
 						self.vorlesungstermine[i] = self.vorlesungsterminToEdit;
 						break;
 					}
 				}
+			}
+			//Disable checkbox Klausur, if vorlesungstermin is klausur
+			if (self.vorlesungsterminToEdit.klausur === true)
+			{
+				self.disableToggleKlausur = true;
 			}
 			this.calculateProgress();
 			this.reject();
@@ -390,6 +380,11 @@
 		edit: function(e, detail, sender) {
 			var self = this;
 			self.vorlesungsterminToEdit = JSON.parse(JSON.stringify(e.target.templateInstance.model.item));
+			//Enable checkbox Klausur, if the edited vorlesungstermin is a klausur
+			if (this.vorlesungsterminToEdit.klausur === true)
+			{
+				this.disableToggleKlausur = false;
+			}
 			self.job('update-labels-edit', function() {
 				self.$.datum.inputAction();
 				self.$.startUhrzeit.inputAction();
@@ -408,7 +403,7 @@
 			var i;
 			for (i = 0; i < this.vorlesungstermine.length; i++) {
 				if (this.vorlesungstermine[i].id === this.vorlesungsterminToDelete.id) {
-					//Checkbox Klausur enablen, if delete vorlesungstermin was a klausur
+					//Enable checkbox Klausur, if the deleted vorlesungstermin was a klausur
 					if (this.vorlesungsterminToDelete.klausur === true)
 					{
 						this.disableToggleKlausur = false;
