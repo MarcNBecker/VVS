@@ -53,15 +53,15 @@
 						<span class="small-headline" horizontal layout center>Termin bearbeiten</span>
 						<div horizontal layout start>
 							<polymer-date-picker id="datePicker" relatedTarget="{{$.datum}}" halign="left" style="z-index:99" selectedDate="{{selectedDate}}" opened="false"></polymer-date-picker>
-							<paper-input-decorator id="datum" label="Datum" error="Pflichtfeld: Ung&uuml;ltiges Datum" autoValidate isInvalid="{{invalid.datum}}" floatingLabel flex>
+							<paper-input-decorator id="datum" label="Datum" error="{{minDateString && maxDateString ? 'Pflichtfeld: Ung&uuml;ltiges Datum (Zeitraum ' + minDateString + ' bis ' + maxDateString + ')' : 'Pflichtfeld: Ung&uuml;ltiges Datum'}}" autoValidate isInvalid="{{invalid.datum}}" floatingLabel flex>
 								<input is="core-input" on-focus="{{toggleDatePicker}}" on-click="{{toggleDatePicker}}" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" preventInvalidInput="true" value="{{vorlesungsterminToEdit.datum}}" disabled?="{{disableToggle}}" required>
 							</paper-input-decorator>						
 						</div>
 						<div horizontal layout start>
-							<paper-input-decorator id="startUhrzeit" label="Uhrzeit von" on-input="{{calculate}}" error="Pflichtfeld: Ung&uuml;ltige Uhrzeit (hh:mm)" autoValidate isInvalid="{{invalid.startUhrzeit}}" floatingLabel flex>
+							<paper-input-decorator id="startUhrzeit" label="Uhrzeit von" on-input="{{checkAndCalculate}}" error="Pflichtfeld: Ung&uuml;ltige Uhrzeit (hh:mm)" autoValidate isInvalid="{{invalid.startUhrzeit}}" floatingLabel flex>
 								<input id="startInput" is="core-input" type="text" pattern="(2[0-3]|[01][0-9]):[0-5][0-9]" value={{vorlesungsterminToEdit.startUhrzeit}} disabled?="{{disableToggle}}" required>
 							</paper-input-decorator>		
-							<paper-input-decorator id="endUhrzeit" label="Uhrzeit bis" on-input="{{calculate}}" error="Pflichtfeld: Ung&uuml;ltige Uhrzeit (hh:mm)" autoValidate isInvalid="{{invalid.endUhrzeit}}" floatingLabel flex>
+							<paper-input-decorator id="endUhrzeit" label="Uhrzeit bis" on-input="{{checkAndCalculate}}" error="Pflichtfeld: Ung&uuml;ltige Uhrzeit (hh:mm)" autoValidate isInvalid="{{invalid.endUhrzeit}}" floatingLabel flex>
 								<input id="endInput" is="core-input" type="text" pattern="(2[0-3]|[01][0-9]):[0-5][0-9]" value={{vorlesungsterminToEdit.endUhrzeit}} disabled?="{{disableToggle}}" required>
 							</paper-input-decorator>			
 						</div>
@@ -156,6 +156,10 @@
 		progressProzent: 0,
 		nextVorlesungsterminID: -1,
 		selectedDate: '2000-01-01',
+		minDate: null,
+		maxDate: null,		
+		minDateString: "",
+		maxDateString: "",
 		datePickerOpened: false,
 		disableToggle: true,
 		disableToggleKlausur: false,
@@ -185,6 +189,10 @@
 			self.progressProzent = 0;
 			self.nextVorlesungsterminID = -1;
 			self.selectedDate = self.today();
+			self.minDate = null;
+			self.maxDate = null;
+			self.minDateString = "";
+			self.maxDateString = "";
 			self.datePickerOpened = false;
 			self.disableToggle = true;
 			self.disableToggleKlausur = false;
@@ -253,6 +261,10 @@
 									//Init date picker with blocklagen start datum
 									if(api.response[i].startDatum) {
 										self.selectedDate = api.response[i].startDatum;
+										self.minDate = new Date(api.response[i].startDatum);
+										self.minDateString = api.response[i].startDatum;
+										self.maxDate = new Date(api.response[i].endDatum);
+										self.maxDateString = api.response[i].endDatum;
 									}
 									self.vorlesungsterminToEdit.raum = self.raum;
 									break;
@@ -535,9 +547,15 @@
     		window.history.back();
     	},		
     	//Calculate Pause if inputs are valid
-		calculate: function() {
+		checkAndCalculate: function() {
 			var self = this;
+			//Check if endUhrzeit is greater than startUhrzeit
+			self.$.endUhrzeit.validate();
 			if (!self.invalid.startUhrzeit && !self.invalid.endUhrzeit) {
+				if(!(new Date('2000-01-01 ' + self.vorlesungsterminToEdit.startUhrzeit) < new Date('2000-01-01 ' + self.vorlesungsterminToEdit.endUhrzeit))) {
+					self.invalid.endUhrzeit = true;
+					return;
+				}
 				self.vorlesungsterminToEdit.pause = self.calculatePause(self.vorlesungsterminToEdit.startUhrzeit, self.vorlesungsterminToEdit.endUhrzeit);
 			}
 		},
@@ -652,6 +670,7 @@
 			//Wait until the date picker potentially auto closed to reopen it
 			this.job('open-date-picker', function() {
 				this.$.datum.inputAction();
+				this.validateSelectedDate();
 				this.$.datePicker.open();
 				this.datePickerOpened = true;
 			}, 100);
@@ -668,7 +687,17 @@
 			this.datePickerOpened = false;
 			this.job('label-date-picker', function() {
 				this.$.datum.inputAction();
+				this.validateSelectedDate();
 			}, 100);
+		},
+		validateSelectedDate: function() {
+			//validate termin
+			var terminAsDate = new Date(this.selectedDate);
+			if(this.minDate && this.maxDate && !(this.minDate <= terminAsDate && this.maxDate >= terminAsDate)) {
+				this.invalid.datum = true;
+			} else {
+				this.invalid.datum = false;
+			}
 		},
 		//Calculate date of today
 		today: function() {
