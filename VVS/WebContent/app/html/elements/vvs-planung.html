@@ -74,8 +74,20 @@
 							</paper-input-decorator>
 						</div>
 						<div horizontal layout center class="horizontal-verticalizable">
-							<paper-checkbox checked="{{vorlesungsterminToEdit.klausur}}" self-center disabled?="{{disableToggle || disableToggleKlausur}}"></paper-checkbox>
+							<paper-checkbox checked="{{vorlesungsterminToEdit.klausur}}" self-center disabled?="{{disableToggle || disableToggleKlausur || recurring.isRecurring}}"></paper-checkbox>
 							<span class="small-headline" self-center>Klausur</span>
+						</div>
+						<div horizontal layout center class="horizontal-verticalizable text-line-input">
+							<paper-checkbox checked="{{recurring.isRecurring}}" self-center disabled?="{{disableToggle || vorlesungsterminToEdit.klausur}}"></paper-checkbox>
+							<span class="small-headline">Wiederholender Termin:</span>
+							<paper-input-decorator id="wiederholungen" label="Anzahl" flex>
+								<input is="core-input" type="number" min="1" preventInvalidInput="true" value={{recurring.count}} disabled?="{{disableToggle || !recurring.isRecurring}}">
+							</paper-input-decorator>
+							<span self-center>mal alle</span>
+							<paper-input-decorator id="anzahl" label="Abstand" flex>
+								<input is="core-input" type="number" min="1" preventInvalidInput="true" value={{recurring.distance}} disabled?="{{disableToggle || !recurring.isRecurring}}">
+							</paper-input-decorator>
+							<span>Tage</span>
 						</div>
 						<div horizontal layout>
 							<paper-button on-click={{add}} raised disabled?="{{disableToggle}}" flex>&Uuml;bernehmen</paper-button>
@@ -163,6 +175,8 @@
 		datePickerOpened: false,
 		disableToggle: true,
 		disableToggleKlausur: false,
+		onRejectDisableKlausur: false,
+		recurring: {isRecurring: false, count: "", distance: ""},
 		invalid: {},
 		//Publish those attributes to home
 		publish: {
@@ -196,6 +210,8 @@
 			self.datePickerOpened = false;
 			self.disableToggle = true;
 			self.disableToggleKlausur = false;
+			self.onRejectDisableKlausur = false;
+			self.recurring = {isRecurring: false, count: "", distance: ""};
 			self.invalid = {};
 			var showVorlesung = new model.templates.Vorlesung();
 			showVorlesung.id = self.pageParameter.planung.id;			
@@ -347,6 +363,11 @@
 			if(!this.checkInputs()) {
 				return;
 			}
+			//Disable checkbox Klausur, if vorlesungstermin is klausur
+			if (self.vorlesungsterminToEdit.klausur === true)
+			{
+				self.disableToggleKlausur = true;
+			}
 			self.vorlesungsterminToEdit.dauer = self.calculateDauer(self.vorlesungsterminToEdit.startUhrzeit, self.vorlesungsterminToEdit.endUhrzeit, self.vorlesungsterminToEdit.pause);
 			//The Vorlesungstermin is completely new, we need to set an internal ID and add it to the Vorlesung
 			if(self.vorlesungsterminToEdit.id === 0) {
@@ -364,17 +385,39 @@
 					}
 				}
 			}
-			//Disable checkbox Klausur, if vorlesungstermin is klausur
-			if (self.vorlesungsterminToEdit.klausur === true)
-			{
-				self.disableToggleKlausur = true;
+			if(self.recurring.isRecurring && self.recurring.count && self.recurring.distance && self.recurring.count > 1) {
+				var i;
+				var dateBasis = new Date(self.vorlesungsterminToEdit.datum);
+				for(i=1; i<self.recurring.count; i++) {
+					//Copy Termin
+					var vorlesungsTermin = JSON.parse(JSON.stringify(self.vorlesungsterminToEdit));
+					vorlesungsTermin.id = self.nextVorlesungsterminID;
+					self.nextVorlesungsterminID--;
+					//Calculate recurring date
+					var dateRecurring = new Date(dateBasis);
+					dateRecurring.setDate(dateRecurring.getDate() + i * self.recurring.distance);
+					var year = dateRecurring.getFullYear();
+				    var month = '0' + (dateRecurring.getMonth() + 1);
+				    month = month.slice(-2, (month.length - 2) + 3);
+				    var day = '0' + dateRecurring.getDate();
+				    day = day.slice(-2, (day.length - 2) + 3);
+				    vorlesungsTermin.datum = year + '-' + month + '-' + day;
+					//Add Termin
+				    self.vorlesungstermine.push(vorlesungsTermin);
+				}
 			}
 			this.calculateProgress();
+			this.onRejectDisableKlausur = false;
 			this.reject();
 	    },
 	    //Reject input fields
 		reject: function() {
 			var self = this;
+			if(self.onRejectDisableKlausur === true) {
+				self.disableToggleKlausur = true;
+				self.onRejectDisableKlausur = false;
+			}
+			self.recurring = {isRecurring: false, count: "", distance: ""};
 			self.vorlesungsterminToEdit = new model.templates.Termin();
 			self.vorlesungsterminToEdit.raum = self.raum;
 			self.invalid.datum = true;
@@ -386,16 +429,20 @@
 				self.$.endUhrzeit.inputAction();
 				self.$.pause.inputAction();
 				self.$.raum.inputAction();
+				self.$.wiederholungen.inputAction();
+				self.$.anzahl.inputAction();
 			}, 100);
 		},
 		//Edit Vorlesungstermin
 		edit: function(e, detail, sender) {
 			var self = this;
+			self.recurring = {isRecurring: false, count: "", distance: ""};
 			self.vorlesungsterminToEdit = JSON.parse(JSON.stringify(e.target.templateInstance.model.item));
 			//Enable checkbox Klausur, if the edited vorlesungstermin is a klausur
 			if (this.vorlesungsterminToEdit.klausur === true)
 			{
 				this.disableToggleKlausur = false;
+				this.onRejectDisableKlausur = true;
 			}
 			self.job('update-labels-edit', function() {
 				self.$.datum.inputAction();
@@ -403,6 +450,8 @@
 				self.$.endUhrzeit.inputAction();
 				self.$.pause.inputAction();
 				self.$.raum.inputAction();
+				self.$.wiederholungen.inputAction();
+				self.$.anzahl.inputAction();
 			}, 100);
 		},
 		//Show Action Dialog for Deletion of Vorlesungstermin
@@ -429,6 +478,7 @@
 				}
 			}
 			this.calculateProgress();
+			this.onRejectDisableKlausur = false;
 			this.reject();
 		},
 		//Show Action Dialog for Deletion of Vorlesung
