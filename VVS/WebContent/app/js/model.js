@@ -558,6 +558,7 @@ var model = new function() {
 		};
 		
 		this.doRequest = function(uri, method, data, callback, callbackData) {
+			var api = new Object();
 			if(uri === undefined || uri === null || method === undefined || method === null || allowedMethods.indexOf(method) === -1) {
 				api.isError = true;
 				api.status = "0";
@@ -567,7 +568,6 @@ var model = new function() {
 			var xhr = new XMLHttpRequest();
 			xhr.onreadystatechange = function() {
 				if(xhr.readyState === 4) {
-					var api = new Object();
 					if(xhr.response !== null && (xhr.status === 200 || xhr.status === 201 || xhr.status === 204)) { //OK, ACCEPTED, NO_CONTENT
 						api.isError = false;
 						api.status = xhr.status;
