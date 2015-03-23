@@ -17,7 +17,6 @@ import de.dhbw.vvs.resources.FeiertageResource;
 import de.dhbw.vvs.resources.KursBlocklagenResource;
 import de.dhbw.vvs.resources.KursBlocklagenSemesterDozentenResource;
 import de.dhbw.vvs.resources.KursBlocklagenSemesterResource;
-import de.dhbw.vvs.resources.KursDashboardResource;
 import de.dhbw.vvs.resources.KursResource;
 import de.dhbw.vvs.resources.KursSemesterVorlesungDozentenResource;
 import de.dhbw.vvs.resources.KursSemesterVorlesungResource;
@@ -95,9 +94,8 @@ public class VVSApplication extends Application {
 		router.attach(VERSION_ONE + "/modulplaene/quickdelete/faecher/{fachInstanzID}", ModulplanQuickDeleteFachInstanzResource.class); //DELETE
 		
 		//PLANNING FUNCTIONALITY
-		//Dashboards
+		//Dashboard
 		router.attach(VERSION_ONE + "/studiengangsleiter/{studiengangsleiterID}/dashboard", StudiengangsleiterDashboardResource.class); //GET
-		router.attach(VERSION_ONE + "/kurse/{kursID}/dashboard", KursDashboardResource.class); //GET
 		
 		//Kurs <-> Moduplan = Vorlesungen
 		router.attach(VERSION_ONE + "/kurse/{kursID}/vorlesungen", KursVorlesungenResource.class); //GET

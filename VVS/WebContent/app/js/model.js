@@ -246,6 +246,12 @@ var model = new function() {
 			this.semester = 0;
 		};
 		
+		this.VorlesungsKachel = function() {
+			this.vorlesung = new model.templates.Vorlesung();
+			this.geplanteStunden = 0;
+			this.geplanteKlausur = false;
+		};
+		
 	};
 	
 	/*
