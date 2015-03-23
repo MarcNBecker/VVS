@@ -4,8 +4,6 @@ import org.restlet.Application;
 import org.restlet.Restlet;
 import org.restlet.routing.Router;
 
-import de.dhbw.vvs.resources.DozentAnhaengeResource;
-import de.dhbw.vvs.resources.DozentAnhangResource;
 import de.dhbw.vvs.resources.DozentFachResource;
 import de.dhbw.vvs.resources.DozentFaecherResource;
 import de.dhbw.vvs.resources.DozentKommentarResource;
@@ -64,8 +62,6 @@ public class VVSApplication extends Application {
 		router.attach(VERSION_ONE + "/dozenten/{dozentID}/faecher", DozentFaecherResource.class); //GET
 		router.attach(VERSION_ONE + "/dozenten/{dozentID}/faecher/{fachID}", DozentFachResource.class); //PUT, DELETE
 		router.attach(VERSION_ONE + "/dozenten/faecher/{fachID}", DozentenFachResource.class); //GET
-		router.attach(VERSION_ONE + "/dozenten/{dozentID}/anhaenge", DozentAnhaengeResource.class); //GET, POST
-		router.attach(VERSION_ONE + "/dozenten/{dozentID}/anhaenge/{anhangID}", DozentAnhangResource.class); //GET, DELETE
 		router.attach(VERSION_ONE + "/dozenten/{dozentID}/kommentare", DozentKommentareResource.class); //GET, POST
 		router.attach(VERSION_ONE + "/dozenten/{dozentID}/kommentare/{kommentarID}", DozentKommentarResource.class); //DELETE
 
