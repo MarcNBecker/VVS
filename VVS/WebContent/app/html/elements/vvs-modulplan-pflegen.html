@@ -4,7 +4,7 @@
 		<core-media-query query="max-width: 1400px" queryMatches="{{smallScreen}}"></core-media-query>
 		<paper-shadow z="3" class="shadow">
 			<div vertical layout>
-				<span horizontal layout class="headline vertical-input">{{modulplan.studiengang}} - {{modulplan.vertiefungsrichtung}}</span>
+				<span horizontal layout class="headline vertical-input">{{modulplan.studiengang}} - {{modulplan.vertiefungsrichtung}}{{modulplan.gueltigAb > 0 ? ' (ab ' + modulplan.gueltigAb + ')' : ''}}</span>
 				<div horizontal?="{{!smallScreen}}" vertical?="{{smallScreen}}" layout class="horizontal-input vertical-input">
 					<div auto-vertical?="{{smallScreen}}" vertical layout flex?="{{!smallScreen}}" two?="{{!smallScreen}}">
 						<paper-shadow z="2" class="inner-shadow">

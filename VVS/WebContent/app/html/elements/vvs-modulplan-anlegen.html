@@ -13,6 +13,9 @@
 					<paper-input-decorator label="Vertiefungsrichtung" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.vertiefungsrichtung}}">
 						<input is="core-input" value={{modulplan.vertiefungsrichtung}} maxlength="100" required disabled?="{{toggleDisabled}}">
 					</paper-input-decorator>	
+					<paper-input-decorator label="Gueltig ab Jahr" floatingLabel>
+						<input is="core-input" type="number" value={{modulplan.gueltigAb}} min="1" max="9999" preventInvalidInput="true" disabled?="{{toggleDisabled}}">
+					</paper-input-decorator>
 				</div>
 				<div horizontal layout center>
 					<span class="headline">Vorlage</span>
@@ -95,7 +98,9 @@
     				self.modulplan.vorlage = self.vorlagen[self.selectedVorlage].id;
 				}
     			//Create Modulplan
-    			model.webService.createModulplan(self.modulplan, function(api) {
+    			var modulplan = JSON.parse(JSON.stringify(self.modulplan));
+    			modulplan.gueltigAb = modulplan.gueltigAb ? modulplan.gueltigAb : 0;
+    			model.webService.createModulplan(modulplan, function(api) {
 					if (!api.isError)
 					{
 						self.modulplan = api.response;

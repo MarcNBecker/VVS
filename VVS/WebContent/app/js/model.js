@@ -8,6 +8,7 @@ var model = new function() {
 			this.id = 0;
 			this.studiengang = "";
 			this.vertiefungsrichtung = "";
+			this.gueltigAb = 0;
 			this.modulInstanzList = [];
 		};
 		
@@ -20,6 +21,7 @@ var model = new function() {
 					modulplan.id = api1.response.id;
 					modulplan.studiengang = api1.response.studiengang;
 					modulplan.vertiefungsrichtung = api1.response.vertiefungsrichtung;
+					modulplan.gueltigAb = api1.response.gueltigAb;
 					//Read ModulInstanzList
 					model.webService.getAllModulInstanzen(m, function(api2) {
 						//ModulInstanzList can be read
@@ -210,6 +212,7 @@ var model = new function() {
 			this.id = 0;
 			this.studiengang = "";
 			this.vertiefungsrichtung = "";
+			this.gueltigAb = ""; //number
 			this.vorlage = 0;
 		};
 
