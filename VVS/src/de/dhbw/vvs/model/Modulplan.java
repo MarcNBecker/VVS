@@ -13,15 +13,17 @@ public class Modulplan {
 	private int id;
 	private String studiengang;
 	private String vertiefungsrichtung;
+	private int gueltigAb;
 	
 	public static ArrayList<Modulplan> getAll() throws WebServiceException {
 		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
-		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT id, studiengang, vertiefungsrichtung FROM modulplan ORDER BY studiengang ASC", null);
+		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT id, studiengang, vertiefungsrichtung, gueltigAb FROM modulplan ORDER BY studiengang ASC", null);
 		ArrayList<Modulplan> modulplanList = new ArrayList<Modulplan>();
 		for(TypeHashMap<String, Object> result : resultList) {
 			Modulplan m = new Modulplan(result.getInt("id"));
 			m.studiengang = result.getString("studiengang");
 			m.vertiefungsrichtung = result.getString("vertiefungsrichtung");
+			m.gueltigAb = result.getInt("gueltigAb");
 			modulplanList.add(m);
 		}
 		return modulplanList;
@@ -41,13 +43,14 @@ public class Modulplan {
 		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
 		ArrayList<Object> fieldValues = new ArrayList<Object>();
 		fieldValues.add(id);
-		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT studiengang, vertiefungsrichtung FROM modulplan WHERE id = ?", fieldValues);
+		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT studiengang, vertiefungsrichtung, gueltigAb FROM modulplan WHERE id = ?", fieldValues);
 		if(resultList.isEmpty()) {
 			throw new WebServiceException(ExceptionStatus.OBJECT_NOT_FOUND);
 		}
 		TypeHashMap<String, Object> result = resultList.get(0);
 		studiengang = result.getString("studiengang");
 		vertiefungsrichtung = result.getString("vertiefungsrichtung");
+		gueltigAb = result.getInt("gueltigAb");
 		return this;
 	}
 	
@@ -64,7 +67,8 @@ public class Modulplan {
 		ArrayList<Object> fieldValues = new ArrayList<Object>();
 		fieldValues.add(studiengang);
 		fieldValues.add(vertiefungsrichtung);
-		this.id = db.doQuery("INSERT INTO modulplan (studiengang, vertiefungsrichtung) VALUES (?, ?)", fieldValues);
+		fieldValues.add(gueltigAb);
+		this.id = db.doQuery("INSERT INTO modulplan (studiengang, vertiefungsrichtung, gueltigAb) VALUES (?, ?, ?)", fieldValues);
 		return this;
 	}
 	
@@ -93,8 +97,9 @@ public class Modulplan {
 		ArrayList<Object> fieldValues = new ArrayList<Object>();
 		fieldValues.add(studiengang);
 		fieldValues.add(vertiefungsrichtung);
+		fieldValues.add(gueltigAb);
 		fieldValues.add(id);
-		int affectedRows = db.doQuery("UPDATE modulplan SET studiengang = ?, vertiefungsrichtung = ? WHERE id = ?", fieldValues);
+		int affectedRows = db.doQuery("UPDATE modulplan SET studiengang = ?, vertiefungsrichtung = ?, gueltigAb = ? WHERE id = ?", fieldValues);
 		if(affectedRows == 0) {
 			throw new WebServiceException(ExceptionStatus.OBJECT_NOT_FOUND);
 		} else {
@@ -118,6 +123,9 @@ public class Modulplan {
 		}
 		if (vertiefungsrichtung == null || (vertiefungsrichtung = vertiefungsrichtung.trim()).isEmpty()) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_STRING);
+		}
+		if (gueltigAb < 0) {
+			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_NUMBER);
 		}
 	}
 	

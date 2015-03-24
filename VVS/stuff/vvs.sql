@@ -46,7 +46,7 @@ CREATE TABLE `vvs`.`Modulplan` (
   `ID` INT unsigned NOT NULL AUTO_INCREMENT,
   `Studiengang` VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL,
   `Vertiefungsrichtung` VARCHAR(100) COLLATE utf8_unicode_ci NOT NULL,
-  `GueltigAb` INT unsigned NOT NULL,
+  `GueltigAb` INT unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`ID`) 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
@@ -215,22 +215,6 @@ CREATE TABLE `vvs`.`Kommentar` (
     FOREIGN KEY (`Verfasser`)
     REFERENCES `vvs`.`User` (`Name`)
     ON DELETE SET NULL
-    ON UPDATE RESTRICT
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
--- -----------------------------------------------------
--- Table `vvs`.`Anhang`
--- -----------------------------------------------------
-CREATE TABLE `vvs`.`Anhang` (
-  `ID` INT unsigned NOT NULL AUTO_INCREMENT,
-  `Dozent` INT unsigned NOT NULL,
-  `Daten` BLOB NOT NULL,
-  PRIMARY KEY (`ID`),
-  INDEX `INDEX_Anhang_Dozent` (`Dozent` ASC),
-  CONSTRAINT `FK_Anhang_Dozent`
-    FOREIGN KEY (`Dozent`)
-    REFERENCES `vvs`.`Dozent` (`ID`)
-    ON DELETE CASCADE
     ON UPDATE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 

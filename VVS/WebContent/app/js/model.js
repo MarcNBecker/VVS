@@ -8,6 +8,7 @@ var model = new function() {
 			this.id = 0;
 			this.studiengang = "";
 			this.vertiefungsrichtung = "";
+			this.gueltigAb = 0;
 			this.modulInstanzList = [];
 		};
 		
@@ -20,6 +21,7 @@ var model = new function() {
 					modulplan.id = api1.response.id;
 					modulplan.studiengang = api1.response.studiengang;
 					modulplan.vertiefungsrichtung = api1.response.vertiefungsrichtung;
+					modulplan.gueltigAb = api1.response.gueltigAb;
 					//Read ModulInstanzList
 					model.webService.getAllModulInstanzen(m, function(api2) {
 						//ModulInstanzList can be read
@@ -210,6 +212,7 @@ var model = new function() {
 			this.id = 0;
 			this.studiengang = "";
 			this.vertiefungsrichtung = "";
+			this.gueltigAb = ""; //number
 			this.vorlage = 0;
 		};
 
@@ -241,6 +244,12 @@ var model = new function() {
 			this.fachInstanz = new model.templates.FachInstanz();
 			this.dozentID = 0;
 			this.semester = 0;
+		};
+		
+		this.VorlesungsKachel = function() {
+			this.vorlesung = new model.templates.Vorlesung();
+			this.geplanteStunden = 0;
+			this.geplanteKlausur = false;
 		};
 		
 	};
@@ -549,6 +558,7 @@ var model = new function() {
 		};
 		
 		this.doRequest = function(uri, method, data, callback, callbackData) {
+			var api = new Object();
 			if(uri === undefined || uri === null || method === undefined || method === null || allowedMethods.indexOf(method) === -1) {
 				api.isError = true;
 				api.status = "0";
@@ -558,7 +568,6 @@ var model = new function() {
 			var xhr = new XMLHttpRequest();
 			xhr.onreadystatechange = function() {
 				if(xhr.readyState === 4) {
-					var api = new Object();
 					if(xhr.response !== null && (xhr.status === 200 || xhr.status === 201 || xhr.status === 204)) { //OK, ACCEPTED, NO_CONTENT
 						api.isError = false;
 						api.status = xhr.status;

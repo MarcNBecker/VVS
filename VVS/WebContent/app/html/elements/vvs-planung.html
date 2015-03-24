@@ -10,38 +10,6 @@
 					<paper-progress class="progress" value="{{progressProzent}}"></paper-progress>
 					<span>{{progress}} / {{vorlesung.fachInstanz.stunden}} {{vorlesung.fachInstanz.stunden === 1 ? 'Stunde' : 'Stunden'}} geplant</span>
 				</div>
-				<!-- Grafische Planung -->
-				<div horizontal layout class="horizontal-input vertical-input">
-					<paper-shadow z="2" class="inner-shadow" flex>
-						<div horizontal layout>
-							<div vertical layout>
-								<div horizontal layout>
-									<div class="hide small-headline" style="width: 70px">Zeiten</div>
-									<template repeat="{{item in zeiten}}">
-										<div class="small-headline">{{item}}:00&nbsp;&nbsp;</div>
-									</template>
-								</div>
-								<template repeat="{{zeile in zeilen}}">
-									<div horizontal layout center style="margin-bottom: 10px">
-										<div style="width: 70px">{{zeile}}</div>
-										<paper-shadow z="1" class="inner-inner-shadow-grafik" flex>
-											<div horizontal layout>
-												<template repeat="{{item in zeiten}}">
-													<div horizontal layout flex>
-														<div id="{{zeile}}_{{item}}_1" flex>&nbsp;</div>
-														<div id="{{zeile}}_{{item}}_2" flex>&nbsp;</div>
-														<div id="{{zeile}}_{{item}}_3" flex>&nbsp;</div>
-														<div id="{{zeile}}_{{item}}_4" flex>&nbsp;</div>
-													</div>
-												</template>
-											</div>
-										</paper-shadow>
-									</div>
-								</template>
-							</div>
-						</div>
-					</paper-shadow>
-				</div>
 				<!-- Hauptscreen -->
 				<div horizontal?="{{!smallScreen}}" vertical?="{{smallScreen}}" layout class="horizontal-input vertical-input">
 					<div auto-vertical?="{{smallScreen}}" vertical layout flex?="{{!smallScreen}}" two?="{{!smallScreen}}">
@@ -85,15 +53,15 @@
 						<span class="small-headline" horizontal layout center>Termin bearbeiten</span>
 						<div horizontal layout start>
 							<polymer-date-picker id="datePicker" relatedTarget="{{$.datum}}" halign="left" style="z-index:99" selectedDate="{{selectedDate}}" opened="false"></polymer-date-picker>
-							<paper-input-decorator id="datum" label="Datum" error="Pflichtfeld: Ung&uuml;ltiges Datum" autoValidate isInvalid="{{invalid.datum}}" floatingLabel flex>
+							<paper-input-decorator id="datum" label="Datum" error="{{minDateString && maxDateString ? 'Pflichtfeld: Ung&uuml;ltiges Datum (Zeitraum ' + minDateString + ' bis ' + maxDateString + ')' : 'Pflichtfeld: Ung&uuml;ltiges Datum'}}" autoValidate isInvalid="{{invalid.datum}}" floatingLabel flex>
 								<input is="core-input" on-focus="{{toggleDatePicker}}" on-click="{{toggleDatePicker}}" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" preventInvalidInput="true" value="{{vorlesungsterminToEdit.datum}}" disabled?="{{disableToggle}}" required>
 							</paper-input-decorator>						
 						</div>
 						<div horizontal layout start>
-							<paper-input-decorator id="startUhrzeit" label="Uhrzeit von" on-input="{{calculate}}" error="Pflichtfeld: Ung&uuml;ltige Uhrzeit (hh:mm)" autoValidate isInvalid="{{invalid.startUhrzeit}}" floatingLabel flex>
+							<paper-input-decorator id="startUhrzeit" label="Uhrzeit von" on-input="{{checkAndCalculate}}" error="Pflichtfeld: Ung&uuml;ltige Uhrzeit (hh:mm)" autoValidate isInvalid="{{invalid.startUhrzeit}}" floatingLabel flex>
 								<input id="startInput" is="core-input" type="text" pattern="(2[0-3]|[01][0-9]):[0-5][0-9]" value={{vorlesungsterminToEdit.startUhrzeit}} disabled?="{{disableToggle}}" required>
 							</paper-input-decorator>		
-							<paper-input-decorator id="endUhrzeit" label="Uhrzeit bis" on-input="{{calculate}}" error="Pflichtfeld: Ung&uuml;ltige Uhrzeit (hh:mm)" autoValidate isInvalid="{{invalid.endUhrzeit}}" floatingLabel flex>
+							<paper-input-decorator id="endUhrzeit" label="Uhrzeit bis" on-input="{{checkAndCalculate}}" error="Pflichtfeld: Ung&uuml;ltige Uhrzeit (hh:mm)" autoValidate isInvalid="{{invalid.endUhrzeit}}" floatingLabel flex>
 								<input id="endInput" is="core-input" type="text" pattern="(2[0-3]|[01][0-9]):[0-5][0-9]" value={{vorlesungsterminToEdit.endUhrzeit}} disabled?="{{disableToggle}}" required>
 							</paper-input-decorator>			
 						</div>
@@ -106,8 +74,20 @@
 							</paper-input-decorator>
 						</div>
 						<div horizontal layout center class="horizontal-verticalizable">
-							<paper-checkbox checked="{{vorlesungsterminToEdit.klausur}}" self-center disabled?="{{disableToggle}}"></paper-checkbox>
+							<paper-checkbox checked="{{vorlesungsterminToEdit.klausur}}" self-center disabled?="{{disableToggle || disableToggleKlausur || recurring.isRecurring}}"></paper-checkbox>
 							<span class="small-headline" self-center>Klausur</span>
+						</div>
+						<div horizontal layout center class="horizontal-verticalizable text-line-input">
+							<paper-checkbox checked="{{recurring.isRecurring}}" self-center disabled?="{{disableToggle || vorlesungsterminToEdit.klausur}}"></paper-checkbox>
+							<span class="small-headline">Wiederholender Termin:</span>
+							<paper-input-decorator id="wiederholungen" label="Anzahl" flex>
+								<input is="core-input" type="number" min="1" preventInvalidInput="true" value={{recurring.count}} disabled?="{{disableToggle || !recurring.isRecurring}}">
+							</paper-input-decorator>
+							<span self-center>mal alle</span>
+							<paper-input-decorator id="anzahl" label="Abstand" flex>
+								<input is="core-input" type="number" min="1" preventInvalidInput="true" value={{recurring.distance}} disabled?="{{disableToggle || !recurring.isRecurring}}">
+							</paper-input-decorator>
+							<span>Tage</span>
 						</div>
 						<div horizontal layout>
 							<paper-button on-click={{add}} raised disabled?="{{disableToggle}}" flex>&Uuml;bernehmen</paper-button>
@@ -116,7 +96,7 @@
 						<div vertical layout class="vertical-input">
 							<span class="small-headline" horizontal layout center>Dozent ausw&auml;hlen</span>
 							<paper-shadow z="2" class="inner-shadow">
-								<span horizontal layout center-center class="small-headline" flex>Vorherhige Dozenten</span>
+								<span horizontal layout center-center class="small-headline" flex>Vorherige Dozenten</span>
 								<template repeat="{{item in topDozenten}}">
 									<paper-shadow z="1" class="{{item.id === dozent.id ? 'inner-inner-shadow highlight' : 'inner-inner-shadow'}}">
 										<div horizontal layout center>
@@ -146,7 +126,7 @@
 										</paper-dropdown-searchable>
 									</paper-dropdown-menu-searchable>
 								</div>
-								<template repeat="{{item in otherDozenten}}">
+						 		<template repeat="{{item in otherDozenten}}">
 									<paper-shadow z="1" class="{{item.id === dozent.id ? 'inner-inner-shadow highlight' : 'inner-inner-shadow'}}">
 										<div horizontal layout center>
 											<paper-item on-click="{{setListDozent}}" horizontal layout center-center flex class="self-click">{{item.name}}, {{item.vorname}}</paper-item>
@@ -188,10 +168,17 @@
 		progressProzent: 0,
 		nextVorlesungsterminID: -1,
 		selectedDate: '2000-01-01',
+		minDate: null,
+		maxDate: null,		
+		minDateString: "",
+		maxDateString: "",
 		zeiten: ["07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"],
 		zeilen: ["Kurs", "Dozent", "Raum", "Termin"],
 		datePickerOpened: false,
 		disableToggle: true,
+		disableToggleKlausur: false,
+		onRejectDisableKlausur: false,
+		recurring: {isRecurring: false, count: "", distance: ""},
 		invalid: {},
 		//Publish those attributes to home
 		publish: {
@@ -218,11 +205,24 @@
 			self.progressProzent = 0;
 			self.nextVorlesungsterminID = -1;
 			self.selectedDate = self.today();
+			self.minDate = null;
+			self.maxDate = null;
+			self.minDateString = "";
+			self.maxDateString = "";
 			self.zeiten = ["07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"];
 			self.zeilen = ["Kurs", "Dozent", "Raum", "Termin"];
 			self.datePickerOpened = false;
 			self.disableToggle = true;
+			self.disableToggleKlausur = false;
+			self.onRejectDisableKlausur = false;
+			self.recurring = {isRecurring: false, count: "", distance: ""};
 			self.invalid = {};
+			//navigate to studiengangsleiter dashboard
+			if(self.pageParameter.planung.id <= 0) {
+				//TODO NAVIGATE TO DASHBOARD (S)
+				self.cancel();
+				return;
+			}
 			var showVorlesung = new model.templates.Vorlesung();
 			showVorlesung.id = self.pageParameter.planung.id;			
 			var deepRuns = 0;
@@ -238,6 +238,11 @@
 							var i;
 							for (i = 0; i < self.vorlesungstermine.length; i++) {
 								self.vorlesungstermine[i].dauer = self.calculateDauer(self.vorlesungstermine[i].startUhrzeit, self.vorlesungstermine[i].endUhrzeit, self.vorlesungstermine[i].pause);
+								//Disable checkbox Klausur, if vorlesungstermin is a klausur
+								if (self.vorlesungstermine[i].klausur === true)
+								{
+									self.disableToggleKlausur = true;
+								}
 							}
 							self.calculateProgress();
     						//Set inputs to invalid
@@ -282,6 +287,10 @@
 									//Init date picker with blocklagen start datum
 									if(api.response[i].startDatum) {
 										self.selectedDate = api.response[i].startDatum;
+										self.minDate = new Date(api.response[i].startDatum);
+										self.minDateString = api.response[i].startDatum;
+										self.maxDate = new Date(api.response[i].endDatum);
+										self.maxDateString = api.response[i].endDatum;
 									}
 									self.vorlesungsterminToEdit.raum = self.raum;
 									break;
@@ -364,7 +373,7 @@
 				}
 			});
 		},
-		//Color a termin
+				//Color a termin
 		color: function(start, ende, zeile) {
 			var self = this;
 			var startzeit = start.split(":");
@@ -415,6 +424,11 @@
 			if(!this.checkInputs()) {
 				return;
 			}
+			//Disable checkbox Klausur, if vorlesungstermin is klausur
+			if (self.vorlesungsterminToEdit.klausur === true)
+			{
+				self.disableToggleKlausur = true;
+			}
 			self.vorlesungsterminToEdit.dauer = self.calculateDauer(self.vorlesungsterminToEdit.startUhrzeit, self.vorlesungsterminToEdit.endUhrzeit, self.vorlesungsterminToEdit.pause);
 			//The Vorlesungstermin is completely new, we need to set an internal ID and add it to the Vorlesung
 			if(self.vorlesungsterminToEdit.id === 0) {
@@ -432,12 +446,39 @@
 					}
 				}
 			}
+			if(self.recurring.isRecurring && self.recurring.count && self.recurring.distance && self.recurring.count > 1) {
+				var i;
+				var dateBasis = new Date(self.vorlesungsterminToEdit.datum);
+				for(i=1; i<self.recurring.count; i++) {
+					//Copy Termin
+					var vorlesungsTermin = JSON.parse(JSON.stringify(self.vorlesungsterminToEdit));
+					vorlesungsTermin.id = self.nextVorlesungsterminID;
+					self.nextVorlesungsterminID--;
+					//Calculate recurring date
+					var dateRecurring = new Date(dateBasis);
+					dateRecurring.setDate(dateRecurring.getDate() + i * self.recurring.distance);
+					var year = dateRecurring.getFullYear();
+				    var month = '0' + (dateRecurring.getMonth() + 1);
+				    month = month.slice(-2, (month.length - 2) + 3);
+				    var day = '0' + dateRecurring.getDate();
+				    day = day.slice(-2, (day.length - 2) + 3);
+				    vorlesungsTermin.datum = year + '-' + month + '-' + day;
+					//Add Termin
+				    self.vorlesungstermine.push(vorlesungsTermin);
+				}
+			}
 			this.calculateProgress();
+			this.onRejectDisableKlausur = false;
 			this.reject();
 	    },
 	    //Reject input fields
 		reject: function() {
 			var self = this;
+			if(self.onRejectDisableKlausur === true) {
+				self.disableToggleKlausur = true;
+				self.onRejectDisableKlausur = false;
+			}
+			self.recurring = {isRecurring: false, count: "", distance: ""};
 			self.vorlesungsterminToEdit = new model.templates.Termin();
 			self.vorlesungsterminToEdit.raum = self.raum;
 			self.invalid.datum = true;
@@ -449,18 +490,29 @@
 				self.$.endUhrzeit.inputAction();
 				self.$.pause.inputAction();
 				self.$.raum.inputAction();
+				self.$.wiederholungen.inputAction();
+				self.$.anzahl.inputAction();
 			}, 100);
 		},
 		//Edit Vorlesungstermin
 		edit: function(e, detail, sender) {
 			var self = this;
+			self.recurring = {isRecurring: false, count: "", distance: ""};
 			self.vorlesungsterminToEdit = JSON.parse(JSON.stringify(e.target.templateInstance.model.item));
+			//Enable checkbox Klausur, if the edited vorlesungstermin is a klausur
+			if (this.vorlesungsterminToEdit.klausur === true)
+			{
+				this.disableToggleKlausur = false;
+				this.onRejectDisableKlausur = true;
+			}
 			self.job('update-labels-edit', function() {
 				self.$.datum.inputAction();
 				self.$.startUhrzeit.inputAction();
 				self.$.endUhrzeit.inputAction();
 				self.$.pause.inputAction();
 				self.$.raum.inputAction();
+				self.$.wiederholungen.inputAction();
+				self.$.anzahl.inputAction();
 			}, 100);
 		},
 		//Show Action Dialog for Deletion of Vorlesungstermin
@@ -473,6 +525,11 @@
 			var i;
 			for (i = 0; i < this.vorlesungstermine.length; i++) {
 				if (this.vorlesungstermine[i].id === this.vorlesungsterminToDelete.id) {
+					//Enable checkbox Klausur, if the deleted vorlesungstermin was a klausur
+					if (this.vorlesungsterminToDelete.klausur === true)
+					{
+						this.disableToggleKlausur = false;
+					}
 					//Only delete if the server knows about the Termin
 					if(this.vorlesungsterminToDelete.id > 0) {
 						this.deletedVorlesungstermine.push(this.vorlesungstermine[i]);
@@ -482,6 +539,7 @@
 				}
 			}
 			this.calculateProgress();
+			this.onRejectDisableKlausur = false;
 			this.reject();
 		},
 		//Show Action Dialog for Deletion of Vorlesung
@@ -496,7 +554,7 @@
 			model.webService.deleteVorlesung(self.vorlesung, function(api) {
 				if(!api.isError) {
 					self.toasts.success.show();
-					//TODO NAVIGATE TO DASHBOARD
+					//TODO NAVIGATE TO DASHBOARD (K)
 					self.cancel();
 				}
 				else {
@@ -600,9 +658,15 @@
     		window.history.back();
     	},		
     	//Calculate Pause if inputs are valid
-		calculate: function() {
+		checkAndCalculate: function() {
 			var self = this;
+			//Check if endUhrzeit is greater than startUhrzeit
+			self.$.endUhrzeit.validate();
 			if (!self.invalid.startUhrzeit && !self.invalid.endUhrzeit) {
+				if(!(new Date('2000-01-01 ' + self.vorlesungsterminToEdit.startUhrzeit) < new Date('2000-01-01 ' + self.vorlesungsterminToEdit.endUhrzeit))) {
+					self.invalid.endUhrzeit = true;
+					return;
+				}
 				self.vorlesungsterminToEdit.pause = self.calculatePause(self.vorlesungsterminToEdit.startUhrzeit, self.vorlesungsterminToEdit.endUhrzeit);
 			}
 		},
@@ -717,6 +781,7 @@
 			//Wait until the date picker potentially auto closed to reopen it
 			this.job('open-date-picker', function() {
 				this.$.datum.inputAction();
+				this.validateSelectedDate();
 				this.$.datePicker.open();
 				this.datePickerOpened = true;
 			}, 100);
@@ -733,7 +798,17 @@
 			this.datePickerOpened = false;
 			this.job('label-date-picker', function() {
 				this.$.datum.inputAction();
+				this.validateSelectedDate();
 			}, 100);
+		},
+		validateSelectedDate: function() {
+			//validate termin
+			var terminAsDate = new Date(this.selectedDate);
+			if(this.minDate && this.maxDate && !(this.minDate <= terminAsDate && this.maxDate >= terminAsDate)) {
+				this.invalid.datum = true;
+			} else {
+				this.invalid.datum = false;
+			}
 		},
 		//Calculate date of today
 		today: function() {

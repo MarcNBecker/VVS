@@ -13,6 +13,7 @@ import de.dhbw.vvs.application.ExceptionStatus;
 import de.dhbw.vvs.application.WebServiceException;
 import de.dhbw.vvs.model.Kurs;
 import de.dhbw.vvs.model.Vorlesung;
+import de.dhbw.vvs.model.VorlesungsKachel;
 import de.dhbw.vvs.utility.JSONify;
 
 public class KursSemesterVorlesungenResource extends SecureServerResource {
@@ -39,7 +40,7 @@ public class KursSemesterVorlesungenResource extends SecureServerResource {
 	@Override
 	protected Object receiveGet() throws WebServiceException {
 		Kurs kurs = new Kurs(getKursID());
-		return Vorlesung.getAll(kurs, getSemester());
+		return VorlesungsKachel.enrich(Vorlesung.getAll(kurs, getSemester()));
 	}
 	
 	@Override

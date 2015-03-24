@@ -92,6 +92,16 @@
 	margin-bottom: 0px;
 }
 
+.text-line-input paper-input-decorator {
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+.text-line-input span {
+	margin-bottom: 10px;
+	margin-top: 10px;
+}
+
 .hide {
 	display: hidden;
 	visibility: hidden;

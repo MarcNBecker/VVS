@@ -66,7 +66,7 @@
 							<paper-dropdown-searchable class="dropdown" arrayName="modulplaene" searchProperties="studiengang vertiefungsrichtung" hideProperty="hidden">
 								<core-menu id="modulplan" class="menu">
 									<template repeat="{{item in modulplaene}}">
-										<paper-item hidden?="{{item.hidden}}">{{item.studiengang}} - {{item.vertiefungsrichtung}}</paper-item>
+										<paper-item hidden?="{{item.hidden}}">{{item.studiengang}} - {{item.vertiefungsrichtung}}{{item.gueltigAb > 0 ? ' (ab ' + item.gueltigAb + ')' : ''}}</paper-item>
 									</template>
 								</core-menu>
 							</paper-dropdown-searchable>
