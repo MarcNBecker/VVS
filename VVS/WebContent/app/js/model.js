@@ -305,6 +305,10 @@ var model = new function() {
 		var vorlesungTermineURI = "/kurse/{kursID}/{semester}/vorlesungen/{vorlesungsID}/termine";
 		var vorlesungTerminURI = "/kurse/{kursID}/{semester}/vorlesungen/{vorlesungsID}/termine/{terminID}";
 		
+		var termineKursURI = "/termine/{datum}/kurse/{kursID}";
+		var termineDozentURI = "/termine/{datum}/dozenten/{dozentID}";
+		var termineRaumURI = "/termine/{datum}/raeume/{raum}";
+		
 		this.getAllDozenten = function(c) {
 			self.doRequest(dozentenURI, "GET", null, c);
 		};
@@ -555,6 +559,18 @@ var model = new function() {
 		
 		this.deleteVorlesungTermin = function(v, t, c) {
 			self.doRequest(vorlesungTerminURI.replace("{kursID}", v.kursID).replace("{semester}", v.semester).replace("{vorlesungsID}", v.id).replace("{terminID}", t.id), "DELETE", null, c);		
+		};
+		
+		this.getAllConflictsTermineKurs = function(v, t, c) {
+			self.doRequest(termineKursURI.replace("{datum}", t.datum).replace("{kursID}", v.kursID), "GET", null, c);
+		};
+		
+		this.getAllConflictsTermineDozent = function(v, t, c) {
+			self.doRequest(termineDozentURI.replace("{datum}", t.datum).replace("{dozentID}", v.dozentID), "GET", null, c);
+		};
+		
+		this.getAllConflictsTermineRaum = function(t, c) {
+			self.doRequest(termineRaumURI.replace("{datum}", t.datum).replace("{raum}", t.raum), "GET", null, c);
 		};
 		
 		this.doRequest = function(uri, method, data, callback, callbackData) {

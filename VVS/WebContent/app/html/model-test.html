@@ -321,5 +321,10 @@
 <input type="button" onclick="model.webService.updateVorlesungTermin(vorlesung, termin, c)" value="Update Vorlesung Termin" />
 <input type="button" onclick="model.webService.deleteVorlesungTermin(vorlesung, termin, c)" value="Delete Vorlesung Termin" /><br />
 
+<!-- Conflicts Termin -->
+<input type="button" onclick="model.webService.getAllConflictsTermineKurs(vorlesung, termin, c)" value="Get All Conflicts Termine Kurs" />
+<input type="button" onclick="model.webService.getAllConflictsTermineDozent(vorlesung, termin, c)" value="Get All Conflicts Termine Dozent" />
+<input type="button" onclick="model.webService.getAllConflictsTermineRaum(termin, c)" value="Get All Conflicts Termine Raum" /><br />
+
 </body>
 </html>
