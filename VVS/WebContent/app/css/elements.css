@@ -20,13 +20,21 @@
 	padding-right: 5px
 }
 
-.inner-inner-shadow-grafik {
+.inner-inner-shadow-timeline {
 	background-color: #FFF;
 	border-radius: 3px
 }
 
 .inner-inner-shadow /deep/ #ripple {
   color: #D32B18;
+}
+
+.line-spacing {
+	width: 70px;
+}
+
+.timeline-border {
+	border-left: solid 1px;
 }
 
 .highlight {
