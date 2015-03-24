@@ -17,7 +17,7 @@ import de.dhbw.vvs.model.Feiertag;
 import de.dhbw.vvs.utility.JSONify;
 import de.dhbw.vvs.utility.Utility;
 
-public class FeiertagResource extends SecureServerResource {
+public class FeiertagResource extends JsonServerResource {
 	
 	private int jahr;
 	private Date datum;

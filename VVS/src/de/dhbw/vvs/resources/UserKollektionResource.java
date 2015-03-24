@@ -10,7 +10,7 @@ import de.dhbw.vvs.model.Studiengangsleiter;
 import de.dhbw.vvs.model.User;
 import de.dhbw.vvs.utility.JSONify;
 
-public class UserKollektionResource extends SecureServerResource {
+public class UserKollektionResource extends JsonServerResource {
 
 	@Override
 	protected void doInit() throws ResourceException {

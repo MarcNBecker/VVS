@@ -15,7 +15,7 @@ import de.dhbw.vvs.model.Dozent;
 import de.dhbw.vvs.model.Kommentar;
 import de.dhbw.vvs.utility.JSONify;
 
-public class DozentKommentareResource extends SecureServerResource {
+public class DozentKommentareResource extends JsonServerResource {
 	
 	private int dozentID;
 	

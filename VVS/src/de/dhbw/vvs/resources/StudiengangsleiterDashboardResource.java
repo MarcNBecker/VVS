@@ -10,7 +10,7 @@ import org.restlet.resource.ResourceException;
 import de.dhbw.vvs.application.ExceptionStatus;
 import de.dhbw.vvs.application.WebServiceException;
 
-public class StudiengangsleiterDashboardResource extends SecureServerResource {
+public class StudiengangsleiterDashboardResource extends JsonServerResource {
 	
 	private int studiengangsleiterID;
 	

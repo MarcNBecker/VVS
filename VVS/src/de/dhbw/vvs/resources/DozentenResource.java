@@ -8,7 +8,7 @@ import de.dhbw.vvs.application.WebServiceException;
 import de.dhbw.vvs.model.Dozent;
 import de.dhbw.vvs.utility.JSONify;
 
-public class DozentenResource extends SecureServerResource {
+public class DozentenResource extends JsonServerResource {
 	
 	@Override
 	protected void doInit() throws ResourceException {

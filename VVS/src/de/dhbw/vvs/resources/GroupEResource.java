@@ -1,22 +1,22 @@
 package de.dhbw.vvs.resources;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.concurrent.ConcurrentMap;
 
-import org.json.JSONException;
+import org.restlet.data.Disposition;
+import org.restlet.data.MediaType;
 import org.restlet.data.Status;
-import org.restlet.ext.json.JsonRepresentation;
+import org.restlet.representation.FileRepresentation;
+import org.restlet.representation.Representation;
 import org.restlet.resource.ResourceException;
 
 import de.dhbw.vvs.application.ExceptionStatus;
 import de.dhbw.vvs.application.WebServiceException;
-import de.dhbw.vvs.model.Kurs;
-import de.dhbw.vvs.model.Vorlesung;
-import de.dhbw.vvs.model.VorlesungsKachel;
-import de.dhbw.vvs.utility.JSONify;
+import de.dhbw.vvs.model.GroupE;
 
-public class KursSemesterVorlesungenResource extends JsonServerResource {
+public class GroupEResource extends EasyServerResource {
 	
 	private int kursID;
 	private int semester;
@@ -24,8 +24,6 @@ public class KursSemesterVorlesungenResource extends JsonServerResource {
 	@Override
 	protected void doInit() throws ResourceException {
 		super.doInit();
-		super.allowGet();
-		super.allowPost();
 		ConcurrentMap<String, Object> urlAttributes = getRequest().getAttributes();
 		try {
 			 this.kursID = Integer.parseInt(URLDecoder.decode(urlAttributes.get("kursID").toString(), "UTF-8"));
@@ -38,25 +36,24 @@ public class KursSemesterVorlesungenResource extends JsonServerResource {
 	}
 	
 	@Override
-	protected Object receiveGet() throws WebServiceException {
-		Kurs kurs = new Kurs(getKursID());
-		return VorlesungsKachel.enrich(Vorlesung.getAll(kurs, getSemester()));
-	}
-	
-	@Override
-	protected Object receivePost(JsonRepresentation json) throws JSONException, WebServiceException {
-		Vorlesung vorlesung = JSONify.deserialize(json.getJsonObject().toString(), Vorlesung.class);
-		vorlesung.setKursID(getKursID());
-		vorlesung.setSemester(getSemester());
-		return vorlesung.create();
+	protected Representation get() throws ResourceException {
+		try {
+			File csv = GroupE.getCSVData(getKursID(), getSemester());
+			FileRepresentation representation = new FileRepresentation(csv, new MediaType("text", "csv"));
+			representation.setAutoDeleting(true);
+			representation.getDisposition().setType(Disposition.TYPE_ATTACHMENT);
+			return representation;
+		} catch (WebServiceException e) {
+			throw e.toResourceException();
+		}
 	}
 	
 	public int getKursID() {
-		return this.kursID;
+		return kursID;
 	}
 	
 	public int getSemester() {
-		return this.semester;
+		return semester;
 	}
-	
+
 }

@@ -14,7 +14,7 @@ import de.dhbw.vvs.application.WebServiceException;
 import de.dhbw.vvs.model.User;
 import de.dhbw.vvs.utility.JSONify;
 
-public class UserResource extends SecureServerResource {
+public class UserResource extends JsonServerResource {
 
 	private String name;
 	

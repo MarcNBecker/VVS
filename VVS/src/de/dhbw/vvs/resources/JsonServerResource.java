@@ -3,54 +3,26 @@ package de.dhbw.vvs.resources;
 import java.io.IOException;
 
 import org.json.JSONException;
-import org.restlet.data.CacheDirective;
 import org.restlet.data.MediaType;
 import org.restlet.data.Status;
 import org.restlet.ext.json.JsonRepresentation;
 import org.restlet.representation.EmptyRepresentation;
 import org.restlet.representation.Representation;
 import org.restlet.resource.ResourceException;
-import org.restlet.resource.ServerResource;
 
 import de.dhbw.vvs.application.ExceptionStatus;
 import de.dhbw.vvs.application.WebServiceException;
-import de.dhbw.vvs.database.ConnectionPool;
 import de.dhbw.vvs.utility.JSONify;
 
 /**
  * A secure ServerResource
  */
-public abstract class SecureServerResource extends ServerResource {
+public abstract class JsonServerResource extends EasyServerResource {
 
 	private boolean allowGet = false;
 	private boolean allowPost = false;
 	private boolean allowPut = false;
 	private boolean allowDelete = false;
-	
-	/**
-	 * This method sets the handling of the response to not negotiated and not conditional.
-	 * As a result of this only the not Variant dependant get, post, delete, put, head & options methods of the ServerResource can be called
-	 */
-	@Override
-	protected void doInit() throws ResourceException {
-		super.doInit();
-		setNegotiated(false);
-		setConditional(false);
-		//Don't allow caching
-		getResponse().getCacheDirectives().add(CacheDirective.noCache());
-	}
-	
-	/**
-	 * Sets the response entity to a JSON object representing a failure if a ResourceException was thrown
-	 */
-	@Override
-	protected void doCatch(Throwable throwable) {
-		super.doCatch(throwable);
-		if(throwable instanceof ResourceException) {
-			ResourceException e = (ResourceException) throwable;
-			getResponse().setEntity(new JsonRepresentation(JSONify.serialize(e)));
-		}
-	}
 	
 	/**
 	 * Allows a GET request
@@ -195,15 +167,6 @@ public abstract class SecureServerResource extends ServerResource {
 	 */
 	protected void receiveDelete() throws WebServiceException {
 		throw new WebServiceException(ExceptionStatus.METHOD_NOT_ALLOWED).toResourceException();
-	}
-	
-	/**
-	 * Close the database connection on releasing the resource
-	 */
-	@Override
-	protected void doRelease() throws ResourceException {
-		super.doRelease();
-		ConnectionPool.getConnectionPool().closeConnection();
 	}
 	
 }

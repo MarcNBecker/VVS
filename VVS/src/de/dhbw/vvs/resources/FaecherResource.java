@@ -5,7 +5,7 @@ import org.restlet.resource.ResourceException;
 import de.dhbw.vvs.application.WebServiceException;
 import de.dhbw.vvs.model.Fach;
 
-public class FaecherResource extends SecureServerResource {
+public class FaecherResource extends JsonServerResource {
 	
 	@Override
 	protected void doInit() throws ResourceException {

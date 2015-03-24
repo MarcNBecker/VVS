@@ -15,7 +15,7 @@ import de.dhbw.vvs.model.FachInstanz;
 import de.dhbw.vvs.model.ModulInstanz;
 import de.dhbw.vvs.utility.JSONify;
 
-public class ModulplanFaecherResource extends SecureServerResource {
+public class ModulplanFaecherResource extends JsonServerResource {
 	
 	private int modulplanID;
 	private int modulID;

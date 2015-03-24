@@ -12,7 +12,7 @@ import de.dhbw.vvs.application.WebServiceException;
 import de.dhbw.vvs.model.Kurs;
 import de.dhbw.vvs.model.Vorlesung;
 
-public class KursVorlesungenResource extends SecureServerResource {
+public class KursVorlesungenResource extends JsonServerResource {
 	
 	private int kursID;
 	

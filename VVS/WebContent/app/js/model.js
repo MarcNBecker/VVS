@@ -300,6 +300,7 @@ var model = new function() {
 		var kursVorlesungenOffen = "/kurse/{kursID}/vorlesungen/offen";
 		
 		var vorlesungenURI = "/kurse/{kursID}/{semester}/vorlesungen";
+		var vorlesungenGroupEURI = "/kurse/{kursID}/{semester}/vorlesungen/groupe";
 		var vorlesungURI = "/kurse/{kursID}/{semester}/vorlesungen/{vorlesungsID}";
 		var vorlesungDozentenURI = "/kurse/{kursID}/{semester}/vorlesungen/{vorlesungsID}/dozenten";
 		var vorlesungTermineURI = "/kurse/{kursID}/{semester}/vorlesungen/{vorlesungsID}/termine";
@@ -515,6 +516,10 @@ var model = new function() {
 		
 		this.getAllVorlesungenSemester = function(k, s, c) {
 			self.doRequest(vorlesungenURI.replace("{kursID}", k.id).replace("{semester}", s), "GET", null, c);
+		};
+		
+		this.redirectGroupE = function (k, s) {
+			location.href = rootURI + vorlesungenGroupEURI.replace("{kursID}", k.id).replace("{semester}", s);
 		};
 		
 		this.createVorlesung = function(v, c) {
