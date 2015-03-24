@@ -10,6 +10,38 @@
 					<paper-progress class="progress" value="{{progressProzent}}"></paper-progress>
 					<span>{{progress}} / {{vorlesung.fachInstanz.stunden}} {{vorlesung.fachInstanz.stunden === 1 ? 'Stunde' : 'Stunden'}} geplant</span>
 				</div>
+				<!-- Grafische Planung -->
+				<div horizontal layout class="horizontal-input vertical-input">
+					<paper-shadow z="2" class="inner-shadow" flex>
+						<div horizontal layout>
+							<div vertical layout>
+								<div horizontal layout>
+									<div class="hide small-headline" style="width: 70px">Zeiten</div>
+									<template repeat="{{item in zeiten}}">
+										<div class="small-headline">{{item}}:00&nbsp;&nbsp;</div>
+									</template>
+								</div>
+								<template repeat="{{zeile in zeilen}}">
+									<div horizontal layout center style="margin-bottom: 10px">
+										<div style="width: 70px">{{zeile}}</div>
+										<paper-shadow z="1" class="inner-inner-shadow-grafik" flex>
+											<div horizontal layout>
+												<template repeat="{{item in zeiten}}">
+													<div horizontal layout flex>
+														<div id="{{zeile}}_{{item}}_1" flex>&nbsp;</div>
+														<div id="{{zeile}}_{{item}}_2" flex>&nbsp;</div>
+														<div id="{{zeile}}_{{item}}_3" flex>&nbsp;</div>
+														<div id="{{zeile}}_{{item}}_4" flex>&nbsp;</div>
+													</div>
+												</template>
+											</div>
+										</paper-shadow>
+									</div>
+								</template>
+							</div>
+						</div>
+					</paper-shadow>
+				</div>
 				<!-- Hauptscreen -->
 				<div horizontal?="{{!smallScreen}}" vertical?="{{smallScreen}}" layout class="horizontal-input vertical-input">
 					<div auto-vertical?="{{smallScreen}}" vertical layout flex?="{{!smallScreen}}" two?="{{!smallScreen}}">
