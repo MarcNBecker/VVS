@@ -518,8 +518,8 @@ var model = new function() {
 			self.doRequest(vorlesungenURI.replace("{kursID}", k.id).replace("{semester}", s), "GET", null, c);
 		};
 		
-		this.redirectGroupE = function (k, s) {
-			location.href = rootURI + vorlesungenGroupEURI.replace("{kursID}", k.id).replace("{semester}", s);
+		this.getGroupEURL = function (k, s) {
+			return rootURI + vorlesungenGroupEURI.replace("{kursID}", k.id).replace("{semester}", s);
 		};
 		
 		this.createVorlesung = function(v, c) {
