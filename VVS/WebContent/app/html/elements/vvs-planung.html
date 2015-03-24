@@ -10,6 +10,38 @@
 					<paper-progress class="progress" value="{{progressProzent}}"></paper-progress>
 					<span>{{progress}} / {{vorlesung.fachInstanz.stunden}} {{vorlesung.fachInstanz.stunden === 1 ? 'Stunde' : 'Stunden'}} geplant</span>
 				</div>
+				<!-- Grafische Planung -->
+				<div horizontal layout class="horizontal-input vertical-input">
+					<paper-shadow z="2" class="inner-shadow" flex>
+						<div horizontal layout>
+							<div vertical layout>
+								<div horizontal layout>
+									<div class="hide small-headline" style="width: 70px">Zeiten</div>
+									<template repeat="{{item in zeiten}}">
+										<div class="small-headline">{{item}}:00&nbsp;&nbsp;</div>
+									</template>
+								</div>
+								<template repeat="{{zeile in zeilen}}">
+									<div horizontal layout center style="margin-bottom: 10px">
+										<div style="width: 70px">{{zeile}}</div>
+										<paper-shadow z="1" class="inner-inner-shadow-grafik" flex>
+											<div horizontal layout>
+												<template repeat="{{item in zeiten}}">
+													<div horizontal layout flex>
+														<div id="{{zeile}}_{{item}}_1" flex>&nbsp;</div>
+														<div id="{{zeile}}_{{item}}_2" flex>&nbsp;</div>
+														<div id="{{zeile}}_{{item}}_3" flex>&nbsp;</div>
+														<div id="{{zeile}}_{{item}}_4" flex>&nbsp;</div>
+													</div>
+												</template>
+											</div>
+										</paper-shadow>
+									</div>
+								</template>
+							</div>
+						</div>
+					</paper-shadow>
+				</div>
 				<!-- Hauptscreen -->
 				<div horizontal?="{{!smallScreen}}" vertical?="{{smallScreen}}" layout class="horizontal-input vertical-input">
 					<div auto-vertical?="{{smallScreen}}" vertical layout flex?="{{!smallScreen}}" two?="{{!smallScreen}}">
@@ -156,6 +188,8 @@
 		progressProzent: 0,
 		nextVorlesungsterminID: -1,
 		selectedDate: '2000-01-01',
+		zeiten: ["07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"],
+		zeilen: ["Kurs", "Dozent", "Raum", "Termin"],
 		datePickerOpened: false,
 		disableToggle: true,
 		invalid: {},
@@ -184,6 +218,8 @@
 			self.progressProzent = 0;
 			self.nextVorlesungsterminID = -1;
 			self.selectedDate = self.today();
+			self.zeiten = ["07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"];
+			self.zeilen = ["Kurs", "Dozent", "Raum", "Termin"];
 			self.datePickerOpened = false;
 			self.disableToggle = true;
 			self.invalid = {};
@@ -315,12 +351,63 @@
 							self.toasts.error.show();
 						}
 					});	
+					//TODO Tesfälle wieder löschen
+					self.color("08:00", "09:30", "Kurs");
+					self.color("14:00", "17:30", "Kurs");
+					self.color("08:00", "09:30", "Dozent");
+					self.color("08:00", "09:30", "Raum");
+					self.color("08:00", "09:30", "Termin");
 				}
 				else {
 					console.log(JSON.stringify(api));
 					self.toasts.error.show();
 				}
 			});
+		},
+		//Color a termin
+		color: function(start, ende, zeile) {
+			var self = this;
+			var startzeit = start.split(":");
+			var endzeit = ende.split(":");
+			var index = 0;
+			switch (startzeit[1])
+			{
+				case "00":
+					index = 1;
+					break;
+				case "15":
+					index = 2;
+					break;
+				case "30":
+					index = 3;
+					break;
+				case "45":
+					index = 4;
+					break;
+				default:
+					break;
+			}
+			
+			var startIndex = this.zeiten.indexOf(startzeit[0]);
+			var endIndex = this.zeiten.indexOf(endzeit[0]);
+			var i;
+			for (i = startIndex; i < endIndex; i++)
+			{
+				for (index; index < 5; index++)
+				{
+					var id = zeile + "_" + this.zeiten[i] + "_" + index;
+					this.$[id].style.background = "rgba(226,0,26,0.5)";
+				}
+				index = 1;
+			}
+			var i;
+			var index = 1;
+			for (i = 0; i < endzeit[1]; i = i + 15)
+			{
+				id = zeile + "_" + endzeit[0] + "_" + index;
+				this.$[id].style.background = "rgba(226,0,26,0.5)";
+				index++;
+			}	
 		},
 		//Add Vorlesungstermin
 		add: function() {

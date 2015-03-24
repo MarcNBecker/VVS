@@ -20,6 +20,11 @@
 	padding-right: 5px
 }
 
+.inner-inner-shadow-grafik {
+	background-color: #FFF;
+	border-radius: 3px
+}
+
 .inner-inner-shadow /deep/ #ripple {
   color: #D32B18;
 }
@@ -89,6 +94,7 @@
 
 .hide {
 	display: hidden;
+	visibility: hidden;
 }
 
 paper-button {
