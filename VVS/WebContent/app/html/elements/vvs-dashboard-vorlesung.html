@@ -11,6 +11,7 @@
 								<paper-icon-button class="icon-good" icon="arrow-back" on-click="{{back}}" hidden?="{{semester == 1}}" disabled="{{disableToggle}}"></paper-icon-button>
 								<span>{{kurs.kursname}} - {{semester}}. Semester</span>
 								<paper-icon-button class="icon-good" icon="arrow-forward" on-click="{{forward}}" hidden?="{{semester == 6}}" disabled="{{disableToggle}}"></paper-icon-button>
+								<paper-spinner active?={{disableToggle}}></paper-spinner>
 							</div>
 						</div>
 					</span>
@@ -79,7 +80,7 @@
 					}
 					var params = self.pageParameter.vdashboard.id.split("-");
 					self.kurs.id = params[0];
-					self.semester = params[1] ? params[1] : 1;
+					self.semester = params[1] ? parseInt(params[1]) : 1;
 					model.webService.getKurs(self.kurs, function(api) {
 						if(!api.isError) {
 							self.kurs = api.response;

@@ -63,6 +63,12 @@
 			},
 			load: function() {
 				var self = this;
+				self.alleVorlesungen = [];
+				self.aktuelleVorlesungen = [];
+				self.verbleibendeVorlesungen = [];
+				self.searchTerm = "";
+				self.boolSuchenVorlesungIsEmpty = true;
+				self.disableToggle = true;
 				self.createdVorlesungen = false;
 				//Load offene Vorlesungen
 				model.webService.getAllVorlesungenOffen(self.kurs, function(api) {
