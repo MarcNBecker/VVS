@@ -30,8 +30,14 @@ public class GroupE {
 	}
 
 	public static File getCSVData(int kursID, int semester) throws WebServiceException {
+		//Constant Values for GroupE-Export
+		String ConstNoInvites = "1";
+		String ConstVisibility = "@all";
 		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
-		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("Select t.datum as 'StartDate', t.startUhrzeit as 'StartTime', t.endUhrzeit as 'EndTime', f.name as 'Subject', t.raum as 'Resources', k.kursName as 'Owner', d.Name as 'Attendees', 'Vorlesung' as 'Category', '1' as 'NoInvites', '@all' as 'Visibility' from vvs.termin as t join vvs.vorlesung as v on t.Vorlesung = v.ID join vvs.kurs as k on v.kurs = k.ID join vvs.dozent as d on v.Dozent = d.ID join vvs.fachinstanz as fi on v.fachInstanz = fi.ID join vvs.fach as f on fi.fach = f.ID",null);
+		ArrayList<Object> fieldValues = new ArrayList<Object>();
+		fieldValues.add(kursID);
+		fieldValues.add(semester);
+		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("Select t.datum as 'StartDate', t.startUhrzeit as 'StartTime', t.endUhrzeit as 'EndTime', f.name as 'Subject', t.raum as 'Resources', k.kursName as 'Owner', d.Name as 'Attendees', 'Vorlesung' as 'Category' from vvs.termin as t join vvs.vorlesung as v on t.Vorlesung = v.ID join vvs.kurs as k on v.kurs = k.ID join vvs.dozent as d on v.Dozent = d.ID join vvs.fachinstanz as fi on v.fachInstanz = fi.ID join vvs.fach as f on fi.fach = f.ID where v.Kurs = ? and v.Semester = ?",fieldValues);
 		File file = new File("export.csv");
 		PrintWriter out;
 		try {
@@ -41,7 +47,7 @@ public class GroupE {
 		}
 		out.println("StartDate;StartTime;EndTime;Subject;Resources;Owner;Attendees;Category;NoInvites;Visibility");
 		for(TypeHashMap<String, Object> result : resultList) {
-			out.println(result.get("StartDate").toString()+";"+result.get("StartTime").toString()+";"+result.get("EndTime").toString()+";"+result.get("Subject").toString()+";"+result.get("Resources").toString()+";"+result.get("Owner").toString()+";"+result.get("Attendees").toString()+";"+result.get("Category").toString()+";"+result.get("NoInvites").toString()+";"+result.get("Visibility").toString());
+			out.println(result.get("StartDate").toString()+";"+result.get("StartTime").toString()+";"+result.get("EndTime").toString()+";"+result.get("Subject").toString()+";"+result.get("Resources").toString()+";"+result.get("Owner").toString()+";"+result.get("Attendees").toString()+";"+result.get("Category").toString()+";"+ConstNoInvites+";"+ConstVisibility);
 		}
 		out.close();
 		return file;
