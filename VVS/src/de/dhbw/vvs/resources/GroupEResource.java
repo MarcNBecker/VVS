@@ -15,6 +15,7 @@ import org.restlet.resource.ResourceException;
 import de.dhbw.vvs.application.ExceptionStatus;
 import de.dhbw.vvs.application.WebServiceException;
 import de.dhbw.vvs.model.GroupE;
+import de.dhbw.vvs.model.Kurs;
 
 public class GroupEResource extends EasyServerResource {
 	
@@ -38,7 +39,7 @@ public class GroupEResource extends EasyServerResource {
 	@Override
 	protected Representation get() throws ResourceException {
 		try {
-			File csv = GroupE.getCSVData(getKursID(), getSemester());
+			File csv = GroupE.getCSVData(new Kurs(getKursID()), getSemester());
 			FileRepresentation representation = new FileRepresentation(csv, new MediaType("text", "csv"));
 			representation.setAutoDeleting(true);
 			representation.getDisposition().setType(Disposition.TYPE_ATTACHMENT);
