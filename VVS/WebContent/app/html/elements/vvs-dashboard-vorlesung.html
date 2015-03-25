@@ -1,0 +1,81 @@
+<polymer-element name="vvs-dashboard-vorlesung">
+	<template>
+ 		<link rel="stylesheet" href="../../css/elements.css" shim-shadowdom>
+		<core-media-query query="max-width: 1400px" queryMatches="{{smallScreen}}"></core-media-query>
+		<!-- Main DIV -->
+		<paper-shadow z="3" class="shadow">
+			<div vertical layout>
+				<div vertical layout class="vertical-input">
+					<div horizontal layout center class="flexbox">
+						<!-- Main input fields -->
+								<template repeat="{{item in vorlesungen}}">
+								<paper-button id="tile" style="background: #FFFFFF; color: #E2001A; margin-bottom: 20px" raised>
+									<table border=0>
+									<tr>
+										<th colspan="2">{{item.vorlesung.fachInstanz.fach.name}}</th>
+									</tr>
+									<tr>
+										<td align="left" valign="middle">geplante Stunden:</td>
+										<td><paper-progress class="progress" value="{{item.geplanteStunden/item.vorlesung.fachInstanz.stunden}}"></paper-progress></td>
+									</tr>
+									<tr>
+										<td align="left" valign="middle">Dozent ausgew&aumlhlt:</td>
+										<td>
+											<div hidden?="{{item.vorlesung.dozent>0}}"><paper-fab mini icon="check"></div>
+											<div hidden?="{{!item.vorlesung.dozent>0}}"><paper-fab mini icon="close"></paper-fab></div>
+										</td>
+									</tr>									
+									<tr>
+										<td align="left" valign="middle">Klausur festgelegt:</td>
+										<td>
+											<div hidden?={{!item.geplanteKlausur}}><paper-fab mini icon="check"></div>
+											<div hidden?={{item.geplanteKlausur}}><paper-fab mini icon="close"></paper-fab></div>
+										</td>
+									</tr>
+									</table>
+								</paper-button>
+								</template>
+							<paper-fab icon="add" on-click={{}}></paper-fab>	
+					</div>
+				</div>
+			</div>
+		</paper-shadow>
+	</template>
+		<script type="text/javascript">
+		"use strict";
+		Polymer('vvs-dashboard-vorlesung',
+			{
+				vorlesungen: [],
+				progressProzent: 0,
+				//Publish those attributes to home
+				publish: {
+					pageParameter: {},
+					pageLoaded: {},
+					toasts: {}
+				},
+				//Initialize the screen
+				ready : function() {
+					var self = this;
+					self.vorlesungen = [];
+					//ID is correct, needs to be named like this for other functions
+					//TODO Parameter aus Kursdashboard übergeben
+					var kurs = new model.templates.Kurs();
+					kurs.id = "9";
+					model.webService.getAllVorlesungenSemester(kurs, 3, function(api) {
+						if (!api.isError)
+	   					{
+	   						self.vorlesungen = api.response;
+	   						self.progressProzent = 
+	   						self.disableToggle = false;
+	   					}
+	   					else
+	   					{
+	   						console.log(JSON.stringify(api));
+	   						self.toasts.error.show();
+	   					}
+					}
+					);
+				},
+		});
+	</script>
+</polymer-element>
