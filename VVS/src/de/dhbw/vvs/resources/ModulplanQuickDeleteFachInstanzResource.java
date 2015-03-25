@@ -11,7 +11,7 @@ import de.dhbw.vvs.application.ExceptionStatus;
 import de.dhbw.vvs.application.WebServiceException;
 import de.dhbw.vvs.model.FachInstanz;
 
-public class ModulplanQuickDeleteFachInstanzResource extends SecureServerResource {
+public class ModulplanQuickDeleteFachInstanzResource extends JsonServerResource {
 	
 	private int fachInstanzID;
 	

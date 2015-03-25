@@ -11,7 +11,7 @@ import de.dhbw.vvs.application.ExceptionStatus;
 import de.dhbw.vvs.application.WebServiceException;
 import de.dhbw.vvs.model.Dozent;
 
-public class DozentFaecherResource extends SecureServerResource {
+public class DozentFaecherResource extends JsonServerResource {
 	
 	private int dozentID;
 	

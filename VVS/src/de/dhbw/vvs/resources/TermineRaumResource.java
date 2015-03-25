@@ -13,7 +13,7 @@ import de.dhbw.vvs.application.WebServiceException;
 import de.dhbw.vvs.model.Termin;
 import de.dhbw.vvs.utility.Utility;
 
-public class TermineRaumResource extends SecureServerResource {
+public class TermineRaumResource extends JsonServerResource {
 	
 	private Date datum;
 	private String raum;

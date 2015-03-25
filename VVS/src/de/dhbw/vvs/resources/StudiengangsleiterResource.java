@@ -14,7 +14,7 @@ import de.dhbw.vvs.application.WebServiceException;
 import de.dhbw.vvs.model.Studiengangsleiter;
 import de.dhbw.vvs.utility.JSONify;
 
-public class StudiengangsleiterResource extends SecureServerResource {
+public class StudiengangsleiterResource extends JsonServerResource {
 	
 	private int studiengangsleiterID;
 	

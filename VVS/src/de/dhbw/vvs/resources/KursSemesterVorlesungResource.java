@@ -14,7 +14,7 @@ import de.dhbw.vvs.application.WebServiceException;
 import de.dhbw.vvs.model.Vorlesung;
 import de.dhbw.vvs.utility.JSONify;
 
-public class KursSemesterVorlesungResource extends SecureServerResource {
+public class KursSemesterVorlesungResource extends JsonServerResource {
 	
 	private int kursID;
 	private int semester;

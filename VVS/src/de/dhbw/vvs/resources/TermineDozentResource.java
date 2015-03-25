@@ -14,7 +14,7 @@ import de.dhbw.vvs.model.Dozent;
 import de.dhbw.vvs.model.Termin;
 import de.dhbw.vvs.utility.Utility;
 
-public class TermineDozentResource extends SecureServerResource {
+public class TermineDozentResource extends JsonServerResource {
 	
 	private Date datum;
 	private int dozentID;

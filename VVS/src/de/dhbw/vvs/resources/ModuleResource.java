@@ -5,7 +5,7 @@ import org.restlet.resource.ResourceException;
 import de.dhbw.vvs.application.WebServiceException;
 import de.dhbw.vvs.model.Modul;
 
-public class ModuleResource extends SecureServerResource {
+public class ModuleResource extends JsonServerResource {
 	
 	@Override
 	protected void doInit() throws ResourceException {

@@ -15,7 +15,7 @@ import de.dhbw.vvs.model.Termin;
 import de.dhbw.vvs.model.Vorlesung;
 import de.dhbw.vvs.utility.JSONify;
 
-public class KursSemesterVorlesungTermineResource extends SecureServerResource {
+public class KursSemesterVorlesungTermineResource extends JsonServerResource {
 	
 	private int kursID;
 	private int semester;
