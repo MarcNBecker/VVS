@@ -93,7 +93,9 @@ public class Utility {
 	 * @return the string representation
 	 */
 	public static String dateString(Date d) {
-		return d == null ? null : DATE_FORMAT.format(d);
+		synchronized(DATE_FORMAT) {
+			return d == null ? null : DATE_FORMAT.format(d);	
+		}
 	}
 	
 	/**
@@ -102,7 +104,9 @@ public class Utility {
 	 * @return the string representation
 	 */
 	public static String timeString(Time t) {
-		return TIME_FORMAT.format(t);
+		synchronized(TIME_FORMAT) {
+			return TIME_FORMAT.format(t);	
+		}
 	}
 	
 	/**
@@ -113,7 +117,9 @@ public class Utility {
 	 */
 	public static Date stringDate(String s) throws WebServiceException {
 		try {
-			return s == null ? null : new Date(DATE_FORMAT.parse(s).getTime());
+			synchronized(DATE_FORMAT) {
+				return s == null ? null : new Date(DATE_FORMAT.parse(s).getTime());
+			}
 		} catch (ParseException e) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_DATE);
 		}
@@ -127,7 +133,9 @@ public class Utility {
 	 */
 	public static Time stringTime(String s) throws WebServiceException {
 		try {
-			return new Time(TIME_FORMAT.parse(s).getTime());
+			synchronized(TIME_FORMAT) {
+				return new Time(TIME_FORMAT.parse(s).getTime());	
+			}
 		} catch (ParseException e) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_DATE);
 		}

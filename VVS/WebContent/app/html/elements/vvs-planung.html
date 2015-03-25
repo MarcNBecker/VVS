@@ -99,11 +99,11 @@
 							</paper-input-decorator>			
 						</div>
 						<div horizontal layout start>
-							<paper-input-decorator id="pause" label="Pause" error="Ung&uuml;tige Pause" autoValidate isInvalid="{{invalid.pause}}" floatingLabel flex>
-								<input is="core-input" type="text" pattern="[0-9]+" value={{vorlesungsterminToEdit.pause}} disabled?="{{disableToggle}}">
+							<paper-input-decorator id="pause" label="Pause" error="Pflichtfeld: Ung&uuml;tige Pause" autoValidate isInvalid="{{invalid.pause}}" floatingLabel flex>
+								<input is="core-input" type="text" pattern="[0-9]+" value={{vorlesungsterminToEdit.pause}} required disabled?="{{disableToggle}}">
 							</paper-input-decorator>	
-							<paper-input-decorator id="raum" label="Raum" floatingLabel flex>
-								<input is="core-input" type="text" value={{vorlesungsterminToEdit.raum}} maxlength="100" disabled?="{{disableToggle}}">
+							<paper-input-decorator id="raum" label="Raum" error="Pflichtfeld" autoValidate isInvalid="{{invalid.raum}}" floatingLabel flex>
+								<input is="core-input" type="text" value={{vorlesungsterminToEdit.raum}} committedValue="{{committedRaum}}" maxlength="100" required disabled?="{{disableToggle}}">
 							</paper-input-decorator>
 						</div>
 						<div horizontal layout center class="horizontal-verticalizable">
@@ -205,6 +205,7 @@
 		maxDate: null,		
 		minDateString: "",
 		maxDateString: "",
+		committedRaum: null,
 		hours: ["08", "09", "10", "11", 
 		        "12", "13", "14", "15", 
 		        "16", "17", "18", "19"],
@@ -404,16 +405,7 @@
 							console.log(JSON.stringify(api));
 							self.toasts.error.show();
 						}
-					});	
-					//TODO Tesfälle wieder löschen
-					self.color("Kurs", "08:12", "09:30");
-					self.color("Kurs", "14:42", "17:39");
-					self.color("Dozent", "08:11", "09:30");
-					self.color("Raum", "08:10", "09:30");
-					self.color("Termin", "08:09", "09:30");
-					self.job('remove-color', function() {
-						self.clearColor("Kurs");
-					}, 10000);
+					});
 				}
 				else {
 					console.log(JSON.stringify(api));
@@ -484,6 +476,7 @@
 			self.recurring = {isRecurring: false, count: "", distance: ""};
 			self.vorlesungsterminToEdit = new model.templates.Termin();
 			self.vorlesungsterminToEdit.raum = self.raum;
+			self.clearAllColor();
 			self.invalid.datum = true;
 			self.invalid.startUhrzeit = true;
 			self.invalid.endUhrzeit = true;
@@ -508,6 +501,8 @@
 				this.disableToggleKlausur = false;
 				this.onRejectDisableKlausur = true;
 			}
+			//Update timeline
+			self.showTermin(self.vorlesungsterminToEdit);
 			self.job('update-labels-edit', function() {
 				self.$.datum.inputAction();
 				self.$.startUhrzeit.inputAction();
@@ -671,15 +666,19 @@
 					return;
 				}
 				self.vorlesungsterminToEdit.pause = self.calculatePause(self.vorlesungsterminToEdit.startUhrzeit, self.vorlesungsterminToEdit.endUhrzeit);
+				self.showTermin(self.vorlesungsterminToEdit);
 			}
 		},
     	//Set selected Dozent for Vorlesung from top list
     	setListDozent: function(e, detail, sender) {
     		this.dozent = e.target.templateInstance.model.item;
+    		this.vorlesung.dozentID = this.dozent.id;
+    		this.showTermin(this.vorlesungsterminToEdit);
     	},
     	setOtherDozent: function(e, detail, sender) {
     		if(detail.isSelected === true) {
         		this.dozent = detail.item.templateInstance.model.item;
+        		this.vorlesung.dozentID = this.dozent.id;
         		var i;
         		var found = false;
         		for(i=0; i<this.topDozenten.length; i++) {
@@ -704,6 +703,7 @@
             		this.otherDozenten.push(this.dozent);	
         		}
         		e.target.selected = null;
+        		this.showTermin(this.vorlesungsterminToEdit);
     		}
     	},
     	navigateToDozent: function(e, detail, sender) {
@@ -811,6 +811,7 @@
 				this.invalid.datum = true;
 			} else {
 				this.invalid.datum = false;
+				this.showTermin(this.vorlesungsterminToEdit);
 			}
 		},
 		//Calculate date of today
@@ -822,6 +823,97 @@
 		    var day = '0' + date.getDate();
 		    day = day.slice(-2, (day.length - 2) + 3);
 		    return year + '-' + month + '-' + day;
+		},
+		committedRaumChanged: function() {
+			if(this.vorlesungsterminToEdit !== null && this.vorlesungsterminToEdit !== undefined) {
+				this.showTermin(this.vorlesungsterminToEdit);	
+			}
+		},
+		showTermin: function(termin) {
+			if(!(termin.startUhrzeit && termin.endUhrzeit && termin.datum && termin.raum)) {
+				return;
+			}
+			var self = this;
+			self.disableToggle = true;
+			self.clearAllColor();
+			self.color("Termin", termin.startUhrzeit, termin.endUhrzeit);
+			//Find all locally added Termine on the same date
+			var i;
+			var localTermine = [];
+			for(i=0; i<self.vorlesungstermine.length; i++) {
+				if(self.vorlesungstermine[i].id < 0 && self.vorlesungstermine[i].id !== termin.id && self.vorlesungstermine[i].datum === termin.datum) {
+					localTermine.push(self.vorlesungstermine[i]);
+				}
+			}
+			var deepRuns = 0;
+			model.webService.getAllConflictsTermineKurs(this.vorlesung, termin, function(api) {
+				if(!api.isError) {
+					var i;
+					for(i=0; i<api.response.length; i++) {
+						if(api.response[i].id === termin.id) {
+							continue;
+						}
+						self.color("Kurs", api.response[i].startUhrzeit, api.response[i].endUhrzeit);
+					}
+					//Add local Termine to Kurs timeline
+					for(i=0; i<localTermine.length; i++) {
+						self.color("Kurs", localTermine[i].startUhrzeit, localTermine[i].endUhrzeit);	
+					}
+					deepRuns++;
+					if(deepRuns === 3) {
+						self.disableToggle = false;
+					}
+				} else {
+					console.log(JSON.stringify(api));
+					self.toasts.error.show();
+				}
+			});
+			model.webService.getAllConflictsTermineDozent(this.vorlesung, termin, function(api) {
+				if(!api.isError) {
+					var i;
+					for(i=0; i<api.response.length; i++) {
+						if(api.response[i].id === termin.id) {
+							continue;
+						}
+						self.color("Dozent", api.response[i].startUhrzeit, api.response[i].endUhrzeit);
+					}
+					//Add local Termine to Dozent timeline
+					for(i=0; i<localTermine.length; i++) {
+						self.color("Dozent", localTermine[i].startUhrzeit, localTermine[i].endUhrzeit);	
+					}
+					deepRuns++;
+					if(deepRuns === 3) {
+						self.disableToggle = false;
+					}
+				} else {
+					console.log(JSON.stringify(api));
+					self.toasts.error.show();
+				}
+			});
+			model.webService.getAllConflictsTermineRaum(termin, function(api) {
+				if(!api.isError) {
+					var i;
+					for(i=0; i<api.response.length; i++) {
+						if(api.response[i].id === termin.id) {
+							continue;
+						}
+						self.color("Raum", api.response[i].startUhrzeit, api.response[i].endUhrzeit);
+					}
+					//Add local Termine to Raum timeline
+					for(i=0; i<localTermine.length; i++) {
+						if(localTermine[i].raum === termin.raum) {
+							self.color("Raum", localTermine[i].startUhrzeit, localTermine[i].endUhrzeit);	
+						}	
+					}
+					deepRuns++;
+					if(deepRuns === 3) {
+						self.disableToggle = false;
+					}
+				} else {
+					console.log(JSON.stringify(api));
+					self.toasts.error.show();
+				}
+			});
 		},
 		//Color a termin
 		color: function(timeline, start, end) {
@@ -851,6 +943,12 @@
 				this.$[id].classList.add('highlight');
 				this.$[id].title = start + " - " + end;
 			}	
+		},
+		clearAllColor: function() {
+			var i;
+			for(i=0; i<this.timelines.length; i++) {
+				this.clearColor(this.timelines[i]);
+			}
 		},
 		clearColor: function(timeline) {
 			var i;

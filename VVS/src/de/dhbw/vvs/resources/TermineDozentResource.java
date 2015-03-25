@@ -18,15 +18,15 @@ public class TermineDozentResource extends SecureServerResource {
 	
 	private Date datum;
 	private int dozentID;
-	
+
 	@Override
 	protected void doInit() throws ResourceException {
 		super.doInit();
 		super.allowGet();
 		ConcurrentMap<String, Object> urlAttributes = getRequest().getAttributes();
 		try {
-			 this.datum = Utility.stringDate(URLDecoder.decode(urlAttributes.get("datum").toString(), "UTF-8"));
-			 this.dozentID = Integer.parseInt(URLDecoder.decode(urlAttributes.get("dozentID").toString(), "UTF-8")); 
+			this.datum = Utility.stringDate(URLDecoder.decode(urlAttributes.get("datum").toString(), "UTF-8"));
+			this.dozentID = Integer.parseInt(URLDecoder.decode(urlAttributes.get("dozentID").toString(), "UTF-8")); 
 		} catch (NumberFormatException | NullPointerException e) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT).toResourceException();
 		} catch (UnsupportedEncodingException e) {
