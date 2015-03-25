@@ -262,8 +262,10 @@
 			self.invalid = {};
 			//navigate to studiengangsleiter dashboard
 			if(self.pageParameter.planung.id <= 0) {
-				//TODO NAVIGATE TO DASHBOARD (S)
-				self.cancel();
+				self.pageLoaded.planung = false;
+				self.pageLoaded.sdashboard = false;
+				window.history.replaceState({redirect: true}, '', '#!sdashboard-');
+				location.href = "#!sdashboard";
 				return;
 			}
 			var showVorlesung = new model.templates.Vorlesung();
@@ -554,8 +556,10 @@
 			model.webService.deleteVorlesung(self.vorlesung, function(api) {
 				if(!api.isError) {
 					self.toasts.success.show();
-					//TODO NAVIGATE TO DASHBOARD (K)
-					self.cancel();
+					self.pageLoaded.planung = false;
+					self.pageLoaded.vdashboard = false;
+					window.history.replaceState({redirect: true}, '', '#!vdashboard-');
+					location.href = "#!vdashboard-" + self.vorlesung.kursID + "-" + self.vorlesung.semester; 
 				}
 				else {
 					self.toasts.error.show();	
