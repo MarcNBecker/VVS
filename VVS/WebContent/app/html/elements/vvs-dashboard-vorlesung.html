@@ -8,9 +8,9 @@
 					<span class="headline">
 						<div vertical layout>
 							<div horizontal layout center>
-								<core-icon class="icon-good" icon="arrow-back" on-click="{{back}}" hidden?="{{semester===1}}"></core-icon>
+								<paper-icon-button class="icon-good" icon="arrow-back" on-click="{{back}}" hidden?="{{semester == 1}}" disabled="{{disableToggle}}"></paper-icon-button>
 								<span>{{kurs.kursname}} - {{semester}}. Semester</span>
-								<core-icon class="icon-good" icon="arrow-forward" on-click="{{forward}}" hidden?="{{semester===6}}"></core-icon>
+								<paper-icon-button class="icon-good" icon="arrow-forward" on-click="{{forward}}" hidden?="{{semester == 6}}" disabled="{{disableToggle}}"></paper-icon-button>
 							</div>
 						</div>
 					</span>
@@ -55,8 +55,9 @@
 			{
 				vorlesungen: [],
 				kurs: new model.templates.Kurs(),
-				semester: 0,
+				semester: 1,
 				createdVorlesungen: false,
+				disableToggle: false,
 				//Publish those attributes to home
 				publish: {
 					pageParameter: {},
@@ -67,16 +68,27 @@
 				ready : function() {
 					var self = this;
 					self.vorlesungen = [];
-					//ID is correct, needs to be named like this for other functions
-					//TODO Parameter aus Kursdashboard übergeben
 					self.kurs = new model.templates.Kurs();
-					self.kurs.id = 9;
-					self.kurs.kursname = "WWI12SEA";
-					self.semester = 3;
-					self.load();
+					self.disableToggle = true;
+					if(self.pageParameter.vdashboard.id === 0) {
+						return; //TODO navigate to studiengangsleiter dashboard
+					}
+					var params = self.pageParameter.vdashboard.id.split("-");
+					self.kurs.id = params[0];
+					self.semester = params[1] ? params[1] : 1;
+					model.webService.getKurs(self.kurs, function(api) {
+						if(!api.isError) {
+							self.kurs = api.response;
+							self.load();
+						} else {
+	   						console.log(JSON.stringify(api));
+	   						self.toasts.error.show();
+						}
+					});
 				},
 				load: function() {
 					var self = this;
+					self.disableToggle = true;
 					model.webService.getAllVorlesungenSemester(self.kurs, self.semester, function(api) {
 						if (!api.isError)
 	   					{
@@ -94,25 +106,31 @@
 				//Navigate to Planung for selected Vorlesung
 				navigate: function(e, detail, sender) {
 					var self = this;
+					if(self.disableToggle) {
+						return;
+					}
 					self.pageLoaded.planung = false;
 					location.href = "#!planung" + "-" + sender.templateInstance.model.item.vorlesung.id;
 				},
 				//Navigate to Vorlesungsdashboard of previous semester
 				back: function () {
 					var self = this;
-					var previousSemester = self.semester - 1;
+					var previousSemester = parseInt(self.semester) - 1;
 					self.pageLoaded.vdashboard = false;
-					location.href = "#!vdashboard" + "-" + kurs + "-" + previousSemester;
+					location.href = "#!vdashboard" + "-" + self.kurs.id + "-" + previousSemester;
 				},
 				//Navigate to Vorlesungsdashboard of next semester
 				forward: function() {
 					var self = this;
-					var nextSemester = self.semester + 1;
+					var nextSemester = parseInt(self.semester) + 1;
 					self.pageLoaded.vdashboard = false;
-					location.href = "#!vdashboard" + "-" + kurs + "-" + nextSemester;
+					location.href = "#!vdashboard" + "-" + self.kurs.id + "-" + nextSemester;
 				},
 				//Add new Vorlesungen
 				add: function() {
+					if(this.disableToggle) {
+						return;
+					}
 					this.$.vorlesungsOverlay.toggle();
 				},
 				//Reload dashboard, if vorlesungsOverlay is closed and vorlesungen have been added
