@@ -48,7 +48,7 @@
 					<div auto-vertical?="{{smallScreen}}" vertical layout flex?="{{!smallScreen}}" two?="{{!smallScreen}}">
 						<paper-shadow z="2" class="inner-shadow">
 							<div horizontal layout>
-								<span horizontal layout center-center class="small-headline" flex>Datum</span>
+								<span horizontal layout center-center class="small-headline" flex two>Datum</span>
 								<span horizontal layout center-center class="small-headline" flex>Von</span>
 								<span horizontal layout center-center class="small-headline" flex>Bis</span>
 								<span horizontal layout center-center class="small-headline" flex>Dauer</span>
@@ -60,10 +60,7 @@
 							<template repeat="{{item in vorlesungstermine}}">
 								<paper-shadow z="1" class="{{item.id !== 0 && item.id === vorlesungsterminToEdit.id ? 'inner-inner-shadow highlight' : 'inner-inner-shadow'}}">
 									<div horizontal layout center>
-										<span horizontal layout center-center flex>
-											{{item.datum}}
-											<core-icon icon="assignment" hidden?="{{!item.klausur}}"></core-icon>
-										</span>
+										<span horizontal layout center-center flex two>{{item.datum}}<core-icon title="Klausur" icon="assignment" hidden?="{{!item.klausur}}"></core-icon><core-icon title="Konflikt" icon="warning" hidden?="{{!item.conflicts}}"></core-icon></span>
 										<span horizontal layout center-center flex>{{item.startUhrzeit}} Uhr</span>
 										<span horizontal layout center-center flex>{{item.endUhrzeit}} Uhr</span>
 										<span horizontal layout center-center flex>{{item.dauer}} {{item.dauer === 1 ? 'Stunde' : 'Stunden'}}</span>
@@ -83,7 +80,7 @@
 						</div>
 					</div>
 					<div auto-vertical?="{{smallScreen}}" flex?="{{!smallScreen}}" class="input-padding">
-						<span class="small-headline" horizontal layout center>Termin bearbeiten</span>
+						<span class="small-headline" horizontal layout center>Termin bearbeiten<core-icon title="Konflikt" icon="warning" hidden?="{{!vorlesungsterminToEdit.conflicts}}"></core-icon></span>
 						<div horizontal layout start>
 							<polymer-date-picker id="datePicker" relatedTarget="{{$.datum}}" halign="left" style="z-index:99" selectedDate="{{selectedDate}}" opened="false"></polymer-date-picker>
 							<paper-input-decorator id="datum" label="Datum" error="{{minDateString && maxDateString ? 'Pflichtfeld: Ung&uuml;ltiges Datum (Zeitraum ' + minDateString + ' bis ' + maxDateString + ')' : 'Pflichtfeld: Ung&uuml;ltiges Datum'}}" autoValidate isInvalid="{{invalid.datum}}" floatingLabel flex>
@@ -291,6 +288,7 @@
 								}
 							}
 							self.calculateProgress();
+							self.checkAllConflicts();
     						//Set inputs to invalid
 							self.invalid.datum = true;
 							self.invalid.startUhrzeit = true;
@@ -344,6 +342,7 @@
 							}
     						self.job('update-label-raum-ready', function() {
     							self.$.raum.inputAction();
+    							self.$.raum.input.commit();
     						}, 100);
 							deepRuns++;
 							if(deepRuns === 6) {
@@ -463,6 +462,7 @@
 				}
 			}
 			this.calculateProgress();
+			this.checkAllConflicts();
 			this.onRejectDisableKlausur = false;
 			this.reject();
 	    },
@@ -486,6 +486,7 @@
 				self.$.endUhrzeit.inputAction();
 				self.$.pause.inputAction();
 				self.$.raum.inputAction();
+				self.$.raum.input.commit();
 				self.$.wiederholungen.inputAction();
 				self.$.anzahl.inputAction();
 			}, 100);
@@ -509,6 +510,7 @@
 				self.$.endUhrzeit.inputAction();
 				self.$.pause.inputAction();
 				self.$.raum.inputAction();
+				self.$.raum.input.commit();
 				self.$.wiederholungen.inputAction();
 				self.$.anzahl.inputAction();
 			}, 100);
@@ -829,23 +831,24 @@
 				this.showTermin(this.vorlesungsterminToEdit);	
 			}
 		},
-		showTermin: function(termin) {
+		showTermin: function(termin, noColor) {
 			if(!(termin.startUhrzeit && termin.endUhrzeit && termin.datum && termin.raum)) {
 				return;
 			}
 			var self = this;
-			self.disableToggle = true;
+			self.disableToggle = false;
 			self.clearAllColor();
-			self.color("Termin", termin.startUhrzeit, termin.endUhrzeit);
+			self.color("Termin", termin.startUhrzeit, termin.endUhrzeit, noColor);
 			//Find all locally added Termine on the same date
 			var i;
 			var localTermine = [];
 			for(i=0; i<self.vorlesungstermine.length; i++) {
-				if(self.vorlesungstermine[i].id < 0 && self.vorlesungstermine[i].id !== termin.id && self.vorlesungstermine[i].datum === termin.datum) {
+				if(self.vorlesungstermine[i].id !== termin.id && self.vorlesungstermine[i].datum === termin.datum) {
 					localTermine.push(self.vorlesungstermine[i]);
 				}
 			}
 			var deepRuns = 0;
+			var conflicts = false;
 			model.webService.getAllConflictsTermineKurs(this.vorlesung, termin, function(api) {
 				if(!api.isError) {
 					var i;
@@ -853,15 +856,37 @@
 						if(api.response[i].id === termin.id) {
 							continue;
 						}
-						self.color("Kurs", api.response[i].startUhrzeit, api.response[i].endUhrzeit);
+						var j;
+						var found = false;
+						//Dont use webService for local termin
+						for(j=0; j<self.vorlesungstermine.length; j++) {
+							if(self.vorlesungstermine[j].id === api.response[i].id) {
+								found = true;
+							}
+						}
+						if(found === true) {
+							continue;
+						}
+						if(!conflicts && self.conflicts(termin, api.response[i])){
+							conflicts = true;
+						}
+						self.color("Kurs", api.response[i].startUhrzeit, api.response[i].endUhrzeit, noColor);
 					}
 					//Add local Termine to Kurs timeline
 					for(i=0; i<localTermine.length; i++) {
-						self.color("Kurs", localTermine[i].startUhrzeit, localTermine[i].endUhrzeit);	
+						if(!conflicts && self.conflicts(termin, localTermine[i])){
+							conflicts = true;
+						}
+						self.color("Kurs", localTermine[i].startUhrzeit, localTermine[i].endUhrzeit, noColor);	
 					}
 					deepRuns++;
 					if(deepRuns === 3) {
 						self.disableToggle = false;
+						if(conflicts) {
+							termin.conflicts = true;
+						} else {
+							termin.conflicts = false;
+						}
 					}
 				} else {
 					console.log(JSON.stringify(api));
@@ -875,15 +900,37 @@
 						if(api.response[i].id === termin.id) {
 							continue;
 						}
-						self.color("Dozent", api.response[i].startUhrzeit, api.response[i].endUhrzeit);
+						var j;
+						var found = false;
+						//Dont use webService for local termin
+						for(j=0; j<self.vorlesungstermine.length; j++) {
+							if(self.vorlesungstermine[j].id === api.response[i].id) {
+								found = true;
+							}
+						}
+						if(found === true) {
+							continue;
+						}
+						if(!conflicts && self.conflicts(termin, api.response[i])){
+							conflicts = true;
+						}
+						self.color("Dozent", api.response[i].startUhrzeit, api.response[i].endUhrzeit, noColor);
 					}
 					//Add local Termine to Dozent timeline
 					for(i=0; i<localTermine.length; i++) {
-						self.color("Dozent", localTermine[i].startUhrzeit, localTermine[i].endUhrzeit);	
+						if(!conflicts && self.conflicts(termin, localTermine[i])){
+							conflicts = true;
+						}
+						self.color("Dozent", localTermine[i].startUhrzeit, localTermine[i].endUhrzeit, noColor);	
 					}
 					deepRuns++;
 					if(deepRuns === 3) {
 						self.disableToggle = false;
+						if(conflicts) {
+							termin.conflicts = true;
+						} else {
+							termin.conflicts = false;
+						}
 					}
 				} else {
 					console.log(JSON.stringify(api));
@@ -897,17 +944,39 @@
 						if(api.response[i].id === termin.id) {
 							continue;
 						}
-						self.color("Raum", api.response[i].startUhrzeit, api.response[i].endUhrzeit);
+						var j;
+						var found = false;
+						//Dont use webService for local termin
+						for(j=0; j<self.vorlesungstermine.length; j++) {
+							if(self.vorlesungstermine[j].id === api.response[i].id) {
+								found = true;
+							}
+						}
+						if(found === true) {
+							continue;
+						}
+						if(!conflicts && self.conflicts(termin, api.response[i])){
+							conflicts = true;
+						}
+						self.color("Raum", api.response[i].startUhrzeit, api.response[i].endUhrzeit, noColor);
 					}
 					//Add local Termine to Raum timeline
 					for(i=0; i<localTermine.length; i++) {
 						if(localTermine[i].raum === termin.raum) {
-							self.color("Raum", localTermine[i].startUhrzeit, localTermine[i].endUhrzeit);	
+							if(!conflicts && self.conflicts(termin, localTermine[i])){
+								conflicts = true;
+							}
+							self.color("Raum", localTermine[i].startUhrzeit, localTermine[i].endUhrzeit, noColor);	
 						}	
 					}
 					deepRuns++;
 					if(deepRuns === 3) {
 						self.disableToggle = false;
+						if(conflicts) {
+							termin.conflicts = true;
+						} else {
+							termin.conflicts = false;
+						}
 					}
 				} else {
 					console.log(JSON.stringify(api));
@@ -915,8 +984,27 @@
 				}
 			});
 		},
+		conflicts: function(terminNew, terminKnown) {
+			var terminNewStart = new Date('2000-01-01 ' + terminNew.startUhrzeit);
+			var terminNewEnd = new Date('2000-01-01 ' + terminNew.endUhrzeit);
+			var terminKnownStart = new Date('2000-01-01 ' + terminKnown.startUhrzeit);
+			var terminKnownEnd = new Date('2000-01-01 ' + terminKnown.endUhrzeit);
+			if(terminNewStart >= terminKnownEnd || terminNewEnd <= terminKnownStart) {
+				return false;
+			}
+			return true;
+		},
+		checkAllConflicts: function() {
+			var i;
+			for(i=0; i<this.vorlesungstermine.length; i++) {
+				this.showTermin(this.vorlesungstermine[i], true);
+			}
+		},
 		//Color a termin
-		color: function(timeline, start, end) {
+		color: function(timeline, start, end, noColor) {
+			if(noColor === true) {
+				return;
+			}
 			var startTime = start.split(":");
 			var endTime = end.split(":");
 			
