@@ -522,6 +522,11 @@ var model = new function() {
 			return rootURI + vorlesungenGroupEURI.replace("{kursID}", k.id).replace("{semester}", s);
 		};
 		
+		this.redirectGroupE = function (k, s) { 
+			location.href = rootURI + vorlesungenGroupEURI.replace("{kursID}", k.id).replace("{semester}", s); 
+		};
+		
+		
 		this.createVorlesung = function(v, c) {
 			self.doRequest(vorlesungenURI.replace("{kursID}", v.kursID).replace("{semester}", v.semester), "POST", v, c);
 		};
