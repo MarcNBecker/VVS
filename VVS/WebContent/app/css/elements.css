@@ -36,11 +36,11 @@
 
 .flex-item {
     width: 320px;
-    height: 150px;
+    min-height: 175px;
     padding: 5px;
     margin-top: 20px;
     margin-left: 20px;
-    text-align: center;
+    cursor: pointer;
 }
 
 .flex-item-item {
@@ -67,11 +67,16 @@
 }
 
 .small-headline-dashboard {
-	height: 50px;
+	min-height: 75px;
 	font-size: 16pt;
 	font-weight: 350;
 	margin-top: 10px;
 	margin-bottom: 10px;
+	display: flex;
+	text-align: center;
+	justify-content: center;
+    align-content: center;
+    flex-direction: column;
 }
 
 .horizontal-input {

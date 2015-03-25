@@ -5,11 +5,19 @@
 		<paper-shadow z="3" class="shadow">
 			<div horizontal layout>
 				<div vertical layout class="vertical-input">
-					<span class="headline">{{kurs.kursname}} - {{semester}}. Semester</span>
+					<span class="headline">
+						<div vertical layout>
+							<div horizontal layout center>
+								<core-icon class="icon-good" icon="arrow-back" on-click="{{back}}" hidden?="{{semester===1}}"></core-icon>
+								<span>{{kurs.kursname}} - {{semester}}. Semester</span>
+								<core-icon class="icon-good" icon="arrow-forward" on-click="{{forward}}" hidden?="{{semester===6}}"></core-icon>
+							</div>
+						</div>
+					</span>
 					<div horizontal layout center class="flex-container">
 					<!-- bestehende Vorlesungen -->
 						<template repeat="{{item in vorlesungen}}">
-							<paper-shadow z="2" class="inner-shadow flex-item">
+							<paper-shadow z="2" class="inner-shadow flex-item" on-click="{{navigate}}">
 								<div class="margin">
 									<div class="small-headline-dashboard">{{item.vorlesung.fachInstanz.fach.name}}</div>
 									<div class="flex-item-item" horizontal layout center>
@@ -30,7 +38,7 @@
 							</paper-shadow>
 						</template>
 						<!-- neue Vorlesung -->
-						<paper-shadow z="2" class="inner-shadow flex-item">
+						<paper-shadow z="2" class="inner-shadow flex-item" on-click="{{add}}">
 							<div horizontal layout center-center fit>
 								<core-icon class="icon-neutral" icon="add-circle-outline" flex></core-icon>
 							</div>
@@ -39,6 +47,7 @@
 				</div>
 			</div>
 		</paper-shadow>
+		<vvs-vorlesungs-overlay id="vorlesungsOverlay" kurs="{{kurs}}" semester="{{semester}}" toasts="{{toasts}}" createdVorlesungen="{{createdVorlesungen}}"></vvs-vorlesungs-overlay>
 	</template>
 		<script type="text/javascript">
 		"use strict";
@@ -47,6 +56,7 @@
 				vorlesungen: [],
 				kurs: new model.templates.Kurs(),
 				semester: 0,
+				createdVorlesungen: false,
 				//Publish those attributes to home
 				publish: {
 					pageParameter: {},
@@ -63,6 +73,10 @@
 					self.kurs.id = 9;
 					self.kurs.kursname = "WWI12SEA";
 					self.semester = 3;
+					self.load();
+				},
+				load: function() {
+					var self = this;
 					model.webService.getAllVorlesungenSemester(self.kurs, self.semester, function(api) {
 						if (!api.isError)
 	   					{
@@ -77,6 +91,36 @@
 					}
 					);
 				},
+				//Navigate to Planung for selected Vorlesung
+				navigate: function(e, detail, sender) {
+					var self = this;
+					self.pageLoaded.planung = false;
+					location.href = "#!planung" + "-" + sender.templateInstance.model.item.vorlesung.id;
+				},
+				//Navigate to Vorlesungsdashboard of previous semester
+				back: function () {
+					var self = this;
+					var previousSemester = self.semester - 1;
+					self.pageLoaded.vdashboard = false;
+					location.href = "#!vdashboard" + "-" + kurs + "-" + previousSemester;
+				},
+				//Navigate to Vorlesungsdashboard of next semester
+				forward: function() {
+					var self = this;
+					var nextSemester = self.semester + 1;
+					self.pageLoaded.vdashboard = false;
+					location.href = "#!vdashboard" + "-" + kurs + "-" + nextSemester;
+				},
+				//Add new Vorlesungen
+				add: function() {
+					this.$.vorlesungsOverlay.toggle();
+				},
+				//Reload dashboard, if vorlesungsOverlay is closed and vorlesungen have been added
+				createdVorlesungenChanged: function() {
+					if(this.createdVorlesungen === true) {
+						this.load();
+					}
+				}
 		});
 	</script>
 </polymer-element>
