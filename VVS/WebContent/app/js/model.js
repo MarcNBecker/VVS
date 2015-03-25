@@ -195,6 +195,16 @@ var model = new function() {
 			this.sekretariatName = "";
 		};
 
+		this.KursKachel = function() {
+			this.kurs = new model.templates.Kurs();
+			this.planBlocklage = new model.templates.Blocklage();
+			this.geplanteVorlesungen = 0; 
+			this.geplanteStunden = 0.0;
+			this.gesamteStunden = 0;
+			this.fehlendeDozenten = 0;
+			this.fehlendeKlausuren = 0;
+		};
+		
 		this.Modul = function() {
 			this.id = 0;
 			this.name = "";
@@ -271,6 +281,8 @@ var model = new function() {
 		var dozentKommentareURI = "/dozenten/{dozentID}/kommentare";
 		var dozentKommentarURI = "/dozenten/{dozentID}/kommentare/{kommentarID}";
 
+		var studiengangsleiterDashboardURI = "/studiengangsleiter/{studiengangsleiterID}/dashboard";
+		
 		var kurseURI = "/kurse";
 		var kursURI = "/kurse/{kursID}";
 		var kursBlocklagenURI = "/kurse/{kursID}/blocklagen";
@@ -355,6 +367,10 @@ var model = new function() {
 		
 		this.deleteDozentKommentar = function(k, c) {
 			self.doRequest(dozentKommentarURI.replace("{dozentID}", k.dozentID).replace("{kommentarID}", k.id), "DELETE", null, c);	
+		};
+		
+		this.getStudiengangsleiterDashboard = function(s, c) {
+			self.doRequest(studiengangsleiterDashboardURI.replace("{studiengangsleiterID}", s.id), "GET", null, c);
 		};
 		
 		this.getAllKurse = function(c) {
