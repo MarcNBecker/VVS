@@ -1,0 +1,148 @@
+<polymer-element name="vvs-dashboard-vorlesung">
+	<template>
+ 		<link rel="stylesheet" href="../../css/elements.css" shim-shadowdom>
+		<!-- Main DIV -->
+		<paper-shadow z="3" class="shadow">
+			<div horizontal layout>
+				<div vertical layout class="vertical-input">
+					<span class="headline">
+						<div vertical layout>
+							<div horizontal layout center>
+								<paper-icon-button class="icon-good" icon="arrow-back" on-click="{{back}}" hidden?="{{semester == 1}}" disabled="{{disableToggle}}"></paper-icon-button>
+								<span>{{kurs.kursname}} - {{semester}}. Semester</span>
+								<paper-icon-button class="icon-good" icon="arrow-forward" on-click="{{forward}}" hidden?="{{semester == 6}}" disabled="{{disableToggle}}"></paper-icon-button>
+							</div>
+						</div>
+					</span>
+					<div horizontal layout center class="flex-container">
+					<!-- bestehende Vorlesungen -->
+						<template repeat="{{item in vorlesungen}}">
+							<paper-shadow z="2" class="inner-shadow flex-item" on-click="{{navigate}}">
+								<div class="margin">
+									<div class="small-headline-dashboard">{{item.vorlesung.fachInstanz.fach.name}}</div>
+									<div class="flex-item-item" horizontal layout center>
+										<span class="text-width">geplante Stunden:</span>
+										<paper-progress class="progress-dashboard" value="{{(item.geplanteStunden/item.vorlesung.fachInstanz.stunden)*100}}"></paper-progress>
+									</div>
+									<div class="flex-item-item" horizontal layout center-center>
+										<span class="text-width">Dozent ausgew&auml;hlt:</span>
+										<core-icon class="icon-good" icon="check-box" hidden?="{{item.vorlesung.dozent>0}}" flex></core-icon>
+										<core-icon class="icon-bad" icon="cancel" hidden?="{{!item.vorlesung.dozent>0}}" flex></core-icon>
+									</div>
+									<div class="flex-item-item" horizontal layout center-center>
+										<span class="text-width">Klausur festgelegt:</span>
+										<core-icon class="icon-good" icon="check-box" hidden?="{{!item.geplanteKlausur}}" flex></core-icon>
+										<core-icon class="icon-bad" icon="cancel" hidden?="{{item.geplanteKlausur}}" flex></core-icon>
+									</div>
+								</div>
+							</paper-shadow>
+						</template>
+						<!-- neue Vorlesung -->
+						<paper-shadow z="2" class="inner-shadow flex-item" on-click="{{add}}">
+							<div horizontal layout center-center fit>
+								<core-icon class="icon-neutral" icon="add-circle-outline" flex></core-icon>
+							</div>
+						</paper-shadow>	
+					</div>
+				</div>
+			</div>
+		</paper-shadow>
+		<vvs-vorlesungs-overlay id="vorlesungsOverlay" kurs="{{kurs}}" semester="{{semester}}" toasts="{{toasts}}" createdVorlesungen="{{createdVorlesungen}}"></vvs-vorlesungs-overlay>
+	</template>
+		<script type="text/javascript">
+		"use strict";
+		Polymer('vvs-dashboard-vorlesung',
+			{
+				vorlesungen: [],
+				kurs: new model.templates.Kurs(),
+				semester: 1,
+				createdVorlesungen: false,
+				disableToggle: false,
+				//Publish those attributes to home
+				publish: {
+					pageParameter: {},
+					pageLoaded: {},
+					toasts: {}
+				},
+				//Initialize the screen
+				ready : function() {
+					var self = this;
+					self.vorlesungen = [];
+					self.kurs = new model.templates.Kurs();
+					self.disableToggle = true;
+					if(self.pageParameter.vdashboard.id === 0) {
+						self.pageLoaded.vdashboard = false;
+						self.pageLoaded.sdashboard = false;
+						window.history.replaceState({redirect: true}, '', '#!sdashboard-');
+						location.href = "#!sdashboard";
+						return;
+					}
+					var params = self.pageParameter.vdashboard.id.split("-");
+					self.kurs.id = params[0];
+					self.semester = params[1] ? params[1] : 1;
+					model.webService.getKurs(self.kurs, function(api) {
+						if(!api.isError) {
+							self.kurs = api.response;
+							self.load();
+						} else {
+	   						console.log(JSON.stringify(api));
+	   						self.toasts.error.show();
+						}
+					});
+				},
+				load: function() {
+					var self = this;
+					self.disableToggle = true;
+					model.webService.getAllVorlesungenSemester(self.kurs, self.semester, function(api) {
+						if (!api.isError)
+	   					{
+	   						self.vorlesungen = api.response;
+	   						self.disableToggle = false;
+	   					}
+	   					else
+	   					{
+	   						console.log(JSON.stringify(api));
+	   						self.toasts.error.show();
+	   					}
+					}
+					);
+				},
+				//Navigate to Planung for selected Vorlesung
+				navigate: function(e, detail, sender) {
+					var self = this;
+					if(self.disableToggle) {
+						return;
+					}
+					self.pageLoaded.planung = false;
+					location.href = "#!planung" + "-" + sender.templateInstance.model.item.vorlesung.id;
+				},
+				//Navigate to Vorlesungsdashboard of previous semester
+				back: function () {
+					var self = this;
+					var previousSemester = parseInt(self.semester) - 1;
+					self.pageLoaded.vdashboard = false;
+					location.href = "#!vdashboard" + "-" + self.kurs.id + "-" + previousSemester;
+				},
+				//Navigate to Vorlesungsdashboard of next semester
+				forward: function() {
+					var self = this;
+					var nextSemester = parseInt(self.semester) + 1;
+					self.pageLoaded.vdashboard = false;
+					location.href = "#!vdashboard" + "-" + self.kurs.id + "-" + nextSemester;
+				},
+				//Add new Vorlesungen
+				add: function() {
+					if(this.disableToggle) {
+						return;
+					}
+					this.$.vorlesungsOverlay.toggle();
+				},
+				//Reload dashboard, if vorlesungsOverlay is closed and vorlesungen have been added
+				createdVorlesungenChanged: function() {
+					if(this.createdVorlesungen === true) {
+						this.load();
+					}
+				}
+		});
+	</script>
+</polymer-element>

@@ -38,6 +38,9 @@ import de.dhbw.vvs.resources.ModulplanResource;
 import de.dhbw.vvs.resources.StudiengangsleiterDashboardResource;
 import de.dhbw.vvs.resources.StudiengangsleiterKollektionResource;
 import de.dhbw.vvs.resources.StudiengangsleiterResource;
+import de.dhbw.vvs.resources.TermineDozentResource;
+import de.dhbw.vvs.resources.TermineKursResource;
+import de.dhbw.vvs.resources.TermineRaumResource;
 import de.dhbw.vvs.resources.UserKollektionResource;
 import de.dhbw.vvs.resources.UserResource;
 
@@ -109,6 +112,11 @@ public class VVSApplication extends Application {
 		router.attach(VERSION_ONE + "/kurse/{kursID}/{semester}/vorlesungen/{vorlesungsID}/dozenten", KursSemesterVorlesungDozentenResource.class); //GET
 		router.attach(VERSION_ONE + "/kurse/{kursID}/{semester}/vorlesungen/{vorlesungsID}/termine", KursSemesterVorlesungTermineResource.class); //GET, POST
 		router.attach(VERSION_ONE + "/kurse/{kursID}/{semester}/vorlesungen/{vorlesungsID}/termine/{terminID}", KursSemesterVorlesungTerminResource.class); //GET, PUT, DELETE
+		
+		//Konflikte
+		router.attach(VERSION_ONE + "/termine/{datum}/kurse/{kursID}", TermineKursResource.class); //GET
+		router.attach(VERSION_ONE + "/termine/{datum}/dozenten/{dozentID}", TermineDozentResource.class); //GET
+		router.attach(VERSION_ONE + "/termine/{datum}/raeume/{raum}", TermineRaumResource.class); //GET
 		
 		return router;
 	}

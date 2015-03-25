@@ -82,8 +82,20 @@ public class Blocklage {
 		this.kursID = kursID;
 	}
 	
+	public int getSemester() {
+		return semester;
+	}
+	
 	public void setSemester(int semester) {
 		this.semester = semester;
+	}
+	
+	public Date getStartDatum() {
+		return startDatum;
+	}
+	
+	public Date getEndDatum() {
+		return endDatum;
 	}
 	
 }

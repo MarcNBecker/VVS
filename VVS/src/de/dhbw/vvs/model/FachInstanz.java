@@ -176,6 +176,10 @@ public class FachInstanz {
 		return id;
 	}
 	
+	public int getStunden() {
+		return stunden;
+	}
+	
 	/**
 	 * It is only allowed to call this method, when fach.setID() follows this call
 	 */

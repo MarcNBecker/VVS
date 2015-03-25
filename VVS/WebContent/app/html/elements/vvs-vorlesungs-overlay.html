@@ -48,7 +48,8 @@
 			publish: {
 				kurs: {},
 				semester: 0,
-				toasts: {}
+				toasts: {},
+				createdVorlesungen: false
 			},
 			//Initialize the screen
 			ready: function (){
@@ -62,6 +63,7 @@
 			},
 			load: function() {
 				var self = this;
+				self.createdVorlesungen = false;
 				//Load offene Vorlesungen
 				model.webService.getAllVorlesungenOffen(self.kurs, function(api) {
 					if (!api.isError)
@@ -128,6 +130,7 @@
 							if (deepRuns === selectedVorlesungen.length)
 							{
 								self.toasts.success.show();
+								self.createdVorlesungen = true;
 							}
 						}
 						else

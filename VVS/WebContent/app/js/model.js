@@ -195,6 +195,16 @@ var model = new function() {
 			this.sekretariatName = "";
 		};
 
+		this.KursKachel = function() {
+			this.kurs = new model.templates.Kurs();
+			this.planBlocklage = new model.templates.Blocklage();
+			this.geplanteVorlesungen = 0; 
+			this.geplanteStunden = 0.0;
+			this.gesamteStunden = 0;
+			this.fehlendeDozenten = 0;
+			this.fehlendeKlausuren = 0;
+		};
+		
 		this.Modul = function() {
 			this.id = 0;
 			this.name = "";
@@ -271,6 +281,8 @@ var model = new function() {
 		var dozentKommentareURI = "/dozenten/{dozentID}/kommentare";
 		var dozentKommentarURI = "/dozenten/{dozentID}/kommentare/{kommentarID}";
 
+		var studiengangsleiterDashboardURI = "/studiengangsleiter/{studiengangsleiterID}/dashboard";
+		
 		var kurseURI = "/kurse";
 		var kursURI = "/kurse/{kursID}";
 		var kursBlocklagenURI = "/kurse/{kursID}/blocklagen";
@@ -305,6 +317,10 @@ var model = new function() {
 		var vorlesungDozentenURI = "/kurse/{kursID}/{semester}/vorlesungen/{vorlesungsID}/dozenten";
 		var vorlesungTermineURI = "/kurse/{kursID}/{semester}/vorlesungen/{vorlesungsID}/termine";
 		var vorlesungTerminURI = "/kurse/{kursID}/{semester}/vorlesungen/{vorlesungsID}/termine/{terminID}";
+		
+		var termineKursURI = "/termine/{datum}/kurse/{kursID}";
+		var termineDozentURI = "/termine/{datum}/dozenten/{dozentID}";
+		var termineRaumURI = "/termine/{datum}/raeume/{raum}";
 		
 		this.getAllDozenten = function(c) {
 			self.doRequest(dozentenURI, "GET", null, c);
@@ -352,6 +368,10 @@ var model = new function() {
 		
 		this.deleteDozentKommentar = function(k, c) {
 			self.doRequest(dozentKommentarURI.replace("{dozentID}", k.dozentID).replace("{kommentarID}", k.id), "DELETE", null, c);	
+		};
+		
+		this.getStudiengangsleiterDashboard = function(s, c) {
+			self.doRequest(studiengangsleiterDashboardURI.replace("{studiengangsleiterID}", s.id), "GET", null, c);
 		};
 		
 		this.getAllKurse = function(c) {
@@ -562,7 +582,20 @@ var model = new function() {
 			self.doRequest(vorlesungTerminURI.replace("{kursID}", v.kursID).replace("{semester}", v.semester).replace("{vorlesungsID}", v.id).replace("{terminID}", t.id), "DELETE", null, c);		
 		};
 		
+		this.getAllConflictsTermineKurs = function(v, t, c) {
+			self.doRequest(termineKursURI.replace("{datum}", t.datum).replace("{kursID}", v.kursID), "GET", null, c);
+		};
+		
+		this.getAllConflictsTermineDozent = function(v, t, c) {
+			self.doRequest(termineDozentURI.replace("{datum}", t.datum).replace("{dozentID}", v.dozentID), "GET", null, c);
+		};
+		
+		this.getAllConflictsTermineRaum = function(t, c) {
+			self.doRequest(termineRaumURI.replace("{datum}", t.datum).replace("{raum}", t.raum), "GET", null, c);
+		};
+		
 		this.doRequest = function(uri, method, data, callback, callbackData) {
+			var api = new Object();
 			if(uri === undefined || uri === null || method === undefined || method === null || allowedMethods.indexOf(method) === -1) {
 				api.isError = true;
 				api.status = "0";
@@ -572,7 +605,6 @@ var model = new function() {
 			var xhr = new XMLHttpRequest();
 			xhr.onreadystatechange = function() {
 				if(xhr.readyState === 4) {
-					var api = new Object();
 					if(xhr.response !== null && (xhr.status === 200 || xhr.status === 201 || xhr.status === 204)) { //OK, ACCEPTED, NO_CONTENT
 						api.isError = false;
 						api.status = xhr.status;

@@ -9,6 +9,9 @@ import org.restlet.resource.ResourceException;
 
 import de.dhbw.vvs.application.ExceptionStatus;
 import de.dhbw.vvs.application.WebServiceException;
+import de.dhbw.vvs.model.Kurs;
+import de.dhbw.vvs.model.KursKachel;
+import de.dhbw.vvs.model.Studiengangsleiter;
 
 public class StudiengangsleiterDashboardResource extends JsonServerResource {
 	
@@ -30,8 +33,7 @@ public class StudiengangsleiterDashboardResource extends JsonServerResource {
 	
 	@Override
 	protected Object receiveGet() throws WebServiceException {
-		// TODO Auto-generated method stub
-		return super.receiveGet();
+		return KursKachel.enrich(Kurs.getAllForStudiengangsleiter(new Studiengangsleiter(getStudiengangsleiterID())));
 	}
 	
 	public int getStudiengangsleiterID() {

@@ -43,6 +43,83 @@ public class Termin {
 		return terminList;
 	}
 	
+	public static ArrayList<Termin> getAllForKursOnDate(Date datum, Kurs kurs) throws WebServiceException {
+		if(datum == null) {
+			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_DATE);
+		}
+		kurs.getDirectAttributes(); //check existance
+		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
+		ArrayList<Object> fieldValues = new ArrayList<Object>();
+		fieldValues.add(kurs.getID());
+		fieldValues.add(Utility.dateString(datum));
+		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT termin.id, vorlesung, datum, startUhrzeit, endUhrzeit, pause, raum, klausur FROM termin INNER JOIN vorlesung ON termin.vorlesung = vorlesung.id WHERE vorlesung.kurs = ? AND termin.datum = ? ORDER BY startUhrzeit ASC", fieldValues);
+		ArrayList<Termin> terminList = new ArrayList<Termin>();
+		for(TypeHashMap<String, Object> result : resultList) {
+			Termin t = new Termin(result.getInt("id"));
+			t.vorlesungID = result.getInt("vorlesung");
+			t.datum = (Date) result.get("datum");
+			t.startUhrzeit = (Time) result.get("startUhrzeit");
+			t.endUhrzeit = (Time) result.get("endUhrzeit");
+			t.pause = result.getInt("pause");
+			t.raum = result.getString("raum");
+			t.klausur = result.getBoolean("klausur");
+			terminList.add(t);
+		}
+		return terminList;
+	}
+	
+	public static ArrayList<Termin> getAllForDozentOnDate(Date datum, Dozent dozent) throws WebServiceException {
+		if(datum == null) {
+			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_DATE);
+		}
+		dozent.getDirectAttributes(); //check existance
+		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
+		ArrayList<Object> fieldValues = new ArrayList<Object>();
+		fieldValues.add(dozent.getID());
+		fieldValues.add(Utility.dateString(datum));
+		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT termin.id, vorlesung, datum, startUhrzeit, endUhrzeit, pause, raum, klausur FROM termin INNER JOIN vorlesung ON termin.vorlesung = vorlesung.id WHERE vorlesung.dozent = ? AND termin.datum = ? ORDER BY startUhrzeit ASC", fieldValues);
+		ArrayList<Termin> terminList = new ArrayList<Termin>();
+		for(TypeHashMap<String, Object> result : resultList) {
+			Termin t = new Termin(result.getInt("id"));
+			t.vorlesungID = result.getInt("vorlesung");
+			t.datum = (Date) result.get("datum");
+			t.startUhrzeit = (Time) result.get("startUhrzeit");
+			t.endUhrzeit = (Time) result.get("endUhrzeit");
+			t.pause = result.getInt("pause");
+			t.raum = result.getString("raum");
+			t.klausur = result.getBoolean("klausur");
+			terminList.add(t);
+		}
+		return terminList;
+	}
+	
+	public static ArrayList<Termin> getAllForRaumOnDate(Date datum, String raum) throws WebServiceException {
+		if(datum == null) {
+			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_DATE);
+		}
+		if(raum == null || (raum = raum.trim()).isEmpty()) {
+			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_STRING);
+		}
+		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
+		ArrayList<Object> fieldValues = new ArrayList<Object>();
+		fieldValues.add(raum);
+		fieldValues.add(Utility.dateString(datum));
+		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT termin.id, vorlesung, datum, startUhrzeit, endUhrzeit, pause, raum, klausur FROM termin WHERE raum = ? AND termin.datum = ? ORDER BY startUhrzeit ASC", fieldValues);
+		ArrayList<Termin> terminList = new ArrayList<Termin>();
+		for(TypeHashMap<String, Object> result : resultList) {
+			Termin t = new Termin(result.getInt("id"));
+			t.vorlesungID = result.getInt("vorlesung");
+			t.datum = (Date) result.get("datum");
+			t.startUhrzeit = (Time) result.get("startUhrzeit");
+			t.endUhrzeit = (Time) result.get("endUhrzeit");
+			t.pause = result.getInt("pause");
+			t.raum = result.getString("raum");
+			t.klausur = result.getBoolean("klausur");
+			terminList.add(t);
+		}
+		return terminList;
+	}
+	
 	public Termin(int id) throws WebServiceException {
 		if (id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
