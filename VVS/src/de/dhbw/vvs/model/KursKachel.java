@@ -24,6 +24,9 @@ public class KursKachel {
 			ArrayList<Blocklage> blocklagen = Blocklage.getAll(k);
 			Blocklage planBlocklage = null;
 			for(Blocklage b : blocklagen) {
+				if(b.getStartDatum() == null || b.getEndDatum() == null) {
+					continue;
+				}
 				if(b.getStartDatum().compareTo(heute) <= 0 && b.getEndDatum().compareTo(heute) >= 0) {
 					planBlocklage = b;
 					break;
@@ -32,6 +35,9 @@ public class KursKachel {
 			if(planBlocklage == null) {
 				int minSemester = 7; //lowest non valid positive semester number (except of 0)
 				for(Blocklage b : blocklagen) {
+					if(b.getStartDatum() == null || b.getEndDatum() == null) {
+						continue;
+					}
 					if(b.getStartDatum().after(heute) && b.getSemester() < minSemester)  {
 						minSemester = b.getSemester();
 						planBlocklage = b;

@@ -71,16 +71,19 @@
 					<span class="headline">Blocklagen</span>
 					<template repeat="{{item, i in blocklagen}}">
 						<div horizontal start layout class="horizontal-input">
-							<paper-input-decorator class="s" id="s{{i}}" neighbor="e{{i}}" label="{{i + 1}}. Blocklage von" error="Pflichtfeld: Ung&uuml;ltiges Datum" on-input="{{validateNeighbor}}" autoValidate isInvalid="{{item.invalidS}}" floatingLabel flex>
+							<paper-input-decorator class="s" id="s{{i}}" neighbor="e{{i}}" label="{{i + 1}}. Semester von" error="Pflichtfeld: Ung&uuml;ltiges Datum" on-input="{{validateNeighbor}}" autoValidate isInvalid="{{item.invalidS}}" floatingLabel flex>
 								<input is="core-input" on-focus="{{toggleDatePicker}}" on-click="{{toggleDatePicker}}" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" preventInvalidInput="true" value="{{item.startDatum}}" required?="{{item.endDatum ? true : false}}" disabled?="{{disableToggle}}">
 							</paper-input-decorator>
-							<paper-input-decorator class="e" id="e{{i}}" neighbor="s{{i}}" label="{{i + 1}}. Blocklage bis" error="Pflichtfeld: Ung&uuml;ltiges Datum" on-input="{{validateNeighbor}}" autoValidate isInvalid="{{item.invalidE}}" floatingLabel flex>
+							<paper-input-decorator class="e" id="e{{i}}" neighbor="s{{i}}" label="{{i + 1}}. Semester bis" error="Pflichtfeld: Ung&uuml;ltiges Datum" on-input="{{validateNeighbor}}" autoValidate isInvalid="{{item.invalidE}}" floatingLabel flex>
 								<input is="core-input" on-focus="{{toggleDatePicker}}" on-click="{{toggleDatePicker}}" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" preventInvalidInput="true" value="{{item.endDatum}}" required?="{{item.startDatum ? true : false}}" disabled?="{{disableToggle}}">
 							</paper-input-decorator>
 							<paper-input-decorator label="Raum" floatingLabel flex>
 								<input is="core-input" type="text" value={{item.raum}} maxlength="100" disabled?="{{disableToggle}}">
 							</paper-input-decorator>
-							<paper-icon-button on-click="{{toggleExport}}" icon="file-download" self-center disabled?="{{disableToggle}}" hidden?="{{creationMode}}"></paper-icon-button>
+							<div horizontal layout self-center>
+								<paper-icon-button on-click="{{navigateVDashboard}}" icon="apps" disabled?="{{disableToggle}}" hidden?="{{creationMode}}"></paper-icon-button>
+								<paper-icon-button on-click="{{toggleExport}}" icon="file-download" disabled?="{{disableToggle}}" hidden?="{{creationMode}}"></paper-icon-button>
+							</div>
 						</div>
 					</template>
 					<polymer-date-picker id="datePicker" relatedTarget="{{$.s1}}" halign="left" style="z-index:99" selectedDate="{{selectedDate}}" opened="false"></polymer-date-picker>
@@ -447,6 +450,9 @@
 	    	{
 	    		this.pageLoaded.kurs = false;
 	    		window.history.back();
+	    	},
+	    	navigateVDashboard: function(e, detail, sender) {
+	    		location.href = "#!vdashboard-" + this.kurs.id + "-" + (sender.templateInstance.model.i + 1);
 	    	},
 			//Open Export overlay
 			toggleExport: function (e, detail, sender) {
