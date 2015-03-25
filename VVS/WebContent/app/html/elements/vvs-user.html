@@ -214,7 +214,8 @@
 	    				//Set storage user and update current session app user
 	    				if(self.user.name === self.currentUser.name) {
 	    					sessionStorage.setItem("user", JSON.stringify(self.user));
-		    				self.currentUser = self.user;	
+		    				self.currentUser = self.user;
+		    				self.pageLoaded.sdashboard = false;
 	    				}
 	    				self.toggleDisabled = false;
 						self.toasts.success.show();

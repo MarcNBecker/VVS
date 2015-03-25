@@ -79,6 +79,14 @@
     flex-direction: column;
 }
 
+.small-headline-dashboard-sl {
+	min-height: 25px;
+	font-size: 16pt;
+	font-weight: 350;
+	margin-top: 10px;
+	margin-bottom: 20px;
+}
+
 .horizontal-input {
 	margin-left: 20px;
 }

@@ -50,7 +50,8 @@ template.pageLoaded = {
 	user: false,
 	feiertage: false,
 	planung: false,
-	vdashboard: false
+	vdashboard: false,
+	sdashboard: false
 };
 
 //Page descriptors including the HTML code to load the page
@@ -63,11 +64,12 @@ template.pageDescriptor = {
 	user: {name: 'User pflegen', hash: 'user', html: '<vvs-user currentUser="{{user}}" pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-user>'},
 	feiertage: {name: 'Feiertage pflegen', hash: 'feiertage', html: '<vvs-feiertage pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-feiertage>'},
 	planung: {name: 'Planung', hash: 'planung', html: '<vvs-planung pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-planung>'},
-	vdashboard: {name: 'Vorlesungsdashboard', hash: 'vdashboard', html: '<vvs-dashboard-vorlesung pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-dashboard-vorlesung>'}
+	vdashboard: {name: 'Vorlesungsdashboard', hash: 'vdashboard', html: '<vvs-dashboard-vorlesung pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-dashboard-vorlesung>'},
+	sdashboard: {name: 'Studiengangsleiterdashboard', hash: 'sdashboard', html: '<vvs-dashboard-studiengangsleiter user="{{user}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-dashboard-studiengangsleiter>'}
 };
 
 //Pages to display in the navigation drawer
-template.drawerPages = [template.pageDescriptor.stammdaten, template.pageDescriptor.vdashboard];
+template.drawerPages = [template.pageDescriptor.stammdaten, template.pageDescriptor.vdashboard, template.pageDescriptor.sdashboard];
 
 //Pages that can be displayed in the home main div
 template.homePages = [template.pageDescriptor.stammdaten, 
@@ -78,7 +80,8 @@ template.homePages = [template.pageDescriptor.stammdaten,
                       template.pageDescriptor.user, 
                       template.pageDescriptor.feiertage, 
                       template.pageDescriptor.planung,
-                      template.pageDescriptor.vdashboard];
+                      template.pageDescriptor.vdashboard,
+                      template.pageDescriptor.sdashboard];
 
 //Is called whenever the url hash is changed and navigates the app
 function handleHashChange(refresh) {
