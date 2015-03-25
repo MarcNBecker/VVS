@@ -60,7 +60,7 @@
 							<template repeat="{{item in vorlesungstermine}}">
 								<paper-shadow z="1" class="{{item.id !== 0 && item.id === vorlesungsterminToEdit.id ? 'inner-inner-shadow highlight' : 'inner-inner-shadow'}}">
 									<div horizontal layout center>
-										<span horizontal layout center-center flex two>{{item.datum}}<core-icon title="Klausur" icon="assignment" hidden?="{{!item.klausur}}"></core-icon><core-icon title="Konflikt" icon="warning" hidden?="{{!item.conflicts}}"></core-icon></span>
+										<span horizontal layout center-center flex two>{{item.datum}}<core-icon title="Klausur" icon="assignment" hidden?="{{!item.klausur}}"></core-icon><core-icon class="icon-bad" title="Konflikt" icon="warning" hidden?="{{!item.conflicts}}"></core-icon></span>
 										<span horizontal layout center-center flex>{{item.startUhrzeit}} Uhr</span>
 										<span horizontal layout center-center flex>{{item.endUhrzeit}} Uhr</span>
 										<span horizontal layout center-center flex>{{item.dauer}} {{item.dauer === 1 ? 'Stunde' : 'Stunden'}}</span>
@@ -80,7 +80,7 @@
 						</div>
 					</div>
 					<div auto-vertical?="{{smallScreen}}" flex?="{{!smallScreen}}" class="input-padding">
-						<span class="small-headline" horizontal layout center>Termin bearbeiten<core-icon title="Konflikt" icon="warning" hidden?="{{!vorlesungsterminToEdit.conflicts}}"></core-icon></span>
+						<span class="small-headline" horizontal layout center>Termin bearbeiten<core-icon class="icon-bad" title="Konflikt" icon="warning" hidden?="{{!vorlesungsterminToEdit.conflicts}}"></core-icon></span>
 						<div horizontal layout start>
 							<polymer-date-picker id="datePicker" relatedTarget="{{$.datum}}" halign="left" style="z-index:99" selectedDate="{{selectedDate}}" opened="false"></polymer-date-picker>
 							<paper-input-decorator id="datum" label="Datum" error="{{minDateString && maxDateString ? 'Pflichtfeld: Ung&uuml;ltiges Datum (Zeitraum ' + minDateString + ' bis ' + maxDateString + ')' : 'Pflichtfeld: Ung&uuml;ltiges Datum'}}" autoValidate isInvalid="{{invalid.datum}}" floatingLabel flex>
@@ -309,7 +309,7 @@
 							self.toasts.error.show();
 						}
 					});
-					//Load default Kursraum
+					//Load selected Kurs
 					self.kurs.id = self.vorlesung.kursID;
 					model.webService.getKurs(self.kurs, function(api) {
 						if(!api.isError) {
@@ -324,12 +324,17 @@
 							self.toasts.error.show();
 						}
 					});
+					//Load default Kursraum
 					model.webService.getAllKursBlocklagen(self.kurs, function(api) {
 						if (!api.isError) {
 							var i;
 							for (i = 0; i < api.response.length; i++) {
 								if (api.response[i].semester === self.vorlesung.semester) {
 									self.raum = api.response[i].raum;
+									if (!self.raum)
+									{
+										self.invalid.raum = true;
+									}
 									//Init date picker with blocklagen start datum
 									if(api.response[i].startDatum) {
 										self.selectedDate = api.response[i].startDatum;
@@ -624,6 +629,8 @@
 							if (veryDeepRuns === self.vorlesungstermine.length) {
 								self.disableToggle = false;
 								self.toasts.success.show();
+								self.pageLoaded.vdashboard = false;
+								self.pageLoaded.sdashboard = false;
 							}
 						}
 						else {
@@ -641,6 +648,8 @@
 							if (veryDeepRuns === self.vorlesungstermine.length) {
 								self.disableToggle = false;
 								self.toasts.success.show();
+								self.pageLoaded.vdashboard = false;
+								self.pageLoaded.sdashboard = false;
 							}
 						}
 						else {
