@@ -28,6 +28,24 @@
 	background-color: rgba(226,0,26,0.5);
 }
 
+.flex-container {  
+  display: flex; 
+  flex-flow: row wrap;
+}
+
+.flex-item {
+    width: 320px;
+    height: 150px;
+    padding: 5px;
+    margin: 10px;
+    text-align: center;
+}
+
+.flex-item-item {
+	text-align: left;
+	padding-left: 10px;
+}
+
 .vertical-input {
 	margin-top: 30px;
 }
@@ -46,12 +64,24 @@
 	margin-bottom: 10px;
 }
 
+.small-headline-dashboard {
+	height: 50px;
+	font-size: 16pt;
+	font-weight: 350;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
 .horizontal-input {
 	margin-left: 20px;
 }
 
 .horizontal-verticalizable > * {
 	margin-bottom: 10px;
+}
+
+.margin > * {
+	margin-bottom: 5px;
 }
 
 .horizontal-input > * {
@@ -101,6 +131,33 @@
 	display: hidden;
 }
 
+.progress {
+	height:30px;
+}
+
+.progress-dashboard {
+	height: 15px;
+	width: 150px;
+	margin-left: 10px;
+}
+
+.text-width {
+	width: 138px;
+}
+
+.icon-good {
+	fill: #5C6971;
+}
+
+.icon-bad {
+	fill: #E2001A;
+}
+
+.icon-neutral {
+	fill: #5C6971;
+	height: 100px;
+}
+
 paper-button {
 	background: #E2001A;
 	color: #FFFFFF;
@@ -123,10 +180,6 @@ paper-checkbox::shadow #ink[checked] {
 paper-checkbox::shadow #checkbox.checked {
 	background-color: #D32B18;
 	border-color: #D32B18;
-}
-
-.progress {
-	height:30px;
 }
 
 paper-progress::shadow #activeProgress {

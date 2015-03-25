@@ -4,39 +4,35 @@
 		<core-media-query query="max-width: 1400px" queryMatches="{{smallScreen}}"></core-media-query>
 		<!-- Main DIV -->
 		<paper-shadow z="3" class="shadow">
-			<div vertical layout>
-				<div vertical layout class="vertical-input">
-					<div horizontal layout center class="flexbox">
-						<!-- Main input fields -->
-								<template repeat="{{item in vorlesungen}}">
-								<paper-button id="tile" style="background: #FFFFFF; color: #E2001A; margin-bottom: 20px" raised>
-									<table border=0>
-									<tr>
-										<th colspan="2">{{item.vorlesung.fachInstanz.fach.name}}</th>
-									</tr>
-									<tr>
-										<td align="left" valign="middle">geplante Stunden:</td>
-										<td><paper-progress class="progress" value="{{item.geplanteStunden/item.vorlesung.fachInstanz.stunden}}"></paper-progress></td>
-									</tr>
-									<tr>
-										<td align="left" valign="middle">Dozent ausgew&aumlhlt:</td>
-										<td>
-											<div hidden?="{{item.vorlesung.dozent>0}}"><paper-fab mini icon="check"></div>
-											<div hidden?="{{!item.vorlesung.dozent>0}}"><paper-fab mini icon="close"></paper-fab></div>
-										</td>
-									</tr>									
-									<tr>
-										<td align="left" valign="middle">Klausur festgelegt:</td>
-										<td>
-											<div hidden?={{!item.geplanteKlausur}}><paper-fab mini icon="check"></div>
-											<div hidden?={{item.geplanteKlausur}}><paper-fab mini icon="close"></paper-fab></div>
-										</td>
-									</tr>
-									</table>
-								</paper-button>
-								</template>
-							<paper-fab icon="add" on-click={{}}></paper-fab>	
-					</div>
+			<div vertical?="{{smallScreen}}" horizontal?="{{!smallScreen}}" layout>
+				<span class="headline vertical-input">{{kurs.kursname}} - {{semester}}. Semester</span>
+				<div horizontal layout center class="flex-container">
+					<template repeat="{{item in vorlesungen}}">
+						<paper-shadow z="2" class="inner-shadow flex-item">
+							<div class="margin">
+								<div class="small-headline-dashboard">{{item.vorlesung.fachInstanz.fach.name}}</div>
+								<div class="flex-item-item" horizontal layout center>
+									<span class="text-width">geplante Stunden:</span>
+									<paper-progress class="progress-dashboard" value="{{item.geplanteStunden/item.vorlesung.fachInstanz.stunden}}"></paper-progress>
+								</div>
+								<div class="flex-item-item" horizontal layout center-center>
+									<span class="text-width">Dozent ausgew&auml;hlt:</span>
+									<core-icon class="icon-good" icon="check-box" hidden?="{{item.vorlesung.dozent>0}}" flex></core-icon>
+									<core-icon class="icon-bad" icon="cancel" hidden?="{{!item.vorlesung.dozent>0}}" flex></core-icon>
+								</div>
+								<div class="flex-item-item" horizontal layout center-center>
+									<span class="text-width">Klausur festgelegt:</span>
+									<core-icon class="icon-good" icon="check-box" hidden?="{{!item.geplanteKlausur}}" flex></core-icon>
+									<core-icon class="icon-bad" icon="cancel" hidden?="{{item.geplanteKlausur}}" flex></core-icon>
+								</div>
+							</div>
+						</paper-shadow>
+					</template>
+					<paper-shadow z="2" class="inner-shadow flex-item">
+						<div horizontal layout center-center fit>
+							<core-icon class="icon-neutral" icon="add-circle-outline" flex></core-icon>
+						</div>
+					</paper-shadow>	
 				</div>
 			</div>
 		</paper-shadow>
@@ -46,7 +42,8 @@
 		Polymer('vvs-dashboard-vorlesung',
 			{
 				vorlesungen: [],
-				progressProzent: 0,
+				kurs: new model.templates.Kurs(),
+				semester: 0,
 				//Publish those attributes to home
 				publish: {
 					pageParameter: {},
@@ -59,13 +56,14 @@
 					self.vorlesungen = [];
 					//ID is correct, needs to be named like this for other functions
 					//TODO Parameter aus Kursdashboard übergeben
-					var kurs = new model.templates.Kurs();
-					kurs.id = "9";
-					model.webService.getAllVorlesungenSemester(kurs, 3, function(api) {
+					self.kurs = new model.templates.Kurs();
+					self.kurs.id = 9;
+					self.kurs.kursname = "WWI12SEA";
+					self.semester = 3;
+					model.webService.getAllVorlesungenSemester(self.kurs, self.semester, function(api) {
 						if (!api.isError)
 	   					{
 	   						self.vorlesungen = api.response;
-	   						self.progressProzent = 
 	   						self.disableToggle = false;
 	   					}
 	   					else
