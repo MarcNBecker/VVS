@@ -1,7 +1,7 @@
 (function() {
 "use strict";
 
-var DEFAULT_ROUTE = 'stammdaten';
+var DEFAULT_ROUTE = 'sdashboard';
 
 var template = document.querySelector('#home');
 
