@@ -163,6 +163,10 @@ public class Vorlesung {
 		return kursID;
 	}
 	
+	public int getDozentID() {
+		return dozentID;
+	}
+	
 	public FachInstanz getFachInstanz() {
 		return fachInstanz;
 	}
