@@ -261,6 +261,9 @@
 <input type="button" onclick="model.webService.updateKurs(kurs, c)" value="Update Kurs" />
 <input type="button" onclick="model.webService.deleteKurs(kurs, c)" value="Delete Kurs" /><br />
 
+<!-- Studiengangsleiter Dashboard -->
+<input type="button" onclick="model.webService.getStudiengangsleiterDashboard(studiengangsleiter, c)" value="Get Studiengangsleiter Dashboard" /><br />
+
 <!-- Kurs Blocklagen -->
 <input type="button" onclick="model.webService.getAllKursBlocklagen(kurs, c)" value="Get All Kurs Blocklagen" />
 <input type="button" onclick="model.webService.setKursBlocklage(blocklage, c)" value="Set Kurs Blocklagen" />
@@ -320,6 +323,11 @@
 <input type="button" onclick="model.webService.getVorlesungTermin(vorlesung, termin, c)" value="Get Vorlesung Termin" />
 <input type="button" onclick="model.webService.updateVorlesungTermin(vorlesung, termin, c)" value="Update Vorlesung Termin" />
 <input type="button" onclick="model.webService.deleteVorlesungTermin(vorlesung, termin, c)" value="Delete Vorlesung Termin" /><br />
+
+<!-- Conflicts Termin -->
+<input type="button" onclick="model.webService.getAllConflictsTermineKurs(vorlesung, termin, c)" value="Get All Conflicts Termine Kurs" />
+<input type="button" onclick="model.webService.getAllConflictsTermineDozent(vorlesung, termin, c)" value="Get All Conflicts Termine Dozent" />
+<input type="button" onclick="model.webService.getAllConflictsTermineRaum(termin, c)" value="Get All Conflicts Termine Raum" /><br />
 
 </body>
 </html>

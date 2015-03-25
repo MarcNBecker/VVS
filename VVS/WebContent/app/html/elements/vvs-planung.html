@@ -10,12 +10,45 @@
 					<paper-progress class="progress" value="{{progressProzent}}"></paper-progress>
 					<span>{{progress}} / {{vorlesung.fachInstanz.stunden}} {{vorlesung.fachInstanz.stunden === 1 ? 'Stunde' : 'Stunden'}} geplant</span>
 				</div>
+				<!-- Grafische Planung -->
+				<div horizontal layout class="horizontal-input vertical-input">
+					<paper-shadow z="2" class="inner-shadow" flex>
+						<div vertical layout>
+							<div horizontal layout center>
+								<div class="hide small-headline line-spacing">Zeiten</div>
+								<div horizontal layout flex>
+									<template repeat="{{hour in hours}}">
+										<div class="small-headline" flex>{{hour}}:00&nbsp;&nbsp;</div>
+									</template>
+								</div>
+							</div>
+							<template repeat="{{timeline in timelines}}">
+								<div class="horizontal-verticalizable">
+									<div horizontal layout center>
+										<div class="line-spacing">{{timeline}}</div>
+										<paper-shadow z="1" class="inner-inner-shadow-timeline" flex>
+											<div horizontal layout>
+												<template repeat="{{hour, h in hours}}">
+													<div horizontal layout flex>
+														<template repeat="{{minute, m in minutes}}">
+															<div id="{{timeline}}_{{hour}}_{{minute}}" class="{{(h !== 0 && m === 0) || m === minutes.length/2 ? 'timeline-border' : ''}}" flex>&nbsp;</div>
+														</template>
+													</div>
+												</template>
+											</div>
+										</paper-shadow>
+									</div>
+								</div>
+							</template>
+						</div>
+					</paper-shadow>
+				</div>
 				<!-- Hauptscreen -->
 				<div horizontal?="{{!smallScreen}}" vertical?="{{smallScreen}}" layout class="horizontal-input vertical-input">
 					<div auto-vertical?="{{smallScreen}}" vertical layout flex?="{{!smallScreen}}" two?="{{!smallScreen}}">
 						<paper-shadow z="2" class="inner-shadow">
 							<div horizontal layout>
-								<span horizontal layout center-center class="small-headline" flex>Datum</span>
+								<span horizontal layout center-center class="small-headline" flex two>Datum</span>
 								<span horizontal layout center-center class="small-headline" flex>Von</span>
 								<span horizontal layout center-center class="small-headline" flex>Bis</span>
 								<span horizontal layout center-center class="small-headline" flex>Dauer</span>
@@ -27,10 +60,7 @@
 							<template repeat="{{item in vorlesungstermine}}">
 								<paper-shadow z="1" class="{{item.id !== 0 && item.id === vorlesungsterminToEdit.id ? 'inner-inner-shadow highlight' : 'inner-inner-shadow'}}">
 									<div horizontal layout center>
-										<span horizontal layout center-center flex>
-											{{item.datum}}
-											<core-icon icon="assignment" hidden?="{{!item.klausur}}"></core-icon>
-										</span>
+										<span horizontal layout center-center flex two>{{item.datum}}<core-icon title="Klausur" icon="assignment" hidden?="{{!item.klausur}}"></core-icon><core-icon class="icon-bad" title="Konflikt" icon="warning" hidden?="{{!item.conflicts}}"></core-icon></span>
 										<span horizontal layout center-center flex>{{item.startUhrzeit}} Uhr</span>
 										<span horizontal layout center-center flex>{{item.endUhrzeit}} Uhr</span>
 										<span horizontal layout center-center flex>{{item.dauer}} {{item.dauer === 1 ? 'Stunde' : 'Stunden'}}</span>
@@ -50,7 +80,7 @@
 						</div>
 					</div>
 					<div auto-vertical?="{{smallScreen}}" flex?="{{!smallScreen}}" class="input-padding">
-						<span class="small-headline" horizontal layout center>Termin bearbeiten</span>
+						<span class="small-headline" horizontal layout center>Termin bearbeiten<core-icon class="icon-bad" title="Konflikt" icon="warning" hidden?="{{!vorlesungsterminToEdit.conflicts}}"></core-icon></span>
 						<div horizontal layout start>
 							<polymer-date-picker id="datePicker" relatedTarget="{{$.datum}}" halign="left" style="z-index:99" selectedDate="{{selectedDate}}" opened="false"></polymer-date-picker>
 							<paper-input-decorator id="datum" label="Datum" error="{{minDateString && maxDateString ? 'Pflichtfeld: Ung&uuml;ltiges Datum (Zeitraum ' + minDateString + ' bis ' + maxDateString + ')' : 'Pflichtfeld: Ung&uuml;ltiges Datum'}}" autoValidate isInvalid="{{invalid.datum}}" floatingLabel flex>
@@ -66,11 +96,11 @@
 							</paper-input-decorator>			
 						</div>
 						<div horizontal layout start>
-							<paper-input-decorator id="pause" label="Pause" error="Ung&uuml;tige Pause" autoValidate isInvalid="{{invalid.pause}}" floatingLabel flex>
-								<input is="core-input" type="text" pattern="[0-9]+" value={{vorlesungsterminToEdit.pause}} disabled?="{{disableToggle}}">
+							<paper-input-decorator id="pause" label="Pause" error="Pflichtfeld: Ung&uuml;tige Pause" autoValidate isInvalid="{{invalid.pause}}" floatingLabel flex>
+								<input is="core-input" type="text" pattern="[0-9]+" value={{vorlesungsterminToEdit.pause}} required disabled?="{{disableToggle}}">
 							</paper-input-decorator>	
-							<paper-input-decorator id="raum" label="Raum" floatingLabel flex>
-								<input is="core-input" type="text" value={{vorlesungsterminToEdit.raum}} maxlength="100" disabled?="{{disableToggle}}">
+							<paper-input-decorator id="raum" label="Raum" error="Pflichtfeld" autoValidate isInvalid="{{invalid.raum}}" floatingLabel flex>
+								<input is="core-input" type="text" value={{vorlesungsterminToEdit.raum}} committedValue="{{committedRaum}}" maxlength="100" required disabled?="{{disableToggle}}">
 							</paper-input-decorator>
 						</div>
 						<div horizontal layout center class="horizontal-verticalizable">
@@ -172,6 +202,15 @@
 		maxDate: null,		
 		minDateString: "",
 		maxDateString: "",
+		committedRaum: null,
+		hours: ["08", "09", "10", "11", 
+		        "12", "13", "14", "15", 
+		        "16", "17", "18", "19"],
+		minutes: ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14",
+		          "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29",
+		          "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44",
+		          "45", "46", "47", "48", "49", "50", "51", "52", "53", "54", "55", "56", "57", "58", "59"],
+		timelines: ["Kurs", "Dozent", "Raum", "Termin"],
 		datePickerOpened: false,
 		disableToggle: true,
 		disableToggleKlausur: false,
@@ -207,6 +246,14 @@
 			self.maxDate = null;
 			self.minDateString = "";
 			self.maxDateString = "";
+			self.hours = ["08", "09", "10", "11", 
+			              "12", "13", "14", "15", 
+			              "16", "17", "18", "19"];
+			self.minutes = ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14",
+					        "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29",
+					        "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44",
+					        "45", "46", "47", "48", "49", "50", "51", "52", "53", "54", "55", "56", "57", "58", "59"];
+			self.timelines = ["Kurs", "Dozent", "Raum", "Termin"];
 			self.datePickerOpened = false;
 			self.disableToggle = true;
 			self.disableToggleKlausur = false;
@@ -215,8 +262,10 @@
 			self.invalid = {};
 			//navigate to studiengangsleiter dashboard
 			if(self.pageParameter.planung.id <= 0) {
-				//TODO NAVIGATE TO DASHBOARD (S)
-				self.cancel();
+				self.pageLoaded.planung = false;
+				self.pageLoaded.sdashboard = false;
+				window.history.replaceState({redirect: true}, '', '#!sdashboard-');
+				location.href = "#!sdashboard";
 				return;
 			}
 			var showVorlesung = new model.templates.Vorlesung();
@@ -241,6 +290,7 @@
 								}
 							}
 							self.calculateProgress();
+							self.checkAllConflicts();
     						//Set inputs to invalid
 							self.invalid.datum = true;
 							self.invalid.startUhrzeit = true;
@@ -259,7 +309,7 @@
 							self.toasts.error.show();
 						}
 					});
-					//Load default Kursraum
+					//Load selected Kurs
 					self.kurs.id = self.vorlesung.kursID;
 					model.webService.getKurs(self.kurs, function(api) {
 						if(!api.isError) {
@@ -274,12 +324,17 @@
 							self.toasts.error.show();
 						}
 					});
+					//Load default Kursraum
 					model.webService.getAllKursBlocklagen(self.kurs, function(api) {
 						if (!api.isError) {
 							var i;
 							for (i = 0; i < api.response.length; i++) {
 								if (api.response[i].semester === self.vorlesung.semester) {
 									self.raum = api.response[i].raum;
+									if (!self.raum)
+									{
+										self.invalid.raum = true;
+									}
 									//Init date picker with blocklagen start datum
 									if(api.response[i].startDatum) {
 										self.selectedDate = api.response[i].startDatum;
@@ -294,6 +349,7 @@
 							}
     						self.job('update-label-raum-ready', function() {
     							self.$.raum.inputAction();
+    							self.$.raum.input.commit();
     						}, 100);
 							deepRuns++;
 							if(deepRuns === 6) {
@@ -355,7 +411,7 @@
 							console.log(JSON.stringify(api));
 							self.toasts.error.show();
 						}
-					});	
+					});
 				}
 				else {
 					console.log(JSON.stringify(api));
@@ -413,6 +469,7 @@
 				}
 			}
 			this.calculateProgress();
+			this.checkAllConflicts();
 			this.onRejectDisableKlausur = false;
 			this.reject();
 	    },
@@ -426,6 +483,7 @@
 			self.recurring = {isRecurring: false, count: "", distance: ""};
 			self.vorlesungsterminToEdit = new model.templates.Termin();
 			self.vorlesungsterminToEdit.raum = self.raum;
+			self.clearAllColor();
 			self.invalid.datum = true;
 			self.invalid.startUhrzeit = true;
 			self.invalid.endUhrzeit = true;
@@ -435,6 +493,7 @@
 				self.$.endUhrzeit.inputAction();
 				self.$.pause.inputAction();
 				self.$.raum.inputAction();
+				self.$.raum.input.commit();
 				self.$.wiederholungen.inputAction();
 				self.$.anzahl.inputAction();
 			}, 100);
@@ -450,12 +509,15 @@
 				this.disableToggleKlausur = false;
 				this.onRejectDisableKlausur = true;
 			}
+			//Update timeline
+			self.showTermin(self.vorlesungsterminToEdit);
 			self.job('update-labels-edit', function() {
 				self.$.datum.inputAction();
 				self.$.startUhrzeit.inputAction();
 				self.$.endUhrzeit.inputAction();
 				self.$.pause.inputAction();
 				self.$.raum.inputAction();
+				self.$.raum.input.commit();
 				self.$.wiederholungen.inputAction();
 				self.$.anzahl.inputAction();
 			}, 100);
@@ -499,8 +561,10 @@
 			model.webService.deleteVorlesung(self.vorlesung, function(api) {
 				if(!api.isError) {
 					self.toasts.success.show();
-					//TODO NAVIGATE TO DASHBOARD (K)
-					self.cancel();
+					self.pageLoaded.planung = false;
+					self.pageLoaded.vdashboard = false;
+					window.history.replaceState({redirect: true}, '', '#!vdashboard-');
+					location.href = "#!vdashboard-" + self.vorlesung.kursID + "-" + self.vorlesung.semester; 
 				}
 				else {
 					self.toasts.error.show();	
@@ -565,6 +629,8 @@
 							if (veryDeepRuns === self.vorlesungstermine.length) {
 								self.disableToggle = false;
 								self.toasts.success.show();
+								self.pageLoaded.vdashboard = false;
+								self.pageLoaded.sdashboard = false;
 							}
 						}
 						else {
@@ -582,6 +648,8 @@
 							if (veryDeepRuns === self.vorlesungstermine.length) {
 								self.disableToggle = false;
 								self.toasts.success.show();
+								self.pageLoaded.vdashboard = false;
+								self.pageLoaded.sdashboard = false;
 							}
 						}
 						else {
@@ -613,15 +681,19 @@
 					return;
 				}
 				self.vorlesungsterminToEdit.pause = self.calculatePause(self.vorlesungsterminToEdit.startUhrzeit, self.vorlesungsterminToEdit.endUhrzeit);
+				self.showTermin(self.vorlesungsterminToEdit);
 			}
 		},
     	//Set selected Dozent for Vorlesung from top list
     	setListDozent: function(e, detail, sender) {
     		this.dozent = e.target.templateInstance.model.item;
+    		this.vorlesung.dozentID = this.dozent.id;
+    		this.showTermin(this.vorlesungsterminToEdit);
     	},
     	setOtherDozent: function(e, detail, sender) {
     		if(detail.isSelected === true) {
         		this.dozent = detail.item.templateInstance.model.item;
+        		this.vorlesung.dozentID = this.dozent.id;
         		var i;
         		var found = false;
         		for(i=0; i<this.topDozenten.length; i++) {
@@ -646,6 +718,7 @@
             		this.otherDozenten.push(this.dozent);	
         		}
         		e.target.selected = null;
+        		this.showTermin(this.vorlesungsterminToEdit);
     		}
     	},
     	navigateToDozent: function(e, detail, sender) {
@@ -753,6 +826,7 @@
 				this.invalid.datum = true;
 			} else {
 				this.invalid.datum = false;
+				this.showTermin(this.vorlesungsterminToEdit);
 			}
 		},
 		//Calculate date of today
@@ -764,6 +838,229 @@
 		    var day = '0' + date.getDate();
 		    day = day.slice(-2, (day.length - 2) + 3);
 		    return year + '-' + month + '-' + day;
+		},
+		committedRaumChanged: function() {
+			if(this.vorlesungsterminToEdit !== null && this.vorlesungsterminToEdit !== undefined) {
+				this.showTermin(this.vorlesungsterminToEdit);	
+			}
+		},
+		showTermin: function(termin, noColor) {
+			if(!(termin.startUhrzeit && termin.endUhrzeit && termin.datum && termin.raum)) {
+				return;
+			}
+			var self = this;
+			self.disableToggle = false;
+			self.clearAllColor();
+			self.color("Termin", termin.startUhrzeit, termin.endUhrzeit, noColor);
+			//Find all locally added Termine on the same date
+			var i;
+			var localTermine = [];
+			for(i=0; i<self.vorlesungstermine.length; i++) {
+				if(self.vorlesungstermine[i].id !== termin.id && self.vorlesungstermine[i].datum === termin.datum) {
+					localTermine.push(self.vorlesungstermine[i]);
+				}
+			}
+			var deepRuns = 0;
+			var conflicts = false;
+			model.webService.getAllConflictsTermineKurs(this.vorlesung, termin, function(api) {
+				if(!api.isError) {
+					var i;
+					for(i=0; i<api.response.length; i++) {
+						if(api.response[i].id === termin.id) {
+							continue;
+						}
+						var j;
+						var found = false;
+						//Dont use webService for local termin
+						for(j=0; j<self.vorlesungstermine.length; j++) {
+							if(self.vorlesungstermine[j].id === api.response[i].id) {
+								found = true;
+							}
+						}
+						if(found === true) {
+							continue;
+						}
+						if(!conflicts && self.conflicts(termin, api.response[i])){
+							conflicts = true;
+						}
+						self.color("Kurs", api.response[i].startUhrzeit, api.response[i].endUhrzeit, noColor);
+					}
+					//Add local Termine to Kurs timeline
+					for(i=0; i<localTermine.length; i++) {
+						if(!conflicts && self.conflicts(termin, localTermine[i])){
+							conflicts = true;
+						}
+						self.color("Kurs", localTermine[i].startUhrzeit, localTermine[i].endUhrzeit, noColor);	
+					}
+					deepRuns++;
+					if(deepRuns === 3) {
+						self.disableToggle = false;
+						if(conflicts) {
+							termin.conflicts = true;
+						} else {
+							termin.conflicts = false;
+						}
+					}
+				} else {
+					console.log(JSON.stringify(api));
+					self.toasts.error.show();
+				}
+			});
+			model.webService.getAllConflictsTermineDozent(this.vorlesung, termin, function(api) {
+				if(!api.isError) {
+					var i;
+					for(i=0; i<api.response.length; i++) {
+						if(api.response[i].id === termin.id) {
+							continue;
+						}
+						var j;
+						var found = false;
+						//Dont use webService for local termin
+						for(j=0; j<self.vorlesungstermine.length; j++) {
+							if(self.vorlesungstermine[j].id === api.response[i].id) {
+								found = true;
+							}
+						}
+						if(found === true) {
+							continue;
+						}
+						if(!conflicts && self.conflicts(termin, api.response[i])){
+							conflicts = true;
+						}
+						self.color("Dozent", api.response[i].startUhrzeit, api.response[i].endUhrzeit, noColor);
+					}
+					//Add local Termine to Dozent timeline
+					for(i=0; i<localTermine.length; i++) {
+						if(!conflicts && self.conflicts(termin, localTermine[i])){
+							conflicts = true;
+						}
+						self.color("Dozent", localTermine[i].startUhrzeit, localTermine[i].endUhrzeit, noColor);	
+					}
+					deepRuns++;
+					if(deepRuns === 3) {
+						self.disableToggle = false;
+						if(conflicts) {
+							termin.conflicts = true;
+						} else {
+							termin.conflicts = false;
+						}
+					}
+				} else {
+					console.log(JSON.stringify(api));
+					self.toasts.error.show();
+				}
+			});
+			model.webService.getAllConflictsTermineRaum(termin, function(api) {
+				if(!api.isError) {
+					var i;
+					for(i=0; i<api.response.length; i++) {
+						if(api.response[i].id === termin.id) {
+							continue;
+						}
+						var j;
+						var found = false;
+						//Dont use webService for local termin
+						for(j=0; j<self.vorlesungstermine.length; j++) {
+							if(self.vorlesungstermine[j].id === api.response[i].id) {
+								found = true;
+							}
+						}
+						if(found === true) {
+							continue;
+						}
+						if(!conflicts && self.conflicts(termin, api.response[i])){
+							conflicts = true;
+						}
+						self.color("Raum", api.response[i].startUhrzeit, api.response[i].endUhrzeit, noColor);
+					}
+					//Add local Termine to Raum timeline
+					for(i=0; i<localTermine.length; i++) {
+						if(localTermine[i].raum === termin.raum) {
+							if(!conflicts && self.conflicts(termin, localTermine[i])){
+								conflicts = true;
+							}
+							self.color("Raum", localTermine[i].startUhrzeit, localTermine[i].endUhrzeit, noColor);	
+						}	
+					}
+					deepRuns++;
+					if(deepRuns === 3) {
+						self.disableToggle = false;
+						if(conflicts) {
+							termin.conflicts = true;
+						} else {
+							termin.conflicts = false;
+						}
+					}
+				} else {
+					console.log(JSON.stringify(api));
+					self.toasts.error.show();
+				}
+			});
+		},
+		conflicts: function(terminNew, terminKnown) {
+			var terminNewStart = new Date('2000-01-01 ' + terminNew.startUhrzeit);
+			var terminNewEnd = new Date('2000-01-01 ' + terminNew.endUhrzeit);
+			var terminKnownStart = new Date('2000-01-01 ' + terminKnown.startUhrzeit);
+			var terminKnownEnd = new Date('2000-01-01 ' + terminKnown.endUhrzeit);
+			if(terminNewStart >= terminKnownEnd || terminNewEnd <= terminKnownStart) {
+				return false;
+			}
+			return true;
+		},
+		checkAllConflicts: function() {
+			var i;
+			for(i=0; i<this.vorlesungstermine.length; i++) {
+				this.showTermin(this.vorlesungstermine[i], true);
+			}
+		},
+		//Color a termin
+		color: function(timeline, start, end, noColor) {
+			if(noColor === true) {
+				return;
+			}
+			var startTime = start.split(":");
+			var endTime = end.split(":");
+			
+			var startIndexHour = this.hours.indexOf(startTime[0]);
+			var startIndexMinute = this.minutes.indexOf(startTime[1]);
+			var endIndexHour = this.hours.indexOf(endTime[0]);
+			var endIndexMinute = this.minutes.indexOf(endTime[1]);
+			var i;
+			for (i = startIndexHour; i < endIndexHour; i++)
+			{
+				var j;
+				for (j = startIndexMinute; j < this.minutes.length; j++)
+				{
+					var id = timeline + "_" + this.hours[i] + "_" + this.minutes[j];
+					this.$[id].classList.add('highlight');
+					this.$[id].title = start + " - " + end;
+				}
+				startIndexMinute = 0;
+			}
+			var j;
+			for (j = 0; j < endIndexMinute; j++)
+			{
+				var id = timeline + "_" + endTime[0] + "_" + this.minutes[j];
+				this.$[id].classList.add('highlight');
+				this.$[id].title = start + " - " + end;
+			}	
+		},
+		clearAllColor: function() {
+			var i;
+			for(i=0; i<this.timelines.length; i++) {
+				this.clearColor(this.timelines[i]);
+			}
+		},
+		clearColor: function(timeline) {
+			var i;
+			for(i = 0; i<this.hours.length; i++) {
+				var j;
+				for(j = 0; j<this.minutes.length; j++) {
+					var id = timeline + "_" + this.hours[i] + "_" + this.minutes[j];
+					this.$[id].classList.remove("highlight");
+					this.$[id].title = "";
+				}
+			}
 		},
 		//Check all invalid properties
 		checkInputs : function() {

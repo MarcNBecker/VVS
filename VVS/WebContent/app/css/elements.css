@@ -20,12 +20,45 @@
 	padding-right: 5px
 }
 
+.inner-inner-shadow-timeline {
+	background-color: #FFF;
+	border-radius: 3px
+}
+
 .inner-inner-shadow /deep/ #ripple {
   color: #D32B18;
 }
 
+.line-spacing {
+	width: 70px;
+}
+
+.timeline-border {
+	border-left: solid 1px;
+}
+
 .highlight {
 	background-color: rgba(226,0,26,0.5);
+}
+
+.flex-container {  
+  display: flex; 
+  flex-flow: row wrap;
+  margin-right: 20px;
+}
+
+.flex-item {
+    width: 320px;
+    min-height: 175px;
+    padding: 5px;
+    margin-top: 20px;
+    margin-left: 20px;
+    cursor: pointer;
+}
+
+.flex-item-item {
+	text-align: left;
+	padding-left: 10px;
 }
 
 .vertical-input {
@@ -46,12 +79,37 @@
 	margin-bottom: 10px;
 }
 
+.small-headline-dashboard {
+	min-height: 75px;
+	font-size: 16pt;
+	font-weight: 350;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	display: flex;
+	text-align: center;
+	justify-content: center;
+    align-content: center;
+    flex-direction: column;
+}
+
+.small-headline-dashboard-sl {
+	min-height: 25px;
+	font-size: 16pt;
+	font-weight: 350;
+	margin-top: 10px;
+	margin-bottom: 20px;
+}
+
 .horizontal-input {
 	margin-left: 20px;
 }
 
 .horizontal-verticalizable > * {
 	margin-bottom: 10px;
+}
+
+.margin > * {
+	margin-bottom: 5px;
 }
 
 .horizontal-input > * {
@@ -99,6 +157,44 @@
 
 .hide {
 	display: hidden;
+	visibility: hidden;
+}
+
+.progress {
+	height:30px;
+}
+
+.progress-dashboard {
+	height: 15px;
+	width: 150px;
+	margin-left: 10px;
+}
+
+.progress-dashboard-sl {
+	height: 15px;
+	width: 130px;
+	margin-left: 10px;
+}
+
+.text-width {
+	width: 138px;
+}
+
+.text-width-sl {
+	width: 200px;
+}
+
+.icon-good {
+	fill: #5C6971;
+}
+
+.icon-bad {
+	fill: #E2001A;
+}
+
+.icon-neutral {
+	fill: #5C6971;
+	height: 100px;
 }
 
 paper-button {
@@ -123,10 +219,6 @@ paper-checkbox::shadow #ink[checked] {
 paper-checkbox::shadow #checkbox.checked {
 	background-color: #D32B18;
 	border-color: #D32B18;
-}
-
-.progress {
-	height:30px;
 }
 
 paper-progress::shadow #activeProgress {

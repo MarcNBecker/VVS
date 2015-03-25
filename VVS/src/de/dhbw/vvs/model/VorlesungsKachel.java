@@ -24,16 +24,13 @@ public class VorlesungsKachel {
 				double duration = Math.round(((minutes - t.getPause()) / 45.0) * 10.0) / 10.0;
 				geplanteStunden += duration;
 			}
-			VorlesungsKachel kachel = new VorlesungsKachel(v, geplanteStunden, geplanteKlausur);
+			VorlesungsKachel kachel = new VorlesungsKachel();
+			kachel.vorlesung = v;
+			kachel.geplanteStunden = geplanteStunden;
+			kachel.geplanteKlausur = geplanteKlausur;
 			dashboard.add(kachel);
 		}
 		return dashboard;
-	}
-	
-	public VorlesungsKachel(Vorlesung vorlesung, double geplanteStunden, boolean geplanteKlausur) {
-		this.vorlesung = vorlesung;
-		this.geplanteStunden = geplanteStunden;
-		this.geplanteKlausur = geplanteKlausur;
 	}
 
 	public Vorlesung getVorlesung() {

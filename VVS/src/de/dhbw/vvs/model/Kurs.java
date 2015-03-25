@@ -44,6 +44,24 @@ public class Kurs {
 		return kursList;
 	}
 	
+	public static ArrayList<Kurs> getAllForStudiengangsleiter(Studiengangsleiter s) throws WebServiceException {
+		if(s == null) {
+			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_OBJECT);
+		}
+		s.getDirectAttributes(); //check existances
+		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
+		ArrayList<Object> fieldValues = new ArrayList<Object>();
+		fieldValues.add(s.getID());
+		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT id, kursname FROM kurs WHERE studiengangsleiter = ? ORDER BY kursname DESC", fieldValues);
+		ArrayList<Kurs> kursList = new ArrayList<Kurs>();
+		for(TypeHashMap<String, Object> result : resultList) {
+			Kurs k = new Kurs(result.getInt("id"));
+			k.kursname = result.getString("kursname");
+			kursList.add(k);
+		}
+		return kursList;
+	}
+	
 	public Kurs(int id) throws WebServiceException {
 		if(id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
