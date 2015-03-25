@@ -7,6 +7,7 @@
 			<div vertical?="{{smallScreen}}" horizontal?="{{!smallScreen}}" layout>
 				<span class="headline vertical-input">{{kurs.kursname}} - {{semester}}. Semester</span>
 				<div horizontal layout center class="flex-container">
+				<!-- bestehende Vorlesungen -->
 					<template repeat="{{item in vorlesungen}}">
 						<paper-shadow z="2" class="inner-shadow flex-item">
 							<div class="margin">
@@ -28,6 +29,7 @@
 							</div>
 						</paper-shadow>
 					</template>
+					<!-- neue Vorlesung -->
 					<paper-shadow z="2" class="inner-shadow flex-item">
 						<div horizontal layout center-center fit>
 							<core-icon class="icon-neutral" icon="add-circle-outline" flex></core-icon>
