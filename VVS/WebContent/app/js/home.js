@@ -65,11 +65,11 @@ template.pageDescriptor = {
 	feiertage: {name: 'Feiertage pflegen', hash: 'feiertage', html: '<vvs-feiertage pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-feiertage>'},
 	planung: {name: 'Planung', hash: 'planung', html: '<vvs-planung pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-planung>'},
 	vdashboard: {name: 'Vorlesungsdashboard', hash: 'vdashboard', html: '<vvs-dashboard-vorlesung pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-dashboard-vorlesung>'},
-	sdashboard: {name: 'Studiengangsleiterdashboard', hash: 'sdashboard', html: '<vvs-dashboard-studiengangsleiter user="{{user}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-dashboard-studiengangsleiter>'}
+	sdashboard: {name: 'Dashboard', hash: 'sdashboard', html: '<vvs-dashboard-studiengangsleiter user="{{user}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-dashboard-studiengangsleiter>'}
 };
 
 //Pages to display in the navigation drawer
-template.drawerPages = [template.pageDescriptor.stammdaten, template.pageDescriptor.vdashboard, template.pageDescriptor.sdashboard];
+template.drawerPages = [template.pageDescriptor.sdashboard, template.pageDescriptor.stammdaten];
 
 //Pages that can be displayed in the home main div
 template.homePages = [template.pageDescriptor.stammdaten, 

@@ -156,8 +156,18 @@
 	margin-left: 10px;
 }
 
+.progress-dashboard-sl {
+	height: 15px;
+	width: 130px;
+	margin-left: 10px;
+}
+
 .text-width {
 	width: 138px;
+}
+
+.text-width-sl {
+	width: 200px;
 }
 
 .icon-good {

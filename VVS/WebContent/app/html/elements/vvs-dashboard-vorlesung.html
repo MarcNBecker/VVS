@@ -22,7 +22,7 @@
 									<div class="small-headline-dashboard">{{item.vorlesung.fachInstanz.fach.name}}</div>
 									<div class="flex-item-item" horizontal layout center>
 										<span class="text-width">geplante Stunden:</span>
-										<paper-progress class="progress-dashboard" value="{{item.geplanteStunden/item.vorlesung.fachInstanz.stunden}}"></paper-progress>
+										<paper-progress class="progress-dashboard" value="{{(item.geplanteStunden/item.vorlesung.fachInstanz.stunden)*100}}"></paper-progress>
 									</div>
 									<div class="flex-item-item" horizontal layout center-center>
 										<span class="text-width">Dozent ausgew&auml;hlt:</span>
@@ -71,7 +71,11 @@
 					self.kurs = new model.templates.Kurs();
 					self.disableToggle = true;
 					if(self.pageParameter.vdashboard.id === 0) {
-						return; //TODO navigate to studiengangsleiter dashboard
+						self.pageLoaded.vdashboard = false;
+						self.pageLoaded.sdashboard = false;
+						window.history.replaceState({redirect: true}, '', '#!sdashboard-');
+						location.href = "#!sdashboard";
+						return;
 					}
 					var params = self.pageParameter.vdashboard.id.split("-");
 					self.kurs.id = params[0];
