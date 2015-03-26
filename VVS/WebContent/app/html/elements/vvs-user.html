@@ -1,9 +1,11 @@
 <polymer-element name="vvs-user">
 	<template>
 		<link rel="stylesheet" href="../../css/elements.css" shim-shadowdom>
+		<!-- MAIN DIV -->
 		<paper-shadow z="3" class="shadow">
 			<div vertical layout>
 				<div vertical layout class="vertical-input">
+					<!-- Headline -->
 					<span class="headline">User</span>
 					<div vertical layout class="horizontal-input">
 						<!-- Main input fields -->
@@ -21,6 +23,7 @@
 						<span>User ist Sekret&auml;rin</span>
 						<paper-checkbox checked="{{sekretaerinChecked}}" disabled?="{{toggleDisabled}}"></paper-checkbox>
 					</div>
+					<!-- Indicator which Studiengangsleiterdashboard will be shown -->
 					<div horizontal layout center class="{{creationMode ? 'horizontal-input' : 'horizontal-input horizontal-button-bar'}}" hidden?="{{!sekretaerinChecked && creationMode}}">
 						<span>Repr&auml;sentiert</span>
 						<paper-dropdown-menu-searchable label="Studiengangsleiter" disabled?="{{toggleDisabled}}" self-center flex>
@@ -48,10 +51,12 @@
 				</div>
 			</div>
 		</paper-shadow>
+		<!-- Action Dialog for Deletion -->
 		<paper-action-dialog id="delete_user_dialog" heading="{{user.name}} wirklich l&ouml;schen?">
 			<paper-button affirmative>Nein</paper-button>
 			<paper-button on-click="{{doDelete}}" affirmative autofocus>L&ouml;schen</paper-button>
 		</paper-action-dialog>
+		<!-- Toast -->
 		<paper-toast id="toast_duplicate" text="Der Username existiert bereits! Es wurde kein Benutzer angelegt" duration="7000"></paper-toast>
 	</template>
 	<script type="text/javascript">
@@ -65,6 +70,7 @@
 			toggleDisabled: true,
 			creationMode: true,
 			invalid: {},
+			//Publish those attributes to home
 			publish: {
 				currentUser: {},
 				pageParameter: {},
@@ -100,9 +106,11 @@
 				//Go to edit mode
 				} else {
 					self.creationMode = false;
+					//Load selected User
 					model.webService.getUser(showUser, function(api) {
 						if(!api.isError) {
 							self.user = api.response;
+							//Load all available Studiengangsleiter
 							model.webService.getAllStudiengangsleiter(function(api) {
 								if(!api.isError) {
 									self.studiengangsleiter = api.response;
@@ -113,6 +121,7 @@
 											break;
 										}
 									}
+									//Enable everything
 									self.toggleDisabled = false;
 									self.job('update-labels-ready', function() {
 										self.$.name.inputAction();
@@ -122,7 +131,7 @@
 									console.log(JSON.stringify(api));
 									self.toasts.error.show();
 								}
-							})
+							});
 						} else {
 							console.log(JSON.stringify(api));
 							self.toasts.error.show();
@@ -136,6 +145,7 @@
 				if (!self.checkInputs()) {
 					return;
 				}
+				//Disable everything
 				self.toggleDisabled = true;
 				//If Sekretaerin is selected, set studiengangsleiter ID
 				if (self.sekretaerinChecked === true && self.selectedStudiengangsleiter >= 0) {
@@ -164,6 +174,7 @@
 				}
 
 			},
+			//Create User
 			createUser: function() {
 				var self = this;
 				//Create User
@@ -173,6 +184,7 @@
 						self.pageLoaded.stammdaten = false;
 						self.pageParameter.user.id = self.user.name;
 						window.history.replaceState({}, '', '#!user-'+self.user.name);
+						//Enable everything
 						self.toggleDisabled = false;
 						self.creationMode = false;
 						self.toasts.success.show();
@@ -199,6 +211,7 @@
 					}
 				});
 			},
+			//Update selected User
 			update: function() {
     			if(!this.checkInputs()) {
     				return;
@@ -217,6 +230,7 @@
 		    				self.currentUser = self.user;
 		    				self.pageLoaded.sdashboard = false;
 	    				}
+	    				//Enable inputs
 	    				self.toggleDisabled = false;
 						self.toasts.success.show();
 						self.job('update-labels-update', function() {
@@ -228,9 +242,11 @@
 	    			}
 	    		});
 			},
+			// Show Action Dialog for Deletion
 	    	initDelete: function() {
 	    		this.$.delete_user_dialog.toggle();
 	    	},
+	    	//Delete User
 	    	doDelete: function() {
 	    		var self = this;
 	    		self.toggleDisabled = true;

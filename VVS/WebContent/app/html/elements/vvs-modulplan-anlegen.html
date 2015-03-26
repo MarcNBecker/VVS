@@ -1,45 +1,48 @@
 <polymer-element name="vvs-modulplan-anlegen">
 	<template>
 		<link rel="stylesheet" href="../../css/elements.css" shim-shadowdom>
+		<!-- MAIN DIV -->
 		<paper-shadow z="3" class="shadow">
-		<div vertical layout>
-			<div vertical layout class="vertical-input horizontal-verticalizable">
-				<span class="headline">Allgemeine Angaben</span>	
-				<div vertical layout class="horizontal-input">
-					<!-- Main input fields -->
-					<paper-input-decorator label="Studiengang" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.studiengang}}">
-						<input is="core-input" value={{modulplan.studiengang}} maxlength="100" required disabled?="{{toggleDisabled}}">
-					</paper-input-decorator>
-					<paper-input-decorator label="Vertiefungsrichtung" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.vertiefungsrichtung}}">
-						<input is="core-input" value={{modulplan.vertiefungsrichtung}} maxlength="100" required disabled?="{{toggleDisabled}}">
-					</paper-input-decorator>	
-					<paper-input-decorator label="Gueltig ab Jahr" floatingLabel>
-						<input is="core-input" type="number" value={{modulplan.gueltigAb}} min="1" max="9999" preventInvalidInput="true" disabled?="{{toggleDisabled}}">
-					</paper-input-decorator>
-				</div>
-				<div horizontal layout center>
-					<span class="headline">Vorlage</span>
-					<paper-checkbox checked="{{vorlageChecked}}" self-center disabled?="{{toggleDisabled}}"></paper-checkbox>
-				</div>
-				<div vertical layout class="horizontal-input">
-					<paper-dropdown-menu-searchable label="Vorlage" hidden?="{{!vorlageChecked}}" disabled?="{{toggleDisabled}}">
-						<paper-dropdown-searchable class="dropdown" arrayName="vorlagen" searchProperties="studiengang vertiefungsrichtung" hideProperty="hidden">
-							<core-menu selected="{{selectedVorlage}}" class="menu">
-								<template repeat="{{item in vorlagen}}">
-									<paper-item hidden?="{{item.hidden}}">{{item.studiengang}} - {{item.vertiefungsrichtung}}</paper-item>
-								</template>
-							</core-menu>
-						</paper-dropdown-searchable>
-					</paper-dropdown-menu-searchable>
-				</div>
-				<!-- Button Bar -->
-				<div horizontal layout center class="horizontal-input horizontal-button-bar">
-					<paper-button on-click="{{create}}" raised disabled?="{{toggleDisabled}}">Modulplan anlegen</paper-button>
-					<paper-button on-click="{{cancel}}" raised disabled?="{{toggleDisabled}}">Abbrechen</paper-button>
-					<paper-spinner active?="{{toggleDisabled}}" self-center></paper-spinner>
+			<div vertical layout>
+				<div vertical layout class="vertical-input horizontal-verticalizable">
+					<!-- Headline -->
+					<span class="headline">Allgemeine Angaben</span>	
+					<div vertical layout class="horizontal-input">
+						<!-- Main input fields -->
+						<paper-input-decorator label="Studiengang" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.studiengang}}">
+							<input is="core-input" value={{modulplan.studiengang}} maxlength="100" required disabled?="{{toggleDisabled}}">
+						</paper-input-decorator>
+						<paper-input-decorator label="Vertiefungsrichtung" error="Pflichtfeld" floatingLabel autoValidate isInvalid="{{invalid.vertiefungsrichtung}}">
+							<input is="core-input" value={{modulplan.vertiefungsrichtung}} maxlength="100" required disabled?="{{toggleDisabled}}">
+						</paper-input-decorator>	
+						<paper-input-decorator label="Gueltig ab Jahr" floatingLabel>
+							<input is="core-input" type="number" value={{modulplan.gueltigAb}} min="1" max="9999" preventInvalidInput="true" disabled?="{{toggleDisabled}}">
+						</paper-input-decorator>
+					</div>
+					<!-- Create Modulplan based on a Vorlage -->
+					<div horizontal layout center>
+						<span class="headline">Vorlage</span>
+						<paper-checkbox checked="{{vorlageChecked}}" self-center disabled?="{{toggleDisabled}}"></paper-checkbox>
+					</div>
+					<div vertical layout class="horizontal-input">
+						<paper-dropdown-menu-searchable label="Vorlage" hidden?="{{!vorlageChecked}}" disabled?="{{toggleDisabled}}">
+							<paper-dropdown-searchable class="dropdown" arrayName="vorlagen" searchProperties="studiengang vertiefungsrichtung" hideProperty="hidden">
+								<core-menu selected="{{selectedVorlage}}" class="menu">
+									<template repeat="{{item in vorlagen}}">
+										<paper-item hidden?="{{item.hidden}}">{{item.studiengang}} - {{item.vertiefungsrichtung}}</paper-item>
+									</template>
+								</core-menu>
+							</paper-dropdown-searchable>
+						</paper-dropdown-menu-searchable>
+					</div>
+					<!-- Button Bar -->
+					<div horizontal layout center class="horizontal-input horizontal-button-bar">
+						<paper-button on-click="{{create}}" raised disabled?="{{toggleDisabled}}">Modulplan anlegen</paper-button>
+						<paper-button on-click="{{cancel}}" raised disabled?="{{toggleDisabled}}">Abbrechen</paper-button>
+						<paper-spinner active?="{{toggleDisabled}}" self-center></paper-spinner>
+					</div>
 				</div>
 			</div>
-		</div>
 		</paper-shadow>
 	</template>
 	<script type="text/javascript">
@@ -52,6 +55,7 @@
 			toggleDisabled: true,
 			selectedVorlage: 0,
 			invalid: {},
+			//Publish those attributes to home
 			publish: {
 				pageLoaded: {},
 				toasts: {}
@@ -75,6 +79,7 @@
 						//Init required fields
 						self.invalid.studiengang = true;
 						self.invalid.vertiefungsrichtung = true;
+						//Enable everything
 						self.toggleDisabled = false;
 					}
 					else
@@ -91,6 +96,7 @@
     			if(!self.checkInputs()) {
     				return;
     			}
+    			//Disable everything
     			self.toggleDisabled = true;
     			// If Vorlage is selected, set ID
     			if (self.vorlageChecked === true && (self.selectedVorlage !== null && self.vorlagen.length > 0))
@@ -105,6 +111,7 @@
 					{
 						self.modulplan = api.response;
 						self.toasts.success.show();
+						//Navigate to Modulplan pflegen
 						self.pageLoaded.stammdaten = false;
 						self.pageLoaded.modulplanAnlegen = false;
 						self.pageLoaded.modulplanPflegen = false;

@@ -2,6 +2,7 @@
 	<template>
 		<paper-action-dialog id="vorlesungs_overlay" backdrop="true" layered="true" heading="Vorlesungsauswahl f&uuml;r {{kurs.kursname}} im {{semester}}. Semester">
 			<div vertical layout class="overlay-horizontal-input overlay-vertical-input">
+				<!-- Search -->
 				<div horizontal layout center>
 					<paper-input-decorator id="vorlesungSuchenInputDecorater" label="Vorlesung suchen" flex>
 						<input is="core-input" type="text" value={{searchTerm}} disabled?="{{disableToggle}}">
@@ -9,6 +10,7 @@
 					<paper-icon-button icon="search" on-click="{{search}}" self-center></paper-icon-button>
 					<paper-spinner active?={{disableToggle}} self-center></paper-spinner>
 				</div>
+				<!-- Open Vorlesungen of selected Semester -->
 				<div vertical layout class="overlay-bottom">
 					<span class="overlay-headline">Verbleibende Vorlesungen des aktuellen Semesters</span>
 					<paper-shadow z="2" class="overlay-inner-shadow">
@@ -20,6 +22,7 @@
 						</template>
 					</paper-shadow>
 				</div>
+				<!-- All other open Vorlesungen -->
 				<div vertical layout class="overlay-bottom">
 					<span class="overlay-headline">Sonstige verbleibende Vorlesungen</span>
 					<paper-shadow z="2" class="overlay-inner-shadow">
@@ -31,13 +34,16 @@
 						</template>
 					</paper-shadow>
 				</div>
-			</div>			
+			</div>
+			<!-- Button Bar -->			
 			<paper-button affirmative>Abbrechen</paper-button>
 			<paper-button on-click="{{create}}" affirmative autofocus>&Uuml;bernehmen</paper-button>
 		</paper-action-dialog>
 	</template>
-	<script>
+	<script type="text/javascript">
+		"use strict";
 		Polymer("vvs-vorlesungs-overlay",{
+			//Initializing
 			alleVorlesungen: [],
 			aktuelleVorlesungen:[],
 			verbleibendeVorlesungen:[],
@@ -61,6 +67,7 @@
 				self.boolSuchenVorlesungIsEmpty = true;
 				self.disableToggle = true;
 			},
+			//Load Vorlesungen
 			load: function() {
 				var self = this;
 				self.alleVorlesungen = [];
@@ -68,6 +75,7 @@
 				self.verbleibendeVorlesungen = [];
 				self.searchTerm = "";
 				self.boolSuchenVorlesungIsEmpty = true;
+				//Disable everything
 				self.disableToggle = true;
 				self.createdVorlesungen = false;
 				//Load offene Vorlesungen
@@ -90,6 +98,7 @@
 								self.verbleibendeVorlesungen.push(api.response[i]);
 							}
 						}
+						//Enable everything
 						self.disableToggle = false;
 					}
 					else
@@ -121,6 +130,7 @@
 						selectedVorlesungen.push(self.verbleibendeVorlesungen[ii]);
 					}
 				}	
+				//Create Vorlesungen
 				var deepRuns = 0;
 				var iii;
 				for (iii = 0; iii < selectedVorlesungen.length; iii++)
@@ -185,6 +195,7 @@
 		    		}
 		    	}
 			},
+			//Search, if search term has changed
 			searchTermChanged: function() {
 				this.search();
 			}

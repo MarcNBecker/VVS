@@ -2,10 +2,12 @@
 	<template>
 		<link rel="stylesheet" type="text/css" href="../../css/elements.css">
 		<core-media-query query="max-width: 1400px" queryMatches="{{smallScreen}}"></core-media-query>
+		<!-- MAIN DIV -->
 		<paper-shadow z="3" class="shadow">
 			<div vertical layout>
 				<span horizontal layout class="headline vertical-input">{{modulplan.studiengang}} - {{modulplan.vertiefungsrichtung}}{{modulplan.gueltigAb > 0 ? ' (ab ' + modulplan.gueltigAb + ')' : ''}}</span>
 				<div horizontal?="{{!smallScreen}}" vertical?="{{smallScreen}}" layout class="horizontal-input vertical-input">
+					<!-- Table with Modul-Fach-Combinations -->
 					<div auto-vertical?="{{smallScreen}}" vertical layout flex?="{{!smallScreen}}" two?="{{!smallScreen}}">
 						<paper-shadow z="2" class="inner-shadow">
 							<div horizontal layout>
@@ -31,6 +33,7 @@
 								</template>
 							</template>
 						</paper-shadow>
+						<!-- Button Bar -->
 						<div horizontal layout center class="horizontal-button-bar horizontal-verticalizable">
 							<paper-button on-click={{save}} raised disabled?="{{disableToggle}}">Speichern</paper-button>
 							<paper-button on-click={{initDeleteModulplan}} raised disabled?="{{disableToggle}}">L&ouml;schen</paper-button>
@@ -38,8 +41,10 @@
 							<paper-spinner active?={{disableToggle}} self-center></paper-spinner>
 						</div>
 					</div>
+					<!-- Main inputs -->
 					<div auto-vertical?="{{smallScreen}}" vertical layout flex?="{{!smallScreen}}" class="input-padding">			
 						<span class="small-headline">Modulplan bearbeiten</span>
+						<!-- Modul -->
 						<div horizontal layout center>
 							<paper-dropdown-menu-searchable label="Neues Modul anlegen oder eines ausw&auml;hlen" disabled?="{{disableToggle || selectedFach >= 0}}" on-core-select="{{setModulIsInvalid}}" flex>
 								<paper-dropdown-searchable id="modulDropdown" class="dropdown" arrayName="module" searchProperties="modul.name modul.kurzbeschreibung" hideProperty="hidden">
@@ -67,6 +72,7 @@
 						<paper-input-decorator id="credits" label="Credits" error="Pflichtfeld: Keine g&uuml;ltige Creditanzahl" floatingLabel autoValidate isInvalid="{{invalid.credits}}">
 							<input is="core-input" type="text" pattern="[0-9]+" value="{{inputModulInstanz.credits}}" disabled?="{{disableToggle}}" required>
 						</paper-input-decorator>
+						<!-- Fach -->
 						<div horizontal layout center>
 							<paper-dropdown-menu-searchable label="Neues Fach anlegen oder eines ausw&auml;hlen" disabled?="{{disableToggle || (selectedModul < 0 && (invalid.mname || invalid.mkurzbeschreibung || invalid.credits))}}" on-core-select="{{setFachIsInvalid}}" flex>
 								<paper-dropdown-searchable id="fachDropdown" class="dropdown" arrayName="faecher" searchProperties="fach.name fach.kurzbeschreibung" hideProperty="hidden">
@@ -99,6 +105,7 @@
 								<input is="core-input" type="text" pattern="[0-9]+" value="{{inputFachInstanz.stunden}}" disabled?="{{disableToggle}}" required>
 							</paper-input-decorator>
 						</div>
+						<!-- Button Bar -->
 						<div horizontal layout>
 							<paper-button on-click={{add}} raised disabled?="{{disableToggle}}" flex>&Uuml;bernehmen</paper-button>
 							<paper-button on-click={{reject}} raised disabled?="{{disableToggle}}" flex>Verwerfen</paper-button>
@@ -107,7 +114,9 @@
 				</div>
 			</div>
 		</paper-shadow>
+		<!-- Toast -->
 		<paper-toast id="toast_forbidden_fachinstanz" text="Ein Fach darf nicht mehreren Modulen zugeordnet werden" duration="7000"></paper-toast>
+		<!-- Action Dialogs for Deletion -->
 		<paper-action-dialog id="delete_modulplan_dialog" heading="{{modulplan.studiengang}} - {{modulplan.vertiefungsrichtung}} wirklich l&ouml;schen?">
 			<paper-button affirmative>Nein</paper-button>
 			<paper-button on-click="{{deleteModulplan}}" affirmative autofocus>L&ouml;schen</paper-button>
@@ -118,8 +127,9 @@
 		</paper-action-dialog>
 	</template>
 	<script type="text/javascript">
-	"use strict";
+		"use strict";
 		Polymer("vvs-modulplan-pflegen",{
+			//Initializing
 			modulplan: new model.helper.ModulplanComplete(),
 			module: [],
 			faecher: [],
@@ -143,9 +153,9 @@
 				pageLoaded: {},
 				toasts: {}
 			},
+			//Initialize the screen
 			ready: function() {
 				var self = this;
-				//init
 				self.modulplan = new model.helper.ModulplanComplete();
 				self.module = [];
 				self.faecher = [];
@@ -163,7 +173,7 @@
 				self.toggleModulInfo = false;
 				self.toggleFachInfo = false;
 				self.invalid = {};
-				//navigate to modulplanAnlegen
+				//navigate to modulplanAnlegen if ModulplanID is invalid
 				if(self.pageParameter.modulplanPflegen.id <= 0) {
 					self.pageLoaded.modulplanAnlegen = false;
 					self.pageLoaded.modulplanPflegen = false;
@@ -174,6 +184,7 @@
 				var showModulplan = new model.templates.Modulplan();
 				showModulplan.id = self.pageParameter.modulplanPflegen.id;
 				var deepRuns = 0;
+				//Load selected Modulplan
 				model.helper.getModulplanComplete(showModulplan, function(api) {
 					self.modulplan = api;
 					model.webService.getAllModule(function(api) {
@@ -214,6 +225,7 @@
 							self.toasts.error.show();
 						}
 					});
+					//Load all available Faecher
 					model.webService.getAllFaecher(function(api) {
 						if(!api.isError) {
 							deepRuns++;
@@ -265,6 +277,7 @@
 					self.toasts.error.show();
 				});
 			},
+			//Add a Modul-Fach-Combination
 			add: function() {
 				var onlyAllowModulplanUpdate = false;
 				if(!this.checkInputs()) {
@@ -275,8 +288,7 @@
 					}
 				}
 				//Says if the modul was newly created and thus doesn't have a fachInstanzList
-				var modulHasFachList = false;
-				
+				var modulHasFachList = false;				
 				//The ModulInstanz is completely new, we need to set an internal ID and add it to the modulplan and the dropdown
 				if(this.selectedModul < 0 && !onlyAllowModulplanUpdate) {
 					this.inputModulInstanz.id = this.nextModulID;
@@ -301,18 +313,15 @@
 						this.modulplan.modulInstanzList.push(this.inputModulInstanz);
 					}
 					modulHasFachList = true;
-				}
-				
+				}				
 				//Stop if we only want to update the modulplan
 				if(onlyAllowModulplanUpdate) {
 					//clear inputs
 					this.reject();
 					return;
-				}
-				
+				}				
 				//Says if the fach was newly created or only updated
-				var onlyUpdateFach = false;
-				
+				var onlyUpdateFach = false;				
 				//Equivalent to ModulInstanz
 				if(this.selectedFach < 0) {
 					this.inputFachInstanz.id = this.nextFachID;
@@ -339,8 +348,7 @@
 						}
 						onlyUpdateFach = false;
 					}
-				}
-				
+				}			
 				if(!onlyUpdateFach) {
 					if(modulHasFachList) {
 						this.inputModulInstanz.fachInstanzList.push(this.inputFachInstanz);
@@ -348,8 +356,7 @@
 						this.inputModulInstanz.fachInstanzList = [this.inputFachInstanz];
 					}
 					this.inputFachInstanz.modulInstanzID = this.inputModulInstanz.id;
-				}
-				
+				}				
 				//reset input fields
 				this.reject();
 				//reset dropdowns, if something changed
@@ -358,6 +365,7 @@
 		        this.$.modulDropdown.$.scroller.style.height = "";
 		       	this.$.modulDropdown.$.scroller.style.width = "";
 		    },
+		    //Reset input fields
 			reject: function() {
 				if(this.selectedModul === -1) {
 					//Imitate dropdown change
@@ -372,16 +380,19 @@
 					this.selectedFach = -1;
 				}
 			},
+			//Edit a Modul-Fach-Combination
 			edit: function(e, detail, sender) {
 				this.selectedModul = this.module.indexOf(e.target.templateInstance.model.modulInstanz);
 				this.selectedFach = this.faecher.indexOf(e.target.templateInstance.model.fachInstanz);
 			},
+			// Show Action Dialog for Deletion
 			initDoDelete: function(e, detail, sender) {
 				//These references directly point to the same object that is in the modulplan and in the dropdown arrays
 				this.modulInstanzToDelete = e.target.templateInstance.model.modulInstanz;
 				this.fachInstanzToDelete = e.target.templateInstance.model.fachInstanz;
 				this.$.delete_fach_dialog.toggle();
 			},
+			//Delete Modulplan
 			doDelete: function() {
 				var miPosModulplan = this.modulplan.modulInstanzList.indexOf(this.modulInstanzToDelete);
 				var fiPosModulplan = this.modulplan.modulInstanzList[miPosModulplan].fachInstanzList.indexOf(this.fachInstanzToDelete);
@@ -431,6 +442,7 @@
 		        this.$.modulDropdown.$.scroller.style.height = "";
 		       	this.$.modulDropdown.$.scroller.style.width = "";
 			},
+			//Save Modulplan
 			save: function() {
 				this.disableToggle = true;
 				//FIRST COPY OBJECTS IN DELETION LISTS
@@ -439,6 +451,7 @@
 				//This has to be done, because the last FachInstanz of a Fach deletes the Fach (same for ModulInstanz & Modul)
 				this.doUpdatePartOfSave();
 			},
+			//Copy Module and Faecher in deletion lists
 			doCopyPartOfSave: function() {
 				//copy deletion list
 				var i;
@@ -450,6 +463,7 @@
 					this.deletedModulInstanzen[j] = JSON.parse(JSON.stringify(this.deletedModulInstanzen[j])); //clone
 				}
 			},
+			//Update and delete Module and Faecher
 			doUpdatePartOfSave: function() {
 				var self = this;
 				var totalVeryDeepRuns = self.modulplan.modulInstanzList.length;
@@ -501,6 +515,7 @@
 					self.doDeletePartOfSave();
 				}
 			},
+			//Delete Module and Faecher
 			doDeletePartOfSave: function() {
 				//DELETE (NEEDS A COPIED LIST, FROM BEFORE UPDATE (otherwise ids are broken by update))
 				var self = this;
@@ -551,9 +566,11 @@
 					self.toasts.success.show();
 				}
 			},
+			//Show Action Dialog for Deletion
 			initDeleteModulplan: function() {
 				this.$.delete_modulplan_dialog.toggle();
 			},
+			//Delete Modulplan
 			deleteModulplan: function() {
 				var self = this;
 				self.disableToggle = true;
@@ -575,10 +592,12 @@
 					}
 				});
 			},
+			//Navigate backwards and force a reload
 			cancel: function() {
 	    		this.pageLoaded.modulplanPflegen = false;
 	    		window.history.back();
 			},
+			//Check if Modul is deleted
 			checkModulIsDeleted: function(id) {
 				var i;
 				for(i=0; i<this.deletedModulInstanzList.length; i++) {
@@ -588,6 +607,7 @@
 				}
 				return false;
 			},
+			//Check if Fach is deleted
 			checkFachIsDeleted: function(id) {
 				var i;
 				for(i=0; i<this.deletedFachInstanzList.length; i++) {
@@ -608,9 +628,11 @@
 				}
 				return true;
 			},
+			//Check inputs of Modul
 			checkInputsModul : function() {
 				return (!this.invalid.mname && !this.invalid.mkurzbeschreibung && !this.invalid.credits);
 			},
+			//Check inputs of Fach
 			checkInputsFach: function() {
 				return (!this.invalid.fname && !this.invalid.fkurzbeschreibung && !this.invalid.stunden && !this.invalid.semester);
 			},
@@ -637,6 +659,7 @@
 				this.invalid.mkurzbeschreibung = invalid;
 				this.invalid.credits = invalid;
 			},
+			//Switch Modul info
 			switchModulInfo: function() {
 				this.toggleModulInfo = !this.toggleModulInfo;
 			},
@@ -677,6 +700,7 @@
 				this.invalid.stunden = invalid;
 				this.invalid.semester = invalid;
 			},
+			//Switch Fach info
 			switchFachInfo: function() {
 				this.toggleFachInfo = !this.toggleFachInfo;
 			}

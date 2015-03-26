@@ -129,6 +129,7 @@
 	<script type="text/javascript">
 		"use strict";
 		Polymer('vvs-uebersicht', {
+			//Initializing
 			dozenten: [],
 			kurse: [],
 			modulplaene: [],
@@ -139,11 +140,13 @@
 			toggleDisableModulplan: true,
 			toggleDisableFeiertag: true,
 			toggleDisableUser: true,
+			//Publish those attributes to home
 			publish: {
 				pageLoaded: {},
 				pageDescriptor: {},
 				toasts: {}
 			},
+			//Initialize the screen
     		ready: function()
     		{
     			var self = this;
@@ -157,6 +160,7 @@
     			self.toggleDisableModulplan = true;
     			self.toggleDisableFeiertag = true;
     			self.toggleDisableUser = true;
+    			//Load all available Dozenten
     			model.webService.getAllDozenten(function(api) {
 					if (!api.isError)
 					{
@@ -169,6 +173,7 @@
 						self.toasts.error.show();
 					}
 				});
+    			//Load all available Kurse
     			model.webService.getAllKurse(function(api) {
 					if (!api.isError)
 					{
@@ -181,6 +186,7 @@
 						self.toasts.error.show();
 					}
 				});
+    			//Load all available Modulplaene
     			model.webService.getAllModulplaene(function(api) {
 					if (!api.isError)
 					{
@@ -193,6 +199,7 @@
 						self.toasts.error.show();
 					}
 				});
+    			//Load all available User
     			model.webService.getAllUser(function(api) {
     				if(!api.isError) {
     					self.users = api.response;
@@ -202,6 +209,7 @@
 						self.toasts.error.show();
     				}
     			});
+    			//Calculate last year and next to years for year dropdown
     			var aktuellesDatum = new Date();
     			var aktuellesJahr = aktuellesDatum.getFullYear();
     			aktuellesJahr = aktuellesJahr - 1;
@@ -214,60 +222,80 @@
     			self.jahre.push(aktuellesJahr);
     			self.toggleDisableFeiertag = false;
     		},
+    		//Create Dozent
     		createDozent: function() {
     			var self = this;
+    			//Navigate to Dozent
     			self.pageLoaded.dozent = false;
     			location.href = "#!" + self.pageDescriptor.dozent.hash;
     		},
+    		//Update selected Dozent
     		updateDozent: function() {
     			var self = this;
     			if (self.$.dozent.selected !== null && self.dozenten.length > 0)
 				{
-					self.pageLoaded.dozent = false;
+    				//Navigate to Dozent
+    				self.pageLoaded.dozent = false;
 					location.href = "#!" + self.pageDescriptor.dozent.hash + "-" + self.dozenten[self.$.dozent.selected].id;
 				}
     		},
+    		//Create Kurs
     		createKurs: function() {
-    			var self = this; 
+    			var self = this;
+    			//Navigate to Kurs
     			self.pageLoaded.kurs = false;
     			location.href = "#!" + self.pageDescriptor.kurs.hash;
     		},
+    		//Update selected Kurs
     		updateKurs: function() {
     			var self = this;
     			if (self.$.kurs.selected !== null && self.kurse.length > 0)
 				{
-					self.pageLoaded.kurs = false;
+    				//Navigate to Kurs
+    				self.pageLoaded.kurs = false;
 					location.href = "#!" + self.pageDescriptor.kurs.hash + "-" + self.kurse[self.$.kurs.selected].id;
 				}
     		},
+    		//Create Modulplan
     		createModulplan: function() {
     			var self = this;
+    			//Navigate to Modulplan
     			self.pageLoaded.modulplanAnlegen = false;
     			location.href = "#!" + self.pageDescriptor.modulplanAnlegen.hash;
     		},
+    		//Update selected Modulplan
     		updateModulplan: function() {
     			var self = this;
 				if (self.$.modulplan.selected !== null && self.modulplaene.length > 0)
 				{
+					//Navigate to Modulplan
 					self.pageLoaded.modulplanPflegen = false;
 					location.href = "#!" + self.pageDescriptor.modulplanPflegen.hash + "-" + self.modulplaene[self.$.modulplan.selected].id;
 				}
     		},
+    		//Create User
     		createUser: function() {
     			var self = this;
+    			//Navigate to User
+    			self.pageLoaded.user = false;
     			location.href = "#!" + self.pageDescriptor.user.hash;
     		},
+    		//Update selected User
     		updateUser: function() {
     			var self = this;
     			if (self.$.user.selected !== null && self.users.length > 0)
     			{
-					location.href = "#!" + self.pageDescriptor.user.hash + "-" + self.users[self.$.user.selected].name;
+    				//Navigate to User
+    				self.pageLoaded.user = false;
+    				location.href = "#!" + self.pageDescriptor.user.hash + "-" + self.users[self.$.user.selected].name;
     			}
     		},
+    		//Update feiertage of selected Year
     		updateFeiertage: function() {
     			var self = this;
 				if (self.$.jahr.selected !== null && self.jahre.length > 0)
 				{
+					//Navigate to Feiertage
 					self.pageLoaded.feiertage = false;
 					location.href = "#!" + self.pageDescriptor.feiertage.hash + "-" + self.jahre[self.$.jahr.selected];
 				}
