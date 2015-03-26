@@ -27,8 +27,8 @@
 									</div>
 									<div class="flex-item-item" horizontal layout center-center>
 										<span class="text-width">Dozent ausgew&auml;hlt:</span>
-										<core-icon class="icon-good" icon="check-box" hidden?="{{item.vorlesung.dozent>0}}" flex></core-icon>
-										<core-icon class="icon-bad" icon="cancel" hidden?="{{!item.vorlesung.dozent>0}}" flex></core-icon>
+										<core-icon class="icon-good" icon="check-box" hidden?="{{item.vorlesung.dozentID === 0}}" flex></core-icon>
+										<core-icon class="icon-bad" icon="cancel" hidden?="{{item.vorlesung.dozentID > 0}}" flex></core-icon>
 									</div>
 									<div class="flex-item-item" horizontal layout center-center>
 										<span class="text-width">Klausur festgelegt:</span>

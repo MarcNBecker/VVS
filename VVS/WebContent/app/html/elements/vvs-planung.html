@@ -193,7 +193,8 @@
 		skilledDozenten: [],
 		otherDozenten: [],
 		kurs: new model.templates.Kurs(),
-		raum: null,
+		raum: "",
+		committedRaum: "",
 		progress: 0,
 		progressProzent: 0,
 		nextVorlesungsterminID: -1,
@@ -202,7 +203,6 @@
 		maxDate: null,		
 		minDateString: "",
 		maxDateString: "",
-		committedRaum: null,
 		hours: ["08", "09", "10", "11", 
 		        "12", "13", "14", "15", 
 		        "16", "17", "18", "19"],
@@ -237,7 +237,8 @@
 			self.skilledDozenten = [];
 			self.otherDozenten = [];
 			self.kurs = new model.templates.Kurs();
-			self.raum = null;
+			self.raum = "";
+			self.committedRaum = "";
 			self.progress = 0;
 			self.progressProzent = 0;
 			self.nextVorlesungsterminID = -1;
@@ -331,9 +332,14 @@
 							for (i = 0; i < api.response.length; i++) {
 								if (api.response[i].semester === self.vorlesung.semester) {
 									self.raum = api.response[i].raum;
-									if (!self.raum)
-									{
+									self.vorlesungsterminToEdit.raum = self.raum;
+									if (!self.raum) {
 										self.invalid.raum = true;
+									} else {
+			    						self.job('update-label-raum-ready', function() {
+			    							self.$.raum.inputAction();
+			    							self.$.raum.input.commit();
+			    						}, 100);
 									}
 									//Init date picker with blocklagen start datum
 									if(api.response[i].startDatum) {
@@ -343,14 +349,9 @@
 										self.maxDate = new Date(api.response[i].endDatum);
 										self.maxDateString = api.response[i].endDatum;
 									}
-									self.vorlesungsterminToEdit.raum = self.raum;
 									break;
 								}
 							}
-    						self.job('update-label-raum-ready', function() {
-    							self.$.raum.inputAction();
-    							self.$.raum.input.commit();
-    						}, 100);
 							deepRuns++;
 							if(deepRuns === 6) {
 	    						//Enable inputs
@@ -487,6 +488,9 @@
 			self.invalid.datum = true;
 			self.invalid.startUhrzeit = true;
 			self.invalid.endUhrzeit = true;
+			if(!self.raum) {
+				self.invalid.raum = true;
+			}
 			self.job('update-labels-reject', function() {
 				self.$.datum.inputAction();
 				self.$.startUhrzeit.inputAction();
@@ -663,6 +667,8 @@
 			if(veryDeepRuns === 0 && self.vorlesungstermine.length === 0) {
 				self.disableToggle = false;
 				self.toasts.success.show();
+				self.pageLoaded.vdashboard = false;
+				self.pageLoaded.sdashboard = false;
 			}
 		},
 		//Navigate backwards and force a reload
@@ -845,7 +851,7 @@
 			}
 		},
 		showTermin: function(termin, noColor) {
-			if(!(termin.startUhrzeit && termin.endUhrzeit && termin.datum && termin.raum)) {
+			if(!(termin.startUhrzeit && termin.endUhrzeit && termin.datum && termin.raum && this.vorlesung.dozentID > 0)) {
 				return;
 			}
 			var self = this;
