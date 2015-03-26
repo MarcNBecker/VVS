@@ -126,6 +126,7 @@
 			</div>
 		</div>
 		</paper-shadow>
+		<!-- Action Dialog for Deletion -->
 		<paper-action-dialog id="delete_dozent_dialog" heading="{{dozent.name}}, {{dozent.vorname}} wirklich l&ouml;schen?">
 			<paper-button affirmative>Nein</paper-button>
 			<paper-button on-click="{{doDelete}}" affirmative autofocus>L&ouml;schen</paper-button>
@@ -193,6 +194,7 @@
     			{
     				self.creationMode = false;
     				var deepRuns = 0;
+    				//Load selected Dozent
     				model.webService.getDozent(showDozent, function(api) {
     					if (!api.isError)
     					{
@@ -498,6 +500,7 @@
 					}
 	    		});
 	    	},
+	    	// Show Action Dialog for Deletion
 	    	initDelete: function() {
 	    		this.$.delete_dozent_dialog.toggle();
 	    	},

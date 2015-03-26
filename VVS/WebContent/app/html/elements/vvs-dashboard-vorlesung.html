@@ -5,6 +5,7 @@
 		<paper-shadow z="3" class="shadow">
 			<div horizontal layout>
 				<div vertical layout class="vertical-input">
+					<!--Headline, Navigation to other Semester and Export -->
 					<span class="headline">
 						<div vertical layout>
 							<div horizontal layout center>
@@ -17,7 +18,7 @@
 						</div>
 					</span>
 					<div horizontal layout center class="flex-container">
-					<!-- bestehende Vorlesungen -->
+						<!-- Existing Vorlesungen -->
 						<template repeat="{{item in vorlesungen}}">
 							<paper-shadow z="2" class="inner-shadow flex-item" on-click="{{navigate}}">
 								<div class="margin">
@@ -39,7 +40,7 @@
 								</div>
 							</paper-shadow>
 						</template>
-						<!-- neue Vorlesung -->
+						<!-- New Vorlesung -->
 						<paper-shadow z="2" class="inner-shadow flex-item" on-click="{{add}}">
 							<div horizontal layout center-center fit>
 								<core-icon class="icon-neutral" icon="add-circle-outline" flex></core-icon>
@@ -49,107 +50,114 @@
 				</div>
 			</div>
 		</paper-shadow>
+		<!-- Popups -->
 		<vvs-export-overlay id="exportOverlay" kurs="{{kurs}}" semester="{{semester}}"></vvs-export-overlay>
 		<vvs-vorlesungs-overlay id="vorlesungsOverlay" kurs="{{kurs}}" semester="{{semester}}" toasts="{{toasts}}" createdVorlesungen="{{createdVorlesungen}}"></vvs-vorlesungs-overlay>
 	</template>
-		<script type="text/javascript">
+	<script type="text/javascript">
 		"use strict";
 		Polymer('vvs-dashboard-vorlesung',
-			{
-				vorlesungen: [],
-				kurs: new model.templates.Kurs(),
-				semester: 1,
-				createdVorlesungen: false,
-				disableToggle: false,
-				//Publish those attributes to home
-				publish: {
-					pageParameter: {},
-					pageLoaded: {},
-					toasts: {}
-				},
-				//Initialize the screen
-				ready : function() {
-					var self = this;
-					self.vorlesungen = [];
-					self.kurs = new model.templates.Kurs();
-					self.disableToggle = true;
-					if(self.pageParameter.vdashboard.id === 0) {
-						self.pageLoaded.vdashboard = false;
-						self.pageLoaded.sdashboard = false;
-						window.history.replaceState({redirect: true}, '', '#!sdashboard-');
-						location.href = "#!sdashboard";
-						return;
-					}
-					var params = self.pageParameter.vdashboard.id.split("-");
-					self.kurs.id = params[0];
-					self.semester = params[1] ? parseInt(params[1]) : 1;
-					model.webService.getKurs(self.kurs, function(api) {
-						if(!api.isError) {
-							self.kurs = api.response;
-							self.load();
-						} else {
-	   						console.log(JSON.stringify(api));
-	   						self.toasts.error.show();
-						}
-					});
-				},
-				load: function() {
-					var self = this;
-					self.disableToggle = true;
-					model.webService.getAllVorlesungenSemester(self.kurs, self.semester, function(api) {
-						if (!api.isError)
-	   					{
-	   						self.vorlesungen = api.response;
-	   						self.disableToggle = false;
-	   					}
-	   					else
-	   					{
-	   						console.log(JSON.stringify(api));
-	   						self.toasts.error.show();
-	   					}
-					}
-					);
-				},
-				//Navigate to Planung for selected Vorlesung
-				navigate: function(e, detail, sender) {
-					var self = this;
-					if(self.disableToggle) {
-						return;
-					}
-					self.pageLoaded.planung = false;
-					location.href = "#!planung" + "-" + sender.templateInstance.model.item.vorlesung.id;
-				},
-				//Navigate to Vorlesungsdashboard of previous semester
-				back: function () {
-					var self = this;
-					var previousSemester = parseInt(self.semester) - 1;
+		{
+			//Initializing
+			vorlesungen: [],
+			kurs: new model.templates.Kurs(),
+			semester: 1,
+			createdVorlesungen: false,
+			disableToggle: false,
+			//Publish those attributes to home
+			publish: {
+				pageParameter: {},
+				pageLoaded: {},
+				toasts: {}
+			},
+			//Initialize the screen
+			ready : function() {
+				var self = this;
+				self.vorlesungen = [];
+				self.kurs = new model.templates.Kurs();
+				self.disableToggle = true;
+				//Navigate to Studiengangsleiterdashboard if VorlesungsID isn´t valid
+				if(self.pageParameter.vdashboard.id === 0) {
 					self.pageLoaded.vdashboard = false;
-					location.href = "#!vdashboard" + "-" + self.kurs.id + "-" + previousSemester;
-				},
-				//Navigate to Vorlesungsdashboard of next semester
-				forward: function() {
-					var self = this;
-					var nextSemester = parseInt(self.semester) + 1;
-					self.pageLoaded.vdashboard = false;
-					location.href = "#!vdashboard" + "-" + self.kurs.id + "-" + nextSemester;
-				},
-				//Add new Vorlesungen
-				add: function() {
-					if(this.disableToggle) {
-						return;
-					}
-					this.$.vorlesungsOverlay.toggle();
-				},
-				//Reload dashboard, if vorlesungsOverlay is closed and vorlesungen have been added
-				createdVorlesungenChanged: function() {
-					if(this.createdVorlesungen === true) {
-						this.load();
-					}
-				},
-				//Open Export overlay
-				toggleExport: function() {
-					this.$.exportOverlay.toggle();
+					self.pageLoaded.sdashboard = false;
+					window.history.replaceState({redirect: true}, '', '#!sdashboard-');
+					location.href = "#!sdashboard";
+					return;
 				}
+				var params = self.pageParameter.vdashboard.id.split("-");
+				self.kurs.id = params[0];
+				self.semester = params[1] ? parseInt(params[1]) : 1;
+				//Load selected Kurs
+				model.webService.getKurs(self.kurs, function(api) {
+					if(!api.isError) {
+						self.kurs = api.response;
+						self.load();
+					} else {
+   						console.log(JSON.stringify(api));
+   						self.toasts.error.show();
+					}
+				});
+			},
+			//Load all available Vorlesungen of selected Semester of selected Kurs
+			load: function() {
+				var self = this;
+				//Disable everything
+				self.disableToggle = true;
+				model.webService.getAllVorlesungenSemester(self.kurs, self.semester, function(api) {
+					if (!api.isError)
+   					{
+   						self.vorlesungen = api.response;
+   						//Enable headline and buttions
+   						self.disableToggle = false;
+   					}
+   					else
+   					{
+   						console.log(JSON.stringify(api));
+   						self.toasts.error.show();
+   					}
+				}
+				);
+			},
+			//Navigate to Planung for selected Vorlesung
+			navigate: function(e, detail, sender) {
+				var self = this;
+				if(self.disableToggle) {
+					return;
+				}
+				self.pageLoaded.planung = false;
+				location.href = "#!planung" + "-" + sender.templateInstance.model.item.vorlesung.id;
+			},
+			//Navigate to Vorlesungsdashboard of previous semester
+			back: function () {
+				var self = this;
+				var previousSemester = parseInt(self.semester) - 1;
+				self.pageLoaded.vdashboard = false;
+				location.href = "#!vdashboard" + "-" + self.kurs.id + "-" + previousSemester;
+			},
+			//Navigate to Vorlesungsdashboard of next semester
+			forward: function() {
+				var self = this;
+				var nextSemester = parseInt(self.semester) + 1;
+				self.pageLoaded.vdashboard = false;
+				location.href = "#!vdashboard" + "-" + self.kurs.id + "-" + nextSemester;
+			},
+			//Add new Vorlesungen
+			add: function() {
+				if(this.disableToggle) {
+					return;
+				}
+				this.$.vorlesungsOverlay.toggle();
+			},
+			//Reload dashboard, if vorlesungsOverlay is closed and vorlesungen have been added
+			createdVorlesungenChanged: function() {
+				if(this.createdVorlesungen === true) {
+					this.load();
+				}
+			},
+			//Open Export overlay
+			toggleExport: function() {
+				this.$.exportOverlay.toggle();
+			}
 		});
 	</script>
 </polymer-element>

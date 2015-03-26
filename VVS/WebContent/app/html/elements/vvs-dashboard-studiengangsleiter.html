@@ -5,12 +5,13 @@
 		<paper-shadow z="3" class="shadow">
 			<div horizontal layout>
 				<div vertical layout class="vertical-input">
+					<!-- Headline-->
 					<div horizontal layout center>
 						<span class="headline" disabled="{{disableToggle}}">Kurs&uuml;bersicht f&uuml;r {{studiengangsleiter.name}}</span>
 						<paper-spinner active?={{disableToggle}}></paper-spinner>
 					</div>
 					<div horizontal layout center class="flex-container">
-					<!-- bestehende Kurse -->
+						<!-- Existing Kurse -->
 						<template repeat="{{item in kurse}}">
 							<paper-shadow z="2" class="inner-shadow flex-item" on-click="{{navigate}}">
 								<div class="margin">
@@ -37,7 +38,7 @@
 								</div>
 							</paper-shadow>
 						</template>
-						<!-- neuer Kurs -->
+						<!-- New Kurs -->
 						<paper-shadow z="2" class="inner-shadow flex-item" on-click="{{add}}">
 							<div horizontal layout center-center fit>
 								<core-icon class="icon-neutral" icon="add-circle-outline" flex></core-icon>
@@ -48,77 +49,80 @@
 			</div>
 		</paper-shadow>
 	</template>
-		<script type="text/javascript">
+	<script type="text/javascript">
 		"use strict";
 		Polymer('vvs-dashboard-studiengangsleiter',
-			{
-				kurse: [],	
-				studiengangsleiter: new model.templates.Studiengangsleiter(),
-				disableToggle: false,
-				//Publish those attributes to home
-				publish: {
-					user: {},
-					pageLoaded: {},
-					toasts: {}
-				},
-				//Initialize the screen
-				ready : function() {
-					var self = this;
-					self.kurse = [];
-					self.studiengangsleiter = new model.templates.Studiengangsleiter();
-					self.studiengangsleiter.id = self.user.repraesentiert;
-					self.disableToggle = true;
-					//Load selected Studiengangsleiter
-					model.webService.getStudiengangsleiter(self.studiengangsleiter, function(api) {
-						if (!api.isError)
-	   					{
-	   						self.studiengangsleiter = api.response;
-	   						self.load();
-	   					}
-	   					else
-	   					{
-	   						console.log(JSON.stringify(api));
-	   						self.toasts.error.show();
-	   					}
-					});
-				},
-				//Load all available Kurse of Studiengangsleiter
-				load: function() {
-					var self = this;
-					self.disableToggle = true;
-					model.webService.getStudiengangsleiterDashboard(self.studiengangsleiter, function(api) {
-						if (!api.isError)
-	   					{
-	   						self.kurse = api.response;
-	   						self.disableToggle = false;
-	   					}
-	   					else
-	   					{
-	   						console.log(JSON.stringify(api));
-	   						self.toasts.error.show();
-	   					}
-					});
-				},
-				//Navigate to Vorlesungsdashboard for selected Kurs
-				navigate: function(e, detail, sender) {
-					var self = this;
-					self.pageLoaded.vdashboard = false;
-					location.href = "#!vdashboard" + "-" + sender.templateInstance.model.item.kurs.id + "-" + sender.templateInstance.model.item.planBlocklage.semester;
-				},
-				//Add new Kurs
-				add: function() {
-					if (this.disableToggle)
-					{
-						return;
-					}
-					location.href = "#!kurs";
-				},
-				//Reload dashboard, if kursOverlay is closed and kurse have been added
-				createdKurseChanged: function() {
-					if(this.createdKurse === true) {
-						this.load();
-					}
+		{
+			//Initializing
+			kurse: [],	
+			studiengangsleiter: new model.templates.Studiengangsleiter(),
+			disableToggle: false,
+			//Publish those attributes to home
+			publish: {
+				user: {},
+				pageLoaded: {},
+				toasts: {}
+			},
+			//Initialize the screen
+			ready : function() {
+				var self = this;
+				self.kurse = [];
+				self.studiengangsleiter = new model.templates.Studiengangsleiter();
+				self.studiengangsleiter.id = self.user.repraesentiert;
+				self.disableToggle = true;
+				//Load selected Studiengangsleiter
+				model.webService.getStudiengangsleiter(self.studiengangsleiter, function(api) {
+					if (!api.isError)
+	  					{
+	  						self.studiengangsleiter = api.response;
+	  						self.load();
+	  					}
+	  					else
+	  					{
+	  						console.log(JSON.stringify(api));
+	  						self.toasts.error.show();
+	  					}
+				});
+			},
+			//Load all available Kurse of Studiengangsleiter
+			load: function() {
+				var self = this;
+    			//Disable everything
+				self.disableToggle = true;
+				model.webService.getStudiengangsleiterDashboard(self.studiengangsleiter, function(api) {
+					if (!api.isError)
+	  					{
+	  						self.kurse = api.response;
+	  						//Enable headline
+	  						self.disableToggle = false;
+	  					}
+	  					else
+	  					{
+	  						console.log(JSON.stringify(api));
+	  						self.toasts.error.show();
+	  					}
+				});
+			},
+			//Navigate to Vorlesungsdashboard for selected Kurs
+			navigate: function(e, detail, sender) {
+				var self = this;
+				self.pageLoaded.vdashboard = false;
+				location.href = "#!vdashboard" + "-" + sender.templateInstance.model.item.kurs.id + "-" + sender.templateInstance.model.item.planBlocklage.semester;
+			},
+			//Add new Kurs
+			add: function() {
+				if (this.disableToggle)
+				{
+					return;
 				}
+				location.href = "#!kurs";
+			},
+			//Reload dashboard, if kursOverlay is closed and kurse have been added
+			createdKurseChanged: function() {
+				if(this.createdKurse === true) {
+					this.load();
+				}
+			}
 		});
 	</script>
 </polymer-element>

@@ -1,5 +1,6 @@
 <polymer-element name="vvs-export-overlay"> 
 	<template>
+		<!-- Print Vorlesungsplan, Export CSV for Group-e and Print Dozentenplan -->
 		<paper-dialog id="export_overlay" backdrop="true" layered="true" heading="Exporte f&uuml;r {{kurs.kursname}} {{semester}}. Blocklage">
 			<div vertical layout class="test">
 				<span class="overlay-headline">Kurspl&auml;ne</span>
@@ -18,17 +19,20 @@
 	<script type="text/javascript">
 		"use strict";
 		Polymer('vvs-export-overlay', {
+			//Initializing
 			dozenten: [],
 			toggleDisabled: true,
 			publish: {
 				kurs: {},
 				semester: 0
 			},
+			//Load all Dozenten of selected Semester, if Semester has changed
 			semesterChanged: function() {
 				var self = this;
 				if(self.semester === 0 || self.kurs.id === undefined) {
 					return;
 				}
+				//Disable everything
 				self.toggleDisabled = true;
 				var blocklage = new model.templates.Blocklage();
 				blocklage.kursID = self.kurs.id;
@@ -37,6 +41,7 @@
 					if (!api.isError)
 					{
 						self.dozenten = api.response;
+						//Enable buttons
 						self.toggleDisabled = false;
 					}
 					else
@@ -45,20 +50,25 @@
 					}
 				})
 			},
+			//Initialize the screen
 			ready: function() {
 				var self = this;
 				self.dozenten = [];
 				self.toggleDisabled = false;
 			},
+			//Shoe Export overlay
 			toggle: function() {
 				this.$.export_overlay.toggle();
 			},
+			//Print Vorlesungsplan
 			print: function() {
 				//TODO print Kursplan
 			},
+			//Download CSV-file
 			csvExport: function() {
 				window.open(model.webService.getGroupEURL(this.kurs, this.semester), "_blank");
 			},
+			//Print Dozentenplan
 			printDozent: function() {
 				//TODO print Dozentenplan
 			}
