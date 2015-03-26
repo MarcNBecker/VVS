@@ -10,6 +10,7 @@
 							<div horizontal layout center>
 								<paper-icon-button class="icon-good" icon="arrow-back" on-click="{{back}}" hidden?="{{semester == 1}}" disabled="{{disableToggle}}"></paper-icon-button>
 								<span>{{kurs.kursname}} - {{semester}}. Semester</span>
+								<paper-icon-button on-click="{{toggleExport}}" icon="file-download" disabled?="{{disableToggle}}"></paper-icon-button>
 								<paper-icon-button class="icon-good" icon="arrow-forward" on-click="{{forward}}" hidden?="{{semester == 6}}" disabled="{{disableToggle}}"></paper-icon-button>
 								<paper-spinner active?={{disableToggle}}></paper-spinner>
 							</div>
@@ -48,6 +49,7 @@
 				</div>
 			</div>
 		</paper-shadow>
+		<vvs-export-overlay id="exportOverlay" kurs="{{kurs}}" semester="{{semester}}"></vvs-export-overlay>
 		<vvs-vorlesungs-overlay id="vorlesungsOverlay" kurs="{{kurs}}" semester="{{semester}}" toasts="{{toasts}}" createdVorlesungen="{{createdVorlesungen}}"></vvs-vorlesungs-overlay>
 	</template>
 		<script type="text/javascript">
@@ -143,6 +145,10 @@
 					if(this.createdVorlesungen === true) {
 						this.load();
 					}
+				},
+				//Open Export overlay
+				toggleExport: function() {
+					this.$.exportOverlay.toggle();
 				}
 		});
 	</script>
