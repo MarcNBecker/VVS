@@ -62,15 +62,16 @@
 			},
 			//Print Vorlesungsplan
 			print: function() {
-				//TODO print Kursplan
+				window.open(model.webService.getKursPlanURI(this.kurs, this.semester), "_blank");
 			},
 			//Download CSV-file
 			csvExport: function() {
 				window.open(model.webService.getGroupEURL(this.kurs, this.semester), "_blank");
 			},
 			//Print Dozentenplan
-			printDozent: function() {
-				//TODO print Dozentenplan
+			printDozent: function(e, detail, sender) {
+				var dozent = sender.templateInstance.model.item;
+				window.open(model.webService.getDozentenPlanURI(this.kurs, this.semester, dozent), "_blank");
 			}
 		});
 	</script> 

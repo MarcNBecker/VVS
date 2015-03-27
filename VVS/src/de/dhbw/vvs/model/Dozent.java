@@ -33,6 +33,8 @@ public class Dozent {
 	private Timestamp angelegt;
 	@SuppressWarnings("unused")
 	private Timestamp geaendert;
+	@SuppressWarnings("unused")
+	private int maxFachJahr; //This is only filled at times, when the dozent is loaded in context with a fach information
 	
 	public static ArrayList<Dozent> getAll() throws WebServiceException {
 		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
@@ -148,6 +150,35 @@ public class Dozent {
 		angelegt = (Timestamp) result.get("angelegt");
 		geaendert = (Timestamp) result.get("geaendert");
 		return this;
+	}
+	
+	public void lastHeld(Fach fach, boolean setOnFach) throws WebServiceException {
+		if (id <= 0) {
+			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
+		}
+		if(fach == null) {
+			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_OBJECT);
+		} else {
+			fach.getDirectAttributes(); //check existance
+		}
+		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
+		ArrayList<Object> fieldValues = new ArrayList<Object>();
+		fieldValues.add(id);
+		fieldValues.add(fach.getID());
+		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT MAX(YEAR(termin.datum)) AS maxJahr FROM termin INNER JOIN vorlesung ON termin.vorlesung = vorlesung.id WHERE vorlesung.dozent = ? AND vorlesung.fachInstanz IN (SELECT id FROM fachInstanz WHERE fach = ?) GROUP BY vorlesung.dozent", fieldValues);
+		if(resultList.isEmpty()) {
+			if(setOnFach) {
+				fach.setMaxJahr(0);
+			} else {
+				maxFachJahr = 0;	
+			}
+		} else {
+			if(setOnFach) {
+				fach.setMaxJahr(resultList.get(0).getInt("maxJahr"));
+			} else {
+				maxFachJahr = resultList.get(0).getInt("maxJahr");	
+			}	
+		}	
 	}
 	
 	public ArrayList<Fach> getFachList() throws WebServiceException {

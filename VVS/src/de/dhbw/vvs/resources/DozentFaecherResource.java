@@ -2,6 +2,7 @@ package de.dhbw.vvs.resources;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentMap;
 
 import org.restlet.data.Status;
@@ -10,6 +11,7 @@ import org.restlet.resource.ResourceException;
 import de.dhbw.vvs.application.ExceptionStatus;
 import de.dhbw.vvs.application.WebServiceException;
 import de.dhbw.vvs.model.Dozent;
+import de.dhbw.vvs.model.Fach;
 
 public class DozentFaecherResource extends JsonServerResource {
 	
@@ -31,7 +33,12 @@ public class DozentFaecherResource extends JsonServerResource {
 	
 	@Override
 	protected Object receiveGet() throws WebServiceException {
-		return new Dozent(getDozentID()).getFachList();
+		Dozent dozent = new Dozent(getDozentID());
+		ArrayList<Fach> fachList = dozent.getFachList();
+		for (Fach f : fachList) {
+			dozent.lastHeld(f, true);
+		}
+		return fachList;
 	}
 	
 	public int getDozentID() {

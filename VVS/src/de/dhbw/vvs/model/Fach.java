@@ -13,6 +13,8 @@ public class Fach {
 	private int id;
 	private String name; 
 	private String kurzbeschreibung;
+	@SuppressWarnings("unused")
+	private int maxDozentJahr; //This is only filled at times, when the fach is loaded in context with a dozent information
 	
 	public static ArrayList<Fach> getAll() throws WebServiceException {
 		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
@@ -118,6 +120,10 @@ public class Fach {
 	
 	public void setID(int id) {
 		this.id = id;
+	}
+	
+	public void setMaxJahr(int jahr) {
+		this.maxDozentJahr = jahr;
 	}
 	
 }

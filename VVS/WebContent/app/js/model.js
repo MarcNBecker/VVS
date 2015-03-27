@@ -124,6 +124,7 @@ var model = new function() {
 			this.status = 0; //StatusEnum
 			this.angelegt = null; //yyyy-MM-dd
 			this.geaendert = null; //yyyy-MM-dd
+			this.maxFachJahr = 0; //This is only filled at times, when the dozent is loaded in context with a fach information and specifies a year
 		};
 		
 		this.Dozent.prototype.StatusEnum = {
@@ -158,6 +159,7 @@ var model = new function() {
 			this.id = 0;
 			this.name = "";
 			this.kurzbeschreibung = "";
+			this.maxDozentJahr = 0; //This is only filled at times, when the fach is loaded in context with a dozent information and specifies a year
 		};
 
 		this.FachInstanz = function() {
@@ -271,7 +273,9 @@ var model = new function() {
 
 		var self = this;
 		var allowedMethods = ["GET", "POST", "PUT", "DELETE"];
-		var rootURI = "http://localhost:8080/VVS/api/v1";
+		var rootURI = "http://localhost:8080";
+		var apiURI = "/VVS/api/v1";
+		var birtURI = "/birt_viewer";
 		
 		var dozentenURI = "/dozenten";
 		var dozentURI = "/dozenten/{dozentID}";
@@ -321,6 +325,9 @@ var model = new function() {
 		var termineKursURI = "/termine/{datum}/kurse/{kursID}";
 		var termineDozentURI = "/termine/{datum}/dozenten/{dozentID}";
 		var termineRaumURI = "/termine/{datum}/raeume/{raum}";
+		
+		var kursPlanURI = "/{kursID}/{semester}";
+		var dozentenPlanURI = "/{kursID}/{semester}/{dozentID}";
 		
 		this.getAllDozenten = function(c) {
 			self.doRequest(dozentenURI, "GET", null, c);
@@ -539,7 +546,7 @@ var model = new function() {
 		};
 		
 		this.getGroupEURL = function (k, s) {
-			return rootURI + vorlesungenGroupEURI.replace("{kursID}", k.id).replace("{semester}", s);
+			return rootURI + apiURI + vorlesungenGroupEURI.replace("{kursID}", k.id).replace("{semester}", s);
 		};
 		
 		this.createVorlesung = function(v, c) {
@@ -594,6 +601,14 @@ var model = new function() {
 			self.doRequest(termineRaumURI.replace("{datum}", t.datum).replace("{raum}", t.raum), "GET", null, c);
 		};
 		
+		this.getKursPlanURI = function(k, s) {
+			return rootURI + birtURI + kursPlanURI.replace("{kursID}", k.id).replace("{semester}", s);	
+		};
+		
+		this.getDozentenPlanURI = function(k, s, d) {
+			return rootURI + birtURI + dozentenPlanURI.replace("{kursID}", k.id).replace("{semester}", s).replace("{dozentID}", d.id);
+		};
+		
 		this.doRequest = function(uri, method, data, callback, callbackData) {
 			var api = new Object();
 			if(uri === undefined || uri === null || method === undefined || method === null || allowedMethods.indexOf(method) === -1) {
@@ -639,7 +654,7 @@ var model = new function() {
 				api.response = "";
 				callback(api, callbackData);
 			};
-			xhr.open(method, rootURI+uri, true);
+			xhr.open(method, rootURI+apiURI+uri, true);
 			if(data !== undefined && data !== null && (method === "POST" || method === "PUT")) {
 				var dataString = JSON.stringify(data);
 				xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");

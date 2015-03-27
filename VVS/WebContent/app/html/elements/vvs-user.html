@@ -10,7 +10,7 @@
 					<div vertical layout class="horizontal-input">
 						<!-- Main input fields -->
 						<paper-input-decorator id="name" label="Username" error="Pflichtfeld: Kein g&uuml;ltiger Username" floatingLabel autoValidate isInvalid="{{invalid.name}}">
-							<input is="core-input" value={{user.name}} pattern="[0-9a-zA-Z]+" maxlength="100" required disabled?="{{toggleDisabled || !creationMode}}">
+							<input is="core-input" value={{user.name}} pattern="[0-9a-zA-Z]+" maxlength="100" required?="{{creationMode}}" disabled?="{{toggleDisabled || !creationMode}}">
 						</paper-input-decorator>
 						<paper-input-decorator id="name" label="Vollst&auml;ndiger Name" floatingLabel hidden?="{{!creationMode}}">
 							<input is="core-input" value={{user.nameLong}} maxlength="100" disabled?="{{toggleDisabled}}">

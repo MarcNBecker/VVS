@@ -2,6 +2,7 @@ package de.dhbw.vvs.resources;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentMap;
 
 import org.restlet.data.Status;
@@ -39,7 +40,11 @@ public class KursSemesterVorlesungDozentenResource extends JsonServerResource {
 		Vorlesung vorlesung = new Vorlesung(getVorlesungsID());
 		vorlesung.setKursID(getKursID());
 		vorlesung.setSemester(getSemester());
-		return Dozent.getAllForVorlesung(vorlesung);
+		ArrayList<Dozent> dozentList = Dozent.getAllForVorlesung(vorlesung);
+		for (Dozent d : dozentList) {
+			d.lastHeld(vorlesung.getFachInstanz().getFach(), false);
+		}
+		return dozentList;
 	}
 	
 	public int getKursID() {

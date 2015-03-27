@@ -93,7 +93,7 @@
 					<span class="headline">Kompetenzf&auml;cher</span>
 					<template  repeat="{{item in dozentenFaecher}}">
 						<div horizontal layout center class="horizontal-list">
-							<span>{{item.name}}</span>
+							<span>{{item.name}}{{item.maxDozentJahr > 0 ? ' (zuletzt ' + item.maxDozentJahr + ')' : ''}}</span>
 							<paper-icon-button icon="delete" on-click={{deleteFach}} disabled?="{{disableToggle}}"></paper-icon-button>
 						</div>
 					</template>

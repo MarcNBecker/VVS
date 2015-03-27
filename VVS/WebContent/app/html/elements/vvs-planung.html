@@ -135,7 +135,7 @@
 								<template repeat="{{item in topDozenten}}">
 									<paper-shadow z="1" class="{{item.id === dozent.id ? 'inner-inner-shadow highlight' : 'inner-inner-shadow'}}">
 										<div horizontal layout center>
-											<paper-item on-click="{{setListDozent}}" horizontal layout center-center flex disabled?="{{disableToggle}}">{{item.name}}, {{item.vorname}}</paper-item>
+											<paper-item on-click="{{setListDozent}}" horizontal layout center-center flex disabled?="{{disableToggle}}">{{item.name}}, {{item.vorname}}{{item.maxFachJahr > 0 ? ' (zuletzt ' + item.maxFachJahr + ')' : ''}}</paper-item>
 											<paper-icon-button icon="info" on-click="{{navigateToDozent}}" disabled?="{{disableToggle}}"></paper-icon-button>
 										</div>
 									</paper-shadow>
@@ -144,7 +144,7 @@
 								<template repeat="{{item in skilledDozenten}}">
 									<paper-shadow z="1" class="{{item.id === dozent.id ? 'inner-inner-shadow highlight' : 'inner-inner-shadow'}}">
 										<div horizontal layout center>
-											<paper-item on-click="{{setListDozent}}" horizontal layout center-center flex disabled?="{{disableToggle}}">{{item.name}}, {{item.vorname}}</paper-item>
+											<paper-item on-click="{{setListDozent}}" horizontal layout center-center flex disabled?="{{disableToggle}}">{{item.name}}, {{item.vorname}}{{item.maxFachJahr > 0 ? ' (zuletzt ' + item.maxFachJahr + ')' : ''}}</paper-item>
 											<paper-icon-button icon="info" on-click="{{navigateToDozent}}" disabled?="{{disableToggle}}"></paper-icon-button>
 										</div>
 									</paper-shadow>
