@@ -7,6 +7,7 @@
 			<div vertical layout>
 				<!-- Name of Vorlesung and Progress-Bar -->
 				<div horizontal layout class="headline horizontal-input vertical-input">
+					<paper-icon-button on-click="{{navigateVDashboard}}" icon="apps" disabled?="{{disableToggle}}"></paper-icon-button>
 					<span>Terminplanung &quot;{{vorlesung.fachInstanz.fach.name}}&quot; - {{vorlesung.semester}}. Semester - {{kurs.kursname}}</span>
 					<paper-progress class="progress" value="{{progressProzent}}"></paper-progress>
 					<span>{{progress}} / {{vorlesung.fachInstanz.stunden}} {{vorlesung.fachInstanz.stunden === 1 ? 'Stunde' : 'Stunden'}} geplant</span>
@@ -684,7 +685,11 @@
 	    	cancel: function() {
 	    		this.pageLoaded.planung = false;
 	    		window.history.back();
-	    	},		
+	    	},
+	    	//Navigate to Vorlesungsdashboard
+	    	navigateVDashboard: function(e, detail, sender) {
+	    		location.href = "#!vdashboard-" + this.kurs.id + "-" + this.vorlesung.semester;
+	    	},
 	    	//Calculate Pause if inputs are valid
 			checkAndCalculate: function() {
 				var self = this;
@@ -1050,6 +1055,7 @@
 				}
 				return true;
 			},
+			//Get Comparable Date
 			getComparableDate: function(uhrzeit) {
 				var date = new Date('2000-01-01');
 				var splittedTime = uhrzeit.split(":");
