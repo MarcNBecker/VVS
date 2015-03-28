@@ -4,38 +4,38 @@
 		<!-- Main DIV -->
 		<paper-shadow z="3" class="shadow">
 			<div horizontal layout>
-				<div vertical layout class="vertical-input">
+				<div vertical layout class="vertical-input" flex>
 					<!--Headline, Navigation to other Semester and Export -->
-					<span class="headline">
-						<div vertical layout>
-							<div horizontal layout center>
-								<paper-icon-button class="icon-good" icon="arrow-back" on-click="{{back}}" hidden?="{{semester == 1}}" disabled="{{disableToggle}}"></paper-icon-button>
-								<span>{{kurs.kursname}} - {{semester}}. Semester</span>
-								<paper-icon-button on-click="{{toggleExport}}" icon="file-download" disabled?="{{disableToggle}}"></paper-icon-button>
-								<paper-icon-button class="icon-good" icon="arrow-forward" on-click="{{forward}}" hidden?="{{semester == 6}}" disabled="{{disableToggle}}"></paper-icon-button>
-								<paper-spinner active?={{disableToggle}}></paper-spinner>
-							</div>
-						</div>
-					</span>
+					<div horizontal layout center class="headline">
+						<paper-icon-button class="icon-good" icon="arrow-back" on-click="{{back}}" hidden?="{{semester == 1}}" disabled="{{disableToggle}}"></paper-icon-button>
+						<span>{{kurs.kursname}} - {{semester}}. Semester</span>
+						<paper-icon-button on-click="{{toggleExport}}" icon="file-download" disabled?="{{disableToggle}}"></paper-icon-button>
+						<paper-icon-button class="icon-good" icon="arrow-forward" on-click="{{forward}}" hidden?="{{semester == 6}}" disabled="{{disableToggle}}"></paper-icon-button>
+						<paper-spinner active?={{disableToggle}}></paper-spinner>
+					</div>
 					<div horizontal layout center class="flex-container">
 						<!-- Existing Vorlesungen -->
 						<template repeat="{{item in vorlesungen}}">
 							<paper-shadow z="2" class="inner-shadow flex-item" on-click="{{navigate}}">
-								<div class="margin">
-									<div class="small-headline-dashboard">{{item.vorlesung.fachInstanz.fach.name}}</div>
-									<div class="flex-item-item" horizontal layout center>
-										<span class="text-width">geplante Stunden:</span>
-										<paper-progress class="progress-dashboard" value="{{(item.geplanteStunden/item.vorlesung.fachInstanz.stunden)*100}}"></paper-progress>
-									</div>
-									<div class="flex-item-item" horizontal layout center-center>
-										<span class="text-width">Dozent ausgew&auml;hlt:</span>
-										<core-icon class="icon-good" icon="check-box" hidden?="{{item.vorlesung.dozentID === 0}}" flex></core-icon>
-										<core-icon class="icon-bad" icon="cancel" hidden?="{{item.vorlesung.dozentID > 0}}" flex></core-icon>
-									</div>
-									<div class="flex-item-item" horizontal layout center-center>
-										<span class="text-width">Klausur festgelegt:</span>
-										<core-icon class="icon-good" icon="check-box" hidden?="{{!item.geplanteKlausur}}" flex></core-icon>
-										<core-icon class="icon-bad" icon="cancel" hidden?="{{item.geplanteKlausur}}" flex></core-icon>
+								<div horizontal layout>
+									<div vertical layout flex class="dashboard-margin">
+										<div horizontal layout center-center class="headline-container">
+											<div class="small-headline" flex>{{item.vorlesung.fachInstanz.fach.name}}</div>
+										</div>
+										<div horizontal layout center>
+											<span class="text-width">geplante Stunden:</span>
+											<paper-progress class="progress-dashboard" value="{{(item.geplanteStunden/item.vorlesung.fachInstanz.stunden)*100}}" flex></paper-progress>
+										</div>
+										<div horizontal layout center>
+											<span class="text-width">Dozent ausgew&auml;hlt:</span>
+											<core-icon class="icon-good" icon="check-box" hidden?="{{item.vorlesung.dozentID === 0}}" flex></core-icon>
+											<core-icon class="icon-bad" icon="cancel" hidden?="{{item.vorlesung.dozentID > 0}}" flex></core-icon>
+										</div>
+										<div horizontal layout center>
+											<span class="text-width">Klausur festgelegt:</span>
+											<core-icon class="icon-good" icon="check-box" hidden?="{{!item.geplanteKlausur}}" flex></core-icon>
+											<core-icon class="icon-bad" icon="cancel" hidden?="{{item.geplanteKlausur}}" flex></core-icon>
+										</div>
 									</div>
 								</div>
 							</paper-shadow>

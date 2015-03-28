@@ -4,7 +4,7 @@
 		<!-- Main DIV -->
 		<paper-shadow z="3" class="shadow">
 			<div horizontal layout>
-				<div vertical layout class="vertical-input">
+				<div vertical layout class="vertical-input" flex>
 					<!-- Headline-->
 					<div horizontal layout center>
 						<span class="headline" disabled="{{disableToggle}}">Kurs&uuml;bersicht f&uuml;r {{studiengangsleiter.name}}</span>
@@ -14,26 +14,42 @@
 						<!-- Existing Kurse -->
 						<template repeat="{{item in kurse}}">
 							<paper-shadow z="2" class="inner-shadow flex-item" on-click="{{navigate}}">
-								<div class="margin">
-									<div class="flex-item-item small-headline-dashboard-sl" horizontal layout center-center>
-										<span>{{item.kurs.kursname}} - {{item.planBlocklage.semester}}. Semester</span>
-									</div>
-									<div class="flex-item-item" horizontal layout center-center>{{item.planBlocklage.startDatum}} bis {{item.planBlocklage.endDatum}}</div>
-									<div class="flex-item-item" horizontal layout center>
-										<span class="text-width-sl">ausgew&auml;hlte Vorlesungen:</span>
-										<span flex>{{item.geplanteVorlesungen}}</span>
-									</div>
-									<div class="flex-item-item" horizontal layout center>
-										<span class="text-width-sl">geplante Stunden:</span>
-										<paper-progress class="progress-dashboard-sl" value="{{(item.geplanteStunden/item.gesamteStunden)*100}}"></paper-progress>
-									</div>
-									<div class="flex-item-item" horizontal layout center>
-										<span class="text-width-sl">fehlende Dozenten:</span>
-										<span flex>{{item.fehlendeDozenten}}</span>
-									</div>
-									<div class="flex-item-item" horizontal layout center>
-										<span class="text-width-sl">fehlende Klausuren:</span>
-										<span flex>{{item.fehlendeKlausuren}}</span>
+								<div horizontal layout>
+									<div vertical layout flex class="dashboard-margin">
+										<div horizontal layout center-center class="headline-container-small">
+											<div class="small-headline" flex>{{item.kurs.kursname}} - {{item.planBlocklage.semester}}. Semester</div>
+										</div>
+										<div horizontal layout center-center>
+											<span>{{item.planBlocklage.startDatum}} bis {{item.planBlocklage.endDatum}}</span>
+										</div>
+										<div horizontal layout center>
+											<span class="text-width-sl">ausgew&auml;hlte Vorlesungen:</span>
+											<div horizontal layout center-center flex>
+												<span>{{item.geplanteVorlesungen}}</span>
+												<core-icon class="icon-good" icon="check-box" hidden?="{{item.fehlendeKlausuren === 0}}"></core-icon>
+												<core-icon class="icon-bad" icon="cancel" hidden?="{{item.fehlendeKlausuren > 0}}"></core-icon>
+											</div>
+										</div>
+										<div horizontal layout center>
+											<span class="text-width-sl">geplante Stunden:</span>
+											<paper-progress class="progress-dashboard" value="{{(item.geplanteStunden/item.gesamteStunden)*100}}" flex></paper-progress>
+										</div>
+										<div horizontal layout center>
+											<span class="text-width-sl">fehlende Dozenten:</span>
+											<div horizontal layout center-center flex>
+												<span>{{item.fehlendeDozenten}}</span>
+												<core-icon class="icon-good" icon="check-box" hidden?="{{item.fehlendeDozenten > 0}}"></core-icon>
+												<core-icon class="icon-bad" icon="cancel" hidden?="{{item.fehlendeDozenten === 0}}"></core-icon>
+											</div>
+										</div>
+										<div horizontal layout center>
+											<span class="text-width-sl">fehlende Klausuren:</span>
+											<div horizontal layout center-center flex>
+												<span>{{item.fehlendeKlausuren}}</span>
+												<core-icon class="icon-good" icon="check-box" hidden?="{{item.fehlendeKlausuren > 0}}"></core-icon>
+												<core-icon class="icon-bad" icon="cancel" hidden?="{{item.fehlendeKlausuren === 0}}"></core-icon>
+											</div>
+										</div>
 									</div>
 								</div>
 							</paper-shadow>
