@@ -114,11 +114,11 @@
 							<paper-checkbox checked="{{recurring.isRecurring}}" self-center disabled?="{{disableToggle || vorlesungsterminToEdit.klausur}}"></paper-checkbox>
 							<span class="small-headline">Wiederholender Termin:</span>
 							<paper-input-decorator id="wiederholungen" label="Anzahl" flex>
-								<input is="core-input" type="number" min="1" preventInvalidInput="true" value={{recurring.count}} disabled?="{{disableToggle || !recurring.isRecurring}}">
+								<input is="core-input" type="text" pattern="[1-9][0-9]*" preventInvalidInput="true" value={{recurring.count}} disabled?="{{disableToggle || !recurring.isRecurring}}">
 							</paper-input-decorator>
 							<span self-center>mal alle</span>
 							<paper-input-decorator id="anzahl" label="Abstand" flex>
-								<input is="core-input" type="number" min="1" preventInvalidInput="true" value={{recurring.distance}} disabled?="{{disableToggle || !recurring.isRecurring}}">
+								<input is="core-input" type="text" pattern="[1-9][0-9]*" preventInvalidInput="true" value={{recurring.distance}} disabled?="{{disableToggle || !recurring.isRecurring}}">
 							</paper-input-decorator>
 							<span>Tage</span>
 						</div>
@@ -691,7 +691,9 @@
 				//Check if endUhrzeit is greater than startUhrzeit
 				self.$.endUhrzeit.validate();
 				if (!self.invalid.startUhrzeit && !self.invalid.endUhrzeit) {
-					if(!(new Date('2000-01-01 ' + self.vorlesungsterminToEdit.startUhrzeit) < new Date('2000-01-01 ' + self.vorlesungsterminToEdit.endUhrzeit))) {
+					var startDate = this.getComparableDate(self.vorlesungsterminToEdit.startUhrzeit);
+					var endDate = this.getComparableDate(self.vorlesungsterminToEdit.endUhrzeit);
+					if(!(startDate < endDate)) {
 						self.invalid.endUhrzeit = true;
 						return;
 					}
@@ -1023,14 +1025,20 @@
 			},
 			//Calculate conflict
 			conflicts: function(terminNew, terminKnown) {
-				var terminNewStart = new Date('2000-01-01 ' + terminNew.startUhrzeit);
-				var terminNewEnd = new Date('2000-01-01 ' + terminNew.endUhrzeit);
-				var terminKnownStart = new Date('2000-01-01 ' + terminKnown.startUhrzeit);
-				var terminKnownEnd = new Date('2000-01-01 ' + terminKnown.endUhrzeit);
+				var terminNewStart = this.getComparableDate(terminNew.startUhrzeit);
+				var terminNewEnd = this.getComparableDate(terminNew.endUhrzeit);
+				var terminKnownStart = this.getComparableDate(terminKnown.startUhrzeit);
+				var terminKnownEnd = this.getComparableDate(terminKnown.endUhrzeit);
 				if(terminNewStart >= terminKnownEnd || terminNewEnd <= terminKnownStart) {
 					return false;
 				}
 				return true;
+			},
+			getComparableDate: function(uhrzeit) {
+				var date = new Date('2000-01-01');
+				var splittedTime = uhrzeit.split(":");
+				date.setUTCHours(splittedTime[0], splittedTime[1]);
+				return date;
 			},
 			//Check all conflicts
 			checkAllConflicts: function() {
