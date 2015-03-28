@@ -885,6 +885,7 @@
 				//Calculate conflicts
 				var deepRuns = 0;
 				var conflicts = false;
+				var globalConflicts = false;
 				//Calculate conflicts with Kurs
 				model.webService.getAllConflictsTermineKurs(this.vorlesung, termin, function(api) {
 					if(!api.isError) {
@@ -906,24 +907,29 @@
 							}
 							if(!conflicts && self.conflicts(termin, api.response[i])){
 								conflicts = true;
+								globalConflicts = true;
 							}
 							self.color("Kurs", api.response[i].startUhrzeit, api.response[i].endUhrzeit, noColor, conflicts);
+							conflicts = false;
 						}
 						//Add local Termine to Kurs timeline
 						for(i=0; i<localTermine.length; i++) {
 							if(!conflicts && self.conflicts(termin, localTermine[i])){
 								conflicts = true;
+								globalConflicts = true;
 							}
-							self.color("Kurs", localTermine[i].startUhrzeit, localTermine[i].endUhrzeit, noColor, conflicts);	
+							self.color("Kurs", localTermine[i].startUhrzeit, localTermine[i].endUhrzeit, noColor, conflicts);
+							conflicts = false;
 						}
 						deepRuns++;
 						if(deepRuns === 3) {
 							self.disableToggle = false;
-							if(conflicts) {
+							if(globalConflicts) {
 								termin.conflicts = true;
 							} else {
 								termin.conflicts = false;
 							}
+							conflicts = false;
 						}
 					} else {
 						console.log(JSON.stringify(api));
@@ -951,24 +957,29 @@
 							}
 							if(!conflicts && self.conflicts(termin, api.response[i])){
 								conflicts = true;
+								globalConflicts = true;
 							}
 							self.color("Dozent", api.response[i].startUhrzeit, api.response[i].endUhrzeit, noColor, conflicts);
+							conflicts = false;
 						}
 						//Add local Termine to Dozent timeline
 						for(i=0; i<localTermine.length; i++) {
 							if(!conflicts && self.conflicts(termin, localTermine[i])){
 								conflicts = true;
+								globalConflicts = true;
 							}
-							self.color("Dozent", localTermine[i].startUhrzeit, localTermine[i].endUhrzeit, noColor, conflicts);	
+							self.color("Dozent", localTermine[i].startUhrzeit, localTermine[i].endUhrzeit, noColor, conflicts);
+							conflicts = false;
 						}
 						deepRuns++;
 						if(deepRuns === 3) {
 							self.disableToggle = false;
-							if(conflicts) {
+							if(globalConflicts) {
 								termin.conflicts = true;
 							} else {
 								termin.conflicts = false;
 							}
+							conflicts = false;
 						}
 					} else {
 						console.log(JSON.stringify(api));
@@ -996,26 +1007,31 @@
 							}
 							if(!conflicts && self.conflicts(termin, api.response[i])){
 								conflicts = true;
+								globalConflicts = true;
 							}
 							self.color("Raum", api.response[i].startUhrzeit, api.response[i].endUhrzeit, noColor, conflicts);
+							conflicts = false;
 						}
 						//Add local Termine to Raum timeline
 						for(i=0; i<localTermine.length; i++) {
 							if(localTermine[i].raum === termin.raum) {
 								if(!conflicts && self.conflicts(termin, localTermine[i])){
 									conflicts = true;
+									globalConflicts = true;
 								}
-								self.color("Raum", localTermine[i].startUhrzeit, localTermine[i].endUhrzeit, noColor, conflicts);	
+								self.color("Raum", localTermine[i].startUhrzeit, localTermine[i].endUhrzeit, noColor, conflicts);
+								conflicts = false;
 							}	
 						}
 						deepRuns++;
 						if(deepRuns === 3) {
 							self.disableToggle = false;
-							if(conflicts) {
+							if(globalConflicts) {
 								termin.conflicts = true;
 							} else {
 								termin.conflicts = false;
 							}
+							conflicts = false;
 						}
 					} else {
 						console.log(JSON.stringify(api));
