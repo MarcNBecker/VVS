@@ -41,6 +41,10 @@
 	background-color: rgba(226,0,26,0.5);
 }
 
+.highlight-termin {
+	background-color: rgba(92,105,113,0.5);
+}
+
 .flex-container {
   display: -webkit-box;
   display: -moz-box;
@@ -196,19 +200,19 @@ core-icon {
 }
 
 paper-icon-button::shadow #ripple {
-  color: #D32B18;
+  color: #E2001A;
   opacity: 0.25;
 }
 
 paper-checkbox::shadow #ink[checked] {
-	color: #D32B18;
+	color: #E2001A;
 }
 			
 paper-checkbox::shadow #checkbox.checked {
-	background-color: #D32B18;
-	border-color: #D32B18;
+	background-color: #E2001A;
+	border-color: #E2001A;
 }
 
 paper-progress::shadow #activeProgress {
-	background-color: #D32B18;
+	background-color: #E2001A;
 }

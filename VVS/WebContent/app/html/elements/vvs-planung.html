@@ -873,7 +873,7 @@
 				var self = this;
 				self.disableToggle = false;
 				self.clearAllColor();
-				self.color("Termin", termin.startUhrzeit, termin.endUhrzeit, noColor);
+				self.color("Termin", termin.startUhrzeit, termin.endUhrzeit, noColor, false);
 				//Find all locally added Termine on the same date
 				var i;
 				var localTermine = [];
@@ -907,14 +907,14 @@
 							if(!conflicts && self.conflicts(termin, api.response[i])){
 								conflicts = true;
 							}
-							self.color("Kurs", api.response[i].startUhrzeit, api.response[i].endUhrzeit, noColor);
+							self.color("Kurs", api.response[i].startUhrzeit, api.response[i].endUhrzeit, noColor, conflicts);
 						}
 						//Add local Termine to Kurs timeline
 						for(i=0; i<localTermine.length; i++) {
 							if(!conflicts && self.conflicts(termin, localTermine[i])){
 								conflicts = true;
 							}
-							self.color("Kurs", localTermine[i].startUhrzeit, localTermine[i].endUhrzeit, noColor);	
+							self.color("Kurs", localTermine[i].startUhrzeit, localTermine[i].endUhrzeit, noColor, conflicts);	
 						}
 						deepRuns++;
 						if(deepRuns === 3) {
@@ -952,14 +952,14 @@
 							if(!conflicts && self.conflicts(termin, api.response[i])){
 								conflicts = true;
 							}
-							self.color("Dozent", api.response[i].startUhrzeit, api.response[i].endUhrzeit, noColor);
+							self.color("Dozent", api.response[i].startUhrzeit, api.response[i].endUhrzeit, noColor, conflicts);
 						}
 						//Add local Termine to Dozent timeline
 						for(i=0; i<localTermine.length; i++) {
 							if(!conflicts && self.conflicts(termin, localTermine[i])){
 								conflicts = true;
 							}
-							self.color("Dozent", localTermine[i].startUhrzeit, localTermine[i].endUhrzeit, noColor);	
+							self.color("Dozent", localTermine[i].startUhrzeit, localTermine[i].endUhrzeit, noColor, conflicts);	
 						}
 						deepRuns++;
 						if(deepRuns === 3) {
@@ -997,7 +997,7 @@
 							if(!conflicts && self.conflicts(termin, api.response[i])){
 								conflicts = true;
 							}
-							self.color("Raum", api.response[i].startUhrzeit, api.response[i].endUhrzeit, noColor);
+							self.color("Raum", api.response[i].startUhrzeit, api.response[i].endUhrzeit, noColor, conflicts);
 						}
 						//Add local Termine to Raum timeline
 						for(i=0; i<localTermine.length; i++) {
@@ -1005,7 +1005,7 @@
 								if(!conflicts && self.conflicts(termin, localTermine[i])){
 									conflicts = true;
 								}
-								self.color("Raum", localTermine[i].startUhrzeit, localTermine[i].endUhrzeit, noColor);	
+								self.color("Raum", localTermine[i].startUhrzeit, localTermine[i].endUhrzeit, noColor, conflicts);	
 							}	
 						}
 						deepRuns++;
@@ -1048,12 +1048,17 @@
 				}
 			},
 			//Color a termin
-			color: function(timeline, start, end, noColor) {
+			color: function(timeline, start, end, noColor, conflicts) {
 				if(noColor === true) {
 					return;
 				}
 				var startTime = start.split(":");
 				var endTime = end.split(":");
+				var color = 'highlight-termin';
+				if (conflicts)
+				{
+					color = 'highlight';
+				}
 				
 				var startIndexHour = this.hours.indexOf(startTime[0]);
 				var startIndexMinute = this.minutes.indexOf(startTime[1]);
@@ -1066,7 +1071,7 @@
 					for (j = startIndexMinute; j < this.minutes.length; j++)
 					{
 						var id = timeline + "_" + this.hours[i] + "_" + this.minutes[j];
-						this.$[id].classList.add('highlight');
+						this.$[id].classList.add(color);
 						this.$[id].title = start + " - " + end;
 					}
 					startIndexMinute = 0;
@@ -1075,7 +1080,7 @@
 				for (j = 0; j < endIndexMinute; j++)
 				{
 					var id = timeline + "_" + endTime[0] + "_" + this.minutes[j];
-					this.$[id].classList.add('highlight');
+					this.$[id].classList.add(color);
 					this.$[id].title = start + " - " + end;
 				}	
 			},
@@ -1094,6 +1099,7 @@
 					for(j = 0; j<this.minutes.length; j++) {
 						var id = timeline + "_" + this.hours[i] + "_" + this.minutes[j];
 						this.$[id].classList.remove("highlight");
+						this.$[id].classList.remove("highlight-termin");
 						this.$[id].title = "";
 					}
 				}
