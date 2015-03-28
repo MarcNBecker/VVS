@@ -49,8 +49,6 @@
   -webkit-flex-flow: row wrap;
   -moz-flex-flow: row wrap;
   -ms-flex-flow: row wrap;
-  -ms-flex-direction: row;
-  -ms-flex-wrap: wrap;
   flex-flow: row wrap;
   margin-right: 20px;
 }
