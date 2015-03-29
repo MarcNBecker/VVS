@@ -6,8 +6,8 @@
 		<paper-shadow z="3" class="shadow">
 			<div vertical layout>
 				<!-- Name of Vorlesung and Progress-Bar -->
-				<div horizontal layout class="headline horizontal-input vertical-input">
-					<paper-icon-button on-click="{{navigateVDashboard}}" icon="apps" disabled?="{{disableToggle}}"></paper-icon-button>
+				<div horizontal layout center class="headline horizontal-input vertical-input">
+					<paper-icon-button style="margin-right: 0px" self-start on-click="{{navigateVDashboard}}" icon="apps" disabled?="{{disableToggle}}"></paper-icon-button>
 					<span>Terminplanung &quot;{{vorlesung.fachInstanz.fach.name}}&quot; - {{vorlesung.semester}}. Semester - {{kurs.kursname}}</span>
 					<paper-progress class="progress" value="{{progressProzent}}"></paper-progress>
 					<span>{{progress}} / {{vorlesung.fachInstanz.stunden}} {{vorlesung.fachInstanz.stunden === 1 ? 'Stunde' : 'Stunden'}} geplant</span>
