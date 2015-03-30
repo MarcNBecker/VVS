@@ -127,11 +127,13 @@
    						//Enable everything
    		    			self.disableToggle = false;
    						self.feiertag = new model.templates.Feiertag();
+   						self.invalid.name = true;
+   						self.invalid.datum = true;
    						self.toasts.success.show();
    						self.job("update-feiertag-label", function() {
    							self.$.name.inputAction();
    							self.$.datum.inputAction();
-   						})
+   						}, 100);
    					}
    					else
    					{
