@@ -877,6 +877,7 @@
 				var terminAsDate = new Date(this.selectedDate);
 				if(this.minDate && this.maxDate && !(this.minDate <= terminAsDate && this.maxDate >= terminAsDate)) {
 					this.invalid.datum = true;
+					this.clearAllColor();
 				} else {
 					this.invalid.datum = false;
 					this.showTermin(this.vorlesungsterminToEdit);
