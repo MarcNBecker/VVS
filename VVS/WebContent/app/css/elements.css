@@ -30,6 +30,9 @@
 }
 
 .line-spacing {
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
 	width: 90px;
 }
 

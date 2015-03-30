@@ -47,7 +47,7 @@
 					<paper-button affirmative>Nein</paper-button>
 					<paper-button on-click="{{doDelete}}" affirmative autofocus>L&ouml;schen</paper-button>
 				</paper-action-dialog>
-				<paper-action-dialog id="copy_feiertage_dialog" heading="Feiertage aus {{jahrToCopy}} wirklich &uuml;bernehmen?">
+				<paper-action-dialog id="copy_feiertage_dialog" heading="Feiertage aus {{jahr - 1}} wirklich &uuml;bernehmen?">
 					<paper-button affirmative>Nein</paper-button>
 					<paper-button on-click="{{doCopy}}" affirmative autofocus>&Uuml;bernehmen</paper-button>
 				</paper-action-dialog>
@@ -62,7 +62,6 @@
 			feiertag: new model.templates.Feiertag(),
 			feiertage: [],
 			feiertagToDelete: null,
-			jahrToCopy: 0,
 			selectedDate: '2000-01-01',
 			jahr: new Date().getFullYear(),
 			datePickerOpened: false,
@@ -80,13 +79,13 @@
 				self.feiertag = new model.templates.Feiertag();
 				self.feiertage = [];
 				self.feiertagToDelete = null;
-				self.jahrToCopy = 0;
 				self.selectedDate = self.today();
 				self.datePickerOpened = false;
 				self.disableToggle = true;
 				self.invalid = {};
 				//ID is correct, needs to be named like this for other functions
 				self.jahr = self.pageParameter.feiertage.id == 0 ? new Date().getFullYear() : self.pageParameter.feiertage.id; 
+				self.selectedDate = self.selectedDate.replace(new Date().getFullYear(), self.jahr);
 				//Load all available Feiertage for selected Jahr
 				model.webService.getAllFeiertage(self.jahr, function(api) {
 					if (!api.isError)
@@ -180,7 +179,6 @@
 			},
 			//Show action dialog for copy
 			initCopy: function() {
-				this.jahrToCopy = this.jahr - 1;
 				this.$.copy_feiertage_dialog.toggle();
 			},
 			//Copy feiertage from previous year
@@ -189,7 +187,8 @@
 				var self = this;
 				//Disable everything
     			self.disableToggle = true;
-				model.webService.getAllFeiertage(self.jahrToCopy, function(api) {
+				var vorjahr = self.jahr - 1;
+				model.webService.getAllFeiertage(vorjahr, function(api) {
 					if (!api.isError)
    					{
    						var feiertageVorjahr = api.response;
@@ -199,7 +198,7 @@
    						{
    							var feiertag = feiertageVorjahr[i];
    							//Change year to next year
-							feiertag.datum = feiertag.datum.replace(self.jahrToCopy, self.jahr);
+							feiertag.datum = feiertag.datum.replace(vorjahr, self.jahr);
    							model.webService.setFeiertag(feiertag, function(api) {
    								if (!api.isError)
    			   					{
@@ -263,7 +262,7 @@
 				if(this.$.datum.input.value) {
 					this.selectedDate = this.feiertag.datum;
 				} else {
-					this.feiertag.datum = this.today();		
+					this.feiertag.datum = this.selectedDate;		
 				}
 				//Wait until the date picker potentially auto closed to reopen it
 				this.job('open-date-picker', function() {

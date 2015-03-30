@@ -17,7 +17,7 @@
 					<paper-shadow z="2" class="inner-shadow" flex>
 						<div vertical layout>
 							<div horizontal layout center>
-								<div class="small-headline line-spacing"><paper-icon-button icon="arrow-back" on-click="{{back}}" disabled="{{disableToggle || !vorlesungsterminToEdit.datum}}"></paper-icon-button></div>
+								<div class="line-spacing"><paper-icon-button icon="arrow-back" on-click="{{back}}" disabled="{{disableToggle || !vorlesungsterminToEdit.datum}}"></paper-icon-button></div>
 								<div horizontal layout flex>
 									<template repeat="{{hour in hours}}">
 										<div class="small-headline" flex>{{hour}}:00&nbsp;&nbsp;</div>
@@ -28,12 +28,12 @@
 							<template repeat="{{timeline in timelines}}">
 								<div class="horizontal-verticalizable">
 									<div horizontal layout center>
-										<div class="line-spacing" hidden?="{{timeline !== 'Kurs' || !(timeline === 'Kurs' && kurs.kursname !== '')}}">{{kurs.kursname}}</div>
-										<div class="line-spacing" hidden?="{{timeline !== 'Kurs' || !(timeline === 'Kurs' && kurs.kursname === '')}}">{{timeline}}</div>
-										<div class="line-spacing" hidden?="{{timeline !== 'Dozent' || !(timeline === 'Dozent' && dozent.id > 0)}}">{{dozent.name | shortName}}</div>
-										<div class="line-spacing" hidden?="{{timeline !== 'Dozent' || !(timeline === 'Dozent' && dozent.id <= 0)}}">{{timeline}}</div>
-										<div class="line-spacing" hidden?="{{timeline !== 'Raum' || !(timeline === 'Raum' && vorlesungsterminToEdit.raum !== '')}}">{{vorlesungsterminToEdit.raum}}</div>
-										<div class="line-spacing" hidden?="{{timeline !== 'Raum' || !(timeline === 'Raum' && vorlesungsterminToEdit.raum === '')}}">{{timeline}}</div>
+										<div class="line-spacing" hidden?="{{timeline !== 'Kurs' || !(timeline === 'Kurs' && kurs.kursname)}}">{{kurs.kursname}}</div>
+										<div class="line-spacing" hidden?="{{timeline !== 'Kurs' || !(timeline === 'Kurs' && !kurs.kursname)}}">{{timeline}}</div>
+										<div class="line-spacing" hidden?="{{timeline !== 'Dozent' || !(timeline === 'Dozent' && dozent.name)}}">{{dozent.name}}</div>
+										<div class="line-spacing" hidden?="{{timeline !== 'Dozent' || !(timeline === 'Dozent' && !dozent.name)}}">{{timeline}}</div>
+										<div class="line-spacing" hidden?="{{timeline !== 'Raum' || !(timeline === 'Raum' && vorlesungsterminToEdit.raum)}}">{{vorlesungsterminToEdit.raum}}</div>
+										<div class="line-spacing" hidden?="{{timeline !== 'Raum' || !(timeline === 'Raum' && !vorlesungsterminToEdit.raum)}}">{{timeline}}</div>
 										<div class="line-spacing" hidden?="{{timeline !== 'Termin'}}">{{timeline}}</div>
 										<paper-shadow z="1" class="inner-inner-shadow-timeline" flex>
 											<div horizontal layout>
@@ -1157,20 +1157,6 @@
 					}
 				}
 				return true;
-			},
-			//Make name of dozent shorter for timeline in graphical planning, if the name is too long
-			shortName: function(value) {
-				var result;
-				if (value.length > 10)
-				{
-					result = value.substr(0, 9) + "...";
-				}
-				else
-				{
-					result = value;
-				}
-				console.log(result);
-				return result;
 			}
 		});
 	</script>
