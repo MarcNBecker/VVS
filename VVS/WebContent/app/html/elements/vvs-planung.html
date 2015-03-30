@@ -28,13 +28,13 @@
 							<template repeat="{{timeline in timelines}}">
 								<div class="horizontal-verticalizable">
 									<div horizontal layout center>
-										<div class="line-spacing" hidden?="{{timeline !== 'Kurs' || !(timeline === 'Kurs' && kurs.kursname)}}">{{kurs.kursname}}</div>
-										<div class="line-spacing" hidden?="{{timeline !== 'Kurs' || !(timeline === 'Kurs' && !kurs.kursname)}}">{{timeline}}</div>
-										<div class="line-spacing" hidden?="{{timeline !== 'Dozent' || !(timeline === 'Dozent' && dozent.name)}}">{{dozent.name}}</div>
-										<div class="line-spacing" hidden?="{{timeline !== 'Dozent' || !(timeline === 'Dozent' && !dozent.name)}}">{{timeline}}</div>
-										<div class="line-spacing" hidden?="{{timeline !== 'Raum' || !(timeline === 'Raum' && vorlesungsterminToEdit.raum)}}">{{vorlesungsterminToEdit.raum}}</div>
-										<div class="line-spacing" hidden?="{{timeline !== 'Raum' || !(timeline === 'Raum' && !vorlesungsterminToEdit.raum)}}">{{timeline}}</div>
-										<div class="line-spacing" hidden?="{{timeline !== 'Termin'}}">{{timeline}}</div>
+										<span class="line-spacing" title="Kurs: {{kurs.kursname}}" hidden?="{{timeline !== 'Kurs' || !(timeline === 'Kurs' && kurs.kursname)}}">{{kurs.kursname}}</span>
+										<span class="line-spacing" title="Kurs" hidden?="{{timeline !== 'Kurs' || !(timeline === 'Kurs' && !kurs.kursname)}}">{{timeline}}</span>
+										<span class="line-spacing" title="Dozent: {{dozent.name}}" hidden?="{{timeline !== 'Dozent' || !(timeline === 'Dozent' && dozent.name)}}">{{dozent.name}}</span>
+										<span class="line-spacing" title="Dozent" hidden?="{{timeline !== 'Dozent' || !(timeline === 'Dozent' && !dozent.name)}}">{{timeline}}</span>
+										<span class="line-spacing" title="Raum: {{$.raum.input.committedValue}}" hidden?="{{timeline !== 'Raum' || !(timeline === 'Raum' && $.raum.input.committedValue)}}">{{$.raum.input.committedValue}}</span>
+										<span class="line-spacing" title="Raum" hidden?="{{timeline !== 'Raum' || !(timeline === 'Raum' && !$.raum.input.committedValue)}}">{{timeline}}</span>
+										<span class="line-spacing" hidden?="{{timeline !== 'Termin'}}">{{timeline}}</span>
 										<paper-shadow z="1" class="inner-inner-shadow-timeline" flex>
 											<div horizontal layout>
 												<template repeat="{{hour, h in hours}}">
