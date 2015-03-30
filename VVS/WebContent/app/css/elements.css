@@ -179,6 +179,12 @@
 	}	
 }
 
+@supports (-moz-appearance:meterbar) {
+	.fixed-timeline-ff{
+		font-size: 5px;
+	}
+}	
+
 .icon-good {
 	fill: #5C6971;
 }

@@ -33,7 +33,7 @@
 												<template repeat="{{hour, h in hours}}">
 													<div horizontal layout flex>
 														<template repeat="{{minute, m in minutes}}">
-															<div id="{{timeline}}_{{hour}}_{{minute}}" class="{{(h !== 0 && m === 0) || m === minutes.length/2 ? 'timeline-border' : ''}}" flex>&nbsp;</div>
+															<div id="{{timeline}}_{{hour}}_{{minute}}" class="{{(h !== 0 && m === 0) || m === minutes.length/2 ? 'timeline-border fixed-timeline-ff' : 'fixed-timeline-ff'}}" flex>&nbsp;</div>
 														</template>
 													</div>
 												</template>
