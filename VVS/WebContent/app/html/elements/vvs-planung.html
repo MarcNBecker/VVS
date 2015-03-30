@@ -229,11 +229,13 @@
 			publish: {
 				pageParameter: {},
 				pageLoaded: {},
-				toasts: {}
+				toasts: {},
+				navigating: false
 			},
 			//Initialize the screen
 			ready: function() {
 				var self = this;
+				self.navigating = false;
 				self.vorlesung = new model.templates.Vorlesung();
 				self.vorlesungstermine = [];
 				self.vorlesungsterminToEdit = new model.templates.Termin();
