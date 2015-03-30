@@ -348,6 +348,8 @@
     			model.webService.updateKurs(self.kurs, function(api) {
 	   				if (!api.isError)
 					{
+	   					//Tell the outside world about the changes
+						self.pageLoaded.stammdaten = false;
 						self.updateBlocklagen();
 					}
 					else
@@ -408,7 +410,7 @@
 					if(!api.isError) {
 						//Update variables and switch display of button bar
 						self.kurs = new model.templates.Kurs();
-						//Tell the outside world the new ID
+						//Tell the outside world the changes
 						self.pageLoaded.stammdaten = false;
 						window.history.replaceState({}, '', '#!kurs');
 		    			self.blocklagen = [new model.templates.Blocklage(), 

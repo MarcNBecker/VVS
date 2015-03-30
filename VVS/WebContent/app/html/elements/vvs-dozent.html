@@ -428,6 +428,8 @@
 					{
 						var i;
 						var deepRuns = 0;
+						//Tell the outside world about the changes
+						self.pageLoaded.stammdaten = false;
 						//Delete all deleted Faecher
 						for (i = 0; i < self.deletedFaecher.length; i++)
 						{
@@ -515,7 +517,7 @@
 					if(!api.isError) {
 						//Update variables and switch display of button bar
 						self.dozent = new model.templates.Dozent();
-						//Tell the outside world the new ID
+						//Tell the outside world about the changes
 						self.pageLoaded.stammdaten = false;
 						window.history.replaceState({}, '', '#!dozent');
 						self.faecher = self.allFaecher.slice();

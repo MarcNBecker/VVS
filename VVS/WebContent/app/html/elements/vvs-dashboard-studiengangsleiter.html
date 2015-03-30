@@ -26,8 +26,7 @@
 											<span class="text-width-sl">ausgew&auml;hlte Vorlesungen:</span>
 											<div horizontal layout center-center flex>
 												<span>{{item.geplanteVorlesungen}}</span>
-												<core-icon class="icon-good" icon="check-box" hidden?="{{item.fehlendeKlausuren === 0}}"></core-icon>
-												<core-icon class="icon-bad" icon="cancel" hidden?="{{item.fehlendeKlausuren > 0}}"></core-icon>
+												<core-icon class="icon-bad" icon="cancel" hidden?="{{item.geplanteVorlesungen > 0}}"></core-icon>
 											</div>
 										</div>
 										<div horizontal layout center>
