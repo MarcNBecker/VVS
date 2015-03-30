@@ -17,12 +17,13 @@
 					<paper-shadow z="2" class="inner-shadow" flex>
 						<div vertical layout>
 							<div horizontal layout center>
-								<div class="hide small-headline line-spacing">Zeiten</div>
+								<div class="small-headline line-spacing"><paper-icon-button icon="arrow-back" on-click="{{back}}" disabled="{{disableToggle || !vorlesungsterminToEdit.datum}}"></paper-icon-button></div>
 								<div horizontal layout flex>
 									<template repeat="{{hour in hours}}">
 										<div class="small-headline" flex>{{hour}}:00&nbsp;&nbsp;</div>
 									</template>
 								</div>
+								<paper-icon-button icon="arrow-forward" on-click="{{forward}}" disabled="{{disableToggle || !vorlesungsterminToEdit.datum}}"></paper-icon-button>
 							</div>
 							<template repeat="{{timeline in timelines}}">
 								<div class="horizontal-verticalizable">
@@ -39,6 +40,7 @@
 												</template>
 											</div>
 										</paper-shadow>
+										<paper-icon-button class="hide" style="height: 0px"></paper-icon-button>
 									</div>
 								</div>
 							</template>
@@ -680,6 +682,32 @@
 					self.pageLoaded.vdashboard = false;
 					self.pageLoaded.sdashboard = false;
 				}
+			},
+			//Show Termine of previous day
+			back: function () {
+				var self = this;
+				var dateNew = new Date(self.vorlesungsterminToEdit.datum);
+				dateNew.setDate(dateNew.getDate() - 1);
+				var year = dateNew.getFullYear();
+			    var month = '0' + (dateNew.getMonth() + 1);
+			    month = month.slice(-2, (month.length - 2) + 3);
+			    var day = '0' + dateNew.getDate();
+			    day = day.slice(-2, (day.length - 2) + 3);
+			    self.datePickerOpened = true;
+			    self.selectedDate = year + '-' + month + '-' + day;
+			},
+			//Show Termine of next day
+			forward: function() {
+				var self = this;
+				var dateNew = new Date(self.vorlesungsterminToEdit.datum);
+				dateNew.setDate(dateNew.getDate() + 1);
+				var year = dateNew.getFullYear();
+			    var month = '0' + (dateNew.getMonth() + 1);
+			    month = month.slice(-2, (month.length - 2) + 3);
+			    var day = '0' + dateNew.getDate();
+			    day = day.slice(-2, (day.length - 2) + 3);
+			    self.datePickerOpened = true;
+			    self.selectedDate = year + '-' + month + '-' + day;
 			},
 			//Navigate backwards and force a reload
 	    	cancel: function() {
