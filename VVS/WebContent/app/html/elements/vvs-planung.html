@@ -17,17 +17,24 @@
 					<paper-shadow z="2" class="inner-shadow" flex>
 						<div vertical layout>
 							<div horizontal layout center>
-								<div class="hide small-headline line-spacing">Zeiten</div>
+								<div class="small-headline line-spacing"><paper-icon-button icon="arrow-back" on-click="{{back}}" disabled="{{disableToggle || !vorlesungsterminToEdit.datum}}"></paper-icon-button></div>
 								<div horizontal layout flex>
 									<template repeat="{{hour in hours}}">
 										<div class="small-headline" flex>{{hour}}:00&nbsp;&nbsp;</div>
 									</template>
 								</div>
+								<paper-icon-button icon="arrow-forward" on-click="{{forward}}" disabled="{{disableToggle || !vorlesungsterminToEdit.datum}}"></paper-icon-button>
 							</div>
 							<template repeat="{{timeline in timelines}}">
 								<div class="horizontal-verticalizable">
 									<div horizontal layout center>
-										<div class="line-spacing">{{timeline}}</div>
+										<div class="line-spacing" hidden?="{{timeline !== 'Kurs' || !(timeline === 'Kurs' && kurs.kursname !== '')}}">{{kurs.kursname}}</div>
+										<div class="line-spacing" hidden?="{{timeline !== 'Kurs' || !(timeline === 'Kurs' && kurs.kursname === '')}}">{{timeline}}</div>
+										<div class="line-spacing" hidden?="{{timeline !== 'Dozent' || !(timeline === 'Dozent' && dozent.id > 0)}}">{{dozent.name | shortName}}</div>
+										<div class="line-spacing" hidden?="{{timeline !== 'Dozent' || !(timeline === 'Dozent' && dozent.id <= 0)}}">{{timeline}}</div>
+										<div class="line-spacing" hidden?="{{timeline !== 'Raum' || !(timeline === 'Raum' && vorlesungsterminToEdit.raum !== '')}}">{{vorlesungsterminToEdit.raum}}</div>
+										<div class="line-spacing" hidden?="{{timeline !== 'Raum' || !(timeline === 'Raum' && vorlesungsterminToEdit.raum === '')}}">{{timeline}}</div>
+										<div class="line-spacing" hidden?="{{timeline !== 'Termin'}}">{{timeline}}</div>
 										<paper-shadow z="1" class="inner-inner-shadow-timeline" flex>
 											<div horizontal layout>
 												<template repeat="{{hour, h in hours}}">
@@ -39,6 +46,7 @@
 												</template>
 											</div>
 										</paper-shadow>
+										<paper-icon-button class="hide" style="height: 0px"></paper-icon-button>
 									</div>
 								</div>
 							</template>
@@ -683,6 +691,32 @@
 					self.pageLoaded.sdashboard = false;
 				}
 			},
+			//Show Termine of previous day
+			back: function () {
+				var self = this;
+				var dateNew = new Date(self.vorlesungsterminToEdit.datum);
+				dateNew.setDate(dateNew.getDate() - 1);
+				var year = dateNew.getFullYear();
+			    var month = '0' + (dateNew.getMonth() + 1);
+			    month = month.slice(-2, (month.length - 2) + 3);
+			    var day = '0' + dateNew.getDate();
+			    day = day.slice(-2, (day.length - 2) + 3);
+			    self.datePickerOpened = true;
+			    self.selectedDate = year + '-' + month + '-' + day;
+			},
+			//Show Termine of next day
+			forward: function() {
+				var self = this;
+				var dateNew = new Date(self.vorlesungsterminToEdit.datum);
+				dateNew.setDate(dateNew.getDate() + 1);
+				var year = dateNew.getFullYear();
+			    var month = '0' + (dateNew.getMonth() + 1);
+			    month = month.slice(-2, (month.length - 2) + 3);
+			    var day = '0' + dateNew.getDate();
+			    day = day.slice(-2, (day.length - 2) + 3);
+			    self.datePickerOpened = true;
+			    self.selectedDate = year + '-' + month + '-' + day;
+			},
 			//Navigate backwards and force a reload
 	    	cancel: function() {
 	    		this.pageLoaded.planung = false;
@@ -851,6 +885,7 @@
 				var terminAsDate = new Date(this.selectedDate);
 				if(this.minDate && this.maxDate && !(this.minDate <= terminAsDate && this.maxDate >= terminAsDate)) {
 					this.invalid.datum = true;
+					this.clearAllColor();
 				} else {
 					this.invalid.datum = false;
 					this.showTermin(this.vorlesungsterminToEdit);
@@ -1122,6 +1157,20 @@
 					}
 				}
 				return true;
+			},
+			//Make name of dozent shorter for timeline in graphical planning, if the name is too long
+			shortName: function(value) {
+				var result;
+				if (value.length > 10)
+				{
+					result = value.substr(0, 9) + "...";
+				}
+				else
+				{
+					result = value;
+				}
+				console.log(result);
+				return result;
 			}
 		});
 	</script>
