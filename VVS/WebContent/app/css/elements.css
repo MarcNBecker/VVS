@@ -168,12 +168,15 @@
 	margin-right: 10px;
 }
 
-.text-width {
-	min-width: 140px;
-}
-
-.text-width-sl {
-	min-width: 200px;
+/* Remove class for Firefox >16 */
+@supports (not (-moz-appearance:meterbar)) {
+	.text-width {
+		min-width: 140px;
+	}
+	
+	.text-width-sl {
+		min-width: 200px;
+	}	
 }
 
 .icon-good {
