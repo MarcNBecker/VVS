@@ -656,7 +656,7 @@
 					this.$.mkurzbeschreibung.inputAction();
 					this.invalid.mkurzbeschreibung = invalid;
 					this.$.credits.inputAction();
-					this.invalid.credits = invalid;
+					this.invalid.credits = invalid || !this.inputModulInstanz.credits;
 				}, 100);
 			},
 			//Switch Modul info
@@ -695,9 +695,9 @@
 					this.$.fkurzbeschreibung.inputAction();
 					this.invalid.fkurzbeschreibung = invalid;
 					this.$.stunden.inputAction();
-					this.invalid.stunden = invalid;
+					this.invalid.stunden = invalid || !this.inputFachInstanz.stunden;
 					this.$.semester.inputAction();
-					this.invalid.semester = invalid;
+					this.invalid.semester = invalid || !this.inputFachInstanz.semester;
 				}, 100);
 			},
 			//Switch Fach info
