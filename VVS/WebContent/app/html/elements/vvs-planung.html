@@ -144,7 +144,7 @@
 								<template repeat="{{item in topDozenten}}">
 									<paper-shadow z="1" class="{{item.id === dozent.id ? 'inner-inner-shadow highlight' : 'inner-inner-shadow'}}">
 										<div horizontal layout center>
-											<paper-item on-click="{{setListDozent}}" horizontal layout center-center flex disabled?="{{disableToggle}}">{{item.name}}, {{item.vorname}}{{item.maxFachJahr > 0 ? ' (zuletzt ' + item.maxFachJahr + ')' : ''}}</paper-item>
+											<paper-item on-click="{{setListDozent}}" horizontal layout center-center flex disabled?="{{disableToggle}}">{{item.name}}, {{item.vorname}}{{item.maxFachJahr > 0 ? ' (zuletzt ' + item.maxFachJahr + ')' : ''}}{{item.status === 2 ? ' (Inaktiv)' : ''}}</paper-item>
 											<paper-icon-button icon="info" on-click="{{navigateToDozent}}" disabled?="{{disableToggle}}"></paper-icon-button>
 										</div>
 									</paper-shadow>
@@ -153,7 +153,7 @@
 								<template repeat="{{item in skilledDozenten}}">
 									<paper-shadow z="1" class="{{item.id === dozent.id ? 'inner-inner-shadow highlight' : 'inner-inner-shadow'}}">
 										<div horizontal layout center>
-											<paper-item on-click="{{setListDozent}}" horizontal layout center-center flex disabled?="{{disableToggle}}">{{item.name}}, {{item.vorname}}{{item.maxFachJahr > 0 ? ' (zuletzt ' + item.maxFachJahr + ')' : ''}}</paper-item>
+											<paper-item on-click="{{setListDozent}}" horizontal layout center-center flex disabled?="{{disableToggle}}">{{item.name}}, {{item.vorname}}{{item.maxFachJahr > 0 ? ' (zuletzt ' + item.maxFachJahr + ')' : ''}}{{item.status === 2 ? ' (Inaktiv)' : ''}}</paper-item>
 											<paper-icon-button icon="info" on-click="{{navigateToDozent}}" disabled?="{{disableToggle}}"></paper-icon-button>
 										</div>
 									</paper-shadow>
@@ -164,7 +164,7 @@
 										<paper-dropdown-searchable class="dropdown" arrayName="dozenten" searchProperties="name vorname" hideProperty="hidden">
 											<core-menu id="dozent" class="menu">
 												<template repeat="{{item in dozenten}}">
-													<paper-item hidden?="{{item.hidden}}">{{item.name}}, {{item.vorname}}</paper-item>
+													<paper-item hidden?="{{item.hidden}}">{{item.name}}, {{item.vorname}}{{item.status === 2 ? ' (Inaktiv)' : ''}}</paper-item>
 												</template>
 											</core-menu>
 										</paper-dropdown-searchable>
@@ -173,7 +173,7 @@
 						 		<template repeat="{{item in otherDozenten}}">
 									<paper-shadow z="1" class="{{item.id === dozent.id ? 'inner-inner-shadow highlight' : 'inner-inner-shadow'}}">
 										<div horizontal layout center>
-											<paper-item on-click="{{setListDozent}}" horizontal layout center-center flex class="self-click">{{item.name}}, {{item.vorname}}</paper-item>
+											<paper-item on-click="{{setListDozent}}" horizontal layout center-center flex class="self-click">{{item.name}}, {{item.vorname}}{{item.status === 2 ? ' (Inaktiv)' : ''}}</paper-item>
 											<paper-icon-button icon="info" on-click="{{navigateToDozent}}"></paper-icon-button>
 										</div>
 									</paper-shadow>

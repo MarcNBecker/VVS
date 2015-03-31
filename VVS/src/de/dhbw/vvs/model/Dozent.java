@@ -38,13 +38,14 @@ public class Dozent {
 	
 	public static ArrayList<Dozent> getAll() throws WebServiceException {
 		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
-		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT id, titel, name, vorname FROM dozent ORDER BY name ASC", null);
+		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT id, titel, name, vorname, status FROM dozent ORDER BY name ASC", null);
 		ArrayList<Dozent> dozentList = new ArrayList<Dozent>();
 		for(TypeHashMap<String, Object> result : resultList) {
 			Dozent d = new Dozent(result.getInt("id"));
 			d.titel = result.getString("titel");
 			d.name = result.getString("name");
 			d.vorname = result.getString("vorname");
+			d.status = Status.getFromOrdinal(result.getInt("status"));		
 			dozentList.add(d);
 		}
 		return dozentList;
@@ -57,13 +58,14 @@ public class Dozent {
 		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
 		ArrayList<Object> fieldValues = new ArrayList<Object>();
 		fieldValues.add(fach.getID());
-		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT id, titel, name, vorname FROM dozent INNER join dozentfach ON dozent.id = dozentfach.dozent WHERE fach = ? ORDER BY name ASC", fieldValues);
+		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT id, titel, name, vorname, status FROM dozent INNER join dozentfach ON dozent.id = dozentfach.dozent WHERE fach = ? ORDER BY name ASC", fieldValues);
 		ArrayList<Dozent> dozentList = new ArrayList<Dozent>();
 		for(TypeHashMap<String, Object> result : resultList) {
 			Dozent d = new Dozent(result.getInt("id"));
 			d.titel = result.getString("titel");
 			d.name = result.getString("name");
 			d.vorname = result.getString("vorname");
+			d.status = Status.getFromOrdinal(result.getInt("status"));
 			dozentList.add(d);
 		}
 		return dozentList;
@@ -78,13 +80,14 @@ public class Dozent {
 		ArrayList<Object> fieldValues = new ArrayList<Object>();
 		fieldValues.add(vorlesung.getKursID());
 		fieldValues.add(vorlesung.getFachInstanz().getFach().getID());
-		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT id, titel, name, vorname FROM dozent WHERE id IN (SELECT dozent FROM vorlesung WHERE kurs IN (SELECT id FROM kurs WHERE studiengangsleiter = (SELECT studiengangsleiter FROM kurs WHERE id = ?)) AND fachInstanz IN (SELECT id FROM fachInstanz WHERE fach = ?)) ORDER BY name ASC", fieldValues);
+		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT id, titel, name, vorname, status FROM dozent WHERE id IN (SELECT dozent FROM vorlesung WHERE kurs IN (SELECT id FROM kurs WHERE studiengangsleiter = (SELECT studiengangsleiter FROM kurs WHERE id = ?)) AND fachInstanz IN (SELECT id FROM fachInstanz WHERE fach = ?)) ORDER BY name ASC", fieldValues);
 		ArrayList<Dozent> dozentList = new ArrayList<Dozent>();
 		for(TypeHashMap<String, Object> result : resultList) {
 			Dozent d = new Dozent(result.getInt("id"));
 			d.titel = result.getString("titel");
 			d.name = result.getString("name");
 			d.vorname = result.getString("vorname");
+			d.status = Status.getFromOrdinal(result.getInt("status"));
 			dozentList.add(d);
 		}
 		return dozentList;
@@ -102,13 +105,14 @@ public class Dozent {
 		ArrayList<Object> fieldValues = new ArrayList<Object>();
 		fieldValues.add(kurs.getID());
 		fieldValues.add(semester);
-		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT id, titel, name, vorname FROM dozent WHERE id IN (SELECT dozent FROM vorlesung WHERE kurs = ? AND semester = ?) ORDER BY name ASC", fieldValues);
+		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT id, titel, name, vorname, status FROM dozent WHERE id IN (SELECT dozent FROM vorlesung WHERE kurs = ? AND semester = ?) ORDER BY name ASC", fieldValues);
 		ArrayList<Dozent> dozentList = new ArrayList<Dozent>();
 		for(TypeHashMap<String, Object> result : resultList) {
 			Dozent d = new Dozent(result.getInt("id"));
 			d.titel = result.getString("titel");
 			d.name = result.getString("name");
 			d.vorname = result.getString("vorname");
+			d.status = Status.getFromOrdinal(result.getInt("status"));
 			dozentList.add(d);
 		}
 		return dozentList;

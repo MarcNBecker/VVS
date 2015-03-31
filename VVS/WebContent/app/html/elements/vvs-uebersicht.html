@@ -19,7 +19,7 @@
 							<paper-dropdown-searchable class="dropdown" arrayName="dozenten" searchProperties="name vorname" hideProperty="hidden">
 								<core-menu id="dozent" class="menu">
 									<template repeat="{{item in dozenten}}">
-										<paper-item hidden?="{{item.hidden}}">{{item.name}}, {{item.vorname}}</paper-item>
+										<paper-item hidden?="{{item.hidden}}">{{item.name}}, {{item.vorname}}{{item.status === 2 ? ' (Inaktiv)' : ''}}</paper-item>
 									</template>
 								</core-menu>
 							</paper-dropdown-searchable>
