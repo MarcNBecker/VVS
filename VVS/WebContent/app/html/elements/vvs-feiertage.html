@@ -282,11 +282,7 @@
 				if(this.$.datum.input.value) {
 					this.selectedDate = this.feiertagToEdit.datum;
 				} else {
-<<<<<<< HEAD
-					this.feiertagToEdit.datum = this.today();		
-=======
-					this.feiertag.datum = this.selectedDate;		
->>>>>>> refs/heads/usability
+					this.feiertagToEdit.datum = this.selectedDate;		
 				}
 				//Wait until the date picker potentially auto closed to reopen it
 				this.job('open-date-picker', function() {
