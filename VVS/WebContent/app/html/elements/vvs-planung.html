@@ -932,6 +932,12 @@
 				}
 				//Calculate conflicts
 				var deepRuns = 0;
+				if(!(termin.datum && this.vorlesung.dozentID > 0)) {
+					deepRuns++;
+				}
+				if(!(termin.datum && termin.raum)) {
+					deepRuns++;
+				}
 				var globalConflicts = false;
 				//Calculate conflicts with Kurs
 				if (termin.datum)
