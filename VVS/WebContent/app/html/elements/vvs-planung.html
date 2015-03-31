@@ -1166,7 +1166,7 @@
 					startIndexMinute = 0;
 				}
 				var j;
-				for (j = 0; j < endIndexMinute; j++)
+				for (j = startIndexMinute; j < endIndexMinute; j++)
 				{
 					var id = timeline + "_" + endTime[0] + "_" + this.minutes[j];
 					if (!this.$[id])
