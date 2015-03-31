@@ -914,13 +914,14 @@
 			},
 			//Update grafical planning
 			showTermin: function(termin, noColor) {
-				if(!(termin.startUhrzeit && termin.endUhrzeit && termin.datum && termin.raum && this.vorlesung.dozentID > 0)) {
-					return;
-				}
 				var self = this;
 				self.disableToggle = false;
 				self.clearAllColor();
-				self.color("Termin", termin.startUhrzeit, termin.endUhrzeit, noColor, false);
+				//Color Termin only, if date, start time and end time are set
+				if (termin.datum && termin.startUhrzeit && termin.endUhrzeit)
+				{
+					self.color("Termin", termin.startUhrzeit, termin.endUhrzeit, noColor, false);
+				}
 				//Find all locally added Termine on the same date
 				var i;
 				var localTermine = [];
@@ -933,145 +934,158 @@
 				var deepRuns = 0;
 				var globalConflicts = false;
 				//Calculate conflicts with Kurs
-				model.webService.getAllConflictsTermineKurs(this.vorlesung, termin, function(api) {
-					if(!api.isError) {
-						var i;
-						for(i=0; i<api.response.length; i++) {
-							if(api.response[i].id === termin.id) {
-								continue;
-							}
-							var j;
-							var found = false;
-							var conflicts = false;
-							//Dont use webService for local termin
-							for(j=0; j<self.vorlesungstermine.length; j++) {
-								if(self.vorlesungstermine[j].id === api.response[i].id) {
-									found = true;
+				if (termin.datum)
+				{
+					model.webService.getAllConflictsTermineKurs(this.vorlesung, termin, function(api) {
+						if(!api.isError) {
+							var i;
+							for(i=0; i<api.response.length; i++) {
+								if(api.response[i].id === termin.id) {
+									continue;
 								}
-							}
-							if(found === true) {
-								continue;
-							}
-							if(self.conflicts(termin, api.response[i])){
-								conflicts = true;
-								globalConflicts = true;
-							}
-							self.color("Kurs", api.response[i].startUhrzeit, api.response[i].endUhrzeit, noColor, conflicts);
-						}
-						//Add local Termine to Kurs timeline
-						for(i=0; i<localTermine.length; i++) {
-							var conflicts = false;
-							if(self.conflicts(termin, localTermine[i])){
-								conflicts = true;
-								globalConflicts = true;
-							}
-							self.color("Kurs", localTermine[i].startUhrzeit, localTermine[i].endUhrzeit, noColor, conflicts);
-						}
-						deepRuns++;
-						if(deepRuns === 3) {
-							self.disableToggle = false;
-							termin.conflicts = globalConflicts;
-						}
-					} else {
-						console.log(JSON.stringify(api));
-						self.toasts.error.show();
-					}
-				});
-				//Calculate conflicts with Dozent
-				model.webService.getAllConflictsTermineDozent(this.vorlesung, termin, function(api) {
-					if(!api.isError) {
-						var i;
-						for(i=0; i<api.response.length; i++) {
-							if(api.response[i].id === termin.id) {
-								continue;
-							}
-							var j;
-							var found = false;
-							var conflicts = false;
-							//Dont use webService for local termin
-							for(j=0; j<self.vorlesungstermine.length; j++) {
-								if(self.vorlesungstermine[j].id === api.response[i].id) {
-									found = true;
+								var j;
+								var found = false;
+								var conflicts = false;
+								//Dont use webService for local termin
+								for(j=0; j<self.vorlesungstermine.length; j++) {
+									if(self.vorlesungstermine[j].id === api.response[i].id) {
+										found = true;
+									}
 								}
-							}
-							if(found === true) {
-								continue;
-							}
-							if(self.conflicts(termin, api.response[i])){
-								conflicts = true;
-								globalConflicts = true;
-							}
-							self.color("Dozent", api.response[i].startUhrzeit, api.response[i].endUhrzeit, noColor, conflicts);
-						}
-						//Add local Termine to Dozent timeline
-						for(i=0; i<localTermine.length; i++) {
-							var conflicts = false;
-							if(self.conflicts(termin, localTermine[i])){
-								conflicts = true;
-								globalConflicts = true;
-							}
-							self.color("Dozent", localTermine[i].startUhrzeit, localTermine[i].endUhrzeit, noColor, conflicts);
-						}
-						deepRuns++;
-						if(deepRuns === 3) {
-							self.disableToggle = false;
-							termin.conflicts = globalConflicts;
-						}
-					} else {
-						console.log(JSON.stringify(api));
-						self.toasts.error.show();
-					}
-				});
-				//Calculate conflicts with Raum
-				model.webService.getAllConflictsTermineRaum(termin, function(api) {
-					if(!api.isError) {
-						var i;
-						for(i=0; i<api.response.length; i++) {
-							if(api.response[i].id === termin.id) {
-								continue;
-							}
-							var j;
-							var found = false;
-							var conflicts = false;
-							//Dont use webService for local termin
-							for(j=0; j<self.vorlesungstermine.length; j++) {
-								if(self.vorlesungstermine[j].id === api.response[i].id) {
-									found = true;
+								if(found === true) {
+									continue;
 								}
+								if(self.conflicts(termin, api.response[i])){
+									conflicts = true;
+									globalConflicts = true;
+								}
+								self.color("Kurs", api.response[i].startUhrzeit, api.response[i].endUhrzeit, noColor, conflicts);
 							}
-							if(found === true) {
-								continue;
-							}
-							if(self.conflicts(termin, api.response[i])){
-								conflicts = true;
-								globalConflicts = true;
-							}
-							self.color("Raum", api.response[i].startUhrzeit, api.response[i].endUhrzeit, noColor, conflicts);
-						}
-						//Add local Termine to Raum timeline
-						for(i=0; i<localTermine.length; i++) {
-							var conflicts = false;
-							if(localTermine[i].raum === termin.raum) {
+							//Add local Termine to Kurs timeline
+							for(i=0; i<localTermine.length; i++) {
+								var conflicts = false;
 								if(self.conflicts(termin, localTermine[i])){
 									conflicts = true;
 									globalConflicts = true;
 								}
-								self.color("Raum", localTermine[i].startUhrzeit, localTermine[i].endUhrzeit, noColor, conflicts);
-							}	
+								self.color("Kurs", localTermine[i].startUhrzeit, localTermine[i].endUhrzeit, noColor, conflicts);
+							}
+							deepRuns++;
+							if(deepRuns === 3) {
+								self.disableToggle = false;
+								termin.conflicts = globalConflicts;
+							}
+						} else {
+							console.log(JSON.stringify(api));
+							self.toasts.error.show();
 						}
-						deepRuns++;
-						if(deepRuns === 3) {
-							self.disableToggle = false;
-							termin.conflicts = globalConflicts;
+					});
+				}
+				//Calculate conflicts with Dozent
+				if (termin.datum && this.vorlesung.dozentID > 0)
+				{
+					model.webService.getAllConflictsTermineDozent(this.vorlesung, termin, function(api) {
+						if(!api.isError) {
+							var i;
+							for(i=0; i<api.response.length; i++) {
+								if(api.response[i].id === termin.id) {
+									continue;
+								}
+								var j;
+								var found = false;
+								var conflicts = false;
+								//Dont use webService for local termin
+								for(j=0; j<self.vorlesungstermine.length; j++) {
+									if(self.vorlesungstermine[j].id === api.response[i].id) {
+										found = true;
+									}
+								}
+								if(found === true) {
+									continue;
+								}
+								if(self.conflicts(termin, api.response[i])){
+									conflicts = true;
+									globalConflicts = true;
+								}
+								self.color("Dozent", api.response[i].startUhrzeit, api.response[i].endUhrzeit, noColor, conflicts);
+							}
+							//Add local Termine to Dozent timeline
+							for(i=0; i<localTermine.length; i++) {
+								var conflicts = false;
+								if(self.conflicts(termin, localTermine[i])){
+									conflicts = true;
+									globalConflicts = true;
+								}
+								self.color("Dozent", localTermine[i].startUhrzeit, localTermine[i].endUhrzeit, noColor, conflicts);
+							}
+							deepRuns++;
+							if(deepRuns === 3) {
+								self.disableToggle = false;
+								termin.conflicts = globalConflicts;
+							}
+						} else {
+							console.log(JSON.stringify(api));
+							self.toasts.error.show();
 						}
-					} else {
-						console.log(JSON.stringify(api));
-						self.toasts.error.show();
-					}
-				});
+					});
+				}
+				//Calculate conflicts with Raum
+				if (termin.datum && termin.raum)
+				{
+					model.webService.getAllConflictsTermineRaum(termin, function(api) {
+						if(!api.isError) {
+							var i;
+							for(i=0; i<api.response.length; i++) {
+								if(api.response[i].id === termin.id) {
+									continue;
+								}
+								var j;
+								var found = false;
+								var conflicts = false;
+								//Dont use webService for local termin
+								for(j=0; j<self.vorlesungstermine.length; j++) {
+									if(self.vorlesungstermine[j].id === api.response[i].id) {
+										found = true;
+									}
+								}
+								if(found === true) {
+									continue;
+								}
+								if(self.conflicts(termin, api.response[i])){
+									conflicts = true;
+									globalConflicts = true;
+								}
+								self.color("Raum", api.response[i].startUhrzeit, api.response[i].endUhrzeit, noColor, conflicts);
+							}
+							//Add local Termine to Raum timeline
+							for(i=0; i<localTermine.length; i++) {
+								var conflicts = false;
+								if(localTermine[i].raum === termin.raum) {
+									if(self.conflicts(termin, localTermine[i])){
+										conflicts = true;
+										globalConflicts = true;
+									}
+									self.color("Raum", localTermine[i].startUhrzeit, localTermine[i].endUhrzeit, noColor, conflicts);
+								}	
+							}
+							deepRuns++;
+							if(deepRuns === 3) {
+								self.disableToggle = false;
+								termin.conflicts = globalConflicts;
+							}
+						} else {
+							console.log(JSON.stringify(api));
+							self.toasts.error.show();
+						}
+					});
+				}
 			},
 			//Calculate conflict
 			conflicts: function(terminNew, terminKnown) {
+				if (!(terminNew.startUhrzeit && terminNew.endUhrzeit))
+				{
+					return;
+				}
 				var terminNewStart = this.getComparableDate(terminNew.startUhrzeit);
 				var terminNewEnd = this.getComparableDate(terminNew.endUhrzeit);
 				var terminKnownStart = this.getComparableDate(terminKnown.startUhrzeit);
