@@ -121,12 +121,12 @@
 						</div>
 						<div horizontal layout center class="horizontal-verticalizable text-line-input">
 							<paper-checkbox checked="{{recurring.isRecurring}}" self-center disabled?="{{disableToggle || vorlesungsterminToEdit.klausur}}"></paper-checkbox>
-							<span class="small-headline">Wiederholender Termin:</span>
-							<paper-input-decorator id="wiederholungen" label="Anzahl" flex>
+							<div class="small-headline">Wiederholender Termin:</div>
+							<paper-input-decorator id="wiederholungen" label="Anzahl" style="min-width: 15px" flex>
 								<input is="core-input" type="text" pattern="[1-9][0-9]*" preventInvalidInput="true" value={{recurring.count}} disabled?="{{disableToggle || !recurring.isRecurring}}">
 							</paper-input-decorator>
 							<span self-center>mal alle</span>
-							<paper-input-decorator id="anzahl" label="Abstand" flex>
+							<paper-input-decorator id="anzahl" label="Abstand" style="min-width: 15px" flex>
 								<input is="core-input" type="text" pattern="[1-9][0-9]*" preventInvalidInput="true" value={{recurring.distance}} disabled?="{{disableToggle || !recurring.isRecurring}}">
 							</paper-input-decorator>
 							<span>Tage</span>
