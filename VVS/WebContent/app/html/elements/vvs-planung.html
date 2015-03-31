@@ -357,6 +357,7 @@
 				    						self.job('update-label-raum-ready', function() {
 				    							self.$.raum.inputAction();
 				    							self.$.raum.input.commit();
+				    							self.invalid.raum = false;
 				    						}, 100);
 										}
 										//Init date picker with blocklagen start datum
@@ -505,18 +506,18 @@
 				self.vorlesungsterminToEdit = new model.templates.Termin();
 				self.vorlesungsterminToEdit.raum = self.raum;
 				self.clearAllColor();
-				self.invalid.datum = true;
-				self.invalid.startUhrzeit = true;
-				self.invalid.endUhrzeit = true;
-				if(!self.raum) {
-					self.invalid.raum = true;
-				}
 				self.job('update-labels-reject', function() {
 					self.$.datum.inputAction();
+					self.invalid.datum = true;
 					self.$.startUhrzeit.inputAction();
+					self.invalid.startUhrzeit = true;
 					self.$.endUhrzeit.inputAction();
+					self.invalid.endUhrzeit = true;
 					self.$.pause.inputAction();
 					self.$.raum.inputAction();
+					if(!self.raum) {
+						self.invalid.raum = true;
+					}
 					self.$.raum.input.commit();
 					self.$.wiederholungen.inputAction();
 					self.$.anzahl.inputAction();
@@ -537,11 +538,15 @@
 				self.showTermin(self.vorlesungsterminToEdit);
 				self.job('update-labels-edit', function() {
 					self.$.datum.inputAction();
+					self.invalid.datum = false;
 					self.$.startUhrzeit.inputAction();
+					self.invalid.startUhrzeit = false;
 					self.$.endUhrzeit.inputAction();
+					self.invalid.endUhrzeit = false;
 					self.$.pause.inputAction();
 					self.$.raum.inputAction();
 					self.$.raum.input.commit();
+					self.invalid.raum = false;
 					self.$.wiederholungen.inputAction();
 					self.$.anzahl.inputAction();
 				}, 100);

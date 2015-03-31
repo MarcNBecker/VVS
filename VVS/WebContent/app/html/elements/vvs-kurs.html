@@ -259,6 +259,7 @@
 							//Initialize input fields and make them display correctly
 							self.job('update-labels-ready', function() {
 								self.$.kursname.inputAction();
+								self.invalid.kursname = false;
 								self.$.sekretariatName.inputAction();
 								self.$.studentenAnzahl.inputAction();
 								self.$.kurssprecherName.inputAction();
@@ -425,10 +426,10 @@
 		    			self.selectedDate = self.today();
 		    			self.lastDatePickerSender = null;
 		    			self.creationMode = true;
-    					self.invalid.kursname = true;
     					self.job('update-labels-delete', function() {
 							self.$.kursname.inputAction();
-							self.$.sekretariatName.inputAction();
+							self.invalid.kursname = true;
+	    					self.$.sekretariatName.inputAction();
 							self.$.studentenAnzahl.inputAction();
 							self.$.kurssprecherName.inputAction();
 							self.$.kurssprecherVorname.inputAction();

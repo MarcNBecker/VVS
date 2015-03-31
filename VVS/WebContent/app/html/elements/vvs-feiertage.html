@@ -135,7 +135,9 @@
    						self.toasts.success.show();
    						self.job("update-feiertag-label", function() {
    							self.$.name.inputAction();
+   							self.invalid.name = true;
    							self.$.datum.inputAction();
+   							self.invalid.datum = true;
    						})
    					}
    					else
