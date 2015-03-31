@@ -27,6 +27,14 @@
 											<paper-progress class="progress-dashboard" value="{{(item.geplanteStunden/item.vorlesung.fachInstanz.stunden)*100}}" flex></paper-progress>
 										</div>
 										<div horizontal layout center>
+											<span class="text-width">Konflikte:</span>
+											<div horizontal layout center-center flex>
+												<span>{{item.anzahlKonflikte}}</span>
+												<core-icon class="icon-good" icon="check-box" hidden?="{{item.anzahlKonflikte > 0}}"></core-icon>
+												<core-icon class="icon-bad" icon="warning" hidden?="{{item.anzahlKonflikte === 0}}"></core-icon>
+											</div>
+										</div>
+										<div horizontal layout center>
 											<span class="text-width">Dozent ausgew&auml;hlt:</span>
 											<core-icon class="icon-good" icon="check-box" hidden?="{{item.vorlesung.dozentID === 0}}" flex></core-icon>
 											<core-icon class="icon-bad" icon="cancel" hidden?="{{item.vorlesung.dozentID > 0}}" flex></core-icon>

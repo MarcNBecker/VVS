@@ -16,6 +16,7 @@ public class KursKachel {
 	private int gesamteStunden;
 	private int fehlendeDozenten;
 	private int fehlendeKlausuren;
+	private int anzahlKonflikte;
 	
 	public static ArrayList<KursKachel> enrich(ArrayList<Kurs> kursList) throws WebServiceException {
 		ArrayList<KursKachel> dashboard = new ArrayList<KursKachel>();
@@ -53,12 +54,14 @@ public class KursKachel {
 			int gesamteStunden = 0;
 			int fehlendeDozenten = 0;
 			int fehlendeKlausuren = 0;
+			int anzahlKonflikte = 0;
 			for(VorlesungsKachel vk : vorlesungsKachelList) {
 				geplanteVorlesungen++;
 				geplanteStunden += vk.getGeplanteStunden();
 				gesamteStunden += vk.getVorlesung().getFachInstanz().getStunden();
 				fehlendeDozenten += (vk.getVorlesung().getDozentID() > 0 ? 0 : 1);
 				fehlendeKlausuren += (vk.getGeplanteKlausur() ? 0 : 1);
+				anzahlKonflikte += vk.getAnzahlKonflikte();
 			}
 			KursKachel kachel = new KursKachel();
 			kachel.kurs = k;
@@ -68,6 +71,7 @@ public class KursKachel {
 			kachel.gesamteStunden = gesamteStunden;
 			kachel.fehlendeDozenten = fehlendeDozenten;
 			kachel.fehlendeKlausuren = fehlendeKlausuren;
+			kachel.anzahlKonflikte = anzahlKonflikte;
 			dashboard.add(kachel);
 		}
 		return dashboard;

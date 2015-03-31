@@ -140,18 +140,12 @@ public class Termin {
 			if(!Utility.dateString(datum).equals(Utility.dateString(f.getDatum()))) {
 				continue;
 			}
-			Calendar startTime = Calendar.getInstance();
-			startTime.set(Calendar.HOUR_OF_DAY, 0);
-			startTime.set(Calendar.MINUTE, 0);
-			Calendar endTime = Calendar.getInstance();
-			endTime.set(Calendar.HOUR_OF_DAY, 23);
-			endTime.set(Calendar.MINUTE, 59);
 			Termin t = new Termin();
 			t.id = -999999;
 			t.datum = f.getDatum();
 			t.vorlesungID = 0;
-			t.startUhrzeit = new Time(startTime.getTimeInMillis());
-			t.endUhrzeit = new Time(endTime.getTimeInMillis());
+			t.startUhrzeit = Utility.getComparableTime(datum, 0, 0);
+			t.endUhrzeit = Utility.getComparableTime(datum, 23, 59);
 			t.pause = 0;
 			t.raum = null;
 			t.klausur = false;
@@ -191,6 +185,28 @@ public class Termin {
 		raum = result.getString("raum");
 		klausur = result.getBoolean("klausur");
 		return this;
+	}
+	
+	public boolean hasConflicts(Kurs kurs, Dozent dozent) throws WebServiceException {
+		checkDirectAttributes();
+		startUhrzeit = Utility.getComparableTime(datum, startUhrzeit);
+		endUhrzeit = Utility.getComparableTime(datum, endUhrzeit);
+		ArrayList<Termin> potentialConflicts = Termin.getAllForKursOnDate(datum, kurs, true);
+		if(dozent != null) {
+			potentialConflicts.addAll(Termin.getAllForDozentOnDate(datum, dozent, false));	
+		}
+		potentialConflicts.addAll(Termin.getAllForRaumOnDate(datum, raum, false));
+		for (Termin potentialConflict : potentialConflicts) {
+			if(id == potentialConflict.id) {
+				continue;
+			}
+			Time pcStartUhrzeit = Utility.getComparableTime(datum, potentialConflict.getStartUhrzeit());
+			Time pcEndUhrzeit = Utility.getComparableTime(datum, potentialConflict.getEndUhrzeit());
+			if(!(startUhrzeit.compareTo(pcEndUhrzeit) >= 0 || endUhrzeit.compareTo(pcStartUhrzeit) <= 0)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public Termin create() throws WebServiceException {
