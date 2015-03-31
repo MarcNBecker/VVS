@@ -162,7 +162,9 @@
 				this.feiertagToDelete = JSON.parse(JSON.stringify(e.target.templateInstance.model.item));
 				this.job('update-labels-edit', function() {
 					this.$.name.inputAction();
+					this.invalid.name = false;
 					this.$.datum.inputAction();
+					this.invalid.datum = false;
 				}, 100);
 			},
 			// Show Action Dialog for Deletion
