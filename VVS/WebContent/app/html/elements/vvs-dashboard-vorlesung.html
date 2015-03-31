@@ -11,7 +11,7 @@
 						<span>{{kurs.kursname}} - {{semester}}. Semester</span>
 						<paper-icon-button on-click="{{toggleExport}}" icon="file-download" disabled?="{{disableToggle}}"></paper-icon-button>
 						<paper-icon-button class="icon-good" icon="arrow-forward" on-click="{{forward}}" hidden?="{{semester == 6}}" disabled="{{disableToggle}}"></paper-icon-button>
-						<paper-spinner active?={{disableToggle}}></paper-spinner>
+						<paper-spinner active?="{{disableToggle || navigating}}"></paper-spinner>
 					</div>
 					<div horizontal layout center class="flex-container">
 						<!-- Existing Vorlesungen -->
@@ -25,6 +25,14 @@
 										<div horizontal layout center>
 											<span class="text-width">geplante Stunden:</span>
 											<paper-progress class="progress-dashboard" value="{{(item.geplanteStunden/item.vorlesung.fachInstanz.stunden)*100}}" flex></paper-progress>
+										</div>
+										<div horizontal layout center>
+											<span class="text-width">Konflikte:</span>
+											<div horizontal layout center-center flex>
+												<span>{{item.anzahlKonflikte}}</span>
+												<core-icon class="icon-good" icon="check-box" hidden?="{{item.anzahlKonflikte > 0}}"></core-icon>
+												<core-icon class="icon-bad" icon="warning" hidden?="{{item.anzahlKonflikte === 0}}"></core-icon>
+											</div>
 										</div>
 										<div horizontal layout center>
 											<span class="text-width">Dozent ausgew&auml;hlt:</span>
@@ -68,7 +76,8 @@
 			publish: {
 				pageParameter: {},
 				pageLoaded: {},
-				toasts: {}
+				toasts: {},
+				navigating: false
 			},
 			//Initialize the screen
 			ready : function() {
@@ -124,6 +133,7 @@
 				if(self.disableToggle) {
 					return;
 				}
+				self.navigating = true;
 				self.pageLoaded.planung = false;
 				location.href = "#!planung" + "-" + sender.templateInstance.model.item.vorlesung.id;
 			},

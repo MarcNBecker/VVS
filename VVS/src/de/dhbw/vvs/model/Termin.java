@@ -3,6 +3,7 @@ package de.dhbw.vvs.model;
 import java.sql.Date;
 import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import de.dhbw.vvs.application.ExceptionStatus;
 import de.dhbw.vvs.application.WebServiceException;
@@ -21,6 +22,9 @@ public class Termin {
 	private int pause;
 	private String raum;
 	private boolean klausur;
+	
+	@SuppressWarnings("unused")
+	private String infoString; //this is only filled if the termin is loaded as a potential conflict to show more information on the timeline
 	
 	public static ArrayList<Termin> getAll(Vorlesung vorlesung) throws WebServiceException {
 		vorlesung.getDirectAttributes(); //check existance
@@ -43,7 +47,7 @@ public class Termin {
 		return terminList;
 	}
 	
-	public static ArrayList<Termin> getAllForKursOnDate(Date datum, Kurs kurs) throws WebServiceException {
+	public static ArrayList<Termin> getAllForKursOnDate(Date datum, Kurs kurs, boolean includeFeiertageForConflicts) throws WebServiceException {
 		if(datum == null) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_DATE);
 		}
@@ -63,12 +67,16 @@ public class Termin {
 			t.pause = result.getInt("pause");
 			t.raum = result.getString("raum");
 			t.klausur = result.getBoolean("klausur");
+			t.infoString = new Vorlesung(t.vorlesungID).getInfoString();
 			terminList.add(t);
+		}
+		if(includeFeiertageForConflicts) {
+			terminList.addAll(getFeiertageAsTermin(datum));
 		}
 		return terminList;
 	}
 	
-	public static ArrayList<Termin> getAllForDozentOnDate(Date datum, Dozent dozent) throws WebServiceException {
+	public static ArrayList<Termin> getAllForDozentOnDate(Date datum, Dozent dozent, boolean includeFeiertageForConflicts) throws WebServiceException {
 		if(datum == null) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_DATE);
 		}
@@ -88,12 +96,16 @@ public class Termin {
 			t.pause = result.getInt("pause");
 			t.raum = result.getString("raum");
 			t.klausur = result.getBoolean("klausur");
+			t.infoString = new Vorlesung(t.vorlesungID).getInfoString();
 			terminList.add(t);
+		}
+		if(includeFeiertageForConflicts) {
+			terminList.addAll(getFeiertageAsTermin(datum));
 		}
 		return terminList;
 	}
 	
-	public static ArrayList<Termin> getAllForRaumOnDate(Date datum, String raum) throws WebServiceException {
+	public static ArrayList<Termin> getAllForRaumOnDate(Date datum, String raum, boolean includeFeiertageForConflicts) throws WebServiceException {
 		if(datum == null) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_DATE);
 		}
@@ -115,6 +127,34 @@ public class Termin {
 			t.pause = result.getInt("pause");
 			t.raum = result.getString("raum");
 			t.klausur = result.getBoolean("klausur");
+			t.infoString = new Vorlesung(t.vorlesungID).getInfoString();
+			terminList.add(t);
+		}
+		if(includeFeiertageForConflicts) {
+			terminList.addAll(getFeiertageAsTermin(datum));
+		}
+		return terminList;
+	}
+	
+	public static ArrayList<Termin> getFeiertageAsTermin(Date datum) throws WebServiceException {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(datum);
+		ArrayList<Feiertag> feiertagList = Feiertag.getAll(calendar.get(Calendar.YEAR));
+		ArrayList<Termin> terminList = new ArrayList<Termin>();
+		for(Feiertag f : feiertagList) {
+			//Skip Feiertag on another day
+			if(!Utility.dateString(datum).equals(Utility.dateString(f.getDatum()))) {
+				continue;
+			}
+			Termin t = new Termin();
+			t.id = -999999;
+			t.datum = f.getDatum();
+			t.vorlesungID = 0;
+			t.startUhrzeit = Utility.getComparableTime(datum, 0, 0);
+			t.endUhrzeit = Utility.getComparableTime(datum, 23, 59);
+			t.pause = 0;
+			t.raum = null;
+			t.klausur = false;
 			terminList.add(t);
 		}
 		return terminList;
@@ -125,6 +165,10 @@ public class Termin {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
 		}
 		this.id = id;
+	}
+	
+	private Termin() {
+		//lazy and no check
 	}
 	
 	public Termin getDirectAttributes() throws WebServiceException {
@@ -147,6 +191,28 @@ public class Termin {
 		raum = result.getString("raum");
 		klausur = result.getBoolean("klausur");
 		return this;
+	}
+	
+	public boolean hasConflicts(Kurs kurs, Dozent dozent) throws WebServiceException {
+		checkDirectAttributes();
+		startUhrzeit = Utility.getComparableTime(datum, startUhrzeit);
+		endUhrzeit = Utility.getComparableTime(datum, endUhrzeit);
+		ArrayList<Termin> potentialConflicts = Termin.getAllForKursOnDate(datum, kurs, true);
+		if(dozent != null) {
+			potentialConflicts.addAll(Termin.getAllForDozentOnDate(datum, dozent, false));	
+		}
+		potentialConflicts.addAll(Termin.getAllForRaumOnDate(datum, raum, false));
+		for (Termin potentialConflict : potentialConflicts) {
+			if(id == potentialConflict.id) {
+				continue;
+			}
+			Time pcStartUhrzeit = Utility.getComparableTime(datum, potentialConflict.getStartUhrzeit());
+			Time pcEndUhrzeit = Utility.getComparableTime(datum, potentialConflict.getEndUhrzeit());
+			if(!(startUhrzeit.compareTo(pcEndUhrzeit) >= 0 || endUhrzeit.compareTo(pcStartUhrzeit) <= 0)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public Termin create() throws WebServiceException {

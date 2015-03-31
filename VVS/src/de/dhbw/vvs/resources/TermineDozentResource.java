@@ -38,7 +38,7 @@ public class TermineDozentResource extends JsonServerResource {
 	
 	@Override
 	protected Object receiveGet() throws WebServiceException {
-		return Termin.getAllForDozentOnDate(getDatum(), new Dozent(getDozentID()));
+		return Termin.getAllForDozentOnDate(getDatum(), new Dozent(getDozentID()), true);
 	}
 	
 	public Date getDatum() {

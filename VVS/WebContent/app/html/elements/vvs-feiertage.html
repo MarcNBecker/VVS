@@ -14,10 +14,11 @@
 								<paper-icon-button class="hide"></paper-icon-button>
 							</div>
 							<template repeat="{{item in feiertage}}"> 
-								<paper-shadow z="1" class="inner-inner-shadow">
+								<paper-shadow z="1" class="{{item.datum !== null && item.datum === feiertagToEdit.datum ? 'inner-inner-shadow highlight' : 'inner-inner-shadow'}}">
 									<div horizontal layout center>
 										<span horizontal layout center-center flex>{{item.name}}</span>
 										<span horizontal layout center-center flex>{{item.datum}}</span>
+										<paper-icon-button on-click="{{edit}}" icon="create" disabled?="{{disableToggle}}"></paper-icon-button>
 										<paper-icon-button on-click="{{initDelete}}" icon="delete" self-center disabled?="{{disableToggle}}"></paper-icon-button>
 									</div>
 								</paper-shadow>
@@ -29,23 +30,27 @@
 				<div vertical layout>
 					<div horizontal start layout class="horizontal-input vertical-input">
 						<paper-input-decorator id="name" label="Name" error="Pflichtfeld" autoValidate isInvalid="{{invalid.name}}" floatingLabel flex>
-							<input is="core-input"  type="text" value={{feiertag.name}} maxlength="100" required disabled?="{{disableToggle}}">
+							<input is="core-input"  type="text" value={{feiertagToEdit.name}} maxlength="100" required disabled?="{{disableToggle}}">
 						</paper-input-decorator>
 						<polymer-date-picker id="datePicker" relatedTarget="{{$.datum}}" halign="left" style="z-index:99" selectedDate="{{selectedDate}}" opened="false"></polymer-date-picker>
 						<paper-input-decorator id="datum" label="Datum"  error="Pflichtfeld: Bitte nur Feiertage f&uuml;r {{jahr}} pflegen" autoValidate isInvalid="{{invalid.datum}}" floatingLabel flex>
-							<input is="core-input" on-focus="{{toggleDatePicker}}" on-click="{{toggleDatePicker}}" pattern="{{jahr}}-[0-9]{2}-[0-9]{2}" preventInvalidInput="true" value="{{feiertag.datum}}" required disabled?="{{disableToggle}}">
+							<input is="core-input" on-focus="{{toggleDatePicker}}" on-click="{{toggleDatePicker}}" pattern="{{jahr}}-[0-9]{2}-[0-9]{2}" preventInvalidInput="true" value="{{feiertagToEdit.datum}}" required disabled?="{{disableToggle}}">
 						</paper-input-decorator>
 						<!-- Button Bar -->
 						<paper-button on-click="{{add}}" disabled?="{{disableToggle}}" self-center raised>Feiertag speichern</paper-button>
 						<paper-button on-click="{{cancel}}" disabled?="{{disableToggle}}" self-center raised>Abbrechen</paper-button>
-						<paper-button on-click="{{copy}}" disabled?="{{disableToggle}}" self-center raised>Feiertage aus Vorjahr &uuml;bernehmen</paper-button>
+						<paper-button on-click="{{initCopy}}" disabled?="{{disableToggle}}" self-center raised>Feiertage aus Vorjahr &uuml;bernehmen</paper-button>
 						<paper-spinner active?={{disableToggle}} self-center></paper-spinner>
 					</div>
 				</div>
-				<!-- Action Dialog for Deletion-->
+				<!-- Action Dialogs-->
 				<paper-action-dialog id="delete_feiertag_dialog" heading="{{feiertagToDelete.name}} am {{feiertagToDelete.datum}} wirklich l&ouml;schen?">
 					<paper-button affirmative>Nein</paper-button>
 					<paper-button on-click="{{doDelete}}" affirmative autofocus>L&ouml;schen</paper-button>
+				</paper-action-dialog>
+				<paper-action-dialog id="copy_feiertage_dialog" heading="Feiertage aus {{jahr - 1}} wirklich &uuml;bernehmen?">
+					<paper-button affirmative>Nein</paper-button>
+					<paper-button on-click="{{doCopy}}" affirmative autofocus>&Uuml;bernehmen</paper-button>
 				</paper-action-dialog>
 			</div>
 		</paper-shadow> 
@@ -54,13 +59,14 @@
 		"use strict";
 		Polymer('vvs-feiertage',
 		{
-			//Initializin
-			feiertag: new model.templates.Feiertag(),
+			//Initializing
 			feiertage: [],
+			feiertagToEdit: new model.templates.Feiertag(),
 			feiertagToDelete: null,
 			selectedDate: '2000-01-01',
 			jahr: new Date().getFullYear(),
 			datePickerOpened: false,
+			editMode: false,
 			disableToggle: true,
 			invalid : {},
 			//Publish those attributes to home
@@ -72,15 +78,17 @@
 			//Initialize the screen
 			ready : function() {
 				var self = this;
-				self.feiertag = new model.templates.Feiertag();
 				self.feiertage = [];
+				self.feiertagToEdit = new model.templates.Feiertag();
 				self.feiertagToDelete = null;
 				self.selectedDate = self.today();
 				self.datePickerOpened = false;
+				self.editMode = false;
 				self.disableToggle = true;
 				self.invalid = {};
 				//ID is correct, needs to be named like this for other functions
 				self.jahr = self.pageParameter.feiertage.id == 0 ? new Date().getFullYear() : self.pageParameter.feiertage.id; 
+				self.selectedDate = self.selectedDate.replace(new Date().getFullYear(), self.jahr);
 				//Load all available Feiertage for selected Jahr
 				model.webService.getAllFeiertage(self.jahr, function(api) {
 					if (!api.isError)
@@ -106,7 +114,12 @@
 				}
 				//Disable everything
     			self.disableToggle = true;
-				model.webService.setFeiertag(self.feiertag, function(api) {
+				if (self.editMode)
+				{
+					self.doDelete();
+					self.editMode = false;
+				}
+				model.webService.setFeiertag(self.feiertagToEdit, function(api) {
 					if (!api.isError)
    					{
 						var i;
@@ -126,12 +139,14 @@
 						}
    						//Enable everything
    		    			self.disableToggle = false;
-   						self.feiertag = new model.templates.Feiertag();
+   						self.feiertagToEdit = new model.templates.Feiertag();
    						self.toasts.success.show();
    						self.job("update-feiertag-label", function() {
    							self.$.name.inputAction();
+   							self.invalid.name = true;
    							self.$.datum.inputAction();
-   						})
+   							self.invalid.datum = true;
+   						}, 100)
    					}
    					else
    					{
@@ -139,6 +154,18 @@
    						self.toasts.error.show();
    					}
 				});
+			},
+			//Edit an existing Feiertag
+			edit: function(e, detail, sender) {
+				this.editMode = true;
+				this.feiertagToEdit = JSON.parse(JSON.stringify(e.target.templateInstance.model.item));
+				this.feiertagToDelete = JSON.parse(JSON.stringify(e.target.templateInstance.model.item));
+				this.job('update-labels-edit', function() {
+					this.$.name.inputAction();
+					this.invalid.name = false;
+					this.$.datum.inputAction();
+					this.invalid.datum = false;
+				}, 100);
 			},
 			// Show Action Dialog for Deletion
 			initDelete: function(e, detail, sender) {
@@ -172,13 +199,17 @@
    					}
 				});
 			},
+			//Show action dialog for copy
+			initCopy: function() {
+				this.$.copy_feiertage_dialog.toggle();
+			},
 			//Copy feiertage from previous year
-			copy: function()
+			doCopy: function()
 			{
 				var self = this;
-				var vorjahr = self.jahr - 1;
 				//Disable everything
     			self.disableToggle = true;
+				var vorjahr = self.jahr - 1;
 				model.webService.getAllFeiertage(vorjahr, function(api) {
 					if (!api.isError)
    					{
@@ -251,9 +282,9 @@
 				this.$.datePicker.close(); //force close
 				//Init or set selected date
 				if(this.$.datum.input.value) {
-					this.selectedDate = this.feiertag.datum;
+					this.selectedDate = this.feiertagToEdit.datum;
 				} else {
-					this.feiertag.datum = this.today();		
+					this.feiertagToEdit.datum = this.selectedDate;		
 				}
 				//Wait until the date picker potentially auto closed to reopen it
 				this.job('open-date-picker', function() {
@@ -268,7 +299,7 @@
 					return;
 				}
 				//Read date
-				this.feiertag.datum = this.selectedDate;
+				this.feiertagToEdit.datum = this.selectedDate;
 				//Update UI
 				this.$.datePicker.close();
 				this.datePickerOpened = false;

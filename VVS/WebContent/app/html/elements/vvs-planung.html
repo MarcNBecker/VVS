@@ -17,28 +17,36 @@
 					<paper-shadow z="2" class="inner-shadow" flex>
 						<div vertical layout>
 							<div horizontal layout center>
-								<div class="hide small-headline line-spacing">Zeiten</div>
+								<div class="line-spacing"><paper-icon-button icon="arrow-back" on-click="{{back}}" disabled="{{disableToggle || !vorlesungsterminToEdit.datum}}"></paper-icon-button></div>
 								<div horizontal layout flex>
 									<template repeat="{{hour in hours}}">
 										<div class="small-headline" flex>{{hour}}:00&nbsp;&nbsp;</div>
 									</template>
 								</div>
+								<paper-icon-button icon="arrow-forward" on-click="{{forward}}" disabled="{{disableToggle || !vorlesungsterminToEdit.datum}}"></paper-icon-button>
 							</div>
 							<template repeat="{{timeline in timelines}}">
 								<div class="horizontal-verticalizable">
 									<div horizontal layout center>
-										<div class="line-spacing">{{timeline}}</div>
+										<div class="line-spacing" title="Kurs: {{kurs.kursname}}" hidden?="{{timeline !== 'Kurs' || !(timeline === 'Kurs' && kurs.kursname)}}">{{kurs.kursname}}</div>
+										<div class="line-spacing" title="Kurs" hidden?="{{timeline !== 'Kurs' || !(timeline === 'Kurs' && !kurs.kursname)}}">{{timeline}}</div>
+										<div class="line-spacing" title="Dozent: {{dozent.name}}" hidden?="{{timeline !== 'Dozent' || !(timeline === 'Dozent' && dozent.name)}}">{{dozent.name}}</div>
+										<div class="line-spacing" title="Dozent" hidden?="{{timeline !== 'Dozent' || !(timeline === 'Dozent' && !dozent.name)}}">{{timeline}}</div>
+										<div class="line-spacing" title="Raum: {{$.raum.input.committedValue}}" hidden?="{{timeline !== 'Raum' || !(timeline === 'Raum' && $.raum.input.committedValue)}}">{{$.raum.input.committedValue}}</div>
+										<div class="line-spacing" title="Raum" hidden?="{{timeline !== 'Raum' || !(timeline === 'Raum' && !$.raum.input.committedValue)}}">{{timeline}}</div>
+										<div class="line-spacing" hidden?="{{timeline !== 'Termin'}}">{{timeline}}</div>
 										<paper-shadow z="1" class="inner-inner-shadow-timeline" flex>
 											<div horizontal layout>
 												<template repeat="{{hour, h in hours}}">
 													<div horizontal layout flex>
 														<template repeat="{{minute, m in minutes}}">
-															<div id="{{timeline}}_{{hour}}_{{minute}}" class="{{(h !== 0 && m === 0) || m === minutes.length/2 ? 'timeline-border' : ''}}" flex>&nbsp;</div>
+															<div id="{{timeline}}_{{hour}}_{{minute}}" class="{{(h !== 0 && m === 0) || m === minutes.length/2 ? 'timeline-border fixed-timeline-ff' : 'fixed-timeline-ff'}}" flex>&nbsp;</div>
 														</template>
 													</div>
 												</template>
 											</div>
 										</paper-shadow>
+										<paper-icon-button class="hide" style="height: 0px"></paper-icon-button>
 									</div>
 								</div>
 							</template>
@@ -113,12 +121,12 @@
 						</div>
 						<div horizontal layout center class="horizontal-verticalizable text-line-input">
 							<paper-checkbox checked="{{recurring.isRecurring}}" self-center disabled?="{{disableToggle || vorlesungsterminToEdit.klausur}}"></paper-checkbox>
-							<span class="small-headline">Wiederholender Termin:</span>
-							<paper-input-decorator id="wiederholungen" label="Anzahl" flex>
+							<div class="small-headline">Wiederholender Termin:</div>
+							<paper-input-decorator id="wiederholungen" label="Anzahl" style="min-width: 15px" flex>
 								<input is="core-input" type="text" pattern="[1-9][0-9]*" preventInvalidInput="true" value={{recurring.count}} disabled?="{{disableToggle || !recurring.isRecurring}}">
 							</paper-input-decorator>
 							<span self-center>mal alle</span>
-							<paper-input-decorator id="anzahl" label="Abstand" flex>
+							<paper-input-decorator id="anzahl" label="Abstand" style="min-width: 15px" flex>
 								<input is="core-input" type="text" pattern="[1-9][0-9]*" preventInvalidInput="true" value={{recurring.distance}} disabled?="{{disableToggle || !recurring.isRecurring}}">
 							</paper-input-decorator>
 							<span>Tage</span>
@@ -136,7 +144,7 @@
 								<template repeat="{{item in topDozenten}}">
 									<paper-shadow z="1" class="{{item.id === dozent.id ? 'inner-inner-shadow highlight' : 'inner-inner-shadow'}}">
 										<div horizontal layout center>
-											<paper-item on-click="{{setListDozent}}" horizontal layout center-center flex disabled?="{{disableToggle}}">{{item.name}}, {{item.vorname}}{{item.maxFachJahr > 0 ? ' (zuletzt ' + item.maxFachJahr + ')' : ''}}</paper-item>
+											<paper-item on-click="{{setListDozent}}" horizontal layout center-center flex disabled?="{{disableToggle}}">{{item.name}}, {{item.vorname}}{{item.maxFachJahr > 0 ? ' (zuletzt ' + item.maxFachJahr + ')' : ''}}{{item.status === 2 ? ' (Inaktiv)' : ''}}</paper-item>
 											<paper-icon-button icon="info" on-click="{{navigateToDozent}}" disabled?="{{disableToggle}}"></paper-icon-button>
 										</div>
 									</paper-shadow>
@@ -145,7 +153,7 @@
 								<template repeat="{{item in skilledDozenten}}">
 									<paper-shadow z="1" class="{{item.id === dozent.id ? 'inner-inner-shadow highlight' : 'inner-inner-shadow'}}">
 										<div horizontal layout center>
-											<paper-item on-click="{{setListDozent}}" horizontal layout center-center flex disabled?="{{disableToggle}}">{{item.name}}, {{item.vorname}}{{item.maxFachJahr > 0 ? ' (zuletzt ' + item.maxFachJahr + ')' : ''}}</paper-item>
+											<paper-item on-click="{{setListDozent}}" horizontal layout center-center flex disabled?="{{disableToggle}}">{{item.name}}, {{item.vorname}}{{item.maxFachJahr > 0 ? ' (zuletzt ' + item.maxFachJahr + ')' : ''}}{{item.status === 2 ? ' (Inaktiv)' : ''}}</paper-item>
 											<paper-icon-button icon="info" on-click="{{navigateToDozent}}" disabled?="{{disableToggle}}"></paper-icon-button>
 										</div>
 									</paper-shadow>
@@ -156,7 +164,7 @@
 										<paper-dropdown-searchable class="dropdown" arrayName="dozenten" searchProperties="name vorname" hideProperty="hidden">
 											<core-menu id="dozent" class="menu">
 												<template repeat="{{item in dozenten}}">
-													<paper-item hidden?="{{item.hidden}}">{{item.name}}, {{item.vorname}}</paper-item>
+													<paper-item hidden?="{{item.hidden}}">{{item.name}}, {{item.vorname}}{{item.status === 2 ? ' (Inaktiv)' : ''}}</paper-item>
 												</template>
 											</core-menu>
 										</paper-dropdown-searchable>
@@ -165,7 +173,7 @@
 						 		<template repeat="{{item in otherDozenten}}">
 									<paper-shadow z="1" class="{{item.id === dozent.id ? 'inner-inner-shadow highlight' : 'inner-inner-shadow'}}">
 										<div horizontal layout center>
-											<paper-item on-click="{{setListDozent}}" horizontal layout center-center flex class="self-click">{{item.name}}, {{item.vorname}}</paper-item>
+											<paper-item on-click="{{setListDozent}}" horizontal layout center-center flex class="self-click">{{item.name}}, {{item.vorname}}{{item.status === 2 ? ' (Inaktiv)' : ''}}</paper-item>
 											<paper-icon-button icon="info" on-click="{{navigateToDozent}}"></paper-icon-button>
 										</div>
 									</paper-shadow>
@@ -229,11 +237,13 @@
 			publish: {
 				pageParameter: {},
 				pageLoaded: {},
-				toasts: {}
+				toasts: {},
+				navigating: false
 			},
 			//Initialize the screen
 			ready: function() {
 				var self = this;
+				self.navigating = false;
 				self.vorlesung = new model.templates.Vorlesung();
 				self.vorlesungstermine = [];
 				self.vorlesungsterminToEdit = new model.templates.Termin();
@@ -347,6 +357,7 @@
 				    						self.job('update-label-raum-ready', function() {
 				    							self.$.raum.inputAction();
 				    							self.$.raum.input.commit();
+				    							self.invalid.raum = false;
 				    						}, 100);
 										}
 										//Init date picker with blocklagen start datum
@@ -495,18 +506,18 @@
 				self.vorlesungsterminToEdit = new model.templates.Termin();
 				self.vorlesungsterminToEdit.raum = self.raum;
 				self.clearAllColor();
-				self.invalid.datum = true;
-				self.invalid.startUhrzeit = true;
-				self.invalid.endUhrzeit = true;
-				if(!self.raum) {
-					self.invalid.raum = true;
-				}
 				self.job('update-labels-reject', function() {
 					self.$.datum.inputAction();
+					self.invalid.datum = true;
 					self.$.startUhrzeit.inputAction();
+					self.invalid.startUhrzeit = true;
 					self.$.endUhrzeit.inputAction();
+					self.invalid.endUhrzeit = true;
 					self.$.pause.inputAction();
 					self.$.raum.inputAction();
+					if(!self.raum) {
+						self.invalid.raum = true;
+					}
 					self.$.raum.input.commit();
 					self.$.wiederholungen.inputAction();
 					self.$.anzahl.inputAction();
@@ -527,11 +538,15 @@
 				self.showTermin(self.vorlesungsterminToEdit);
 				self.job('update-labels-edit', function() {
 					self.$.datum.inputAction();
+					self.invalid.datum = false;
 					self.$.startUhrzeit.inputAction();
+					self.invalid.startUhrzeit = false;
 					self.$.endUhrzeit.inputAction();
+					self.invalid.endUhrzeit = false;
 					self.$.pause.inputAction();
 					self.$.raum.inputAction();
 					self.$.raum.input.commit();
+					self.invalid.raum = false;
 					self.$.wiederholungen.inputAction();
 					self.$.anzahl.inputAction();
 				}, 100);
@@ -560,6 +575,7 @@
 					}
 				}
 				this.calculateProgress();
+				this.checkAllConflicts();
 				this.onRejectDisableKlausur = false;
 				this.reject();
 			},
@@ -680,6 +696,32 @@
 					self.pageLoaded.vdashboard = false;
 					self.pageLoaded.sdashboard = false;
 				}
+			},
+			//Show Termine of previous day
+			back: function () {
+				var self = this;
+				var dateNew = new Date(self.vorlesungsterminToEdit.datum);
+				dateNew.setDate(dateNew.getDate() - 1);
+				var year = dateNew.getFullYear();
+			    var month = '0' + (dateNew.getMonth() + 1);
+			    month = month.slice(-2, (month.length - 2) + 3);
+			    var day = '0' + dateNew.getDate();
+			    day = day.slice(-2, (day.length - 2) + 3);
+			    self.datePickerOpened = true;
+			    self.selectedDate = year + '-' + month + '-' + day;
+			},
+			//Show Termine of next day
+			forward: function() {
+				var self = this;
+				var dateNew = new Date(self.vorlesungsterminToEdit.datum);
+				dateNew.setDate(dateNew.getDate() + 1);
+				var year = dateNew.getFullYear();
+			    var month = '0' + (dateNew.getMonth() + 1);
+			    month = month.slice(-2, (month.length - 2) + 3);
+			    var day = '0' + dateNew.getDate();
+			    day = day.slice(-2, (day.length - 2) + 3);
+			    self.datePickerOpened = true;
+			    self.selectedDate = year + '-' + month + '-' + day;
 			},
 			//Navigate backwards and force a reload
 	    	cancel: function() {
@@ -849,6 +891,7 @@
 				var terminAsDate = new Date(this.selectedDate);
 				if(this.minDate && this.maxDate && !(this.minDate <= terminAsDate && this.maxDate >= terminAsDate)) {
 					this.invalid.datum = true;
+					this.clearAllColor();
 				} else {
 					this.invalid.datum = false;
 					this.showTermin(this.vorlesungsterminToEdit);
@@ -872,13 +915,14 @@
 			},
 			//Update grafical planning
 			showTermin: function(termin, noColor) {
-				if(!(termin.startUhrzeit && termin.endUhrzeit && termin.datum && termin.raum && this.vorlesung.dozentID > 0)) {
-					return;
-				}
 				var self = this;
 				self.disableToggle = false;
 				self.clearAllColor();
-				self.color("Termin", termin.startUhrzeit, termin.endUhrzeit, noColor, false);
+				//Color Termin only, if date, start time and end time are set
+				if (termin.datum && termin.startUhrzeit && termin.endUhrzeit)
+				{
+					self.color("Termin", termin.startUhrzeit, termin.endUhrzeit, noColor, false);
+				}
 				//Find all locally added Termine on the same date
 				var i;
 				var localTermine = [];
@@ -889,147 +933,188 @@
 				}
 				//Calculate conflicts
 				var deepRuns = 0;
+				if(!(termin.datum && this.vorlesung.dozentID > 0)) {
+					deepRuns++;
+				}
+				if(!(termin.datum && termin.raum)) {
+					deepRuns++;
+				}
 				var globalConflicts = false;
 				//Calculate conflicts with Kurs
-				model.webService.getAllConflictsTermineKurs(this.vorlesung, termin, function(api) {
-					if(!api.isError) {
-						var i;
-						for(i=0; i<api.response.length; i++) {
-							if(api.response[i].id === termin.id) {
-								continue;
-							}
-							var j;
-							var found = false;
-							var conflicts = false;
-							//Dont use webService for local termin
-							for(j=0; j<self.vorlesungstermine.length; j++) {
-								if(self.vorlesungstermine[j].id === api.response[i].id) {
-									found = true;
+				if (termin.datum)
+				{
+					model.webService.getAllConflictsTermineKurs(this.vorlesung, termin, function(api) {
+						if(!api.isError) {
+							var i;
+							for(i=0; i<api.response.length; i++) {
+								if(api.response[i].id === termin.id) {
+									continue;
 								}
-							}
-							if(found === true) {
-								continue;
-							}
-							if(self.conflicts(termin, api.response[i])){
-								conflicts = true;
-								globalConflicts = true;
-							}
-							self.color("Kurs", api.response[i].startUhrzeit, api.response[i].endUhrzeit, noColor, conflicts);
-						}
-						//Add local Termine to Kurs timeline
-						for(i=0; i<localTermine.length; i++) {
-							var conflicts = false;
-							if(self.conflicts(termin, localTermine[i])){
-								conflicts = true;
-								globalConflicts = true;
-							}
-							self.color("Kurs", localTermine[i].startUhrzeit, localTermine[i].endUhrzeit, noColor, conflicts);
-						}
-						deepRuns++;
-						if(deepRuns === 3) {
-							self.disableToggle = false;
-							termin.conflicts = globalConflicts;
-						}
-					} else {
-						console.log(JSON.stringify(api));
-						self.toasts.error.show();
-					}
-				});
-				//Calculate conflicts with Dozent
-				model.webService.getAllConflictsTermineDozent(this.vorlesung, termin, function(api) {
-					if(!api.isError) {
-						var i;
-						for(i=0; i<api.response.length; i++) {
-							if(api.response[i].id === termin.id) {
-								continue;
-							}
-							var j;
-							var found = false;
-							var conflicts = false;
-							//Dont use webService for local termin
-							for(j=0; j<self.vorlesungstermine.length; j++) {
-								if(self.vorlesungstermine[j].id === api.response[i].id) {
-									found = true;
+								var j;
+								var found = false;
+								var conflicts = false;
+								//Dont use webService for local termin
+								for(j=0; j<self.vorlesungstermine.length; j++) {
+									if(self.vorlesungstermine[j].id === api.response[i].id) {
+										found = true;
+										break;
+									}
 								}
-							}
-							if(found === true) {
-								continue;
-							}
-							if(self.conflicts(termin, api.response[i])){
-								conflicts = true;
-								globalConflicts = true;
-							}
-							self.color("Dozent", api.response[i].startUhrzeit, api.response[i].endUhrzeit, noColor, conflicts);
-						}
-						//Add local Termine to Dozent timeline
-						for(i=0; i<localTermine.length; i++) {
-							var conflicts = false;
-							if(self.conflicts(termin, localTermine[i])){
-								conflicts = true;
-								globalConflicts = true;
-							}
-							self.color("Dozent", localTermine[i].startUhrzeit, localTermine[i].endUhrzeit, noColor, conflicts);
-						}
-						deepRuns++;
-						if(deepRuns === 3) {
-							self.disableToggle = false;
-							termin.conflicts = globalConflicts;
-						}
-					} else {
-						console.log(JSON.stringify(api));
-						self.toasts.error.show();
-					}
-				});
-				//Calculate conflicts with Raum
-				model.webService.getAllConflictsTermineRaum(termin, function(api) {
-					if(!api.isError) {
-						var i;
-						for(i=0; i<api.response.length; i++) {
-							if(api.response[i].id === termin.id) {
-								continue;
-							}
-							var j;
-							var found = false;
-							var conflicts = false;
-							//Dont use webService for local termin
-							for(j=0; j<self.vorlesungstermine.length; j++) {
-								if(self.vorlesungstermine[j].id === api.response[i].id) {
-									found = true;
+								//Dont use webService for deleted termin
+								for(j=0; j<self.deletedVorlesungstermine.length && found === false; j++) {
+									if(self.deletedVorlesungstermine[j].id === api.response[i].id) {
+										found = true;
+										break;
+									}
 								}
+								if(found === true) {
+									continue;
+								}
+								if(self.conflicts(termin, api.response[i])){
+									conflicts = true;
+									globalConflicts = true;
+								}
+								self.color("Kurs", api.response[i].startUhrzeit, api.response[i].endUhrzeit, noColor, conflicts, api.response[i].infoString);
 							}
-							if(found === true) {
-								continue;
-							}
-							if(self.conflicts(termin, api.response[i])){
-								conflicts = true;
-								globalConflicts = true;
-							}
-							self.color("Raum", api.response[i].startUhrzeit, api.response[i].endUhrzeit, noColor, conflicts);
-						}
-						//Add local Termine to Raum timeline
-						for(i=0; i<localTermine.length; i++) {
-							var conflicts = false;
-							if(localTermine[i].raum === termin.raum) {
+							//Add local Termine to Kurs timeline
+							for(i=0; i<localTermine.length; i++) {
+								var conflicts = false;
 								if(self.conflicts(termin, localTermine[i])){
 									conflicts = true;
 									globalConflicts = true;
 								}
-								self.color("Raum", localTermine[i].startUhrzeit, localTermine[i].endUhrzeit, noColor, conflicts);
-							}	
+								self.color("Kurs", localTermine[i].startUhrzeit, localTermine[i].endUhrzeit, noColor, conflicts);
+							}
+							deepRuns++;
+							if(deepRuns === 3) {
+								self.disableToggle = false;
+								termin.conflicts = globalConflicts;
+							}
+						} else {
+							console.log(JSON.stringify(api));
+							self.toasts.error.show();
 						}
-						deepRuns++;
-						if(deepRuns === 3) {
-							self.disableToggle = false;
-							termin.conflicts = globalConflicts;
+					});
+				}
+				//Calculate conflicts with Dozent
+				if (termin.datum && this.vorlesung.dozentID > 0)
+				{
+					model.webService.getAllConflictsTermineDozent(this.vorlesung, termin, function(api) {
+						if(!api.isError) {
+							var i;
+							for(i=0; i<api.response.length; i++) {
+								if(api.response[i].id === termin.id) {
+									continue;
+								}
+								var j;
+								var found = false;
+								var conflicts = false;
+								//Dont use webService for local termin
+								for(j=0; j<self.vorlesungstermine.length; j++) {
+									if(self.vorlesungstermine[j].id === api.response[i].id) {
+										found = true;
+									}
+								}
+								//Dont use webService for deleted termin
+								for(j=0; j<self.deletedVorlesungstermine.length && found === false; j++) {
+									if(self.deletedVorlesungstermine[j].id === api.response[i].id) {
+										found = true;
+										break;
+									}
+								}
+								if(found === true) {
+									continue;
+								}
+								if(self.conflicts(termin, api.response[i])){
+									conflicts = true;
+									globalConflicts = true;
+								}
+								self.color("Dozent", api.response[i].startUhrzeit, api.response[i].endUhrzeit, noColor, conflicts, api.response[i].infoString);
+							}
+							//Add local Termine to Dozent timeline
+							for(i=0; i<localTermine.length; i++) {
+								var conflicts = false;
+								if(self.conflicts(termin, localTermine[i])){
+									conflicts = true;
+									globalConflicts = true;
+								}
+								self.color("Dozent", localTermine[i].startUhrzeit, localTermine[i].endUhrzeit, noColor, conflicts);
+							}
+							deepRuns++;
+							if(deepRuns === 3) {
+								self.disableToggle = false;
+								termin.conflicts = globalConflicts;
+							}
+						} else {
+							console.log(JSON.stringify(api));
+							self.toasts.error.show();
 						}
-					} else {
-						console.log(JSON.stringify(api));
-						self.toasts.error.show();
-					}
-				});
+					});
+				}
+				//Calculate conflicts with Raum
+				if (termin.datum && termin.raum)
+				{
+					model.webService.getAllConflictsTermineRaum(termin, function(api) {
+						if(!api.isError) {
+							var i;
+							for(i=0; i<api.response.length; i++) {
+								if(api.response[i].id === termin.id) {
+									continue;
+								}
+								var j;
+								var found = false;
+								var conflicts = false;
+								//Dont use webService for local termin
+								for(j=0; j<self.vorlesungstermine.length; j++) {
+									if(self.vorlesungstermine[j].id === api.response[i].id) {
+										found = true;
+									}
+								}
+								//Dont use webService for deleted termin
+								for(j=0; j<self.deletedVorlesungstermine.length && found === false; j++) {
+									if(self.deletedVorlesungstermine[j].id === api.response[i].id) {
+										found = true;
+										break;
+									}
+								}
+								if(found === true) {
+									continue;
+								}
+								if(self.conflicts(termin, api.response[i])){
+									conflicts = true;
+									globalConflicts = true;
+								}
+								self.color("Raum", api.response[i].startUhrzeit, api.response[i].endUhrzeit, noColor, conflicts, api.response[i].infoString);
+							}
+							//Add local Termine to Raum timeline
+							for(i=0; i<localTermine.length; i++) {
+								var conflicts = false;
+								if(localTermine[i].raum === termin.raum) {
+									if(self.conflicts(termin, localTermine[i])){
+										conflicts = true;
+										globalConflicts = true;
+									}
+									self.color("Raum", localTermine[i].startUhrzeit, localTermine[i].endUhrzeit, noColor, conflicts);
+								}	
+							}
+							deepRuns++;
+							if(deepRuns === 3) {
+								self.disableToggle = false;
+								termin.conflicts = globalConflicts;
+							}
+						} else {
+							console.log(JSON.stringify(api));
+							self.toasts.error.show();
+						}
+					});
+				}
 			},
 			//Calculate conflict
 			conflicts: function(terminNew, terminKnown) {
+				if (!(terminNew.startUhrzeit && terminNew.endUhrzeit))
+				{
+					return;
+				}
 				var terminNewStart = this.getComparableDate(terminNew.startUhrzeit);
 				var terminNewEnd = this.getComparableDate(terminNew.endUhrzeit);
 				var terminKnownStart = this.getComparableDate(terminKnown.startUhrzeit);
@@ -1054,7 +1139,7 @@
 				}
 			},
 			//Color a termin
-			color: function(timeline, start, end, noColor, conflicts) {
+			color: function(timeline, start, end, noColor, conflicts, title) {
 				if(noColor === true) {
 					return;
 				}
@@ -1064,12 +1149,35 @@
 				if (conflicts)
 				{
 					color = 'highlight';
-				}
-				
+				}				
 				var startIndexHour = this.hours.indexOf(startTime[0]);
 				var startIndexMinute = this.minutes.indexOf(startTime[1]);
 				var endIndexHour = this.hours.indexOf(endTime[0]);
 				var endIndexMinute = this.minutes.indexOf(endTime[1]);
+				if (parseInt(endTime[0]) > parseInt(this.hours[this.hours.length-1]) && endIndexHour === -1)
+				{
+					endIndexHour = this.hours.length -1;
+					endIndexMinute = 59;
+					endTime[0] = this.hours[this.hours.length - 1];
+				}
+				else if (parseInt(endTime[0]) < parseInt(this.hours[0]) && endIndexHour === -1)
+				{
+					endIndexHour = 0;
+					endIndexMinute = 0;
+					endTime[0] = this.hours[0];
+				}
+				if (parseInt(startTime[0]) < parseInt(this.hours[0]) && startIndexHour === -1)
+				{
+					startIndexHour = 0;
+					startIndexMinute = 0;
+					startTime[0] = this.hours[0];
+				}
+				else if (parseInt(startTime[0]) > parseInt(this.hours[this.hours.length-1]) && startIndexHour === -1)
+				{
+					startIndexHour = this.hours.length -1;
+					endIndexMinute = 0;
+					startTime[0] = this.hours[this.hours.length - 1];
+				}
 				var i;
 				for (i = startIndexHour; i < endIndexHour; i++)
 				{
@@ -1077,17 +1185,25 @@
 					for (j = startIndexMinute; j < this.minutes.length; j++)
 					{
 						var id = timeline + "_" + this.hours[i] + "_" + this.minutes[j];
+						if (!this.$[id])
+						{
+							continue;
+						}	
 						this.$[id].classList.add(color);
-						this.$[id].title = start + " - " + end;
+						this.$[id].title = start + "-" + end + " Uhr" + (title ? " - " + title : "");
 					}
 					startIndexMinute = 0;
 				}
 				var j;
-				for (j = 0; j < endIndexMinute; j++)
+				for (j = startIndexMinute; j < endIndexMinute; j++)
 				{
 					var id = timeline + "_" + endTime[0] + "_" + this.minutes[j];
+					if (!this.$[id])
+					{
+						continue;
+					}
 					this.$[id].classList.add(color);
-					this.$[id].title = start + " - " + end;
+					this.$[id].title = start + "-" + end + " Uhr" + (title ? " - " + title : "");
 				}	
 			},
 			//Clear all colors in graphical planning

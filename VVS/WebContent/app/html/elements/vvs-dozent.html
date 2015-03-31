@@ -204,7 +204,9 @@
     						self.job('update-labels-ready', function() {
     							self.$.titel.inputAction();
         						self.$.name.inputAction();
+        						self.invalid.name = false;
        							self.$.vorname.inputAction();
+        						self.invalid.vorname = false;
        							self.$.strasse.inputAction();	
        							self.$.postleitzahl.inputAction();	
        							self.$.wohnort.inputAction();	
@@ -217,8 +219,6 @@
         						self.$.angelegt.inputAction();
         						self.$.bearbeitet.inputAction();
     						}, 100);
-    						self.invalid.name = false;
-    						self.invalid.vorname = false;
     						//Enable inputs after last webservice call
     						if(deepRuns === 2) {
     							self.disableToggle = false;
@@ -525,13 +525,13 @@
 						self.geloeschteFaecher = [];
 						self.disableToggle = false;
 						self.creationMode = true;
-    					self.invalid.name = true;
-						self.invalid.vorname = true;
-						self.job('update-labels-delete', function() {
+    					self.job('update-labels-delete', function() {
 							self.$.titel.inputAction();
     						self.$.name.inputAction();
-   							self.$.vorname.inputAction();
-   							self.$.strasse.inputAction();	
+    						self.invalid.name = true;
+    						self.$.vorname.inputAction();
+    						self.invalid.vorname = true;
+    						self.$.strasse.inputAction();	
    							self.$.postleitzahl.inputAction();	
    							self.$.wohnort.inputAction();	
    							self.$.mail.inputAction();	

@@ -88,6 +88,13 @@ public class Vorlesung {
 		return this;
 	}
 	
+	public String getInfoString() throws WebServiceException {
+		getDirectAttributes();
+		Kurs kurs = new Kurs(kursID);
+		kurs.getDirectAttributes();
+		return fachInstanz.getFach().getName() + " - " + semester + ". Semester - " + kurs.getKursname();
+	}
+	
 	public Vorlesung create() throws WebServiceException {
 		if (id != 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);

@@ -8,6 +8,7 @@ import java.sql.Time;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
@@ -139,6 +140,47 @@ public class Utility {
 		} catch (ParseException e) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_DATE);
 		}
+	}
+	
+	/**
+	 * Returns an comparable time object
+	 * @param d the date to be the basis of the time
+	 * @param t the time object
+	 * @return an comparable time object
+	 */
+	public static Time getComparableTime(Date d, Time t) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(d);
+		Calendar tCalendar = Calendar.getInstance();
+		tCalendar.setTime(t);
+		Calendar time = Calendar.getInstance();
+		time.set(Calendar.YEAR, calendar.get(Calendar.YEAR));
+		time.set(Calendar.MONTH, calendar.get(Calendar.MONTH));
+		time.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH));
+		time.set(Calendar.HOUR_OF_DAY, tCalendar.get(Calendar.HOUR_OF_DAY));
+		time.set(Calendar.MINUTE, tCalendar.get(Calendar.MINUTE));
+		time.set(Calendar.SECOND, 0);
+		return new Time(time.getTimeInMillis());
+	}
+	
+	/**
+	 * Returns an comparable time object
+	 * @param d the date to be the basis of the time
+	 * @param hours the hours
+	 * @param minutes the minutes
+	 * @return an comparable time object
+	 */
+	public static Time getComparableTime(Date d, int hours, int minutes) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(d);
+		Calendar time = Calendar.getInstance();
+		time.set(Calendar.YEAR, calendar.get(Calendar.YEAR));
+		time.set(Calendar.MONTH, calendar.get(Calendar.MONTH));
+		time.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH));
+		time.set(Calendar.HOUR_OF_DAY, hours);
+		time.set(Calendar.MINUTE, minutes);
+		time.set(Calendar.SECOND, 0);
+		return new Time(time.getTimeInMillis());
 	}
 	
 }

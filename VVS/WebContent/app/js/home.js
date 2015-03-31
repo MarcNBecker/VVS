@@ -63,8 +63,8 @@ template.pageDescriptor = {
 	kurs: {name: 'Kurs pflegen', hash: 'kurs', html: '<vvs-kurs pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-kurs>'},
 	user: {name: 'User pflegen', hash: 'user', html: '<vvs-user currentUser="{{user}}" pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-user>'},
 	feiertage: {name: 'Feiertage pflegen', hash: 'feiertage', html: '<vvs-feiertage pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-feiertage>'},
-	planung: {name: 'Planung', hash: 'planung', html: '<vvs-planung pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-planung>'},
-	vdashboard: {name: 'Vorlesungsdashboard', hash: 'vdashboard', html: '<vvs-dashboard-vorlesung pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-dashboard-vorlesung>'},
+	planung: {name: 'Planung', hash: 'planung', html: '<vvs-planung navigating="{{navigating}}" pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-planung>'},
+	vdashboard: {name: 'Vorlesungsdashboard', hash: 'vdashboard', html: '<vvs-dashboard-vorlesung navigating="{{navigating}}" pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-dashboard-vorlesung>'},
 	sdashboard: {name: 'Dashboard', hash: 'sdashboard', html: '<vvs-dashboard-studiengangsleiter user="{{user}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-dashboard-studiengangsleiter>'}
 };
 

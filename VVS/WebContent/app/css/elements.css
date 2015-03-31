@@ -30,7 +30,10 @@
 }
 
 .line-spacing {
-	width: 70px;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	width: 90px;
 }
 
 .timeline-border {
@@ -59,7 +62,7 @@
 
 .flex-item {
     width: 320px;
-    min-height: 175px;
+    min-height: 200px;
     padding: 5px 15px 5px 15px;
     margin-top: 20px;
     margin-left: 20px;
@@ -129,7 +132,7 @@
 }
 
 .horizontal-button-bar > * {
-	margin-right: 20px;
+	margin-right: 4px;
 }
 
 .input-padding paper-input-decorator {
@@ -168,13 +171,22 @@
 	margin-right: 10px;
 }
 
-.text-width {
-	min-width: 140px;
+/* Remove class for Firefox >16 */
+@supports (not (-moz-appearance:meterbar)) {
+	.text-width {
+		min-width: 140px;
+	}
+	
+	.text-width-sl {
+		min-width: 200px;
+	}	
 }
 
-.text-width-sl {
-	min-width: 200px;
-}
+@supports (-moz-appearance:meterbar) {
+	.fixed-timeline-ff{
+		font-size: 5px;
+	}
+}	
 
 .icon-good {
 	fill: #5C6971;
@@ -197,6 +209,10 @@ paper-button {
 core-icon {
 	margin-left: 5px;
 	margin-right: 5px;
+}
+
+paper-spinner {
+	margin-left: 5px;
 }
 
 paper-icon-button::shadow #ripple {

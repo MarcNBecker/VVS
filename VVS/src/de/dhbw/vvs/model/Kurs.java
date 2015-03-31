@@ -201,6 +201,10 @@ public class Kurs {
 		return id;
 	}
 	
+	public String getKursname() {
+		return kursname;
+	}
+	
 	public int getModulplanID() {
 		return modulplanID;
 	}

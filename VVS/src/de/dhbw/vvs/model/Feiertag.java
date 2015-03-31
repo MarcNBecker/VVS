@@ -66,6 +66,10 @@ public class Feiertag {
 		}
 	}
 	
+	public Date getDatum() {
+		return datum;
+	}
+	
 	public void setDatum(Date datum) {
 		this.datum = datum;
 	}

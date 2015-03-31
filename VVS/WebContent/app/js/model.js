@@ -205,6 +205,7 @@ var model = new function() {
 			this.gesamteStunden = 0;
 			this.fehlendeDozenten = 0;
 			this.fehlendeKlausuren = 0;
+			this.anzahlKonflikte = 0;
 		};
 		
 		this.Modul = function() {
@@ -262,6 +263,7 @@ var model = new function() {
 			this.vorlesung = new model.templates.Vorlesung();
 			this.geplanteStunden = 0;
 			this.geplanteKlausur = false;
+			this.anzahlKonflikte = 0;
 		};
 		
 	};
