@@ -1154,18 +1154,10 @@
 					for (j = startIndexMinute; j < this.minutes.length; j++)
 					{
 						var id = timeline + "_" + this.hours[i] + "_" + this.minutes[j];
-						if (timeline === "Termin")
-						{
-							var test;
-						};
 						if (!this.$[id])
 						{
 							continue;
-						}
-						if (timeline === "Termin")
-						{
-							var test2;
-						};		
+						}	
 						this.$[id].classList.add(color);
 						this.$[id].title = start + " - " + end;
 					}
