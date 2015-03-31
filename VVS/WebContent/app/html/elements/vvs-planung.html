@@ -1120,12 +1120,33 @@
 				if (conflicts)
 				{
 					color = 'highlight';
-				}
-				
+				}				
 				var startIndexHour = this.hours.indexOf(startTime[0]);
 				var startIndexMinute = this.minutes.indexOf(startTime[1]);
 				var endIndexHour = this.hours.indexOf(endTime[0]);
 				var endIndexMinute = this.minutes.indexOf(endTime[1]);
+				if (parseInt(endTime[0]) > parseInt(this.hours[this.hours.length-1]) && endIndexHour === -1)
+				{
+					endIndexHour = this.hours.length -1;
+					endIndexMinute = 59;
+					endTime[0] = this.hours[this.hours.length - 1];
+				}
+				else if (parseInt(endTime[0]) < parseInt(this.hours[0]) && endIndexHour === -1)
+				{
+					endIndexHour = 0;
+					endTime[0] = this.hours[0];
+				}
+				if (parseInt(startTime[0]) < parseInt(this.hours[0]) && startIndexHour === -1)
+				{
+					startIndexHour = 0;
+					startTime[0] = this.hours[0];
+				}
+				else if (parseInt(startTime[0]) > parseInt(this.hours[this.hours.length-1]) && startIndexHour === -1)
+				{
+					startIndexHour = this.hours.length -1;
+					endIndexMinute = 0;
+					startTime[0] = this.hours[this.hours.length - 1];
+				}
 				var i;
 				for (i = startIndexHour; i < endIndexHour; i++)
 				{
@@ -1133,6 +1154,18 @@
 					for (j = startIndexMinute; j < this.minutes.length; j++)
 					{
 						var id = timeline + "_" + this.hours[i] + "_" + this.minutes[j];
+						if (timeline === "Termin")
+						{
+							var test;
+						};
+						if (!this.$[id])
+						{
+							continue;
+						}
+						if (timeline === "Termin")
+						{
+							var test2;
+						};		
 						this.$[id].classList.add(color);
 						this.$[id].title = start + " - " + end;
 					}
@@ -1142,6 +1175,10 @@
 				for (j = 0; j < endIndexMinute; j++)
 				{
 					var id = timeline + "_" + endTime[0] + "_" + this.minutes[j];
+					if (!this.$[id])
+					{
+						continue;
+					}
 					this.$[id].classList.add(color);
 					this.$[id].title = start + " - " + end;
 				}	
