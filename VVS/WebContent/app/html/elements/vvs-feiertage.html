@@ -39,14 +39,18 @@
 						<!-- Button Bar -->
 						<paper-button on-click="{{add}}" disabled?="{{disableToggle}}" self-center raised>Feiertag speichern</paper-button>
 						<paper-button on-click="{{cancel}}" disabled?="{{disableToggle}}" self-center raised>Abbrechen</paper-button>
-						<paper-button on-click="{{copy}}" disabled?="{{disableToggle}}" self-center raised>Feiertage aus Vorjahr &uuml;bernehmen</paper-button>
+						<paper-button on-click="{{initCopy}}" disabled?="{{disableToggle}}" self-center raised>Feiertage aus Vorjahr &uuml;bernehmen</paper-button>
 						<paper-spinner active?={{disableToggle}} self-center></paper-spinner>
 					</div>
 				</div>
-				<!-- Action Dialog for Deletion-->
+				<!-- Action Dialogs-->
 				<paper-action-dialog id="delete_feiertag_dialog" heading="{{feiertagToDelete.name}} am {{feiertagToDelete.datum}} wirklich l&ouml;schen?">
 					<paper-button affirmative>Nein</paper-button>
 					<paper-button on-click="{{doDelete}}" affirmative autofocus>L&ouml;schen</paper-button>
+				</paper-action-dialog>
+				<paper-action-dialog id="copy_feiertage_dialog" heading="Feiertage aus {{jahr - 1}} wirklich &uuml;bernehmen?">
+					<paper-button affirmative>Nein</paper-button>
+					<paper-button on-click="{{doCopy}}" affirmative autofocus>&Uuml;bernehmen</paper-button>
 				</paper-action-dialog>
 			</div>
 		</paper-shadow> 
@@ -84,6 +88,7 @@
 				self.invalid = {};
 				//ID is correct, needs to be named like this for other functions
 				self.jahr = self.pageParameter.feiertage.id == 0 ? new Date().getFullYear() : self.pageParameter.feiertage.id; 
+				self.selectedDate = self.selectedDate.replace(new Date().getFullYear(), self.jahr);
 				//Load all available Feiertage for selected Jahr
 				model.webService.getAllFeiertage(self.jahr, function(api) {
 					if (!api.isError)
@@ -138,8 +143,10 @@
    						self.toasts.success.show();
    						self.job("update-feiertag-label", function() {
    							self.$.name.inputAction();
+   							self.invalid.name = true;
    							self.$.datum.inputAction();
-   						})
+   							self.invalid.datum = true;
+   						}, 100)
    					}
    					else
    					{
@@ -190,13 +197,17 @@
    					}
 				});
 			},
+			//Show action dialog for copy
+			initCopy: function() {
+				this.$.copy_feiertage_dialog.toggle();
+			},
 			//Copy feiertage from previous year
-			copy: function()
+			doCopy: function()
 			{
 				var self = this;
-				var vorjahr = self.jahr - 1;
 				//Disable everything
     			self.disableToggle = true;
+				var vorjahr = self.jahr - 1;
 				model.webService.getAllFeiertage(vorjahr, function(api) {
 					if (!api.isError)
    					{
@@ -271,7 +282,11 @@
 				if(this.$.datum.input.value) {
 					this.selectedDate = this.feiertagToEdit.datum;
 				} else {
+<<<<<<< HEAD
 					this.feiertagToEdit.datum = this.today();		
+=======
+					this.feiertag.datum = this.selectedDate;		
+>>>>>>> refs/heads/usability
 				}
 				//Wait until the date picker potentially auto closed to reopen it
 				this.job('open-date-picker', function() {

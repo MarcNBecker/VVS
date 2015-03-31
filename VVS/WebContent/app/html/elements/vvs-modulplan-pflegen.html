@@ -652,12 +652,12 @@
 				//Modulinfo is filled -> focus
 				this.job('update-labels-modulplan', function() {
 					this.$.mname.inputAction();
+					this.invalid.mname = invalid;
 					this.$.mkurzbeschreibung.inputAction();
+					this.invalid.mkurzbeschreibung = invalid;
 					this.$.credits.inputAction();
+					this.invalid.credits = invalid || !this.inputModulInstanz.credits;
 				}, 100);
-				this.invalid.mname = invalid;
-				this.invalid.mkurzbeschreibung = invalid;
-				this.invalid.credits = invalid;
 			},
 			//Switch Modul info
 			switchModulInfo: function() {
@@ -691,14 +691,14 @@
 				//Fachinfo is filled -> focus
 				this.job('update-labels-fach', function() {
 					this.$.fname.inputAction();
+					this.invalid.fname = invalid;
 					this.$.fkurzbeschreibung.inputAction();
+					this.invalid.fkurzbeschreibung = invalid;
 					this.$.stunden.inputAction();
+					this.invalid.stunden = invalid || !this.inputFachInstanz.stunden;
 					this.$.semester.inputAction();
+					this.invalid.semester = invalid || !this.inputFachInstanz.semester;
 				}, 100);
-				this.invalid.fname = invalid;
-				this.invalid.fkurzbeschreibung = invalid;
-				this.invalid.stunden = invalid;
-				this.invalid.semester = invalid;
 			},
 			//Switch Fach info
 			switchFachInfo: function() {

@@ -17,28 +17,36 @@
 					<paper-shadow z="2" class="inner-shadow" flex>
 						<div vertical layout>
 							<div horizontal layout center>
-								<div class="hide small-headline line-spacing">Zeiten</div>
+								<div class="line-spacing"><paper-icon-button icon="arrow-back" on-click="{{back}}" disabled="{{disableToggle || !vorlesungsterminToEdit.datum}}"></paper-icon-button></div>
 								<div horizontal layout flex>
 									<template repeat="{{hour in hours}}">
 										<div class="small-headline" flex>{{hour}}:00&nbsp;&nbsp;</div>
 									</template>
 								</div>
+								<paper-icon-button icon="arrow-forward" on-click="{{forward}}" disabled="{{disableToggle || !vorlesungsterminToEdit.datum}}"></paper-icon-button>
 							</div>
 							<template repeat="{{timeline in timelines}}">
 								<div class="horizontal-verticalizable">
 									<div horizontal layout center>
-										<div class="line-spacing">{{timeline}}</div>
+										<div class="line-spacing" title="Kurs: {{kurs.kursname}}" hidden?="{{timeline !== 'Kurs' || !(timeline === 'Kurs' && kurs.kursname)}}">{{kurs.kursname}}</div>
+										<div class="line-spacing" title="Kurs" hidden?="{{timeline !== 'Kurs' || !(timeline === 'Kurs' && !kurs.kursname)}}">{{timeline}}</div>
+										<div class="line-spacing" title="Dozent: {{dozent.name}}" hidden?="{{timeline !== 'Dozent' || !(timeline === 'Dozent' && dozent.name)}}">{{dozent.name}}</div>
+										<div class="line-spacing" title="Dozent" hidden?="{{timeline !== 'Dozent' || !(timeline === 'Dozent' && !dozent.name)}}">{{timeline}}</div>
+										<div class="line-spacing" title="Raum: {{$.raum.input.committedValue}}" hidden?="{{timeline !== 'Raum' || !(timeline === 'Raum' && $.raum.input.committedValue)}}">{{$.raum.input.committedValue}}</div>
+										<div class="line-spacing" title="Raum" hidden?="{{timeline !== 'Raum' || !(timeline === 'Raum' && !$.raum.input.committedValue)}}">{{timeline}}</div>
+										<div class="line-spacing" hidden?="{{timeline !== 'Termin'}}">{{timeline}}</div>
 										<paper-shadow z="1" class="inner-inner-shadow-timeline" flex>
 											<div horizontal layout>
 												<template repeat="{{hour, h in hours}}">
 													<div horizontal layout flex>
 														<template repeat="{{minute, m in minutes}}">
-															<div id="{{timeline}}_{{hour}}_{{minute}}" class="{{(h !== 0 && m === 0) || m === minutes.length/2 ? 'timeline-border' : ''}}" flex>&nbsp;</div>
+															<div id="{{timeline}}_{{hour}}_{{minute}}" class="{{(h !== 0 && m === 0) || m === minutes.length/2 ? 'timeline-border fixed-timeline-ff' : 'fixed-timeline-ff'}}" flex>&nbsp;</div>
 														</template>
 													</div>
 												</template>
 											</div>
 										</paper-shadow>
+										<paper-icon-button class="hide" style="height: 0px"></paper-icon-button>
 									</div>
 								</div>
 							</template>
@@ -113,12 +121,12 @@
 						</div>
 						<div horizontal layout center class="horizontal-verticalizable text-line-input">
 							<paper-checkbox checked="{{recurring.isRecurring}}" self-center disabled?="{{disableToggle || vorlesungsterminToEdit.klausur}}"></paper-checkbox>
-							<span class="small-headline">Wiederholender Termin:</span>
-							<paper-input-decorator id="wiederholungen" label="Anzahl" flex>
+							<div class="small-headline">Wiederholender Termin:</div>
+							<paper-input-decorator id="wiederholungen" label="Anzahl" style="min-width: 15px" flex>
 								<input is="core-input" type="text" pattern="[1-9][0-9]*" preventInvalidInput="true" value={{recurring.count}} disabled?="{{disableToggle || !recurring.isRecurring}}">
 							</paper-input-decorator>
 							<span self-center>mal alle</span>
-							<paper-input-decorator id="anzahl" label="Abstand" flex>
+							<paper-input-decorator id="anzahl" label="Abstand" style="min-width: 15px" flex>
 								<input is="core-input" type="text" pattern="[1-9][0-9]*" preventInvalidInput="true" value={{recurring.distance}} disabled?="{{disableToggle || !recurring.isRecurring}}">
 							</paper-input-decorator>
 							<span>Tage</span>
@@ -229,11 +237,13 @@
 			publish: {
 				pageParameter: {},
 				pageLoaded: {},
-				toasts: {}
+				toasts: {},
+				navigating: false
 			},
 			//Initialize the screen
 			ready: function() {
 				var self = this;
+				self.navigating = false;
 				self.vorlesung = new model.templates.Vorlesung();
 				self.vorlesungstermine = [];
 				self.vorlesungsterminToEdit = new model.templates.Termin();
@@ -347,6 +357,7 @@
 				    						self.job('update-label-raum-ready', function() {
 				    							self.$.raum.inputAction();
 				    							self.$.raum.input.commit();
+				    							self.invalid.raum = false;
 				    						}, 100);
 										}
 										//Init date picker with blocklagen start datum
@@ -495,18 +506,18 @@
 				self.vorlesungsterminToEdit = new model.templates.Termin();
 				self.vorlesungsterminToEdit.raum = self.raum;
 				self.clearAllColor();
-				self.invalid.datum = true;
-				self.invalid.startUhrzeit = true;
-				self.invalid.endUhrzeit = true;
-				if(!self.raum) {
-					self.invalid.raum = true;
-				}
 				self.job('update-labels-reject', function() {
 					self.$.datum.inputAction();
+					self.invalid.datum = true;
 					self.$.startUhrzeit.inputAction();
+					self.invalid.startUhrzeit = true;
 					self.$.endUhrzeit.inputAction();
+					self.invalid.endUhrzeit = true;
 					self.$.pause.inputAction();
 					self.$.raum.inputAction();
+					if(!self.raum) {
+						self.invalid.raum = true;
+					}
 					self.$.raum.input.commit();
 					self.$.wiederholungen.inputAction();
 					self.$.anzahl.inputAction();
@@ -527,11 +538,15 @@
 				self.showTermin(self.vorlesungsterminToEdit);
 				self.job('update-labels-edit', function() {
 					self.$.datum.inputAction();
+					self.invalid.datum = false;
 					self.$.startUhrzeit.inputAction();
+					self.invalid.startUhrzeit = false;
 					self.$.endUhrzeit.inputAction();
+					self.invalid.endUhrzeit = false;
 					self.$.pause.inputAction();
 					self.$.raum.inputAction();
 					self.$.raum.input.commit();
+					self.invalid.raum = false;
 					self.$.wiederholungen.inputAction();
 					self.$.anzahl.inputAction();
 				}, 100);
@@ -680,6 +695,32 @@
 					self.pageLoaded.vdashboard = false;
 					self.pageLoaded.sdashboard = false;
 				}
+			},
+			//Show Termine of previous day
+			back: function () {
+				var self = this;
+				var dateNew = new Date(self.vorlesungsterminToEdit.datum);
+				dateNew.setDate(dateNew.getDate() - 1);
+				var year = dateNew.getFullYear();
+			    var month = '0' + (dateNew.getMonth() + 1);
+			    month = month.slice(-2, (month.length - 2) + 3);
+			    var day = '0' + dateNew.getDate();
+			    day = day.slice(-2, (day.length - 2) + 3);
+			    self.datePickerOpened = true;
+			    self.selectedDate = year + '-' + month + '-' + day;
+			},
+			//Show Termine of next day
+			forward: function() {
+				var self = this;
+				var dateNew = new Date(self.vorlesungsterminToEdit.datum);
+				dateNew.setDate(dateNew.getDate() + 1);
+				var year = dateNew.getFullYear();
+			    var month = '0' + (dateNew.getMonth() + 1);
+			    month = month.slice(-2, (month.length - 2) + 3);
+			    var day = '0' + dateNew.getDate();
+			    day = day.slice(-2, (day.length - 2) + 3);
+			    self.datePickerOpened = true;
+			    self.selectedDate = year + '-' + month + '-' + day;
 			},
 			//Navigate backwards and force a reload
 	    	cancel: function() {
@@ -849,6 +890,7 @@
 				var terminAsDate = new Date(this.selectedDate);
 				if(this.minDate && this.maxDate && !(this.minDate <= terminAsDate && this.maxDate >= terminAsDate)) {
 					this.invalid.datum = true;
+					this.clearAllColor();
 				} else {
 					this.invalid.datum = false;
 					this.showTermin(this.vorlesungsterminToEdit);
