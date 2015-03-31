@@ -211,6 +211,10 @@ core-icon {
 	margin-right: 5px;
 }
 
+paper-spinner {
+	margin-left: 5px;
+}
+
 paper-icon-button::shadow #ripple {
   color: #E2001A;
   opacity: 0.25;

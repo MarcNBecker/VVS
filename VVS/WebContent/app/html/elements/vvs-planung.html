@@ -575,6 +575,7 @@
 					}
 				}
 				this.calculateProgress();
+				this.checkAllConflicts();
 				this.onRejectDisableKlausur = false;
 				this.reject();
 			},
@@ -956,6 +957,14 @@
 								for(j=0; j<self.vorlesungstermine.length; j++) {
 									if(self.vorlesungstermine[j].id === api.response[i].id) {
 										found = true;
+										break;
+									}
+								}
+								//Dont use webService for deleted termin
+								for(j=0; j<self.deletedVorlesungstermine.length && found === false; j++) {
+									if(self.deletedVorlesungstermine[j].id === api.response[i].id) {
+										found = true;
+										break;
 									}
 								}
 								if(found === true) {
@@ -1006,6 +1015,13 @@
 										found = true;
 									}
 								}
+								//Dont use webService for deleted termin
+								for(j=0; j<self.deletedVorlesungstermine.length && found === false; j++) {
+									if(self.deletedVorlesungstermine[j].id === api.response[i].id) {
+										found = true;
+										break;
+									}
+								}
 								if(found === true) {
 									continue;
 								}
@@ -1052,6 +1068,13 @@
 								for(j=0; j<self.vorlesungstermine.length; j++) {
 									if(self.vorlesungstermine[j].id === api.response[i].id) {
 										found = true;
+									}
+								}
+								//Dont use webService for deleted termin
+								for(j=0; j<self.deletedVorlesungstermine.length && found === false; j++) {
+									if(self.deletedVorlesungstermine[j].id === api.response[i].id) {
+										found = true;
+										break;
 									}
 								}
 								if(found === true) {
