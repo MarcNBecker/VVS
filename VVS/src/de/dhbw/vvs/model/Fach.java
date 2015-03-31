@@ -122,6 +122,10 @@ public class Fach {
 		this.id = id;
 	}
 	
+	public String getName() {
+		return name;
+	}
+	
 	public void setMaxJahr(int jahr) {
 		this.maxDozentJahr = jahr;
 	}

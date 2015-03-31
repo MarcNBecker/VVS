@@ -23,6 +23,9 @@ public class Termin {
 	private String raum;
 	private boolean klausur;
 	
+	@SuppressWarnings("unused")
+	private String infoString; //this is only filled if the termin is loaded as a potential conflict to show more information on the timeline
+	
 	public static ArrayList<Termin> getAll(Vorlesung vorlesung) throws WebServiceException {
 		vorlesung.getDirectAttributes(); //check existance
 		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
@@ -64,6 +67,7 @@ public class Termin {
 			t.pause = result.getInt("pause");
 			t.raum = result.getString("raum");
 			t.klausur = result.getBoolean("klausur");
+			t.infoString = new Vorlesung(t.vorlesungID).getInfoString();
 			terminList.add(t);
 		}
 		if(includeFeiertageForConflicts) {
@@ -92,6 +96,7 @@ public class Termin {
 			t.pause = result.getInt("pause");
 			t.raum = result.getString("raum");
 			t.klausur = result.getBoolean("klausur");
+			t.infoString = new Vorlesung(t.vorlesungID).getInfoString();
 			terminList.add(t);
 		}
 		if(includeFeiertageForConflicts) {
@@ -122,6 +127,7 @@ public class Termin {
 			t.pause = result.getInt("pause");
 			t.raum = result.getString("raum");
 			t.klausur = result.getBoolean("klausur");
+			t.infoString = new Vorlesung(t.vorlesungID).getInfoString();
 			terminList.add(t);
 		}
 		if(includeFeiertageForConflicts) {

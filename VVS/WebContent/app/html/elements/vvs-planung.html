@@ -965,7 +965,7 @@
 									conflicts = true;
 									globalConflicts = true;
 								}
-								self.color("Kurs", api.response[i].startUhrzeit, api.response[i].endUhrzeit, noColor, conflicts);
+								self.color("Kurs", api.response[i].startUhrzeit, api.response[i].endUhrzeit, noColor, conflicts, api.response[i].infoString);
 							}
 							//Add local Termine to Kurs timeline
 							for(i=0; i<localTermine.length; i++) {
@@ -1013,7 +1013,7 @@
 									conflicts = true;
 									globalConflicts = true;
 								}
-								self.color("Dozent", api.response[i].startUhrzeit, api.response[i].endUhrzeit, noColor, conflicts);
+								self.color("Dozent", api.response[i].startUhrzeit, api.response[i].endUhrzeit, noColor, conflicts, api.response[i].infoString);
 							}
 							//Add local Termine to Dozent timeline
 							for(i=0; i<localTermine.length; i++) {
@@ -1061,7 +1061,7 @@
 									conflicts = true;
 									globalConflicts = true;
 								}
-								self.color("Raum", api.response[i].startUhrzeit, api.response[i].endUhrzeit, noColor, conflicts);
+								self.color("Raum", api.response[i].startUhrzeit, api.response[i].endUhrzeit, noColor, conflicts, api.response[i].infoString);
 							}
 							//Add local Termine to Raum timeline
 							for(i=0; i<localTermine.length; i++) {
@@ -1116,7 +1116,7 @@
 				}
 			},
 			//Color a termin
-			color: function(timeline, start, end, noColor, conflicts) {
+			color: function(timeline, start, end, noColor, conflicts, title) {
 				if(noColor === true) {
 					return;
 				}
@@ -1167,7 +1167,7 @@
 							continue;
 						}	
 						this.$[id].classList.add(color);
-						this.$[id].title = start + " - " + end;
+						this.$[id].title = start + "-" + end + " Uhr" + (title ? " - " + title : "");
 					}
 					startIndexMinute = 0;
 				}
@@ -1180,7 +1180,7 @@
 						continue;
 					}
 					this.$[id].classList.add(color);
-					this.$[id].title = start + " - " + end;
+					this.$[id].title = start + "-" + end + " Uhr" + (title ? " - " + title : "");
 				}	
 			},
 			//Clear all colors in graphical planning
