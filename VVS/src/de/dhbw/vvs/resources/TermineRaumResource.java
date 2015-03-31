@@ -37,7 +37,7 @@ public class TermineRaumResource extends JsonServerResource {
 	
 	@Override
 	protected Object receiveGet() throws WebServiceException {
-		return Termin.getAllForRaumOnDate(getDatum(), getRaum());
+		return Termin.getAllForRaumOnDate(getDatum(), getRaum(), true);
 	}
 	
 	public Date getDatum() {

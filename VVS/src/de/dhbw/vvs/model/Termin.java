@@ -3,6 +3,7 @@ package de.dhbw.vvs.model;
 import java.sql.Date;
 import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import de.dhbw.vvs.application.ExceptionStatus;
 import de.dhbw.vvs.application.WebServiceException;
@@ -43,7 +44,7 @@ public class Termin {
 		return terminList;
 	}
 	
-	public static ArrayList<Termin> getAllForKursOnDate(Date datum, Kurs kurs) throws WebServiceException {
+	public static ArrayList<Termin> getAllForKursOnDate(Date datum, Kurs kurs, boolean includeFeiertageForConflicts) throws WebServiceException {
 		if(datum == null) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_DATE);
 		}
@@ -65,10 +66,13 @@ public class Termin {
 			t.klausur = result.getBoolean("klausur");
 			terminList.add(t);
 		}
+		if(includeFeiertageForConflicts) {
+			terminList.addAll(getFeiertageAsTermin(datum));
+		}
 		return terminList;
 	}
 	
-	public static ArrayList<Termin> getAllForDozentOnDate(Date datum, Dozent dozent) throws WebServiceException {
+	public static ArrayList<Termin> getAllForDozentOnDate(Date datum, Dozent dozent, boolean includeFeiertageForConflicts) throws WebServiceException {
 		if(datum == null) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_DATE);
 		}
@@ -90,10 +94,13 @@ public class Termin {
 			t.klausur = result.getBoolean("klausur");
 			terminList.add(t);
 		}
+		if(includeFeiertageForConflicts) {
+			terminList.addAll(getFeiertageAsTermin(datum));
+		}
 		return terminList;
 	}
 	
-	public static ArrayList<Termin> getAllForRaumOnDate(Date datum, String raum) throws WebServiceException {
+	public static ArrayList<Termin> getAllForRaumOnDate(Date datum, String raum, boolean includeFeiertageForConflicts) throws WebServiceException {
 		if(datum == null) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_DATE);
 		}
@@ -117,6 +124,39 @@ public class Termin {
 			t.klausur = result.getBoolean("klausur");
 			terminList.add(t);
 		}
+		if(includeFeiertageForConflicts) {
+			terminList.addAll(getFeiertageAsTermin(datum));
+		}
+		return terminList;
+	}
+	
+	public static ArrayList<Termin> getFeiertageAsTermin(Date datum) throws WebServiceException {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(datum);
+		ArrayList<Feiertag> feiertagList = Feiertag.getAll(calendar.get(Calendar.YEAR));
+		ArrayList<Termin> terminList = new ArrayList<Termin>();
+		for(Feiertag f : feiertagList) {
+			//Skip Feiertag on another day
+			if(!Utility.dateString(datum).equals(Utility.dateString(f.getDatum()))) {
+				continue;
+			}
+			Calendar startTime = Calendar.getInstance();
+			startTime.set(Calendar.HOUR_OF_DAY, 0);
+			startTime.set(Calendar.MINUTE, 0);
+			Calendar endTime = Calendar.getInstance();
+			endTime.set(Calendar.HOUR_OF_DAY, 23);
+			endTime.set(Calendar.MINUTE, 59);
+			Termin t = new Termin();
+			t.id = -999999;
+			t.datum = f.getDatum();
+			t.vorlesungID = 0;
+			t.startUhrzeit = new Time(startTime.getTimeInMillis());
+			t.endUhrzeit = new Time(endTime.getTimeInMillis());
+			t.pause = 0;
+			t.raum = null;
+			t.klausur = false;
+			terminList.add(t);
+		}
 		return terminList;
 	}
 	
@@ -125,6 +165,10 @@ public class Termin {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
 		}
 		this.id = id;
+	}
+	
+	private Termin() {
+		//lazy and no check
 	}
 	
 	public Termin getDirectAttributes() throws WebServiceException {
