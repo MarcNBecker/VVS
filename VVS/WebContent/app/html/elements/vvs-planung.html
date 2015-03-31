@@ -1134,11 +1134,13 @@
 				else if (parseInt(endTime[0]) < parseInt(this.hours[0]) && endIndexHour === -1)
 				{
 					endIndexHour = 0;
+					endIndexMinute = 0;
 					endTime[0] = this.hours[0];
 				}
 				if (parseInt(startTime[0]) < parseInt(this.hours[0]) && startIndexHour === -1)
 				{
 					startIndexHour = 0;
+					startIndexMinute = 0;
 					startTime[0] = this.hours[0];
 				}
 				else if (parseInt(startTime[0]) > parseInt(this.hours[this.hours.length-1]) && startIndexHour === -1)
