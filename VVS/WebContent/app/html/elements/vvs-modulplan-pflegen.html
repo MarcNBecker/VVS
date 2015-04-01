@@ -149,6 +149,7 @@
 			invalid: {},
 			//Publish those attributes to home
 			publish: {
+				pageChanged: {changed: false, save: function(){}},
 				pageParameter: {},
 				pageLoaded: {},
 				toasts: {}
@@ -156,6 +157,8 @@
 			//Initialize the screen
 			ready: function() {
 				var self = this;
+				self.pageChanged.save = self.save.bind(self);
+				self.pageChanged.changed = false;
 				self.modulplan = new model.helper.ModulplanComplete();
 				self.module = [];
 				self.faecher = [];
@@ -359,6 +362,8 @@
 				}				
 				//reset input fields
 				this.reject();
+				//set page changed
+				this.pageChanged.changed = true;
 				//reset dropdowns, if something changed
 				this.$.fachDropdown.$.scroller.style.height = "";
 		       	this.$.fachDropdown.$.scroller.style.width = "";
@@ -436,6 +441,8 @@
 				}
 				//reset inputs
 				this.reject();
+				//set page changed
+				this.pageChanged.changed = true;
 				//reset dropdowns
 				this.$.fachDropdown.$.scroller.style.height = "";
 		       	this.$.fachDropdown.$.scroller.style.width = "";
@@ -536,6 +543,7 @@
 											deeperRuns++;
 											if(deeperRuns === self.deletedModulInstanzen.length) {
 												self.disableToggle = false;
+												self.pageChanged.changed = false;
 												self.deletedModulInstanzen = [];
 												self.deletedFachInstanzen = [];
 												self.toasts.success.show();
@@ -548,6 +556,7 @@
 								}
 								if(self.deletedModulInstanzen.length === 0) {
 									self.disableToggle = false;
+									self.pageChanged.changed = false;
 									self.deletedModulInstanzen = [];
 									self.deletedFachInstanzen = [];
 									self.toasts.success.show();
@@ -561,6 +570,7 @@
 				}
 				if(self.deletedFachInstanzen.length === 0) {
 					self.disableToggle = false;
+					self.pageChanged.changed = false;
 					self.deletedModulInstanzen = [];
 					self.deletedFachInstanzen = [];
 					self.toasts.success.show();
@@ -579,6 +589,7 @@
 						self.pageLoaded.stammdaten = false;
 						self.pageLoaded.modulplanAnlegen = false;
 						self.pageLoaded.modulplanPflegen = false;
+						self.pageChanged.changed = false;
 						self.toasts.success.show();
 						window.history.back();
 					} else {
@@ -594,6 +605,7 @@
 			},
 			//Navigate backwards and force a reload
 			cancel: function() {
+				this.pageChanged.changed = false;
 	    		this.pageLoaded.modulplanPflegen = false;
 	    		window.history.back();
 			},

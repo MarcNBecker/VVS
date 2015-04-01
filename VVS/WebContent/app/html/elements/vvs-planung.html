@@ -235,6 +235,7 @@
 			invalid: {},
 			//Publish those attributes to home
 			publish: {
+				pageChanged: {changed: false, save: function(){}},
 				pageParameter: {},
 				pageLoaded: {},
 				toasts: {},
@@ -244,6 +245,8 @@
 			ready: function() {
 				var self = this;
 				self.navigating = false;
+				self.pageChanged.save = self.update.bind(self);
+				self.pageChanged.changed = false;
 				self.vorlesung = new model.templates.Vorlesung();
 				self.vorlesungstermine = [];
 				self.vorlesungsterminToEdit = new model.templates.Termin();
@@ -495,6 +498,7 @@
 				this.checkAllConflicts();
 				this.onRejectDisableKlausur = false;
 				this.reject();
+				this.pageChanged.changed = true;
 		    },
 		    //Reject input fields
 			reject: function() {
@@ -581,6 +585,7 @@
 				this.checkAllConflicts();
 				this.onRejectDisableKlausur = false;
 				this.reject();
+				this.pageChanged.changed = true;
 			},
 			//Show Action Dialog for Deletion of Vorlesung
 			initDeleteVorlesung: function() {
@@ -594,6 +599,7 @@
 				model.webService.deleteVorlesung(self.vorlesung, function(api) {
 					if(!api.isError) {
 						self.toasts.success.show();
+						self.pageChanged.changed = false;
 						self.pageLoaded.planung = false;
 						self.pageLoaded.vdashboard = false;
 						window.history.replaceState({redirect: true}, '', '#!vdashboard-');
@@ -662,6 +668,7 @@
 								if (veryDeepRuns === self.vorlesungstermine.length) {
 									self.disableToggle = false;
 									self.toasts.success.show();
+									self.pageChanged.changed = false;
 									self.pageLoaded.vdashboard = false;
 									self.pageLoaded.sdashboard = false;
 								}
@@ -681,6 +688,7 @@
 								if (veryDeepRuns === self.vorlesungstermine.length) {
 									self.disableToggle = false;
 									self.toasts.success.show();
+									self.pageChanged.changed = false;
 									self.pageLoaded.vdashboard = false;
 									self.pageLoaded.sdashboard = false;
 								}
@@ -696,6 +704,7 @@
 				if(veryDeepRuns === 0 && self.vorlesungstermine.length === 0) {
 					self.disableToggle = false;
 					self.toasts.success.show();
+					self.pageChanged.changed = false;
 					self.pageLoaded.vdashboard = false;
 					self.pageLoaded.sdashboard = false;
 				}
@@ -729,6 +738,7 @@
 			//Navigate backwards and force a reload
 	    	cancel: function() {
 	    		this.pageLoaded.planung = false;
+				this.pageChanged.changed = false;
 	    		window.history.back();
 	    	},
 	    	//Navigate to Vorlesungsdashboard
@@ -758,6 +768,7 @@
 	    	//Set selected Dozent for Vorlesung from top list
 	    	setListDozent: function(e, detail, sender) {
 	    		this.dozent = e.target.templateInstance.model.item;
+				this.pageChanged.changed = true;
 	    		this.vorlesung.dozentID = this.dozent.id;
 	    		this.showTermin(this.vorlesungsterminToEdit);
 	    	},
@@ -765,6 +776,7 @@
 	    	setOtherDozent: function(e, detail, sender) {
 	    		if(detail.isSelected === true) {
 	        		this.dozent = detail.item.templateInstance.model.item;
+	        		this.pageChanged.changed = true;
 	        		this.vorlesung.dozentID = this.dozent.id;
 	        		var i;
 	        		var found = false;

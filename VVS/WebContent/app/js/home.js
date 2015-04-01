@@ -54,16 +54,22 @@ template.pageLoaded = {
 	sdashboard: false
 };
 
+//contains the change state of changeable sites and a method to save that changes
+template.pageChanged = {
+	modulplanPflegen: {changed: false, save: function() {}},
+	planung: {changed: false, save: function() {}},
+};
+
 //Page descriptors including the HTML code to load the page
 template.pageDescriptor = {
 	stammdaten: {name: 'Stammdaten', hash: 'stammdaten', html: '<vvs-uebersicht pageLoaded="{{pageLoaded}}" pageDescriptor="{{pageDescriptor}}" toasts="{{toasts}}"></vvs-uebersicht>'},
-	dozent: {name: 'Dozent pflegen', hash: 'dozent', html: '<vvs-dozent pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-dozent>'},
+	dozent: {name: 'Dozent pflegen', hash: 'dozent', html: '<vvs-dozent pageChanged="{{pageChanged.dozent}}" pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-dozent>'},
 	modulplanAnlegen: {name: 'Modulplan anlegen', hash: 'modulplanAnlegen', html: '<vvs-modulplan-anlegen pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-modulplan-anlegen>'},
-	modulplanPflegen: {name: 'Modulplan pflegen', hash: 'modulplanPflegen', html: '<vvs-modulplan-pflegen pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-modulplan-pflegen>'},
-	kurs: {name: 'Kurs pflegen', hash: 'kurs', html: '<vvs-kurs pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-kurs>'},
-	user: {name: 'User pflegen', hash: 'user', html: '<vvs-user currentUser="{{user}}" pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-user>'},
+	modulplanPflegen: {name: 'Modulplan pflegen', hash: 'modulplanPflegen', html: '<vvs-modulplan-pflegen pageChanged="{{pageChanged.modulplanPflegen}}" pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-modulplan-pflegen>'},
+	kurs: {name: 'Kurs pflegen', hash: 'kurs', html: '<vvs-kurs pageChanged="{{pageChanged.kurs}}" pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-kurs>'},
+	user: {name: 'User pflegen', hash: 'user', html: '<vvs-user pageChanged="{{pageChanged.user}}" currentUser="{{user}}" pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-user>'},
 	feiertage: {name: 'Feiertage pflegen', hash: 'feiertage', html: '<vvs-feiertage pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-feiertage>'},
-	planung: {name: 'Planung', hash: 'planung', html: '<vvs-planung navigating="{{navigating}}" pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-planung>'},
+	planung: {name: 'Planung', hash: 'planung', html: '<vvs-planung pageChanged="{{pageChanged.planung}}" navigating="{{navigating}}" pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-planung>'},
 	vdashboard: {name: 'Vorlesungsdashboard', hash: 'vdashboard', html: '<vvs-dashboard-vorlesung navigating="{{navigating}}" pageParameter="{{pageParameter}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-dashboard-vorlesung>'},
 	sdashboard: {name: 'Dashboard', hash: 'sdashboard', html: '<vvs-dashboard-studiengangsleiter user="{{user}}" pageLoaded="{{pageLoaded}}" toasts="{{toasts}}"></vvs-dashboard-studiengangsleiter>'}
 };
@@ -186,6 +192,10 @@ template.menuItemSelected = function(e, detail, sender) {
 template.navigateFromDrawer = function(e, detail, sender) {
   	var selectedPage = e.target.templateInstance.model.page;
 	location.href = '#!' + selectedPage.hash;
+};
+
+template.saveChanged = function() {
+	template.pageChanged[template.selectedPage.page.hash].save();
 };
 
 //Force a refresh for the current page
