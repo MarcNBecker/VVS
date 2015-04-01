@@ -160,6 +160,7 @@ public class Utility {
 		time.set(Calendar.HOUR_OF_DAY, tCalendar.get(Calendar.HOUR_OF_DAY));
 		time.set(Calendar.MINUTE, tCalendar.get(Calendar.MINUTE));
 		time.set(Calendar.SECOND, 0);
+		time.set(Calendar.MILLISECOND, 0);
 		return new Time(time.getTimeInMillis());
 	}
 	

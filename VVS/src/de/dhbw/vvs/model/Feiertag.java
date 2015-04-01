@@ -74,4 +74,8 @@ public class Feiertag {
 		this.datum = datum;
 	}
 	
+	public String getName() {
+		return name;
+	}
+	
 }

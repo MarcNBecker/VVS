@@ -316,6 +316,7 @@
 								self.invalid.endUhrzeit = true;
 								self.job('update-label-pause-ready', function() {
 	    							self.$.pause.inputAction();
+	    							self.invalid.pause = false;
 	    						}, 100);
 								deepRuns++;
 								if(deepRuns === 6) {
@@ -514,6 +515,7 @@
 					self.$.endUhrzeit.inputAction();
 					self.invalid.endUhrzeit = true;
 					self.$.pause.inputAction();
+					self.invalid.pause = false;
 					self.$.raum.inputAction();
 					if(!self.raum) {
 						self.invalid.raum = true;
@@ -544,6 +546,7 @@
 					self.$.endUhrzeit.inputAction();
 					self.invalid.endUhrzeit = false;
 					self.$.pause.inputAction();
+					self.invalid.pause = false;
 					self.$.raum.inputAction();
 					self.$.raum.input.commit();
 					self.invalid.raum = false;
@@ -745,6 +748,10 @@
 						return;
 					}
 					self.vorlesungsterminToEdit.pause = self.calculatePause(self.vorlesungsterminToEdit.startUhrzeit, self.vorlesungsterminToEdit.endUhrzeit);
+					self.job('update-label-pause-calculation', function() {
+						self.$.pause.inputAction();
+						self.invalid.pause = false;
+					}, 100);
 					self.showTermin(self.vorlesungsterminToEdit);
 				}
 			},
@@ -1189,6 +1196,11 @@
 						{
 							continue;
 						}	
+						if (this.$[id].classList.contains('highlight') && color === 'highlight-termin') {
+							continue; //don't overwrite highlighted
+						} else if (this.$[id].classList.contains('highlight-termin') && color === 'highlight') {
+							this.$[id].classList.remove('highlight-termin'); //highlight has priority
+						}
 						this.$[id].classList.add(color);
 						this.$[id].title = start + "-" + end + " Uhr" + (title ? " - " + title : "");
 					}
@@ -1201,6 +1213,11 @@
 					if (!this.$[id])
 					{
 						continue;
+					}
+					if (this.$[id].classList.contains('highlight') && color === 'highlight-termin') {
+						continue; //don't overwrite highlighted
+					} else if (this.$[id].classList.contains('highlight-termin') && color === 'highlight') {
+						this.$[id].classList.remove('highlight-termin'); //highlight has priority
 					}
 					this.$[id].classList.add(color);
 					this.$[id].title = start + "-" + end + " Uhr" + (title ? " - " + title : "");

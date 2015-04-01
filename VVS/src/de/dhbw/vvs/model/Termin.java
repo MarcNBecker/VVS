@@ -155,6 +155,7 @@ public class Termin {
 			t.pause = 0;
 			t.raum = null;
 			t.klausur = false;
+			t.infoString = f.getName();
 			terminList.add(t);
 		}
 		return terminList;

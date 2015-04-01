@@ -1,5 +1,6 @@
 package de.dhbw.vvs.utility;
 
+import java.sql.Time;
 import java.util.ArrayList;
 
 import com.google.i18n.phonenumbers.NumberParseException;
@@ -13,6 +14,7 @@ import de.dhbw.vvs.database.DatabaseConnection;
 public class Verifier {
 
 	public static void main(String[] args) throws Exception {
+		updatePause();
 		//testEMails();
 		//testPhone();
 		//transport();
@@ -72,6 +74,26 @@ public class Verifier {
 			}
 		}
 		System.out.println(incorrect + "/" + resultList.size());
+	}
+	
+	public static void updatePause() throws Exception {
+		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
+		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT id, startUhrzeit, endUhrzeit FROM termin", null);
+		for(TypeHashMap<String, Object> result : resultList) {
+			int id = result.getInt("id");
+			Time start = (Time) result.get("startUhrzeit");
+			Time ende = (Time) result.get("endUhrzeit");
+			long minutes = (ende.getTime() - start.getTime()) / 60000;
+    		if (minutes <= 90) {
+    			continue;
+    		} else {
+    			int pause = ((int) ((minutes / 50.0))) * 5;
+				ArrayList<Object> fieldValues = new ArrayList<Object>();
+				fieldValues.add(pause);
+				fieldValues.add(id);
+				db.doQuery("UPDATE termin SET pause = ? WHERE id = ?", fieldValues);
+    		}
+		}
 	}
 
 }
