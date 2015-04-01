@@ -40,7 +40,10 @@
     <core-toolbar tool flex>
       <div horizontal layout center flex>
       	<span>{{selectedPage.page.name}}</span>
-      	<paper-icon-button icon="save" on-click="{{saveChanged}}" hidden?="{{pageChanged[selectedPage.page.hash].changed !== true}}"></paper-icon-button>
+      	<div horizontal layout center hidden?="{{pageChanged[selectedPage.page.hash].changed !== true}}">
+	      	<span>&nbsp;(Ungespeicherte &Auml;nderungen)</span>
+	      	<paper-icon-button icon="save" on-click="{{saveChanged}}"></paper-icon-button>
+      	</div>
       </div>
       <div>{{user.name}}</div>
       <paper-icon-button icon="account-circle" on-click="{{navigateToUser}}"></paper-icon-button>
