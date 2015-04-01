@@ -670,7 +670,6 @@
 									self.disableToggle = false;
 									self.toasts.success.show();
 									self.pageChanged.changed = false;
-									self.disableSave = false;
 									self.pageLoaded.vdashboard = false;
 									self.pageLoaded.sdashboard = false;
 								}
@@ -691,7 +690,6 @@
 									self.disableToggle = false;
 									self.toasts.success.show();
 									self.pageChanged.changed = false;
-									self.disableSave = false;
 									self.pageLoaded.vdashboard = false;
 									self.pageLoaded.sdashboard = false;
 								}
@@ -708,7 +706,6 @@
 					self.disableToggle = false;
 					self.toasts.success.show();
 					self.pageChanged.changed = false;
-					self.disableSave = false;
 					self.pageLoaded.vdashboard = false;
 					self.pageLoaded.sdashboard = false;
 				}
@@ -1269,6 +1266,9 @@
 					}
 				}
 				return true;
+			},
+			disableToggleChanged: function(oldValue, newValue) {
+				this.disableSave = newValue;
 			}
 		});
 	</script>

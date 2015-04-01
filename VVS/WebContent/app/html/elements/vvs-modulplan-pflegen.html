@@ -545,7 +545,6 @@
 											if(deeperRuns === self.deletedModulInstanzen.length) {
 												self.disableToggle = false;
 												self.pageChanged.changed = false;
-												self.disableSave = false;
 												self.deletedModulInstanzen = [];
 												self.deletedFachInstanzen = [];
 												self.toasts.success.show();
@@ -559,7 +558,6 @@
 								if(self.deletedModulInstanzen.length === 0) {
 									self.disableToggle = false;
 									self.pageChanged.changed = false;
-									self.disableSave = false;
 									self.deletedModulInstanzen = [];
 									self.deletedFachInstanzen = [];
 									self.toasts.success.show();
@@ -574,7 +572,6 @@
 				if(self.deletedFachInstanzen.length === 0) {
 					self.disableToggle = false;
 					self.pageChanged.changed = false;
-					self.disableSave = false;
 					self.deletedModulInstanzen = [];
 					self.deletedFachInstanzen = [];
 					self.toasts.success.show();
@@ -719,6 +716,9 @@
 			//Switch Fach info
 			switchFachInfo: function() {
 				this.toggleFachInfo = !this.toggleFachInfo;
+			},
+			disableToggleChanged: function(oldValue, newValue) {
+				this.disableSave = newValue;
 			}
 		});
 	</script>
