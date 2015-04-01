@@ -235,6 +235,7 @@
 			invalid: {},
 			//Publish those attributes to home
 			publish: {
+				disableSave: false,
 				pageChanged: {changed: false, save: function(){}},
 				pageParameter: {},
 				pageLoaded: {},
@@ -669,6 +670,7 @@
 									self.disableToggle = false;
 									self.toasts.success.show();
 									self.pageChanged.changed = false;
+									self.disableSave = false;
 									self.pageLoaded.vdashboard = false;
 									self.pageLoaded.sdashboard = false;
 								}
@@ -689,6 +691,7 @@
 									self.disableToggle = false;
 									self.toasts.success.show();
 									self.pageChanged.changed = false;
+									self.disableSave = false;
 									self.pageLoaded.vdashboard = false;
 									self.pageLoaded.sdashboard = false;
 								}
@@ -705,6 +708,7 @@
 					self.disableToggle = false;
 					self.toasts.success.show();
 					self.pageChanged.changed = false;
+					self.disableSave = false;
 					self.pageLoaded.vdashboard = false;
 					self.pageLoaded.sdashboard = false;
 				}

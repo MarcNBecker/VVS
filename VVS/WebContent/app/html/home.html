@@ -42,7 +42,7 @@
       	<span>{{selectedPage.page.name}}</span>
       	<div horizontal layout center hidden?="{{pageChanged[selectedPage.page.hash].changed !== true}}">
 	      	<span>&nbsp;(Ungespeicherte &Auml;nderungen)</span>
-	      	<paper-icon-button icon="save" on-click="{{saveChanged}}"></paper-icon-button>
+	      	<paper-icon-button icon="save" on-click="{{saveChanged}}" disabled?="{{disableSave}}"></paper-icon-button>
       	</div>
       </div>
       <div>{{user.name}}</div>
