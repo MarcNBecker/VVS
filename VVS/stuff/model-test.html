@@ -1,3 +1,4 @@
+<!-- MOVE THIS FILE TO WebContent/app/html/ TO USE IT -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -325,7 +326,8 @@
 <input type="button" onclick="model.webService.deleteVorlesungTermin(vorlesung, termin, c)" value="Delete Vorlesung Termin" /><br />
 
 <!-- Exports -->
-<input type="button" onclick="window.open(model.webService.getGroupEURL(kurs, semester), '_blank')" value="Get GroupE CSV" />
+<input type="button" onclick="window.open(model.webService.getGroupEURI(kurs, semester), '_blank')" value="Get GroupE CSV" />
+<input type="button" onclick="window.open(model.webService.getXMLURI(kurs, semester), '_blank')" value="Get XML" /><br />
 
 <!-- Conflicts Termin -->
 <input type="button" onclick="model.webService.getAllConflictsTermineKurs(vorlesung, termin, c)" value="Get All Conflicts Termine Kurs" />
