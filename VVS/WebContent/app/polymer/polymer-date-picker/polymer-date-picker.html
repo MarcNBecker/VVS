@@ -5,6 +5,10 @@
 <link rel="import" href="polymer-date-picker-positioning.html"/>
 <script src="../moment/min/moment.min.js"></script>
 <script src="../moment-timezone/builds/moment-timezone-with-data.min.js"></script>
+<script src="../moment/locale/de.js"></script>
+<script>
+	moment.locale('de');
+</script>
 <polymer-element name="polymer-date-picker" extends="polymer-date-picker-positioning" attributes="range selectedDate startDate endDate opened halign relatedTarget selected showRanges timezone">
   <template>
     <link rel="stylesheet" href="polymer-date-picker.css"/>
