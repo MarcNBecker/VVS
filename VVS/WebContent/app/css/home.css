@@ -51,3 +51,7 @@ body /deep/ core-toolbar {
 paper-toast .refresh {
 	color: #eeff41
 }
+
+body /deep/ paper-spinner {
+	margin-left: 5px;
+}

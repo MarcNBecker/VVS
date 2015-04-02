@@ -1,15 +1,23 @@
 <polymer-element name="vvs-export-overlay"> 
 	<template>
 		<!-- Print Vorlesungsplan, Export CSV for Group-e and Print Dozentenplan -->
-		<paper-dialog id="export_overlay" backdrop="true" layered="true" heading="Exporte f&uuml;r {{kurs.kursname}} {{semester}}. Blocklage">
+		<paper-dialog id="export_overlay" backdrop="true" layered="true" heading="Exporte f&uuml;r {{kurs.kursname}} {{semester}}. Semester">
 			<div vertical layout class="test">
-				<span class="overlay-headline">Kurspl&auml;ne</span>
-				<paper-button on-click="{{print}}" raised disabled?="{{toggleDisabled}}" >Vorlesungsplan drucken</paper-button>
+				<div horizontal layout center>
+					<span class="overlay-headline">Kurspl&auml;ne</span>
+					<paper-spinner active?="{{toggleDisabled}}" self-center></paper-spinner>
+				</div>
+				<paper-button on-click="{{print}}" raised disabled?="{{toggleDisabled}}" >Vorlesungsplan (Hochformat)</paper-button>
+				<paper-button on-click="{{printQuer}}" raised disabled?="{{toggleDisabled}}" >Vorlesungsplan (Querformat)</paper-button>
+				<paper-button on-click="{{xmlExport}}" raised disabled?="{{toggleDisabled}}">XML Export</paper-button>
 				<paper-button on-click="{{csvExport}}" raised disabled?="{{toggleDisabled}}">GROUP-E CSV Export</paper-button>
-				<span class="overlay-headline">Dozentenpl&auml;ne</span>
-				<template repeat="{{item in dozenten}}">
+				<div horizontal layout center>
+					<span class="overlay-headline">Dozentenpl&auml;ne</span>
+					<paper-spinner active?="{{toggleDisabled}}" self-center></paper-spinner>
+				</div>
+				<template repeat="{{item in vorlesungen}}">
 					<div horizontal layout center>
-						<paper-item flex>{{item.name}}, {{item.vorname}}</paper-item>
+						<paper-item flex>{{item.dozent.name}}, {{item.dozent.vorname}} ({{item.vorlesung.fachInstanz.fach.name}})</paper-item>
 						<paper-icon-button self-center icon="print" on-click="{{printDozent}}" raised disabled?="{{toggleDisabled}}"></paper-icon-button>
 					</div>
 				</template>
@@ -20,7 +28,7 @@
 		"use strict";
 		Polymer('vvs-export-overlay', {
 			//Initializing
-			dozenten: [],
+			vorlesungen: [],
 			toggleDisabled: true,
 			publish: {
 				kurs: {},
@@ -34,18 +42,33 @@
 				}
 				//Disable everything
 				self.toggleDisabled = true;
+				self.vorlesungen = [];
 				var blocklage = new model.templates.Blocklage();
 				blocklage.kursID = self.kurs.id;
 				blocklage.semester = self.semester;
 				model.webService.getAllKursBlocklageDozenten(blocklage, function(api) {
-					if (!api.isError)
-					{
-						self.dozenten = api.response;
-						//Enable buttons
-						self.toggleDisabled = false;
+					if (!api.isError) {
+						model.webService.getAllVorlesungenSemester(self.kurs, self.semester, function(api2) {
+							if(!api2.isError) {
+								self.vorlesungen = api2.response;
+								var i;
+								for(i=0; i<self.vorlesungen.length; i++) {
+									var ii;
+									for(ii=0; ii<api.response.length; ii++) {
+										if(self.vorlesungen[i].vorlesung.dozentID === api.response[ii].id) {
+											self.vorlesungen[i].dozent = api.response[ii];
+											break;
+										}
+									}
+								}
+								//Enable buttons
+								self.toggleDisabled = false;	
+							} else {
+								console.log(JSON.stringify(api2));
+							}
+						});
 					}
-					else
-					{
+					else {
 						console.log(JSON.stringify(api));
 					}
 				})
@@ -53,25 +76,32 @@
 			//Initialize the screen
 			ready: function() {
 				var self = this;
-				self.dozenten = [];
+				self.vorlesungen = [];
 				self.toggleDisabled = false;
 			},
 			//Shoe Export overlay
 			toggle: function() {
 				this.$.export_overlay.toggle();
 			},
-			//Print Vorlesungsplan
+			//Print Vorlesungsplan Hochformat
 			print: function() {
 				window.open(model.webService.getKursPlanURI(this.kurs, this.semester), "_blank");
 			},
+			//Print Vorlesungsplan Querformat
+			printQuer: function() {
+				window.open(model.webService.getKursPlanQuerURI(this.kurs, this.semester), "_blank");
+			},
 			//Download CSV-file
 			csvExport: function() {
-				window.open(model.webService.getGroupEURL(this.kurs, this.semester), "_blank");
+				window.open(model.webService.getGroupEURI(this.kurs, this.semester), "_blank");
+			},
+			//Download XML-file
+			xmlExport: function() {
+				window.open(model.webService.getXMLURI(this.kurs, this.semester), "_blank");
 			},
 			//Print Dozentenplan
 			printDozent: function(e, detail, sender) {
-				var dozent = sender.templateInstance.model.item;
-				window.open(model.webService.getDozentenPlanURI(this.kurs, this.semester, dozent), "_blank");
+				window.open(model.webService.getDozentenPlanURI(sender.templateInstance.model.item.vorlesung), "_blank");
 			}
 		});
 	</script> 

@@ -277,7 +277,7 @@ var model = new function() {
 		var allowedMethods = ["GET", "POST", "PUT", "DELETE"];
 		var rootURI = "http://localhost:8080";
 		var apiURI = "/VVS/api/v1";
-		var birtURI = "/birt_viewer";
+		var birtURI = "/birt-viewer";
 		
 		var dozentenURI = "/dozenten";
 		var dozentURI = "/dozenten/{dozentID}";
@@ -319,6 +319,7 @@ var model = new function() {
 		
 		var vorlesungenURI = "/kurse/{kursID}/{semester}/vorlesungen";
 		var vorlesungenGroupEURI = "/kurse/{kursID}/{semester}/vorlesungen/groupe";
+		var vorlesungenXMLURI = "/kurse/{kursID}/{semester}/vorlesungen/xml";
 		var vorlesungURI = "/kurse/{kursID}/{semester}/vorlesungen/{vorlesungsID}";
 		var vorlesungDozentenURI = "/kurse/{kursID}/{semester}/vorlesungen/{vorlesungsID}/dozenten";
 		var vorlesungTermineURI = "/kurse/{kursID}/{semester}/vorlesungen/{vorlesungsID}/termine";
@@ -328,8 +329,9 @@ var model = new function() {
 		var termineDozentURI = "/termine/{datum}/dozenten/{dozentID}";
 		var termineRaumURI = "/termine/{datum}/raeume/{raum}";
 		
-		var kursPlanURI = "/{kursID}/{semester}";
-		var dozentenPlanURI = "/{kursID}/{semester}/{dozentID}";
+		var kursPlanURI = "/run?__report=Report%5CVorlesungsplan_Hochformat.rptdesign&__format=pdf&Kurs={kursID}&Semester={semester}";
+		var kursPlanQuerURI = "/run?__report=Report%5CVorlesungsplan_Querformat.rptdesign&__format=pdf&Kurs={kursID}&Semester={semester}";
+		var dozentenPlanURI = "/run?__report=Report%5CVorlesungsplan_Dozent.rptdesign&__format=pdf&Vorlesung={vorlesungID}";
 		
 		this.getAllDozenten = function(c) {
 			self.doRequest(dozentenURI, "GET", null, c);
@@ -547,8 +549,12 @@ var model = new function() {
 			self.doRequest(vorlesungenURI.replace("{kursID}", k.id).replace("{semester}", s), "GET", null, c);
 		};
 		
-		this.getGroupEURL = function (k, s) {
+		this.getGroupEURI = function (k, s) {
 			return rootURI + apiURI + vorlesungenGroupEURI.replace("{kursID}", k.id).replace("{semester}", s);
+		};
+		
+		this.getXMLURI = function(k, s) {
+			return rootURI + apiURI + vorlesungenXMLURI.replace("{kursID}", k.id).replace("{semester}", s);
 		};
 		
 		this.createVorlesung = function(v, c) {
@@ -607,8 +613,12 @@ var model = new function() {
 			return rootURI + birtURI + kursPlanURI.replace("{kursID}", k.id).replace("{semester}", s);	
 		};
 		
-		this.getDozentenPlanURI = function(k, s, d) {
-			return rootURI + birtURI + dozentenPlanURI.replace("{kursID}", k.id).replace("{semester}", s).replace("{dozentID}", d.id);
+		this.getKursPlanQuerURI = function(k, s) {
+			return rootURI + birtURI + kursPlanQuerURI.replace("{kursID}", k.id).replace("{semester}", s);	
+		};
+		
+		this.getDozentenPlanURI = function(v) {
+			return rootURI + birtURI + dozentenPlanURI.replace("{vorlesungID}", v.id);
 		};
 		
 		this.doRequest = function(uri, method, data, callback, callbackData) {
