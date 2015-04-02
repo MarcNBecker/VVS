@@ -40,7 +40,7 @@ public class XMLExportResource extends EasyServerResource {
 	protected Representation get() throws ResourceException {
 		try {
 			File xml = XMLExport.getXMLData(new Kurs(getKursID()), getSemester());
-			FileRepresentation representation = new FileRepresentation(xml, new MediaType("application", "xml"));
+			FileRepresentation representation = new FileRepresentation(xml, new MediaType("text", "xml"));
 			representation.setAutoDeleting(true);
 			representation.getDisposition().setType(Disposition.TYPE_ATTACHMENT);
 			return representation;
