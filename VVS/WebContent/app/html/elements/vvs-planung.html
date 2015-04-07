@@ -116,7 +116,7 @@
 							</paper-input-decorator>
 						</div>
 						<div horizontal layout center class="horizontal-verticalizable">
-							<paper-checkbox checked="{{vorlesungsterminToEdit.klausur}}" self-center disabled?="{{disableToggle || disableToggleKlausur || recurring.isRecurring}}"></paper-checkbox>
+							<paper-checkbox checked="{{vorlesungsterminToEdit.klausur}}" self-center disabled?="{{disableToggle || disableToggleKlausur || vorlesung.klausur || recurring.isRecurring}}"></paper-checkbox>
 							<span class="small-headline" self-center>Klausur</span>
 						</div>
 						<div horizontal layout center class="horizontal-verticalizable text-line-input">
@@ -135,6 +135,11 @@
 						<div horizontal layout>
 							<paper-button on-click={{add}} raised disabled?="{{disableToggle}}" flex>&Uuml;bernehmen</paper-button>
 							<paper-button on-click={{reject}} raised disabled?="{{disableToggle}}" flex>Verwerfen</paper-button>
+						</div>
+						<!-- No Klausur neccessary -->
+						<div horizontal layout class="vertical-input">
+							<paper-checkbox checked="{{vorlesung.klausur}}" self-center disabled?="{{disableToggle || vorlesungsterminToEdit.klausur || disableToggleNoKlausur}}"></paper-checkbox>
+							<span class="small-headline" self-center>Keine Klausur notwendig</span>
 						</div>
 						<!-- Dozent -->
 						<div vertical layout class="vertical-input">
@@ -230,6 +235,7 @@
 			datePickerOpened: false,
 			disableToggle: true,
 			disableToggleKlausur: false,
+			disableToggleNoKlausur: false,
 			onRejectDisableKlausur: false,
 			recurring: {isRecurring: false, count: "", distance: ""},
 			invalid: {},
@@ -280,6 +286,7 @@
 				self.datePickerOpened = false;
 				self.disableToggle = true;
 				self.disableToggleKlausur = false;
+				self.disableToggleNoKlausur = false;
 				self.onRejectDisableKlausur = false;
 				self.recurring = {isRecurring: false, count: "", distance: ""};
 				self.invalid = {};
@@ -298,6 +305,8 @@
 				model.webService.getVorlesung(showVorlesung, function(api) {
 					if (!api.isError) {
 						self.vorlesung = api.response;
+						//TODO löschen
+						self.vorlesung.klausur = false;
 						//Load available Vorlesungstermine
 						model.webService.getAllVorlesungTermine(self.vorlesung, function(api) {
 							if (!api.isError) {
@@ -306,10 +315,11 @@
 								var i;
 								for (i = 0; i < self.vorlesungstermine.length; i++) {
 									self.vorlesungstermine[i].dauer = self.calculateDauer(self.vorlesungstermine[i].startUhrzeit, self.vorlesungstermine[i].endUhrzeit, self.vorlesungstermine[i].pause);
-									//Disable checkbox Klausur, if vorlesungstermin is a klausur
-									if (self.vorlesungstermine[i].klausur === true)
+									//Disable checkbox Klausur, if vorlesungstermin is a klausur and vorlesung requires a klausur
+									if (self.vorlesungstermine[i].klausur === true && self.vorlesung.klausur === false)
 									{
 										self.disableToggleKlausur = true;
+										self.disableToggleNoKlausur = true;
 									}
 								}
 								self.calculateProgress();
@@ -455,6 +465,7 @@
 				if (self.vorlesungsterminToEdit.klausur === true)
 				{
 					self.disableToggleKlausur = true;
+					self.disableToggleNoKlausur = true;
 				}
 				self.vorlesungsterminToEdit.dauer = self.calculateDauer(self.vorlesungsterminToEdit.startUhrzeit, self.vorlesungsterminToEdit.endUhrzeit, self.vorlesungsterminToEdit.pause);
 				//The Vorlesungstermin is completely new, we need to set an internal ID and add it to the Vorlesung
@@ -506,6 +517,7 @@
 				var self = this;
 				if(self.onRejectDisableKlausur === true) {
 					self.disableToggleKlausur = true;
+					self.disableToggleNoKlausur = true;
 					self.onRejectDisableKlausur = false;
 				}
 				self.recurring = {isRecurring: false, count: "", distance: ""};
@@ -535,10 +547,11 @@
 				var self = this;
 				self.recurring = {isRecurring: false, count: "", distance: ""};
 				self.vorlesungsterminToEdit = JSON.parse(JSON.stringify(e.target.templateInstance.model.item));
-				//Enable checkbox Klausur, if the edited vorlesungstermin is a klausur
+				//Disable checkbox Klausur, if the edited vorlesungstermin is a klausur
 				if (this.vorlesungsterminToEdit.klausur === true)
 				{
 					this.disableToggleKlausur = false;
+					this.disableToggleNoKlausur = false;
 					this.onRejectDisableKlausur = true;
 				}
 				//Update timeline
@@ -573,6 +586,7 @@
 						if (this.vorlesungsterminToDelete.klausur === true)
 						{
 							this.disableToggleKlausur = false;
+							this.disableToggleNoKlausur = false;
 						}
 						//Only delete if the server knows about the Termin
 						if(this.vorlesungsterminToDelete.id > 0) {
