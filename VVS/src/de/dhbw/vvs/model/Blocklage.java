@@ -96,6 +96,10 @@ public class Blocklage {
 	
 	public Date getEndDatum() {
 		return endDatum;
+	}	
+	
+	public String getRaum() {
+		return raum;
 	}
 	
 }

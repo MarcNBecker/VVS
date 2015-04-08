@@ -353,4 +353,12 @@ public class Dozent {
 	public void setID(int id) throws WebServiceException {
 		this.id = id;
 	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public String getVorname() {
+		return vorname;
+	}
 }

@@ -209,6 +209,18 @@ public class Kurs {
 		return modulplanID;
 	}
 	
+	public int getStudiengangsleiterID() {
+		return studiengangsleiterID;
+	}
+	
+	public int getStudentenAnzahl() {
+		return studentenAnzahl;
+	}
+	
+	public String getSekretariatName() {
+		return sekretariatName;
+	}
+	
 	public void setID(int id) {
 		this.id = id;
 	}

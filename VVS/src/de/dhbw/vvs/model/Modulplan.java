@@ -137,4 +137,8 @@ public class Modulplan {
 		this.id = id;
 	}
 	
+	public String getStudiengang() {
+		return studiengang;
+	} 
+	
 }

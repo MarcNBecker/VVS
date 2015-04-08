@@ -1,16 +1,15 @@
 package de.dhbw.vvs.model;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.sql.Date;
 import java.util.ArrayList;
+import java.util.TreeMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -25,6 +24,7 @@ import de.dhbw.vvs.application.WebServiceException;
 import de.dhbw.vvs.database.ConnectionPool;
 import de.dhbw.vvs.database.DatabaseConnection;
 import de.dhbw.vvs.utility.TypeHashMap;
+import de.dhbw.vvs.utility.Utility;
 
 public class XMLExport {
 
@@ -37,142 +37,168 @@ public class XMLExport {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_NUMBER);
 		}
 		File file = new File("export.xml");
-		PrintWriter out;
+
+		Modulplan modulplan = new Modulplan(kurs.getModulplanID()).getDirectAttributes();
+		Studiengangsleiter studiengangsleiter = new Studiengangsleiter(kurs.getStudiengangsleiterID()).getDirectAttributes();
+		ArrayList<Blocklage> blocklageList = Blocklage.getAll(kurs);
+		Blocklage blocklage = null;
+		for(Blocklage b: blocklageList) {
+			if(b.getSemester() == semester) {
+				blocklage = b;
+				break;
+			}
+		}
+		
+		if(blocklage == null) {
+			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT);
+		}
+		
+		// Create XML
+		DocumentBuilderFactory dFact = DocumentBuilderFactory.newInstance();
+		DocumentBuilder build;
 		try {
-			out = new PrintWriter(file);	
-		} catch (FileNotFoundException e) {
+			build = dFact.newDocumentBuilder();	
+		} catch (ParserConfigurationException e) {
 			throw new WebServiceException(ExceptionStatus.FILE_CREATION_ERROR);
 		}
-		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
-		ArrayList<Object> fieldValues = new ArrayList<Object>();
-		fieldValues.add(semester);
-		fieldValues.add(kurs.getID());
-		
-		//TODO GET DATA FOR XML-EXPORT
-		try {	
-		//Get general data
-		ArrayList<TypeHashMap<String, Object>> resultListGeneral = db.doSelectingQuery("Select k.kursName, k.StudentenAnzahl, s.Name, k.SekretariatName, m.Studiengang, m.Vertiefungsrichtung, b.StartDatum, b.EndDatum, b.Raum from kurs as k join vvs.modulplan as m on k.Modulplan = m.ID join vvs.blocklage as b on k.ID = b.Kurs join vvs.studiengangsleiter as s on s.ID = k.Studiengangsleiter where b.Semester = ? and k.ID = ?;",fieldValues);
-			
-		//Get dates
-		ArrayList<TypeHashMap<String, Object>> resultListDates = db.doSelectingQuery("Select t.datum as 'StartDate', t.startUhrzeit as 'StartTime', t.endUhrzeit as 'EndTime', f.name as 'Subject', t.raum, k.kursName, d.Name as 'Dozent' from vvs.termin as t join vvs.vorlesung as v on t.Vorlesung = v.ID join vvs.kurs as k on v.kurs = k.ID join vvs.dozent as d on v.Dozent = d.ID join vvs.fachinstanz as fi on v.fachInstanz = fi.ID join vvs.fach as f on fi.fach = f.ID where v.Semester = ? and k.ID = ?;",fieldValues);
-		
-		String zeitraumStartString =  resultListGeneral.get(0).get("StartDatum").toString();
-		String zeitraumEndeString = resultListGeneral.get(0).get("EndDatum").toString();
-		//Get holidays //TODO Blocklage als Parameter?
-		ArrayList<Object> blocklage = new ArrayList<Object>();
-		blocklage.add(zeitraumStartString); //Startdatum Blocklage
-		blocklage.add(zeitraumEndeString); //Enddatum Blocklage
-		ArrayList<TypeHashMap<String, Object>> resultListHolidays = db.doSelectingQuery("SELECT * FROM `feiertag` WHERE Datum >= ? AND Datum <= ?",blocklage);
-		
-		//TODO DO XML STUFF HERE
-		// Header Daten vorbereiten
-		DocumentBuilderFactory dFact = DocumentBuilderFactory.newInstance();
-        DocumentBuilder build = dFact.newDocumentBuilder();
         Document doc = build.newDocument();
-        Element root = doc.createElement("root");
-        doc.appendChild(root);
         Element semesterplan = doc.createElement("Semesterplan");
-        root.appendChild(semesterplan);
+        doc.appendChild(semesterplan);
         
         Element kopfdaten = doc.createElement("Kopfdaten");
         semesterplan.appendChild(kopfdaten);
-        TypeHashMap<String, Object> resultGeneral = resultListGeneral.get(0);
         
         Element studiengang = doc.createElement("studiengang");
-        studiengang.appendChild(doc.createTextNode(resultGeneral.get("Studiengang").toString()));
+        studiengang.appendChild(doc.createTextNode(modulplan.getStudiengang()));
         kopfdaten.appendChild(studiengang);
-		Element semesterXML = doc.createElement("semester");
-		semesterXML.appendChild(doc.createTextNode(semester + ". Semester"));
+		
+        Element semesterXML = doc.createElement("semester");
+		semesterXML.appendChild(doc.createTextNode(String.valueOf(semester)));
 		kopfdaten.appendChild(semesterXML);
 		
 		Element studienjahrgang = doc.createElement("studienjahrgang");
-        studienjahrgang.appendChild(doc.createTextNode(resultGeneral.get("kursName").toString()));
+        studienjahrgang.appendChild(doc.createTextNode(kurs.getKursname()));
         kopfdaten.appendChild(studienjahrgang);
 		
-        Element studileiter = doc.createElement("studiengangsleiter");
-		studileiter.appendChild(doc.createTextNode(resultGeneral.get("Name").toString()));
-		kopfdaten.appendChild(studileiter);
+        Element studiengangsleiterXML = doc.createElement("studiengangsleiter");
+		studiengangsleiterXML.appendChild(doc.createTextNode(studiengangsleiter.getName()));
+		kopfdaten.appendChild(studiengangsleiterXML);
 		
-		Element zeitRaumStart = doc.createElement("zeitraumStart");
-		zeitRaumStart.appendChild(doc.createTextNode(zeitraumStartString));
-		kopfdaten.appendChild(zeitRaumStart);
+		Element semesterBeginn = doc.createElement("semesterBeginn");
+		semesterBeginn.appendChild(doc.createTextNode(Utility.dateString(blocklage.getStartDatum())));
+		kopfdaten.appendChild(semesterBeginn);
 		
-		Element zeitRaumEnde = doc.createElement("zeitraumEnde");
-		zeitRaumEnde.appendChild(doc.createTextNode(zeitraumEndeString));
-		kopfdaten.appendChild(zeitRaumEnde);
+		Element semesterEnde = doc.createElement("semesterEnde");
+		semesterEnde.appendChild(doc.createTextNode(Utility.dateString(blocklage.getEndDatum())));
+		kopfdaten.appendChild(semesterEnde);
 		
-		Element anzStudi = doc.createElement("anzahlStudierende");
-		anzStudi.appendChild(doc.createTextNode(resultGeneral.get("StudentenAnzahl").toString()));
-		kopfdaten.appendChild(anzStudi);
+		Element anzahlStudierende = doc.createElement("anzahlStudierende");
+		anzahlStudierende.appendChild(doc.createTextNode(String.valueOf(kurs.getStudentenAnzahl())));
+		kopfdaten.appendChild(anzahlStudierende);
 		
-		Element graum = doc.createElement("raum");
-		graum.appendChild(doc.createTextNode(resultGeneral.get("Raum").toString()));
-		kopfdaten.appendChild(graum);
+		Element raumHead = doc.createElement("raum");
+		raumHead.appendChild(doc.createTextNode(blocklage.getRaum()));
+		kopfdaten.appendChild(raumHead);
 		
-		Element sekraeter = doc.createElement("sekretaer");
-		sekraeter.appendChild(doc.createTextNode(resultGeneral.get("SekretariatName").toString()));
-		kopfdaten.appendChild(sekraeter);
+		Element sekretariat = doc.createElement("sekretariat");
+		sekretariat.appendChild(doc.createTextNode(kurs.getSekretariatName()));
+		kopfdaten.appendChild(sekretariat);
 		
-		Element termine = doc.createElement("termine");
-		semesterplan.appendChild(termine);
+		Element vorlesungen = doc.createElement("Vorlesungen");
+		semesterplan.appendChild(vorlesungen);
+			
+		ArrayList<Vorlesung> vorlesungList = Vorlesung.getAll(kurs, semester);
+		TreeMap<String, Element> map = new TreeMap<String, Element>();
+		for(Vorlesung v: vorlesungList) {
+			Element vorlesung = doc.createElement("Vorlesung");
+			
+			Element fach = doc.createElement("fach");
+			fach.appendChild(doc.createTextNode(v.getFachInstanz().getFach().getName()));
+			vorlesung.appendChild(fach);
+			
+			Dozent dozent = new Dozent(v.getDozentID()).getDirectAttributes();
+			Element dozentXML = doc.createElement("Dozent");
+			vorlesung.appendChild(dozentXML);
+			
+			Element dozentVorname = doc.createElement("vorname");
+			dozentVorname.appendChild(doc.createTextNode(dozent.getVorname()));
+			dozentXML.appendChild(dozentVorname);
+			
+			Element dozentName = doc.createElement("name");
+			dozentName.appendChild(doc.createTextNode(dozent.getName()));
+			dozentXML.appendChild(dozentName);
+			
+			Element termine = doc.createElement("Termine");
+			vorlesung.appendChild(termine);
+			
+			ArrayList<Termin> terminList = Termin.getAll(v);
+			for(Termin t: terminList) {
+				Element termin = doc.createElement("Termin");
+				termine.appendChild(termin);
 				
-		for(TypeHashMap<String, Object> resultDate : resultListDates) {
-			Attr feiertag = doc.createAttribute("feiertag");
-			feiertag.setNodeValue("false");
-			Element termin = doc.createElement("termin");
-			termine.appendChild(termin);
-			termin.setAttributeNode(feiertag);
+				Attr klausur = doc.createAttribute("klausur");
+				klausur.setNodeValue(String.valueOf(t.getKlausur()));
+				termin.setAttributeNode(klausur);
+				
+				Element datum = doc.createElement("datum");
+				datum.appendChild(doc.createTextNode(Utility.dateString(t.getDatum())));
+				termin.appendChild(datum);
+				
+				Element startUhrzeit = doc.createElement("startUhrzeit");
+				startUhrzeit.appendChild(doc.createTextNode(Utility.timeString(t.getStartUhrzeit())));
+				termin.appendChild(startUhrzeit);
+				
+				Element endUhrzeit = doc.createElement("endUhrzeit");
+				endUhrzeit.appendChild(doc.createTextNode(Utility.timeString(t.getEndUhrzeit())));
+				termin.appendChild(endUhrzeit);
+				
+				Element raum = doc.createElement("raum");
+				raum.appendChild(doc.createTextNode(t.getRaum()));
+				termin.appendChild(raum);
+				
+				Element pause = doc.createElement("pause");
+				pause.appendChild(doc.createTextNode(String.valueOf(t.getPause())));
+				termin.appendChild(pause);
+			}
 			
-			Element datum = doc.createElement("datum");
-			datum.appendChild(doc.createTextNode(resultDate.get("StartDate").toString()));
-			termin.appendChild(datum);
-			
-			Element zeitAnfang = doc.createElement("zeitAnfang");
-			zeitAnfang.appendChild(doc.createTextNode(resultDate.get("StartTime").toString()));
-			termin.appendChild(zeitAnfang);
-			
-			Element zeitEnde = doc.createElement("zeitEnde");
-			zeitEnde.appendChild(doc.createTextNode(resultDate.get("EndTime").toString()));
-			termin.appendChild(zeitEnde);
-			
-			Element dozent = doc.createElement("dozent");
-			dozent.appendChild(doc.createTextNode(resultDate.get("Dozent").toString()));
-			termin.appendChild(dozent);
-			
-			Element vorlesung = doc.createElement("vorlesung");
-			vorlesung.appendChild(doc.createTextNode(resultDate.get("Subject").toString()));
-			termin.appendChild(vorlesung);
-			
-			Element raum = doc.createElement("raum");
-			raum.appendChild(doc.createTextNode(resultDate.get("raum").toString()));
-			termin.appendChild(raum);
+			map.put(dozent.getName() + ", " + dozent.getVorname(), vorlesung);
 		}
 		
-		for(TypeHashMap<String, Object> resultHoliday : resultListHolidays) {
-			Attr feiertagYes = doc.createAttribute("feiertag");
-			feiertagYes.setNodeValue("true");
-			Element termin = doc.createElement("termin");
-			termine.appendChild(termin);
-			termin.setAttributeNode(feiertagYes);
+		for(String key : map.keySet()) {
+			vorlesungen.appendChild(map.get(key));
+		}
+		
+		Element feiertage = doc.createElement("Feiertage");
+		semesterplan.appendChild(feiertage);
+		
+		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
+		ArrayList<Object> fieldValues = new ArrayList<Object>();
+		fieldValues.add(Utility.dateString(blocklage.getStartDatum()));
+		fieldValues.add(Utility.dateString(blocklage.getEndDatum()));
+		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT datum, name FROM feiertag WHERE (datum BETWEEN ? AND ?) ORDER BY datum ASC", fieldValues);
+		for(TypeHashMap<String, Object> result : resultList) {
+			Element feiertag = doc.createElement("Feiertag");
+			feiertage.appendChild(feiertag);
 			
 			Element datum = doc.createElement("datum");
-			datum.appendChild(doc.createTextNode(resultHoliday.get("Datum").toString()));
-			termin.appendChild(datum);
+			datum.appendChild(doc.createTextNode(Utility.dateString((Date) result.get("datum"))));
+			feiertag.appendChild(datum);
 			
-			Element feiertagName = doc.createElement("feiertag");
-			feiertagName.appendChild(doc.createTextNode(resultHoliday.get("Name").toString()));
-			termin.appendChild(feiertagName);
+			Element name = doc.createElement("feiertagName");
+			name.appendChild(doc.createTextNode(result.getString(name)));
+			feiertag.appendChild(name);
 		}
-
-		TransformerFactory transformerFactory = TransformerFactory.newInstance();
-		Transformer transformer = transformerFactory.newTransformer();
-		DOMSource source = new DOMSource(doc);
-		StreamResult result = new StreamResult(file);
-		transformer.transform(source, result);
-		} catch (ParserConfigurationException | TransformerException e) {
+		
+		try {
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			Transformer transformer = transformerFactory.newTransformer();
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			DOMSource source = new DOMSource(doc);
+			StreamResult result = new StreamResult(file);
+			transformer.transform(source, result);
+		} catch (TransformerException e) {
 			throw new WebServiceException(ExceptionStatus.FILE_CREATION_ERROR);
 		}
-		out.close();
 		
 		return file;
 	}
