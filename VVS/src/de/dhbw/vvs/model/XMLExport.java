@@ -183,7 +183,7 @@ public class XMLExport {
 			feiertag.appendChild(datum);
 			
 			Element name = doc.createElement("feiertagName");
-			name.appendChild(doc.createTextNode(result.getString(name)));
+			name.appendChild(doc.createTextNode(result.getString("name")));
 			feiertag.appendChild(name);
 		}
 		
