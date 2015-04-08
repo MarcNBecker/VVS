@@ -159,8 +159,7 @@ public class XMLExport {
 				Element pause = doc.createElement("pause");
 				pause.appendChild(doc.createTextNode(String.valueOf(t.getPause())));
 				termin.appendChild(pause);
-			}
-			
+			}			
 			map.put(dozent.getName() + ", " + dozent.getVorname(), vorlesung);
 		}
 		
@@ -179,7 +178,6 @@ public class XMLExport {
 		for(TypeHashMap<String, Object> result : resultList) {
 			Element feiertag = doc.createElement("Feiertag");
 			feiertage.appendChild(feiertag);
-			
 			Element datum = doc.createElement("datum");
 			datum.appendChild(doc.createTextNode(Utility.dateString((Date) result.get("datum"))));
 			feiertag.appendChild(datum);
