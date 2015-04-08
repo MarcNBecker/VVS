@@ -60,7 +60,7 @@ public class KursKachel {
 				geplanteStunden += vk.getGeplanteStunden();
 				gesamteStunden += vk.getVorlesung().getFachInstanz().getStunden();
 				fehlendeDozenten += (vk.getVorlesung().getDozentID() > 0 ? 0 : 1);
-				fehlendeKlausuren += (vk.getGeplanteKlausur() ? 0 : 1);
+				fehlendeKlausuren += (vk.getGeplanteKlausur() || vk.getVorlesung().getKeineKlausur() ? 0 : 1);
 				anzahlKonflikte += vk.getAnzahlKonflikte();
 			}
 			KursKachel kachel = new KursKachel();

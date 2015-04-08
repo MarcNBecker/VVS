@@ -15,6 +15,7 @@ public class Vorlesung {
 	private FachInstanz fachInstanz;
 	private int dozentID;
 	private int semester;
+	private boolean keineKlausur;
 	
 	public static ArrayList<Vorlesung> getAll(Kurs kurs, int semester) throws WebServiceException {
 		if (kurs == null) {
@@ -28,7 +29,7 @@ public class Vorlesung {
 		ArrayList<Object> fieldValues = new ArrayList<Object>();
 		fieldValues.add(kurs.getID());
 		fieldValues.add(semester);
-		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT id, kurs, fachInstanz, dozent, semester FROM vorlesung WHERE kurs = ? AND semester = ? ORDER BY fachInstanz ASC", fieldValues);
+		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT id, kurs, fachInstanz, dozent, semester, keineKlausur FROM vorlesung WHERE kurs = ? AND semester = ? ORDER BY fachInstanz ASC", fieldValues);
 		ArrayList<Vorlesung> vorlesungList = new ArrayList<Vorlesung>();
 		for(TypeHashMap<String, Object> result : resultList) {
 			Vorlesung v = new Vorlesung(result.getInt("id"));
@@ -36,6 +37,7 @@ public class Vorlesung {
 			v.fachInstanz = new FachInstanz(result.getInt("fachInstanz")).getDirectAttributes();
 			v.dozentID = result.getInt("dozent");
 			v.semester = result.getInt("semester");
+			v.keineKlausur = result.getBoolean("keineKlausur");
 			vorlesungList.add(v);
 		}
 		return vorlesungList;
@@ -49,7 +51,7 @@ public class Vorlesung {
 		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
 		ArrayList<Object> fieldValues = new ArrayList<Object>();
 		fieldValues.add(kurs.getID());
-		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT id, kurs, fachInstanz, dozent, semester FROM vorlesung WHERE kurs = ? ORDER BY semester ASC", fieldValues);
+		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT id, kurs, fachInstanz, dozent, semester, keineKlausur FROM vorlesung WHERE kurs = ? ORDER BY semester ASC", fieldValues);
 		ArrayList<Vorlesung> vorlesungList = new ArrayList<Vorlesung>();
 		for(TypeHashMap<String, Object> result : resultList) {
 			Vorlesung v = new Vorlesung(result.getInt("id"));
@@ -57,6 +59,7 @@ public class Vorlesung {
 			v.fachInstanz = new FachInstanz(result.getInt("fachInstanz")).getDirectAttributes();
 			v.dozentID = result.getInt("dozent");
 			v.semester = result.getInt("semester");
+			v.keineKlausur = result.getBoolean("keineKlausur");
 			vorlesungList.add(v);
 		}
 		return vorlesungList;
@@ -76,7 +79,7 @@ public class Vorlesung {
 		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
 		ArrayList<Object> fieldValues = new ArrayList<Object>();
 		fieldValues.add(id);
-		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT kurs, fachInstanz, dozent, semester FROM vorlesung WHERE id = ?", fieldValues);
+		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT kurs, fachInstanz, dozent, semester, keineKlausur FROM vorlesung WHERE id = ?", fieldValues);
 		if(resultList.isEmpty()) {
 			throw new WebServiceException(ExceptionStatus.OBJECT_NOT_FOUND);
 		}
@@ -85,6 +88,7 @@ public class Vorlesung {
 		fachInstanz = new FachInstanz(result.getInt("fachInstanz")).getDirectAttributes();
 		dozentID = result.getInt("dozent");
 		semester = result.getInt("semester");
+		keineKlausur = result.getBoolean("keineKlausur");
 		return this;
 	}
 	
@@ -121,8 +125,9 @@ public class Vorlesung {
 		fieldValues.add(fachInstanz.getID());
 		fieldValues.add(dozentID == 0 ? null: dozentID);
 		fieldValues.add(semester);
+		fieldValues.add(keineKlausur ? 1 : 0);
 		fieldValues.add(id);
-		int affectedRows = db.doQuery("UPDATE vorlesung SET kurs = ?, fachInstanz = ?, dozent = ?, semester = ? WHERE id = ?", fieldValues);
+		int affectedRows = db.doQuery("UPDATE vorlesung SET kurs = ?, fachInstanz = ?, dozent = ?, semester = ?, keineKlausur = ? WHERE id = ?", fieldValues);
 		if(affectedRows == 0) {
 			throw new WebServiceException(ExceptionStatus.OBJECT_NOT_FOUND);
 		} else {
@@ -160,6 +165,16 @@ public class Vorlesung {
 		if (semester <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_NUMBER);
 		}
+		if (keineKlausur) {
+			Vorlesung vorlesung = new Vorlesung(id);
+			ArrayList<Termin> terminList = Termin.getAll(vorlesung);
+			for (Termin t: terminList) {
+				if(t.getKlausur()) {
+					//throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT); 
+					//conflicts with UI when you remove a Klausur and add noKlausur flag - so we only rely on UI checks for this atm
+				}
+			}
+		}
 	}
 	
 	public int getID() {
@@ -184,6 +199,10 @@ public class Vorlesung {
 	
 	public void setSemester(int semester) {
 		this.semester = semester;
+	}
+	
+	public boolean getKeineKlausur() {
+		return keineKlausur;
 	}
 	
 }

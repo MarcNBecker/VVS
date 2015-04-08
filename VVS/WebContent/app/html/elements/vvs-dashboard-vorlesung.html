@@ -42,7 +42,8 @@
 										<div horizontal layout center>
 											<span class="text-width">Klausur festgelegt:</span>
 											<core-icon class="icon-good" icon="check-box" hidden?="{{!item.geplanteKlausur}}" flex></core-icon>
-											<core-icon class="icon-bad" icon="cancel" hidden?="{{item.geplanteKlausur}}" flex></core-icon>
+											<core-icon class="icon-good" icon="remove" hidden?="{{!item.vorlesung.keineKlausur}}" flex></core-icon>
+											<core-icon class="icon-bad" icon="cancel" hidden?="{{item.geplanteKlausur || item.vorlesung.keineKlausur}}" flex></core-icon>
 										</div>
 									</div>
 								</div>
@@ -116,7 +117,7 @@
 					if (!api.isError)
    					{
    						self.vorlesungen = api.response;
-   						//Enable headline and buttions
+   						//Enable headline and buttons
    						self.disableToggle = false;
    					}
    					else
