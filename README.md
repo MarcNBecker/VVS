@@ -2,7 +2,7 @@
 ### Deployment
 
 #### What you need
-Tomcat (tested with Tomcat 7)
+Tomcat (tested with Tomcat 7 and Java 7)
 
 MYSQL (5.6.5 or higher)
 
