@@ -708,9 +708,9 @@
 					this.$.fkurzbeschreibung.inputAction();
 					this.invalid.fkurzbeschreibung = invalid;
 					this.$.stunden.inputAction();
-					this.invalid.stunden = invalid || !this.inputFachInstanz.stunden;
+					this.invalid.stunden = invalid || (!this.inputFachInstanz.stunden && this.inputFachInstanz.stunden !== 0);
 					this.$.semester.inputAction();
-					this.invalid.semester = invalid || !this.inputFachInstanz.semester;
+					this.invalid.semester = invalid || (!this.inputFachInstanz.semester && this.inputFachInstanz.semester !== 0);
 				}, 100);
 			},
 			//Switch Fach info
