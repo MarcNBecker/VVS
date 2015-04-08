@@ -58,15 +58,20 @@ public class FachInstanz {
 		return fachInstanzList;
 	}
 	
-	public static ArrayList<FachInstanz> getAllSondertermineForKurs(Kurs kurs) throws WebServiceException {
+	public static ArrayList<FachInstanz> getAllSondertermineForKurs(Kurs kurs, int semester) throws WebServiceException {
 		if (kurs == null) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_OBJECT);
+		}
+		if (semester <= 0) {
+			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_NUMBER);
 		}
 		kurs.getDirectAttributes(); //check existance
 		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
 		ArrayList<Object> fieldValues = new ArrayList<Object>();
 		fieldValues.add(kurs.getModulplanID());
-		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT id, fach, modulInstanz, semester, stunden FROM fachinstanz WHERE modulInstanz IN (SELECT id FROM modulInstanz WHERE modulplan = ? AND modul = 40) AND semester = 0", fieldValues);
+		fieldValues.add(kurs.getID());
+		fieldValues.add(semester);
+		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT id, fach, modulInstanz, semester, stunden FROM fachinstanz WHERE modulInstanz IN (SELECT id FROM modulInstanz WHERE modulplan = ? AND modul = 40) AND id NOT IN (SELECT fachInstanz FROM vorlesung WHERE kurs = ? AND semester = ?) AND semester = 0", fieldValues);
 		ArrayList<FachInstanz> fachInstanzList = new ArrayList<FachInstanz>();
 		for(TypeHashMap<String, Object> result : resultList) {
 			FachInstanz f = new FachInstanz(result.getInt("id"));

@@ -12,9 +12,10 @@ import de.dhbw.vvs.application.WebServiceException;
 import de.dhbw.vvs.model.FachInstanz;
 import de.dhbw.vvs.model.Kurs;
 
-public class KursVorlesungenSondertermineResource extends JsonServerResource {
+public class KursSemesterVorlesungenSondertermineResource extends JsonServerResource {
 	
 	private int kursID;
+	private int semester;
 	
 	@Override
 	protected void doInit() throws ResourceException {
@@ -23,6 +24,7 @@ public class KursVorlesungenSondertermineResource extends JsonServerResource {
 		ConcurrentMap<String, Object> urlAttributes = getRequest().getAttributes();
 		try {
 			 this.kursID = Integer.parseInt(URLDecoder.decode(urlAttributes.get("kursID").toString(), "UTF-8"));
+			 this.semester = Integer.parseInt(URLDecoder.decode(urlAttributes.get("semester").toString(), "UTF-8"));
 		} catch (NumberFormatException | NullPointerException e) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT).toResourceException();
 		} catch (UnsupportedEncodingException e) {
@@ -33,11 +35,15 @@ public class KursVorlesungenSondertermineResource extends JsonServerResource {
 	@Override
 	protected Object receiveGet() throws WebServiceException {
 		Kurs kurs = new Kurs(getKursID());
-		return FachInstanz.getAllSondertermineForKurs(kurs);
+		return FachInstanz.getAllSondertermineForKurs(kurs, getSemester());
 	}
 	
 	public int getKursID() {
 		return this.kursID;
+	}
+	
+	public int getSemester() {
+		return this.semester;
 	}
 	
 }

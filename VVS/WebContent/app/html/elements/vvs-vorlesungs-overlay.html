@@ -98,7 +98,7 @@
 								self.verbleibendeVorlesungen.push(api.response[i]);
 							}
 						}
-						model.webService.getAllVorlesungenSondertermine(self.kurs, function(api2) {
+						model.webService.getAllVorlesungenSondertermine(self.kurs, self.semester, function(api2) {
 							if(!api2.isError) {
 								var j;
 								for(j = 0; j<api2.response.length; j++) {
