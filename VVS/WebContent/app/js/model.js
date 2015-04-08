@@ -276,7 +276,7 @@ var model = new function() {
 
 		var self = this;
 		var allowedMethods = ["GET", "POST", "PUT", "DELETE"];
-		var rootURI = "http://localhost:8080";
+		var rootURI = "";
 		var apiURI = "/VVS/api/v1";
 		var birtURI = "/birt-viewer";
 		
@@ -332,9 +332,9 @@ var model = new function() {
 		var termineDozentURI = "/termine/{datum}/dozenten/{dozentID}";
 		var termineRaumURI = "/termine/{datum}/raeume/{raum}";
 		
-		var kursPlanURI = "/run?__report=Report%5CVorlesungsplan_Hochformat.rptdesign&__format=pdf&Kurs={kursID}&Semester={semester}";
-		var kursPlanQuerURI = "/run?__report=Report%5CVorlesungsplan_Querformat.rptdesign&__format=pdf&Kurs={kursID}&Semester={semester}";
-		var dozentenPlanURI = "/run?__report=Report%5CVorlesungsplan_Dozent.rptdesign&__format=pdf&Vorlesung={vorlesungID}";
+		var kursPlanURI = "/run?__report=Vorlesungsplan_Hochformat.rptdesign&__format=pdf&Kurs={kursID}&Semester={semester}";
+		var kursPlanQuerURI = "/run?__report=Vorlesungsplan_Querformat.rptdesign&__format=pdf&Kurs={kursID}&Semester={semester}";
+		var dozentenPlanURI = "/run?__report=Vorlesungsplan_Dozent.rptdesign&__format=pdf&Vorlesung={vorlesungID}";
 		
 		this.getAllDozenten = function(c) {
 			self.doRequest(dozentenURI, "GET", null, c);
