@@ -50,15 +50,18 @@
 					if (!api.isError) {
 						model.webService.getAllVorlesungenSemester(self.kurs, self.semester, function(api2) {
 							if(!api2.isError) {
-								self.vorlesungen = api2.response;
+								self.vorlesungen = [];
 								var i;
-								for(i=0; i<self.vorlesungen.length; i++) {
+								for(i=0; i<api2.response.length; i++) {
 									var ii;
 									for(ii=0; ii<api.response.length; ii++) {
-										if(self.vorlesungen[i].vorlesung.dozentID === api.response[ii].id) {
-											self.vorlesungen[i].dozent = api.response[ii];
+										if(api2.response[i].vorlesung.dozentID === api.response[ii].id) {
+											api2.response[i].dozent = api.response[ii];
 											break;
 										}
+									}
+									if(api2.response[i].dozent) {
+										self.vorlesungen.push(api2.response[i]);
 									}
 								}
 								//Enable buttons

@@ -109,6 +109,7 @@ public class XMLExport {
 			
 		ArrayList<Vorlesung> vorlesungList = Vorlesung.getAll(kurs, semester);
 		TreeMap<String, Element> map = new TreeMap<String, Element>();
+		int noDozentCounter = 0;
 		for(Vorlesung v: vorlesungList) {
 			Element vorlesung = doc.createElement("Vorlesung");
 			
@@ -116,17 +117,24 @@ public class XMLExport {
 			fach.appendChild(doc.createTextNode(v.getFachInstanz().getFach().getName()));
 			vorlesung.appendChild(fach);
 			
-			Dozent dozent = new Dozent(v.getDozentID()).getDirectAttributes();
 			Element dozentXML = doc.createElement("Dozent");
 			vorlesung.appendChild(dozentXML);
 			
-			Element dozentVorname = doc.createElement("vorname");
-			dozentVorname.appendChild(doc.createTextNode(dozent.getVorname()));
-			dozentXML.appendChild(dozentVorname);
-			
-			Element dozentName = doc.createElement("name");
-			dozentName.appendChild(doc.createTextNode(dozent.getName()));
-			dozentXML.appendChild(dozentName);
+			if(v.getDozentID() > 0) {
+				Dozent dozent = new Dozent(v.getDozentID()).getDirectAttributes();
+				Element dozentVorname = doc.createElement("vorname");
+				dozentVorname.appendChild(doc.createTextNode(dozent.getVorname()));
+				dozentXML.appendChild(dozentVorname);
+				
+				Element dozentName = doc.createElement("name");
+				dozentName.appendChild(doc.createTextNode(dozent.getName()));
+				dozentXML.appendChild(dozentName);	
+				
+				map.put(dozent.getName() + ", " + dozent.getVorname(), vorlesung);
+			} else {
+				map.put("ZZZZZ, " + noDozentCounter, vorlesung);
+				noDozentCounter++;
+			}
 			
 			Element termine = doc.createElement("Termine");
 			vorlesung.appendChild(termine);
@@ -159,8 +167,7 @@ public class XMLExport {
 				Element pause = doc.createElement("pause");
 				pause.appendChild(doc.createTextNode(String.valueOf(t.getPause())));
 				termin.appendChild(pause);
-			}			
-			map.put(dozent.getName() + ", " + dozent.getVorname(), vorlesung);
+			}
 		}
 		
 		for(String key : map.keySet()) {
