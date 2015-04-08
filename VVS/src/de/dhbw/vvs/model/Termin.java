@@ -321,12 +321,20 @@ public class Termin {
 		this.vorlesungID = vorlesungID;
 	}
 	
+	public Date getDatum() {
+		return datum;
+	}
+	
 	public Time getStartUhrzeit() {
 		return startUhrzeit;
 	}
 	
 	public Time getEndUhrzeit() {
 		return endUhrzeit;
+	}
+	
+	public String getRaum() {
+		return raum;
 	}
 	
 	public int getPause() {

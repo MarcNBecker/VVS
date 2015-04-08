@@ -118,4 +118,8 @@ public class Studiengangsleiter {
 		this.id = id;
 	}
 	
+	public String getName() {
+		return name;
+	}
+	
 }
