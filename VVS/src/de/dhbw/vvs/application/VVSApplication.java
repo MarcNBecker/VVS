@@ -26,6 +26,7 @@ import de.dhbw.vvs.resources.KursSemesterVorlesungTermineResource;
 import de.dhbw.vvs.resources.KursSemesterVorlesungenResource;
 import de.dhbw.vvs.resources.KursVorlesungenOffenResource;
 import de.dhbw.vvs.resources.KursVorlesungenResource;
+import de.dhbw.vvs.resources.KursSemesterVorlesungenSondertermineResource;
 import de.dhbw.vvs.resources.KurseResource;
 import de.dhbw.vvs.resources.ModuleResource;
 import de.dhbw.vvs.resources.ModulplaeneResource;
@@ -108,6 +109,7 @@ public class VVSApplication extends Application {
 		
 		//Semester
 		router.attach(VERSION_ONE + "/kurse/{kursID}/{semester}/vorlesungen", KursSemesterVorlesungenResource.class); //GET, POST
+		router.attach(VERSION_ONE + "/kurse/{kursID}/{semester}/vorlesungen/sondertermine", KursSemesterVorlesungenSondertermineResource.class); //GET
 		router.attach(VERSION_ONE + "/kurse/{kursID}/{semester}/vorlesungen/groupe", GroupEResource.class); //GET
 		router.attach(VERSION_ONE + "/kurse/{kursID}/{semester}/vorlesungen/xml", XMLExportResource.class); //GET
 		router.attach(VERSION_ONE + "/kurse/{kursID}/{semester}/vorlesungen/{vorlesungsID}", KursSemesterVorlesungResource.class); //GET, PUT, DELETE

@@ -317,8 +317,10 @@ var model = new function() {
 		
 		var kursVorlesungen = "/kurse/{kursID}/vorlesungen";
 		var kursVorlesungenOffen = "/kurse/{kursID}/vorlesungen/offen";
+		var kursVorlesungenSondertermine = "/kurse/{kursID}/{semester}/vorlesungen/sondertermine";
 		
 		var vorlesungenURI = "/kurse/{kursID}/{semester}/vorlesungen";
+		var vorlesungenSondertermineURI = "/kurse/{kursID}/{semester}/vorlesungen/sondertermine";
 		var vorlesungenGroupEURI = "/kurse/{kursID}/{semester}/vorlesungen/groupe";
 		var vorlesungenXMLURI = "/kurse/{kursID}/{semester}/vorlesungen/xml";
 		var vorlesungURI = "/kurse/{kursID}/{semester}/vorlesungen/{vorlesungsID}";
@@ -548,6 +550,10 @@ var model = new function() {
 		
 		this.getAllVorlesungenSemester = function(k, s, c) {
 			self.doRequest(vorlesungenURI.replace("{kursID}", k.id).replace("{semester}", s), "GET", null, c);
+		};
+		
+		this.getAllVorlesungenSondertermine = function(k, s, c) {
+			self.doRequest(vorlesungenSondertermineURI.replace("{kursID}", k.id).replace("{semester}", s), "GET", null, c);
 		};
 		
 		this.getGroupEURI = function (k, s) {
