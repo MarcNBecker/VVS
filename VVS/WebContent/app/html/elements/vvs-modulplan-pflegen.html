@@ -669,7 +669,7 @@
 					this.$.mkurzbeschreibung.inputAction();
 					this.invalid.mkurzbeschreibung = invalid;
 					this.$.credits.inputAction();
-					this.invalid.credits = invalid || !this.inputModulInstanz.credits;
+					this.invalid.credits = invalid || (!this.inputModulInstanz.credits && this.inputModulInstanz.credits !== 0);
 				}, 100);
 			},
 			//Switch Modul info

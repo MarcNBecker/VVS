@@ -98,8 +98,23 @@
 								self.verbleibendeVorlesungen.push(api.response[i]);
 							}
 						}
-						//Enable everything
-						self.disableToggle = false;
+						model.webService.getAllVorlesungenSondertermine(self.kurs, function(api2) {
+							if(!api2.isError) {
+								var j;
+								for(j = 0; j<api2.response.length; j++) {
+									var fachInstanz = api2.response[j];
+									fachInstanz.semester = self.semester;
+									fachInstanz.checked = true;
+									self.alleVorlesungen.push(fachInstanz);
+									self.aktuelleVorlesungen.push(fachInstanz);
+								}
+								//Enable everything
+								self.disableToggle = false;
+							} else {
+								console.log(JSON.stringify(api));
+								self.toasts.error.show();
+							}
+						});
 					}
 					else
 					{
