@@ -41,8 +41,9 @@
 										</div>
 										<div horizontal layout center>
 											<span class="text-width">Klausur festgelegt:</span>
-											<core-icon class="icon-good" icon="check-box" hidden?="{{!item.geplanteKlausur && !item.vorlesung.klausur}}" flex></core-icon>
-											<core-icon class="icon-bad" icon="cancel" hidden?="{{item.geplanteKlausur || item.vorlesung.klausur}}" flex></core-icon>
+											<core-icon class="icon-good" icon="check-box" hidden?="{{!item.geplanteKlausur}}" flex></core-icon>
+											<core-icon class="icon-good" icon="remove" hidden?="{{!item.vorlesung.keineKlausur}}" flex></core-icon>
+											<core-icon class="icon-bad" icon="cancel" hidden?="{{item.geplanteKlausur || item.vorlesung.keineKlausur}}" flex></core-icon>
 										</div>
 									</div>
 								</div>
@@ -116,12 +117,6 @@
 					if (!api.isError)
    					{
    						self.vorlesungen = api.response;
-   						//TODO löschen
-   						var i;
-   						for (i = 0; i < self.vorlesungen.length; i++)
-   						{
-   							self.vorlesungen[i].vorlesung.klausur = false;
-   						}
    						//Enable headline and buttons
    						self.disableToggle = false;
    					}

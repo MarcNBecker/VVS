@@ -276,10 +276,11 @@ public class Termin {
 	}
 	
 	public void checkDirectAttributes() throws WebServiceException {
+		Vorlesung vorlesung;
 		if (vorlesungID <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
 		} else {
-			new Vorlesung(vorlesungID).getDirectAttributes(); //check existance
+			vorlesung = new Vorlesung(vorlesungID).getDirectAttributes(); //check existance
 		}
 		if (datum == null) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_DATE);
@@ -300,7 +301,9 @@ public class Termin {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_STRING);
 		}
 		//Allow only one klausur = true Termin
-		if (klausur) {
+		if (klausur && vorlesung.getKeineKlausur()) {
+			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT);
+		} else if (klausur) {
 			DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
 			ArrayList<Object> fieldValues = new ArrayList<Object>();
 			fieldValues.add(vorlesungID);

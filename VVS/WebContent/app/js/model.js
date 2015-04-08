@@ -257,6 +257,7 @@ var model = new function() {
 			this.fachInstanz = new model.templates.FachInstanz();
 			this.dozentID = 0;
 			this.semester = 0;
+			this.keineKlausur = false;
 		};
 		
 		this.VorlesungsKachel = function() {

@@ -116,7 +116,7 @@
 							</paper-input-decorator>
 						</div>
 						<div horizontal layout center class="horizontal-verticalizable">
-							<paper-checkbox checked="{{vorlesungsterminToEdit.klausur}}" self-center disabled?="{{disableToggle || disableToggleKlausur || vorlesung.klausur || recurring.isRecurring}}"></paper-checkbox>
+							<paper-checkbox checked="{{vorlesungsterminToEdit.klausur}}" self-center disabled?="{{disableToggle || disableToggleKlausur || vorlesung.keineKlausur || recurring.isRecurring}}"></paper-checkbox>
 							<span class="small-headline" self-center>Klausur</span>
 						</div>
 						<div horizontal layout center class="horizontal-verticalizable text-line-input">
@@ -138,7 +138,7 @@
 						</div>
 						<!-- No Klausur neccessary -->
 						<div horizontal layout class="vertical-input">
-							<paper-checkbox checked="{{vorlesung.klausur}}" self-center disabled?="{{disableToggle || vorlesungsterminToEdit.klausur || disableToggleNoKlausur}}"></paper-checkbox>
+							<paper-checkbox checked="{{vorlesung.keineKlausur}}" on-click="{{trackNoKlausurChanged}}" self-center disabled?="{{disableToggle || vorlesungsterminToEdit.klausur || disableToggleNoKlausur}}"></paper-checkbox>
 							<span class="small-headline" self-center>Keine Klausur erforderlich</span>
 						</div>
 						<!-- Dozent -->
@@ -305,8 +305,6 @@
 				model.webService.getVorlesung(showVorlesung, function(api) {
 					if (!api.isError) {
 						self.vorlesung = api.response;
-						//TODO löschen
-						self.vorlesung.klausur = false;
 						//Load available Vorlesungstermine
 						model.webService.getAllVorlesungTermine(self.vorlesung, function(api) {
 							if (!api.isError) {
@@ -316,7 +314,7 @@
 								for (i = 0; i < self.vorlesungstermine.length; i++) {
 									self.vorlesungstermine[i].dauer = self.calculateDauer(self.vorlesungstermine[i].startUhrzeit, self.vorlesungstermine[i].endUhrzeit, self.vorlesungstermine[i].pause);
 									//Disable checkbox Klausur, if vorlesungstermin is a klausur and vorlesung requires a klausur
-									if (self.vorlesungstermine[i].klausur === true && self.vorlesung.klausur === false)
+									if (self.vorlesungstermine[i].klausur === true && self.vorlesung.keineKlausur === false)
 									{
 										self.disableToggleKlausur = true;
 										self.disableToggleNoKlausur = true;
@@ -518,6 +516,7 @@
 				if(self.onRejectDisableKlausur === true) {
 					self.disableToggleKlausur = true;
 					self.disableToggleNoKlausur = true;
+					self.vorlesung.keineKlausur = false;
 					self.onRejectDisableKlausur = false;
 				}
 				self.recurring = {isRecurring: false, count: "", distance: ""};
@@ -779,6 +778,9 @@
 					}, 100);
 					self.showTermin(self.vorlesungsterminToEdit);
 				}
+			},
+			trackNoKlausurChanged: function() {
+				this.pageChanged.changed = true;
 			},
 	    	//Set selected Dozent for Vorlesung from top list
 	    	setListDozent: function(e, detail, sender) {
