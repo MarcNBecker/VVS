@@ -117,11 +117,11 @@ public class XMLExport {
 		semesterplan.appendChild(termine);
 				
 		for(TypeHashMap<String, Object> resultDate : resultListDates) {
-			Attr feiertag = doc.createAttribute("feiertag");
-			feiertag.setNodeValue("false");
+			//Attr feiertag = doc.createAttribute("feiertag");
+			//feiertag.setNodeValue("false");
 			Element termin = doc.createElement("termin");
 			termine.appendChild(termin);
-			termin.setAttributeNode(feiertag);
+			//termin.setAttributeNode(feiertag);
 			
 			Element datum = doc.createElement("datum");
 			datum.appendChild(doc.createTextNode(resultDate.get("StartDate").toString()));
@@ -149,11 +149,11 @@ public class XMLExport {
 		}
 		
 		for(TypeHashMap<String, Object> resultHoliday : resultListHolidays) {
-			Attr feiertagYes = doc.createAttribute("feiertag");
-			feiertagYes.setNodeValue("true");
-			Element termin = doc.createElement("termin");
+			//Attr feiertagYes = doc.createAttribute("feiertag");
+			//feiertagYes.setNodeValue("true");
+			Element termin = doc.createElement("feiertag");
 			termine.appendChild(termin);
-			termin.setAttributeNode(feiertagYes);
+			//termin.setAttributeNode(feiertagYes);
 			
 			Element datum = doc.createElement("datum");
 			datum.appendChild(doc.createTextNode(resultHoliday.get("Datum").toString()));
