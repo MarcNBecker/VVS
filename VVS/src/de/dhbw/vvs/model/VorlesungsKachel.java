@@ -6,7 +6,7 @@ import de.dhbw.vvs.application.WebServiceException;
 
 /**
  * This class represents a VorlesungsKachel
- * This is used for the Kurs Dashboard
+ * This is used for the Kurs/Vorlesungs Dashboard
  */
 public class VorlesungsKachel {
 
