@@ -4,6 +4,10 @@ import java.util.ArrayList;
 
 import de.dhbw.vvs.application.WebServiceException;
 
+/**
+ * This class represents a VorlesungsKachel
+ * This is used for the Kurs Dashboard
+ */
 public class VorlesungsKachel {
 
 	private Vorlesung vorlesung;
@@ -11,6 +15,12 @@ public class VorlesungsKachel {
 	private boolean geplanteKlausur;
 	private int anzahlKonflikte;
 	
+	/**
+	 * Enriches a Vorlesung with respective dashboard data
+	 * @param vorlesungList a list of Vorlesungen to enrich
+	 * @return a list of enriched Vorlesungen
+	 * @throws WebServiceException
+	 */
 	public static ArrayList<VorlesungsKachel> enrich(ArrayList<Vorlesung> vorlesungList) throws WebServiceException {
 		ArrayList<VorlesungsKachel> dashboard = new ArrayList<VorlesungsKachel>();
 		for(Vorlesung v : vorlesungList) {

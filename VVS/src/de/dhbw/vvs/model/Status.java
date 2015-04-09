@@ -3,6 +3,9 @@ package de.dhbw.vvs.model;
 import java.util.EnumSet;
 import java.util.HashMap;
 
+/**
+ * Class to represent the status of a Dozent
+ */
 public enum Status implements WebServiceEnum {
 	
 	Neu(0), Aktiv(1), Inaktiv(2);

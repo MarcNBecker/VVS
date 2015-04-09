@@ -8,6 +8,9 @@ import de.dhbw.vvs.database.ConnectionPool;
 import de.dhbw.vvs.database.DatabaseConnection;
 import de.dhbw.vvs.utility.TypeHashMap;
 
+/**
+ * A class to represent a Vorlesung
+ */
 public class Vorlesung {
 
 	private int id;
@@ -17,6 +20,13 @@ public class Vorlesung {
 	private int semester;
 	private boolean keineKlausur;
 	
+	/**
+	 * Returns a list of Vorlesungen for a Kurs in a Semester
+	 * @param kurs the kurs
+	 * @param semester the semester
+	 * @return the list of Vorlesungen
+	 * @throws WebServiceException
+	 */
 	public static ArrayList<Vorlesung> getAll(Kurs kurs, int semester) throws WebServiceException {
 		if (kurs == null) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT);
@@ -43,6 +53,12 @@ public class Vorlesung {
 		return vorlesungList;
 	}
 	
+	/**
+	 * Returns a list of all Vorlesungen for a Kurs
+	 * @param kurs the kurs
+	 * @return a list of Vorlesungen
+	 * @throws WebServiceException
+	 */
 	public static ArrayList<Vorlesung> getAllForKurs(Kurs kurs) throws WebServiceException {
 		if (kurs == null) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT);
@@ -65,6 +81,11 @@ public class Vorlesung {
 		return vorlesungList;
 	}
 	
+	/**
+	 * Constructs a Vorlesung
+	 * @param id the id
+	 * @throws WebServiceException
+	 */
 	public Vorlesung(int id) throws WebServiceException {
 		if (id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -72,6 +93,11 @@ public class Vorlesung {
 		this.id = id;
 	}
 	
+	/**
+	 * Read all attributes of a Vorlesung
+	 * @return the vorlesung with all attributes set
+	 * @throws WebServiceException
+	 */
 	public Vorlesung getDirectAttributes() throws WebServiceException {
 		if (id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -92,6 +118,11 @@ public class Vorlesung {
 		return this;
 	}
 	
+	/**
+	 * Generates an information string of a Vorlesung, containing the name of the Fach, the Semester and the name of the Kurs
+	 * @return the info string
+	 * @throws WebServiceException
+	 */
 	public String getInfoString() throws WebServiceException {
 		getDirectAttributes();
 		Kurs kurs = new Kurs(kursID);
@@ -99,6 +130,11 @@ public class Vorlesung {
 		return fachInstanz.getFach().getName() + " - " + semester + ". Semester - " + kurs.getKursname();
 	}
 	
+	/**
+	 * Creates a Vorlesung
+	 * @return the created Vorlesung
+	 * @throws WebServiceException
+	 */
 	public Vorlesung create() throws WebServiceException {
 		if (id != 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -114,6 +150,11 @@ public class Vorlesung {
 		return this;
 	}
 	
+	/**
+	 * Updates a Vorlesung
+	 * @return the updated Vorlesung
+	 * @throws WebServiceException
+	 */
 	public Vorlesung update() throws WebServiceException {
 		if (id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -135,6 +176,10 @@ public class Vorlesung {
 		}
 	}
 	
+	/**
+	 * Deletes a Vorlesung
+	 * @throws WebServiceException
+	 */
 	public void delete() throws WebServiceException {
 		if (id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -145,6 +190,10 @@ public class Vorlesung {
 		db.doQuery("DELETE FROM vorlesung WHERE id = ?", fieldValues);
 	}
 	
+	/**
+	 * Checks all attributes of a Vorlesung
+	 * @throws WebServiceException if an attribute is invalid
+	 */
 	public void checkDirectAttributes() throws WebServiceException {
 		if (kursID <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);

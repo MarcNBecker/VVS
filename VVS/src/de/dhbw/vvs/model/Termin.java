@@ -12,6 +12,9 @@ import de.dhbw.vvs.database.DatabaseConnection;
 import de.dhbw.vvs.utility.TypeHashMap;
 import de.dhbw.vvs.utility.Utility;
 
+/**
+ * A class to represent a Termin
+ */
 public class Termin {
 	
 	private int id;
@@ -26,6 +29,12 @@ public class Termin {
 	@SuppressWarnings("unused")
 	private String infoString; //this is only filled if the termin is loaded as a potential conflict to show more information on the timeline
 	
+	/**
+	 * Returns a list of all Termine for a Vorlesung
+	 * @param vorlesung the vorlesung
+	 * @return a list of all Termine
+	 * @throws WebServiceException
+	 */
 	public static ArrayList<Termin> getAll(Vorlesung vorlesung) throws WebServiceException {
 		vorlesung.getDirectAttributes(); //check existance
 		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
@@ -47,6 +56,14 @@ public class Termin {
 		return terminList;
 	}
 	
+	/**
+	 * Returns a list of Termine on a given Date for a given Kurs, which are potential conflicts
+	 * @param datum the datum
+	 * @param kurs the kurs
+	 * @param includeFeiertageForConflicts convert Feiertage on that date and add them to the list
+	 * @return a list of Termine with potential conflicts
+	 * @throws WebServiceException
+	 */
 	public static ArrayList<Termin> getAllForKursOnDate(Date datum, Kurs kurs, boolean includeFeiertageForConflicts) throws WebServiceException {
 		if(datum == null) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_DATE);
@@ -76,6 +93,14 @@ public class Termin {
 		return terminList;
 	}
 	
+	/**
+	 * Returns a list of Termine on a given Date for a given Dozent, which are potential conflicts
+	 * @param datum the datum
+	 * @param dozent the dozent
+	 * @param includeFeiertageForConflicts convert Feiertage on that date and add them to the list
+	 * @return a list of Termine with potential conflicts
+	 * @throws WebServiceException
+	 */
 	public static ArrayList<Termin> getAllForDozentOnDate(Date datum, Dozent dozent, boolean includeFeiertageForConflicts) throws WebServiceException {
 		if(datum == null) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_DATE);
@@ -105,6 +130,14 @@ public class Termin {
 		return terminList;
 	}
 	
+	/**
+	 * Returns a list of Termine on a given Date for a given Raum, which are potential conflicts
+	 * @param datum the datum
+	 * @param raum the raum
+	 * @param includeFeiertageForConflicts convert Feiertage on that date and add them to the list
+	 * @return a list of Termine with potential conflicts
+	 * @throws WebServiceException
+	 */
 	public static ArrayList<Termin> getAllForRaumOnDate(Date datum, String raum, boolean includeFeiertageForConflicts) throws WebServiceException {
 		if(datum == null) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_DATE);
@@ -136,6 +169,14 @@ public class Termin {
 		return terminList;
 	}
 	
+	/**
+	 * Returns a list of Feiertage converted as a Termin
+	 * Time is from 00:00 to 23:59 and the id is -999999
+	 * The name of the Feiertag is in infoString
+	 * @param datum the datum
+	 * @return a list of Feiertage converted as a Termin
+	 * @throws WebServiceException
+	 */
 	public static ArrayList<Termin> getFeiertageAsTermin(Date datum) throws WebServiceException {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(datum);
@@ -161,6 +202,11 @@ public class Termin {
 		return terminList;
 	}
 	
+	/**
+	 * Constructs a Termin
+	 * @param id the id
+	 * @throws WebServiceException
+	 */
 	public Termin(int id) throws WebServiceException {
 		if (id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -168,10 +214,19 @@ public class Termin {
 		this.id = id;
 	}
 	
+	/**
+	 * Constructs a Termin
+	 * {@link #Termin(int)} is preferred
+	 */
 	private Termin() {
 		//lazy and no check
 	}
 	
+	/**
+	 * Gets all direct attributes of a Termin
+	 * @return the Termin with all attributes set
+	 * @throws WebServiceException
+	 */
 	public Termin getDirectAttributes() throws WebServiceException {
 		if (id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -194,6 +249,13 @@ public class Termin {
 		return this;
 	}
 	
+	/**
+	 * Checks if a Termin has a conflict (Dozent, Raum, Kurs, Feiertag)
+	 * @param kurs Kurs with which a conflict may occur
+	 * @param dozent Dozent with which a conflict may occur
+	 * @return true if the termin has a conflict
+	 * @throws WebServiceException
+	 */
 	public boolean hasConflicts(Kurs kurs, Dozent dozent) throws WebServiceException {
 		checkDirectAttributes();
 		startUhrzeit = Utility.getComparableTime(datum, startUhrzeit);
@@ -216,6 +278,11 @@ public class Termin {
 		return false;
 	}
 	
+	/**
+	 * Creates a Termin
+	 * @return the created Termin
+	 * @throws WebServiceException
+	 */
 	public Termin create() throws WebServiceException {
 		if (id != 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -238,6 +305,11 @@ public class Termin {
 		return this;
 	}
 	
+	/**
+	 * Updates a Termin
+	 * @return the updated Termin
+	 * @throws WebServiceException
+	 */
 	public Termin update() throws WebServiceException {
 		if (id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -265,6 +337,10 @@ public class Termin {
 		}
 	}
 	
+	/**
+	 * Deletes a Termin
+	 * @throws WebServiceException
+	 */
 	public void delete() throws WebServiceException {
 		if (id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -275,6 +351,10 @@ public class Termin {
 		db.doQuery("DELETE FROM termin WHERE id = ?", fieldValues);
 	}
 	
+	/**
+	 * Checks all attributes of a Termin
+	 * @throws WebServiceException if an attribute is invalid
+	 */
 	public void checkDirectAttributes() throws WebServiceException {
 		Vorlesung vorlesung;
 		if (vorlesungID <= 0) {

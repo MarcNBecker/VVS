@@ -8,6 +8,10 @@ import de.dhbw.vvs.database.ConnectionPool;
 import de.dhbw.vvs.database.DatabaseConnection;
 import de.dhbw.vvs.utility.TypeHashMap;
 
+/**
+ * A class to represent a ModulInstanz
+ * A ModulInstanz is a specific Modul in a Modulplan
+ */
 public class ModulInstanz {
 
 	private int id;
@@ -15,6 +19,12 @@ public class ModulInstanz {
 	private int modulplanID;
 	private int credits;
 	
+	/**
+	 * Returns a list of all ModulInstanzen in a Modulplan
+	 * @param modulplan the Modulplan
+	 * @return a list of all ModulInstanzen
+	 * @throws WebServiceException
+	 */
 	public static ArrayList<ModulInstanz> getAll(Modulplan modulplan) throws WebServiceException {
 		if (modulplan.getID() <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -34,6 +44,13 @@ public class ModulInstanz {
 		return modulInstanzList;
 	}
 	
+	/**
+	 * Returns a ModulInstanz for a Modulplan and a Modul
+	 * @param modulplanID the id of the Modulplan
+	 * @param modulID the id of the Modul
+	 * @return the ModulInstanz
+	 * @throws WebServiceException
+	 */
 	public static ModulInstanz getSingle(int modulplanID, int modulID) throws WebServiceException {
 		if (modulplanID <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -57,6 +74,11 @@ public class ModulInstanz {
 		return m;
 	}
 	
+	/**
+	 * Constructs a ModulInstanz
+	 * @param id the id
+	 * @throws WebServiceException
+	 */
 	public ModulInstanz(int id) throws WebServiceException {
 		if(id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -64,6 +86,11 @@ public class ModulInstanz {
 		this.id = id;
 	}
 	
+	/**
+	 * Gets all direct attributes of a ModulInstanz
+	 * @return the ModulInstanz with all attributes set
+	 * @throws WebServiceException
+	 */
 	public ModulInstanz getDirectAttributes() throws WebServiceException {
 		if (id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -82,10 +109,20 @@ public class ModulInstanz {
 		return this;
 	}
 	
+	/**
+	 * Returns a list of all FachInstanzen of a ModulInstanz
+	 * @return a list of all FachInstanzen
+	 * @throws WebServiceException
+	 */
 	public ArrayList<FachInstanz> getFachList() throws WebServiceException {
 		return FachInstanz.getAll(this);
 	}
 	
+	/**
+	 * Creates a ModulInstanz
+	 * @return the created ModulInstanz
+	 * @throws WebServiceException
+	 */
 	public ModulInstanz create() throws WebServiceException {
 		/*if (id != 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -107,6 +144,10 @@ public class ModulInstanz {
 		return this;
 	}
 	
+	/**
+	 * Deletes a ModulInstanz
+	 * @throws WebServiceException
+	 */
 	public void delete() throws WebServiceException {
 		if (id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -116,11 +157,16 @@ public class ModulInstanz {
 		ArrayList<Object> fieldValues = new ArrayList<Object>();
 		fieldValues.add(id);
 		db.doQuery("DELETE FROM modulinstanz WHERE id = ?", fieldValues);
+		//Also delete Modul if there is no ModulInstanz left
 		if (modul.getInstanzenCount() == 0) {
 			modul.delete();	
 		}
 	}
 	
+	/**
+	 * Checks all direct attributes of a ModulInstanz
+	 * @throws WebServiceException if an attribute is invalid
+	 */
 	private void checkDirectAttributes() throws WebServiceException {
 		if (modul == null || modul.getID() <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_OBJECT);
@@ -151,6 +197,7 @@ public class ModulInstanz {
 	
 	/**
 	 * It is only allowed to call this method, when modul.setID() follows this call
+	 * Or the method {@link #getDirectAttributes()} has been called before
 	 */
 	public Modul getModul() {
 		if(modul == null) {

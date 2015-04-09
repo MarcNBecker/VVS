@@ -9,6 +9,9 @@ import de.dhbw.vvs.database.ConnectionPool;
 import de.dhbw.vvs.database.DatabaseConnection;
 import de.dhbw.vvs.utility.TypeHashMap;
 
+/**
+ * A class to represent a Kommentar
+ */
 public class Kommentar {
 	
 	private int id;
@@ -18,6 +21,12 @@ public class Kommentar {
 	@SuppressWarnings("unused")
 	private Timestamp timestamp;
 	
+	/**
+	 * Returns a list of all Kommentare for a Dozent
+	 * @param dozent the dozent
+	 * @return a list of all Kommentare for a Dozent
+	 * @throws WebServiceException
+	 */
 	public static ArrayList<Kommentar> getAll(Dozent dozent) throws WebServiceException {
 		if (dozent.getID() <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -44,6 +53,11 @@ public class Kommentar {
 		return kommentarList;
 	}
 	
+	/**
+	 * Constructs a Kommentar
+	 * @param id the id
+	 * @throws WebServiceException
+	 */
 	public Kommentar(int id) throws WebServiceException {
 		if (id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -51,6 +65,12 @@ public class Kommentar {
 		this.id = id;
 	}
 	
+	/**
+	 * Creates a Kommentar
+	 * Should be called from {@link Dozent#addKommentar(Kommentar)}
+	 * @return the created Kommentar
+	 * @throws WebServiceException
+	 */
 	Kommentar create() throws WebServiceException {
 		if (id != 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -66,6 +86,11 @@ public class Kommentar {
 		return this;
 	}
 	
+	/**
+	 * Deletes a Kommentar
+	 * Should be called from {@link Dozent#deleteKommentar(Kommentar)}
+	 * @throws WebServiceException
+	 */
 	void delete() throws WebServiceException {
 		if (id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -80,6 +105,10 @@ public class Kommentar {
 		db.doQuery("DELETE FROM kommentar WHERE id = ? AND dozent = ?", fieldValues);
 	}
 	
+	/**
+	 * Checks the attributes of a Kommentar
+	 * @throws WebServiceException if an attribute is invalid
+	 */
 	private void checkDirectAttributes() throws WebServiceException {
 		if (dozentID <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);

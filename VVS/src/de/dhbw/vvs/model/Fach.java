@@ -8,6 +8,9 @@ import de.dhbw.vvs.database.ConnectionPool;
 import de.dhbw.vvs.database.DatabaseConnection;
 import de.dhbw.vvs.utility.TypeHashMap;
 
+/**
+ * A class to represent a Fach
+ */
 public class Fach {
 
 	private int id;
@@ -16,6 +19,11 @@ public class Fach {
 	@SuppressWarnings("unused")
 	private int maxDozentJahr; //This is only filled at times, when the fach is loaded in context with a dozent information
 	
+	/**
+	 * Returns a list of all Faecher
+	 * @return a list of all Faecher
+	 * @throws WebServiceException
+	 */
 	public static ArrayList<Fach> getAll() throws WebServiceException {
 		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
 		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT id, name, kurzbeschreibung FROM fach ORDER BY name ASC", null);
@@ -29,6 +37,12 @@ public class Fach {
 		return fachList;
 	}
 	
+	/**
+	 * Returns a list of all Kompetenzfaecher of a Dozent
+	 * @param dozent the dozent
+	 * @return a list of all Kompetenzfaecher
+	 * @throws WebServiceException
+	 */
 	public static ArrayList<Fach> getAllForDozent(Dozent dozent) throws WebServiceException {
 		if (dozent.getID() <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -47,6 +61,11 @@ public class Fach {
 		return fachList;
 	}
 	
+	/**
+	 * Constructs a Fach
+	 * @param id the id
+	 * @throws WebServiceException
+	 */
 	public Fach(int id) throws WebServiceException {
 		if (id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -54,6 +73,11 @@ public class Fach {
 		this.id = id;
 	}
 	
+	/**
+	 * Loads all attributes of a Fach
+	 * @return the Fach with all attributes set
+	 * @throws WebServiceException
+	 */
 	public Fach getDirectAttributes() throws WebServiceException {
 		if (id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -71,6 +95,11 @@ public class Fach {
 		return this;
 	}
 	
+	/**
+	 * Creates a Fach
+	 * @return the created Fach
+	 * @throws WebServiceException
+	 */
 	public Fach create() throws WebServiceException {
 		if (id != 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -84,6 +113,10 @@ public class Fach {
 		return this;
 	}
 	
+	/**
+	 * Deletes a Fach
+	 * @throws WebServiceException
+	 */
 	public void delete() throws WebServiceException {
 		if (id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -94,6 +127,10 @@ public class Fach {
 		db.doQuery("DELETE FROM fach WHERE id = ?", fieldValues);
 	}
 	
+	/**
+	 * Checks the attributes of a Fach
+	 * @throws WebServiceException if an attribute is invalid
+	 */
 	private void checkDirectAttributes() throws WebServiceException {
 		if (name == null || (name = name.trim()).isEmpty()) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_STRING);
@@ -103,6 +140,11 @@ public class Fach {
 		}
 	}
 	
+	/**
+	 * Returns the number of FachInstanzen that exist for this Fach
+	 * @return the number of FachInstanzen
+	 * @throws WebServiceException
+	 */
 	int getInstanzenCount() throws WebServiceException {
 		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
 		ArrayList<Object> fieldValues = new ArrayList<Object>();

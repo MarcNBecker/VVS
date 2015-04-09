@@ -10,11 +10,20 @@ import de.dhbw.vvs.database.DatabaseConnection;
 import de.dhbw.vvs.utility.TypeHashMap;
 import de.dhbw.vvs.utility.Utility;
 
+/**
+ * A class representing a Feiertag
+ */
 public class Feiertag {
 
 	private Date datum;
 	private String name;
 	
+	/**
+	 * Returns a list of all Feiertage in a specific year
+	 * @param jahr the year
+	 * @return a list of Feiertage
+	 * @throws WebServiceException
+	 */
 	public static ArrayList<Feiertag> getAll(int jahr) throws WebServiceException {
 		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
 		ArrayList<Object> fieldValues = new ArrayList<Object>();
@@ -29,6 +38,11 @@ public class Feiertag {
 		return feiertagList;
 	}
 	
+	/**
+	 * Constructs a Feiertag
+	 * @param datum a date
+	 * @throws WebServiceException
+	 */
 	public Feiertag(Date datum) throws WebServiceException {
 		if(datum == null) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_DATE);
@@ -36,6 +50,11 @@ public class Feiertag {
 		this.datum = datum;
 	}
 	
+	/**
+	 * Creates or updates a Feiertag 
+	 * @return the created or updated Feiertag
+	 * @throws WebServiceException
+	 */
 	public Feiertag update() throws WebServiceException {
 		checkDirectAttributes();
 		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
@@ -47,6 +66,10 @@ public class Feiertag {
 		return this;
 	}
 	
+	/**
+	 * Deletes a Feiertag
+	 * @throws WebServiceException
+	 */
 	public void delete() throws WebServiceException {
 		if (datum == null) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_DATE);
@@ -57,6 +80,10 @@ public class Feiertag {
 		db.doQuery("DELETE FROM feiertag WHERE datum = ?", fieldValues);
 	}
 	
+	/**
+	 * Checks all attributes of a Feiertag
+	 * @throws WebServiceException if an attribute is invalid
+	 */
 	private void checkDirectAttributes() throws WebServiceException {
 		if (datum == null) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_DATE);

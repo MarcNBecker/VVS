@@ -28,8 +28,6 @@ import de.dhbw.vvs.model.WebServiceEnum;
  */
 public class JSONify {
 
-	public static final String SUCCESS = "{\"status\":200, \"message\":\"OK\"}";
-	
 	private static Gson gson;
 	
 	//Build a Gson that can handle all model classes

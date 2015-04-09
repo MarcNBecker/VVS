@@ -9,6 +9,9 @@ import de.dhbw.vvs.database.DatabaseConnection;
 import de.dhbw.vvs.utility.TypeHashMap;
 import de.dhbw.vvs.utility.Utility;
 
+/**
+ * A class to represent a Kurs
+ */
 public class Kurs {
 
 	private int id;
@@ -23,6 +26,11 @@ public class Kurs {
 	private int studiengangsleiterID;
 	private String sekretariatName;
 	
+	/**
+	 * Returns a list of all Kurse
+	 * @return a list of all Kurse
+	 * @throws WebServiceException
+	 */
 	public static ArrayList<Kurs> getAll() throws WebServiceException {
 		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
 		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT id, kursname, kursMail, modulplan, studentenAnzahl, kurssprecherVorname, kurssprecherName, kurssprecherMail, kurssprecherTelefon, studiengangsleiter, sekretariatName FROM kurs ORDER BY kursname DESC", null);
@@ -44,6 +52,12 @@ public class Kurs {
 		return kursList;
 	}
 	
+	/**
+	 * Returns a list of all Kurse that are organized by a Studiengangsleiter
+	 * @param s the studiengangsleiter
+	 * @return a list of Kurse
+	 * @throws WebServiceException
+	 */
 	public static ArrayList<Kurs> getAllForStudiengangsleiter(Studiengangsleiter s) throws WebServiceException {
 		if(s == null) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_OBJECT);
@@ -62,6 +76,11 @@ public class Kurs {
 		return kursList;
 	}
 	
+	/**
+	 * Constructs a Kurs
+	 * @param id the id
+	 * @throws WebServiceException
+	 */
 	public Kurs(int id) throws WebServiceException {
 		if(id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -69,6 +88,11 @@ public class Kurs {
 		this.id = id;
 	}
 	
+	/**
+	 * Gets all attributes of a Kurs
+	 * @return the Kurs with all attributes set
+	 * @throws WebServiceException
+	 */
 	public Kurs getDirectAttributes() throws WebServiceException {
 		if (id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -119,6 +143,11 @@ public class Kurs {
 		return this;
 	}
 	
+	/**
+	 * Updates a Kurs
+	 * @return the updated Kurs
+	 * @throws WebServiceException
+	 */
 	public Kurs update() throws WebServiceException {
 		if (id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -145,11 +174,21 @@ public class Kurs {
 		}
 	}
 	
+	/**
+	 * Updates a Blocklage
+	 * @param blocklage the blocklage
+	 * @return the updated blocklage
+	 * @throws WebServiceException
+	 */
 	public Blocklage updateBlocklage(Blocklage blocklage) throws WebServiceException {
 		blocklage.setKursID(id);
 		return blocklage.update();
 	}
 	
+	/**
+	 * Deletes a Kurs
+	 * @throws WebServiceException
+	 */
 	public void delete() throws WebServiceException {
 		if (id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -160,6 +199,10 @@ public class Kurs {
 		db.doQuery("DELETE FROM kurs WHERE id = ?", fieldValues);
 	}
 	
+	/**
+	 * Checks all attributes of a Kurs
+	 * @throws WebServiceException if an attribute is invalid
+	 */
 	private void checkDirectAttributes() throws WebServiceException {
 		if (kursname == null || (kursname = kursname.trim()).isEmpty()) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_STRING);

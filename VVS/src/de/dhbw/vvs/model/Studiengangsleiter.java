@@ -8,11 +8,19 @@ import de.dhbw.vvs.database.ConnectionPool;
 import de.dhbw.vvs.database.DatabaseConnection;
 import de.dhbw.vvs.utility.TypeHashMap;
 
+/**
+ * A class to represent a Studiengangsleiter
+ */
 public class Studiengangsleiter {
 	
 	private int id;
 	private String name;
 	
+	/**
+	 * Returns a list of all Studiengangsleiter
+	 * @return the list of all Studiengangsleiter
+	 * @throws WebServiceException
+	 */
 	public static ArrayList<Studiengangsleiter> getAll() throws WebServiceException {
 		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
 		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT id, name FROM studiengangsleiter ORDER BY name ASC", null);
@@ -25,6 +33,11 @@ public class Studiengangsleiter {
 		return studiengangsleiterList;
 	}
 	
+	/**
+	 * Constructs a Studiengangsleiter
+	 * @param id the id
+	 * @throws WebServiceException
+	 */
 	public Studiengangsleiter(int id) throws WebServiceException {
 		if (id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -32,6 +45,11 @@ public class Studiengangsleiter {
 		this.id = id;
 	}
 	
+	/**
+	 * Gets all direct attributes of the Studiengangsleiter
+	 * @return the Studiengangsleiter with all attributes set
+	 * @throws WebServiceException
+	 */
 	public Studiengangsleiter getDirectAttributes() throws WebServiceException {
 		if (id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -48,6 +66,11 @@ public class Studiengangsleiter {
 		return this;
 	}
 	
+	/**
+	 * Creates a Studiengangsleiter
+	 * @return the created studiengangsleiter
+	 * @throws WebServiceException
+	 */
 	public Studiengangsleiter create() throws WebServiceException {
 		if (id != 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -60,6 +83,11 @@ public class Studiengangsleiter {
 		return this;
 	}
 	
+	/**
+	 * Sets the User, this Studiengangsleiter is representing
+	 * @param user the user
+	 * @throws WebServiceException
+	 */
 	public void setIst(User user) throws WebServiceException {
 		if (id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -77,6 +105,11 @@ public class Studiengangsleiter {
 		}
 	}
 	
+	/**
+	 * Updates a Studiengangsleiter
+	 * @return the updated Studiengangsleiter
+	 * @throws WebServiceException
+	 */
 	public Studiengangsleiter update() throws WebServiceException {
 		if (id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -94,6 +127,10 @@ public class Studiengangsleiter {
 		}
 	}
 	
+	/**
+	 * Deletes a user
+	 * @throws WebServiceException
+	 */
 	public void delete() throws WebServiceException {
 		if (id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -104,6 +141,10 @@ public class Studiengangsleiter {
 		db.doQuery("DELETE FROM studiengangsleiter WHERE id = ?", fieldValues);
 	}
 	
+	/**
+	 * Checks all attributes of a user
+	 * @throws WebServiceException if an attribute is invalid
+	 */
 	public void checkDirectAttributes() throws WebServiceException {
 		if (name == null || (name = name.trim()).isEmpty()) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_STRING);

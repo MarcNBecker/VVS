@@ -10,6 +10,9 @@ import de.dhbw.vvs.database.DatabaseConnection;
 import de.dhbw.vvs.utility.TypeHashMap;
 import de.dhbw.vvs.utility.Utility;
 
+/**
+ * Class to represent a Blocklage
+ */
 public class Blocklage {
 
 	private int kursID;
@@ -18,6 +21,12 @@ public class Blocklage {
 	private Date endDatum;
 	private String raum;
 	
+	/**
+	 * Returns a list of Blocklagen for a specific Kurs
+	 * @param kurs the kurs
+	 * @return the list of Blocklagen
+	 * @throws WebServiceException
+	 */
 	public static ArrayList<Blocklage> getAll(Kurs kurs) throws WebServiceException {
 		if (kurs.getID() <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -39,6 +48,11 @@ public class Blocklage {
 		return blocklageList;
 	}
 	
+	/**
+	 * Updates a Blocklage on the database
+	 * @return the updated Blocklage
+	 * @throws WebServiceException
+	 */
 	public Blocklage update() throws WebServiceException {
 		checkDirectAttributes();
 		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
@@ -59,6 +73,10 @@ public class Blocklage {
 		}
 	}
 	
+	/**
+	 * Checks the attributes of a Blocklage
+	 * @throws WebServiceException if an attribute is invalid
+	 */
 	private void checkDirectAttributes() throws WebServiceException {
 		if (kursID <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);

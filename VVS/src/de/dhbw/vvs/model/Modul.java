@@ -8,12 +8,20 @@ import de.dhbw.vvs.database.ConnectionPool;
 import de.dhbw.vvs.database.DatabaseConnection;
 import de.dhbw.vvs.utility.TypeHashMap;
 
+/**
+ * A class to represent a Modul
+ */
 public class Modul {
 
 	private int id;
 	private String name; 
 	private String kurzbeschreibung;
 	
+	/**
+	 * Returns a list of all Module
+	 * @return a list of all Module
+	 * @throws WebServiceException
+	 */
 	public static ArrayList<Modul> getAll() throws WebServiceException {
 		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
 		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT id, name, kurzbeschreibung FROM modul ORDER BY name ASC", null);
@@ -27,6 +35,11 @@ public class Modul {
 		return modulList;
 	}
 	
+	/**
+	 * Constructs a Modul
+	 * @param id the id
+	 * @throws WebServiceException
+	 */
 	public Modul(int id) throws WebServiceException {
 		if (id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -34,6 +47,11 @@ public class Modul {
 		this.id = id;
 	}
 	
+	/**
+	 * Gets all direct attributes of a Modul
+	 * @return the modul with all direct attributes set
+	 * @throws WebServiceException
+	 */
 	public Modul getDirectAttributes() throws WebServiceException {
 		if (id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -51,6 +69,11 @@ public class Modul {
 		return this;
 	}
 	
+	/**
+	 * Creates a Modul
+	 * @return the created modul
+	 * @throws WebServiceException
+	 */
 	public Modul create() throws WebServiceException {
 		if (id != 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -64,6 +87,10 @@ public class Modul {
 		return this;
 	}
 	
+	/**
+	 * Deletes a Modul
+	 * @throws WebServiceException
+	 */
 	public void delete() throws WebServiceException {
 		if (id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -74,6 +101,10 @@ public class Modul {
 		db.doQuery("DELETE FROM modul WHERE id = ?", fieldValues);
 	}
 	
+	/**
+	 * Checks all direct attributes of a Modul
+	 * @throws WebServiceException if an attributes is invalid
+	 */
 	private void checkDirectAttributes() throws WebServiceException {
 		if (name == null || (name = name.trim()).isEmpty()) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_STRING);
@@ -83,6 +114,11 @@ public class Modul {
 		}
 	}
 	
+	/**
+	 * Returns the number of ModulInstanzen that exist for a Modul
+	 * @return the number of ModulInstanzen
+	 * @throws WebServiceException
+	 */
 	int getInstanzenCount() throws WebServiceException {
 		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
 		ArrayList<Object> fieldValues = new ArrayList<Object>();

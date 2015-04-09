@@ -9,12 +9,20 @@ import de.dhbw.vvs.database.DatabaseConnection;
 import de.dhbw.vvs.utility.TypeHashMap;
 import de.dhbw.vvs.utility.Utility;
 
+/**
+ * A class to represent a User
+ */
 public class User {
 
 	private String name;
 	private String passwort;
 	private int repraesentiert;
 	
+	/**
+	 * Returns a list of all User
+	 * @return a list of all User
+	 * @throws WebServiceException
+	 */
 	public static ArrayList<User> getAll() throws WebServiceException {
 		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
 		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT name, repraesentiert FROM user ORDER BY name ASC", null);
@@ -27,6 +35,11 @@ public class User {
 		return userList;
 	}
 	
+	/**
+	 * Constructs a user
+	 * @param name the users name
+	 * @throws WebServiceException
+	 */
 	public User(String name) throws WebServiceException {
 		if (name == null || (name = name.trim()).isEmpty()) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_STRING);
@@ -34,6 +47,11 @@ public class User {
 		this.name = name;
 	}
 	
+	/**
+	 * Authenticates a user by checking if the correct password was given
+	 * @return the authenticated user
+	 * @throws WebServiceException
+	 */
 	public User authenticate() throws WebServiceException {
 		if (name == null || (name = name.trim()).isEmpty()) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_STRING);
@@ -55,6 +73,11 @@ public class User {
 		return this;
 	}
 	
+	/**
+	 * Creates a user
+	 * @return the created user
+	 * @throws WebServiceException
+	 */
 	public User create() throws WebServiceException {
 		checkDirectAttributes(false);
 		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
@@ -67,6 +90,11 @@ public class User {
 		return this;
 	}
 	
+	/**
+	 * Gets all attributes of a user
+	 * @return the user with all attributes set
+	 * @throws WebServiceException
+	 */
 	public User getDirectAttributes() throws WebServiceException {
 		if (name == null || (name = name.trim()).isEmpty()) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_STRING);
@@ -84,6 +112,11 @@ public class User {
 		return this;
 	}
 	
+	/**
+	 * Updates a user
+	 * @return the updated user
+	 * @throws WebServiceException
+	 */
 	public User update() throws WebServiceException {
 		checkDirectAttributes(true);
 		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
@@ -104,6 +137,10 @@ public class User {
 		}
 	}
 	
+	/**
+	 * Deletes a user
+	 * @throws WebServiceException
+	 */
 	public void delete() throws WebServiceException {
 		if (name == null || (name = name.trim()).isEmpty()) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_STRING);
@@ -114,6 +151,10 @@ public class User {
 		db.doQuery("DELETE FROM user WHERE name = ?", fieldValues);
 	}
 	
+	/**
+	 * Checks if a users exists
+	 * @throws WebServiceException if the user doesn't exist
+	 */
 	public void checkExistance() throws WebServiceException {
 		if (name == null || (name = name.trim()).isEmpty()) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_STRING);
@@ -127,6 +168,11 @@ public class User {
 		}
 	}
 	
+	/**
+	 * Checks all attributes of a User
+	 * @param update specifies if the check is done for an Update
+	 * @throws WebServiceException if an attribute is invalid
+	 */
 	public void checkDirectAttributes(boolean update) throws WebServiceException {
 		if (name == null || (name = name.trim()).isEmpty()) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_STRING);

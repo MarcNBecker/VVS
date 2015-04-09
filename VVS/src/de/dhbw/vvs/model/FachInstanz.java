@@ -8,6 +8,11 @@ import de.dhbw.vvs.database.ConnectionPool;
 import de.dhbw.vvs.database.DatabaseConnection;
 import de.dhbw.vvs.utility.TypeHashMap;
 
+/**
+ * A class representing a FachInstanz
+ * A FachInstanz is a Fach that occurs in a ModulInstanz
+ * It carries information about Semester and Stunden
+ */
 public class FachInstanz {
 
 	private int id;
@@ -16,6 +21,12 @@ public class FachInstanz {
 	private int semester;
 	private int stunden;
 	
+	/**
+	 * Returns a list of all FachInstanzen that are connected to a ModulInstanz
+	 * @param modulInstanz the ModulInstanz
+	 * @return a list of all FachInstanzen
+	 * @throws WebServiceException
+	 */
 	public static ArrayList<FachInstanz> getAll(ModulInstanz modulInstanz) throws WebServiceException {
 		if (modulInstanz.getID() <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -36,6 +47,12 @@ public class FachInstanz {
 		return fachInstanzList;
 	}
 	
+	/**
+	 * Returns a list of all FachInstanzen that are in the Modulplan of the Kurs and were not used in any Vorlesung yet
+	 * @param kurs the kurs
+	 * @return a list of all FachInstanzen not used in any Vorlesung yet
+	 * @throws WebServiceException
+	 */
 	public static ArrayList<FachInstanz> getAllMissingForKurs(Kurs kurs) throws WebServiceException {
 		if (kurs == null) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT);
@@ -58,6 +75,14 @@ public class FachInstanz {
 		return fachInstanzList;
 	}
 	
+	/**
+	 * Returns a list of FachInstanzen that connect to a ModulInstanz using the Sondertermine Modul (Modul-ID: 40) and are not used in the Semester yet
+	 * These are the only FachInstanzen that the system suggests to use in every Semester as a Vorlesung
+	 * @param kurs the Kurs
+	 * @param semester the semester
+	 * @return a list of FachInstanzen that connect to the Sondertermine Modul
+	 * @throws WebServiceException
+	 */
 	public static ArrayList<FachInstanz> getAllSondertermineForKurs(Kurs kurs, int semester) throws WebServiceException {
 		if (kurs == null) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_OBJECT);
@@ -84,6 +109,13 @@ public class FachInstanz {
 		return fachInstanzList;
 	}
 	
+	/**
+	 * Gets a specific FachInstanz that connects to a given ModulInstanz and connects to a given Fach
+	 * @param modulInstanz the ModulInstanz
+	 * @param fachID the id of a Fach
+	 * @return the FachInstanz
+	 * @throws WebServiceException
+	 */
 	public static FachInstanz getSingle(ModulInstanz modulInstanz, int fachID) throws WebServiceException {
 		if (modulInstanz.getID() <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -108,6 +140,11 @@ public class FachInstanz {
 		return f;
 	}
 	
+	/**
+	 * Constructs a FachInstanz
+	 * @param id the id
+	 * @throws WebServiceException
+	 */
 	public FachInstanz(int id) throws WebServiceException {
 		if(id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -115,6 +152,11 @@ public class FachInstanz {
 		this.id = id;
 	}
 	
+	/**
+	 * Reads all attributes of a FachInstanz from the database
+	 * @return the FachInstanz with all attributes filled
+	 * @throws WebServiceException
+	 */
 	public FachInstanz getDirectAttributes() throws WebServiceException {
 		if (id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -134,6 +176,11 @@ public class FachInstanz {
 		return this;
 	}
 	
+	/**
+	 * Creates a FachInstanz
+	 * @return the created FachInstanz
+	 * @throws WebServiceException
+	 */
 	public FachInstanz create() throws WebServiceException {
 		/*if (id != 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -157,6 +204,10 @@ public class FachInstanz {
 		return this;
 	}
 	
+	/**
+	 * Deletes a FachInstanz
+	 * @throws WebServiceException
+	 */
 	public void delete() throws WebServiceException {
 		if (id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -166,11 +217,16 @@ public class FachInstanz {
 		ArrayList<Object> fieldValues = new ArrayList<Object>();
 		fieldValues.add(id);
 		db.doQuery("DELETE FROM fachinstanz WHERE id = ?", fieldValues);
+		//Delete Fach if there are no Kompetenzfach connections and no FachInstanzen for this Fach
 		if (fach.getInstanzenCount() == 0 && Dozent.getAllForFach(fach).isEmpty()) {
 			fach.delete();	
 		}
 	}
 	
+	/**
+	 * Checks all attributes of a FachInstanz
+	 * @throws WebServiceException if an attribute is invalid
+	 */
 	private void checkDirectAttributes() throws WebServiceException {
 		if(fach == null || fach.getID() <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_OBJECT);
@@ -207,7 +263,7 @@ public class FachInstanz {
 	}
 	
 	/**
-	 * It is only allowed to call this method, when fach.setID() follows this call
+	 * It is only allowed to call this method, when fach.setID() follows this call or {@link #getDirectAttributes()} was called before
 	 */
 	public Fach getFach() {
 		if(fach == null) {

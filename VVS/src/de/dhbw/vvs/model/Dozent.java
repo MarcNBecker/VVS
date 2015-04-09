@@ -10,6 +10,9 @@ import de.dhbw.vvs.database.DatabaseConnection;
 import de.dhbw.vvs.utility.TypeHashMap;
 import de.dhbw.vvs.utility.Utility;
 
+/**
+ * Class to represent a Dozent
+ */
 public class Dozent {
 
 	private int id;
@@ -36,6 +39,11 @@ public class Dozent {
 	@SuppressWarnings("unused")
 	private int maxFachJahr; //This is only filled at times, when the dozent is loaded in context with a fach information
 	
+	/**
+	 * Returns a list of all Dozenten with minimized information
+	 * @return a list of all Dozenten
+	 * @throws WebServiceException
+	 */
 	public static ArrayList<Dozent> getAll() throws WebServiceException {
 		DatabaseConnection db = ConnectionPool.getConnectionPool().getConnection();
 		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT id, titel, name, vorname, status FROM dozent ORDER BY name ASC", null);
@@ -51,6 +59,12 @@ public class Dozent {
 		return dozentList;
 	}
 	
+	/**
+	 * Returns a list of Dozenten that can teach a specific Fach
+	 * @param fach the fach
+	 * @return a list of Dozenten
+	 * @throws WebServiceException
+	 */
 	public static ArrayList<Dozent> getAllForFach(Fach fach) throws WebServiceException {
 		if(fach == null || fach.getID() <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -71,6 +85,12 @@ public class Dozent {
 		return dozentList;
 	}
 	
+	/**
+	 * Returns a list of Dozenten that the Studiengangsleiter of a Kurs has previously used for a specific Fach
+	 * @param vorlesung the vorlesung of a Kurs for a specific Fach
+	 * @return a list of Dozenten
+	 * @throws WebServiceException
+	 */
 	public static ArrayList<Dozent> getAllForVorlesung(Vorlesung vorlesung) throws WebServiceException {
 		if(vorlesung == null || vorlesung.getID() <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -93,6 +113,13 @@ public class Dozent {
 		return dozentList;
 	}
 	
+	/**
+	 * Returns a list of Dozenten that teach one ore more Faecher for a Kurs in a Semester
+	 * @param kurs the kurs
+	 * @param semester the semester
+	 * @return a list of Dozenten
+	 * @throws WebServiceException
+	 */
 	public static ArrayList<Dozent> getAllForKursSemester(Kurs kurs, int semester) throws WebServiceException {
 		if(kurs == null || kurs.getID() <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -118,6 +145,11 @@ public class Dozent {
 		return dozentList;
 	}
 	
+	/**
+	 * Creates a Dozent by an ID
+	 * @param id the ID
+	 * @throws WebServiceException
+	 */
 	public Dozent(int id) throws WebServiceException {
 		if (id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -125,6 +157,11 @@ public class Dozent {
 		this.id = id;
 	}
 	
+	/**
+	 * Loads all attributes of a Dozent
+	 * @return the Dozent with all attributes loaded
+	 * @throws WebServiceException
+	 */
 	public Dozent getDirectAttributes() throws WebServiceException {
 		if (id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -156,6 +193,12 @@ public class Dozent {
 		return this;
 	}
 	
+	/**
+	 * Fills the lastHeld attribute of a Dozent, wich tells in which year a Dozent last held a specific Fach
+	 * @param fach the Fach
+	 * @param setOnFach specifies if the lastHeld attribute should be set on the Fach rather than on the Dozent
+	 * @throws WebServiceException
+	 */
 	public void lastHeld(Fach fach, boolean setOnFach) throws WebServiceException {
 		if (id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -185,14 +228,29 @@ public class Dozent {
 		}	
 	}
 	
+	/**
+	 * Returns a list of all Kompetenzfaecher of a Dozent
+	 * @return a list of all Kompetenzfaecher
+	 * @throws WebServiceException
+	 */
 	public ArrayList<Fach> getFachList() throws WebServiceException {
 		return Fach.getAllForDozent(this);
 	}
 	
+	/**
+	 * Returns a list of all Kommentare for a Dozent
+	 * @return a list of all Kommentare
+	 * @throws WebServiceException
+	 */
 	public ArrayList<Kommentar> getKommentarList() throws WebServiceException {
 		return Kommentar.getAll(this);
 	}
 	
+	/**
+	 * Creates a Dozent
+	 * @return the created Dozent
+	 * @throws WebServiceException
+	 */
 	public Dozent create() throws WebServiceException {
 		if (id != 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -218,6 +276,11 @@ public class Dozent {
 		return this.getDirectAttributes(); //Get Timestamps
 	}
 	
+	/**
+	 * Updates a Dozent
+	 * @return the updated Dozent
+	 * @throws WebServiceException
+	 */
 	public Dozent update() throws WebServiceException {
 		if (id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -248,6 +311,12 @@ public class Dozent {
 		}
 	}
 	
+	/**
+	 * Adds a Fach to the Dozent as a Kompetenzfach
+	 * @param fach the fach
+	 * @return the fach
+	 * @throws WebServiceException
+	 */
 	public Fach addFach(Fach fach) throws WebServiceException {
 		if (id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -264,11 +333,21 @@ public class Dozent {
 		return fach;
 	}
 	
+	/**
+	 * Adds a Kommentar to the Dozent
+	 * @param kommentar the Kommentar
+	 * @return the added Kommentar
+	 * @throws WebServiceException
+	 */
 	public Kommentar addKommentar(Kommentar kommentar) throws WebServiceException {
 		kommentar.setDozentID(id);
 		return kommentar.create();
 	}
 	
+	/**
+	 * Deletes a Dozent
+	 * @throws WebServiceException
+	 */
 	public void delete() throws WebServiceException {
 		if (id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -279,6 +358,11 @@ public class Dozent {
 		db.doQuery("DELETE FROM dozent WHERE id = ?", fieldValues);
 	}
 	
+	/**
+	 * Deletes a Kompetenzfach of a Dozent
+	 * @param fach the Fach
+	 * @throws WebServiceException
+	 */
 	public void deleteFach(Fach fach) throws WebServiceException {
 		if (id <= 0) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -296,11 +380,20 @@ public class Dozent {
 		}
 	}
 	
+	/**
+	 * Deletes a Kommentar for a Dozent
+	 * @param kommentar the Kommentar
+	 * @throws WebServiceException
+	 */
 	public void deleteKommentar(Kommentar kommentar) throws WebServiceException {
 		kommentar.setDozentID(id);
 		kommentar.delete();
 	}
 	
+	/**
+	 * Checks all attributes of a Dozent
+	 * @throws WebServiceException if an attribute is invalid
+	 */
 	private void checkDirectAttributes() throws WebServiceException {
 		if (titel == null) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_STRING);

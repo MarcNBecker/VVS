@@ -26,8 +26,18 @@ import de.dhbw.vvs.database.DatabaseConnection;
 import de.dhbw.vvs.utility.TypeHashMap;
 import de.dhbw.vvs.utility.Utility;
 
+/**
+ * A class to represent the XML Export
+ */
 public class XMLExport {
 
+	/**
+	 * Generates a XML file to use for further processing containing all data about Vorlesungen of a Kurs in a given Semester
+	 * @param kurs the kurs
+	 * @param semester the semester
+	 * @return the XML File
+	 * @throws WebServiceException
+	 */
 	public static File getXMLData(Kurs kurs, int semester) throws WebServiceException {
 		if(kurs == null) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
@@ -65,6 +75,7 @@ public class XMLExport {
         Element semesterplan = doc.createElement("Semesterplan");
         doc.appendChild(semesterplan);
         
+        //Set Header data
         Element kopfdaten = doc.createElement("Kopfdaten");
         semesterplan.appendChild(kopfdaten);
         
@@ -104,6 +115,7 @@ public class XMLExport {
 		sekretariat.appendChild(doc.createTextNode(kurs.getSekretariatName()));
 		kopfdaten.appendChild(sekretariat);
 		
+		//Add Vorlesungen
 		Element vorlesungen = doc.createElement("Vorlesungen");
 		semesterplan.appendChild(vorlesungen);
 			
@@ -111,6 +123,7 @@ public class XMLExport {
 		TreeMap<String, Element> map = new TreeMap<String, Element>();
 		int noDozentCounter = 0;
 		for(Vorlesung v: vorlesungList) {
+			//Add Vorlesung
 			Element vorlesung = doc.createElement("Vorlesung");
 			
 			Element fach = doc.createElement("fach");
@@ -120,6 +133,7 @@ public class XMLExport {
 			Element dozentXML = doc.createElement("Dozent");
 			vorlesung.appendChild(dozentXML);
 			
+			//Add Dozent
 			if(v.getDozentID() > 0) {
 				Dozent dozent = new Dozent(v.getDozentID()).getDirectAttributes();
 				Element dozentVorname = doc.createElement("vorname");
@@ -130,17 +144,21 @@ public class XMLExport {
 				dozentName.appendChild(doc.createTextNode(dozent.getName()));
 				dozentXML.appendChild(dozentName);	
 				
+				//We want to the Vorlesungen by the Dozent's name
 				map.put(dozent.getName() + ", " + dozent.getVorname(), vorlesung);
 			} else {
+				//Generate a Name when no Dozent is known
 				map.put("ZZZZZ, " + noDozentCounter, vorlesung);
 				noDozentCounter++;
 			}
 			
+			//Add Termine
 			Element termine = doc.createElement("Termine");
 			vorlesung.appendChild(termine);
 			
 			ArrayList<Termin> terminList = Termin.getAll(v);
 			for(Termin t: terminList) {
+				//Add Termin
 				Element termin = doc.createElement("Termin");
 				termine.appendChild(termin);
 				
@@ -170,10 +188,12 @@ public class XMLExport {
 			}
 		}
 		
+		//Add Vorlesungen in sorted order
 		for(String key : map.keySet()) {
 			vorlesungen.appendChild(map.get(key));
 		}
 		
+		//Add Feiertage
 		Element feiertage = doc.createElement("Feiertage");
 		semesterplan.appendChild(feiertage);
 		
@@ -183,6 +203,7 @@ public class XMLExport {
 		fieldValues.add(Utility.dateString(blocklage.getEndDatum()));
 		ArrayList<TypeHashMap<String, Object>> resultList = db.doSelectingQuery("SELECT datum, name FROM feiertag WHERE (datum BETWEEN ? AND ?) ORDER BY datum ASC", fieldValues);
 		for(TypeHashMap<String, Object> result : resultList) {
+			//Feiertag
 			Element feiertag = doc.createElement("Feiertag");
 			feiertage.appendChild(feiertag);
 			Element datum = doc.createElement("datum");
@@ -194,6 +215,7 @@ public class XMLExport {
 			feiertag.appendChild(name);
 		}
 		
+		//Generate XML File
 		try {
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();
 			Transformer transformer = transformerFactory.newTransformer();

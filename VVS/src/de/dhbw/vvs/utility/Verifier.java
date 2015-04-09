@@ -11,6 +11,9 @@ import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 import de.dhbw.vvs.database.ConnectionPool;
 import de.dhbw.vvs.database.DatabaseConnection;
 
+/**
+ * A migration tool
+ */
 public class Verifier {
 
 	public static void main(String[] args) throws Exception {

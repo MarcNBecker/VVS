@@ -3,6 +3,9 @@ package de.dhbw.vvs.model;
 import java.util.EnumSet;
 import java.util.HashMap;
 
+/**
+ * An enum to handle gender
+ */
 public enum Geschlecht implements WebServiceEnum {
 	
 	HERR(0), FRAU(1);

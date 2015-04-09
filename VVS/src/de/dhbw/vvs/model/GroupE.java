@@ -11,8 +11,18 @@ import de.dhbw.vvs.database.ConnectionPool;
 import de.dhbw.vvs.database.DatabaseConnection;
 import de.dhbw.vvs.utility.TypeHashMap;
 
+/**
+ * A class to represent the GroupE CSV export
+ */
 public class GroupE {
 
+	/**
+	 * Generates a CSV file to use for GroupE containing all data about Vorlesungen of a Kurs in a given Semester
+	 * @param kurs the kurs
+	 * @param semester the semester
+	 * @return the CSV file
+	 * @throws WebServiceException
+	 */
 	public static File getCSVData(Kurs kurs, int semester) throws WebServiceException {
 		if(kurs == null) {
 			throw new WebServiceException(ExceptionStatus.INVALID_ARGUMENT_ID);
