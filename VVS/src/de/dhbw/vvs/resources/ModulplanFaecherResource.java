@@ -15,6 +15,9 @@ import de.dhbw.vvs.model.FachInstanz;
 import de.dhbw.vvs.model.ModulInstanz;
 import de.dhbw.vvs.utility.JSONify;
 
+/**
+ * URI: /modulplaene/{modulplanID}/module/{modulID}/faecher
+ */
 public class ModulplanFaecherResource extends JsonServerResource {
 	
 	private int modulplanID;

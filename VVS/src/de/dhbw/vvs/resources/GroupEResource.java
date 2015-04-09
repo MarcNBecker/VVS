@@ -17,6 +17,9 @@ import de.dhbw.vvs.application.WebServiceException;
 import de.dhbw.vvs.model.GroupE;
 import de.dhbw.vvs.model.Kurs;
 
+/**
+ * URI: /kurse/{kursID}/{semester}/vorlesungen/groupe
+ */
 public class GroupEResource extends EasyServerResource {
 	
 	private int kursID;
@@ -39,9 +42,12 @@ public class GroupEResource extends EasyServerResource {
 	@Override
 	protected Representation get() throws ResourceException {
 		try {
+			//Generate file and return a FileRepresentation
 			File csv = GroupE.getCSVData(new Kurs(getKursID()), getSemester());
 			FileRepresentation representation = new FileRepresentation(csv, new MediaType("text", "csv"));
+			//Auto deletes the file
 			representation.setAutoDeleting(true);
+			//Provides it as a download rather than displaying it natively in the browser
 			representation.getDisposition().setType(Disposition.TYPE_ATTACHMENT);
 			return representation;
 		} catch (WebServiceException e) {

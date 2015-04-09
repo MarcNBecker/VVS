@@ -14,6 +14,9 @@ import de.dhbw.vvs.application.WebServiceException;
 import de.dhbw.vvs.model.Vorlesung;
 import de.dhbw.vvs.utility.JSONify;
 
+/**
+ * URI: /kurse/{kursID}/{semester}/vorlesungen/{vorlesungsID}
+ */
 public class KursSemesterVorlesungResource extends JsonServerResource {
 	
 	private int kursID;

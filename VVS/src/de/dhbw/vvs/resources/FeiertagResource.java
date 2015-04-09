@@ -17,6 +17,9 @@ import de.dhbw.vvs.model.Feiertag;
 import de.dhbw.vvs.utility.JSONify;
 import de.dhbw.vvs.utility.Utility;
 
+/**
+ * URI: /feiertage/{jahr}/{datum}
+ */
 public class FeiertagResource extends JsonServerResource {
 	
 	private int jahr;

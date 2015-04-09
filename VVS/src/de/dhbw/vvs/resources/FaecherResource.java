@@ -5,6 +5,9 @@ import org.restlet.resource.ResourceException;
 import de.dhbw.vvs.application.WebServiceException;
 import de.dhbw.vvs.model.Fach;
 
+/**
+ * URI: /faecher
+ */
 public class FaecherResource extends JsonServerResource {
 	
 	@Override

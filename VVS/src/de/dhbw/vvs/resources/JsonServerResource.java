@@ -15,7 +15,7 @@ import de.dhbw.vvs.application.WebServiceException;
 import de.dhbw.vvs.utility.JSONify;
 
 /**
- * A secure ServerResource
+ * A JSON based ServerResource
  */
 public abstract class JsonServerResource extends EasyServerResource {
 

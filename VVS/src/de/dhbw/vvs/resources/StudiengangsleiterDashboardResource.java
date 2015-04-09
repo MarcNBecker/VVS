@@ -13,6 +13,9 @@ import de.dhbw.vvs.model.Kurs;
 import de.dhbw.vvs.model.KursKachel;
 import de.dhbw.vvs.model.Studiengangsleiter;
 
+/**
+ * URI: /studiengangsleiter/{studiengangsleiterID}/dashboard
+ */
 public class StudiengangsleiterDashboardResource extends JsonServerResource {
 	
 	private int studiengangsleiterID;

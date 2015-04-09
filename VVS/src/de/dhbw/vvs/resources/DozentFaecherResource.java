@@ -13,6 +13,10 @@ import de.dhbw.vvs.application.WebServiceException;
 import de.dhbw.vvs.model.Dozent;
 import de.dhbw.vvs.model.Fach;
 
+
+/**
+ * URI: /dozenten/{dozentID}/faecher
+ */
 public class DozentFaecherResource extends JsonServerResource {
 	
 	private int dozentID;
@@ -35,6 +39,7 @@ public class DozentFaecherResource extends JsonServerResource {
 	protected Object receiveGet() throws WebServiceException {
 		Dozent dozent = new Dozent(getDozentID());
 		ArrayList<Fach> fachList = dozent.getFachList();
+		//Get Timestamp when the Dozent last taught the Fach
 		for (Fach f : fachList) {
 			dozent.lastHeld(f, true);
 		}

@@ -11,6 +11,9 @@ import de.dhbw.vvs.application.ExceptionStatus;
 import de.dhbw.vvs.application.WebServiceException;
 import de.dhbw.vvs.model.FachInstanz;
 
+/**
+ * URI: /modulplaene/quickdelete/faecher/{fachInstanzID}
+ */
 public class ModulplanQuickDeleteFachInstanzResource extends JsonServerResource {
 	
 	private int fachInstanzID;

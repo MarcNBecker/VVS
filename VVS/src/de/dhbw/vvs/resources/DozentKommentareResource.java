@@ -14,7 +14,9 @@ import de.dhbw.vvs.application.WebServiceException;
 import de.dhbw.vvs.model.Dozent;
 import de.dhbw.vvs.model.Kommentar;
 import de.dhbw.vvs.utility.JSONify;
-
+/**
+ * URI: /dozenten/{dozentID}/kommentare
+ */
 public class DozentKommentareResource extends JsonServerResource {
 	
 	private int dozentID;
@@ -39,9 +41,6 @@ public class DozentKommentareResource extends JsonServerResource {
 		return new Dozent(getDozentID()).getKommentarList();
 	}
 	
-	/**
-	 * Input JSON: {text: "Kommentar", verfasser: "baumgart"}
-	 */
 	@Override
 	protected Object receivePost(JsonRepresentation json) throws JSONException, WebServiceException {
 		Kommentar k = JSONify.deserialize(json.getJsonObject().toString(), Kommentar.class);

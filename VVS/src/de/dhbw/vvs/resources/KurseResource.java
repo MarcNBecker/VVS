@@ -8,6 +8,9 @@ import de.dhbw.vvs.application.WebServiceException;
 import de.dhbw.vvs.model.Kurs;
 import de.dhbw.vvs.utility.JSONify;
 
+/**
+ * URI: /kurse
+ */
 public class KurseResource extends JsonServerResource {
 	
 	@Override

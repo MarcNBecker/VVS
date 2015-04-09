@@ -14,6 +14,9 @@ import de.dhbw.vvs.application.WebServiceException;
 import de.dhbw.vvs.model.Studiengangsleiter;
 import de.dhbw.vvs.utility.JSONify;
 
+/**
+ * URI: /studiengangsleiter/{studiengangsleiterID}
+ */
 public class StudiengangsleiterResource extends JsonServerResource {
 	
 	private int studiengangsleiterID;
@@ -39,9 +42,6 @@ public class StudiengangsleiterResource extends JsonServerResource {
 		return new Studiengangsleiter(studiengangsleiterID).getDirectAttributes();
 	}
 	
-	/**
-	 * Input JSON {name:"Jörg Baumgart"}
-	 */
 	@Override
 	protected Object receivePut(JsonRepresentation json) throws JSONException, WebServiceException {
 		Studiengangsleiter studiengangsleiter = JSONify.deserialize(json.getJsonObject().toString(), Studiengangsleiter.class);

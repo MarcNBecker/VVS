@@ -14,6 +14,9 @@ import de.dhbw.vvs.model.Dozent;
 import de.dhbw.vvs.model.Termin;
 import de.dhbw.vvs.utility.Utility;
 
+/**
+ * URI: /termine/{datum}/dozent/{dozentID}
+ */
 public class TermineDozentResource extends JsonServerResource {
 	
 	private Date datum;

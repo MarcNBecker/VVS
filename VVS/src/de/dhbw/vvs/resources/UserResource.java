@@ -14,6 +14,9 @@ import de.dhbw.vvs.application.WebServiceException;
 import de.dhbw.vvs.model.User;
 import de.dhbw.vvs.utility.JSONify;
 
+/**
+ * URI: /user/{name}
+ */
 public class UserResource extends JsonServerResource {
 
 	private String name;
@@ -40,6 +43,9 @@ public class UserResource extends JsonServerResource {
 		return new User(getName()).getDirectAttributes();
 	}
 	
+	/**
+	 * Authenticates a User
+	 */
 	@Override
 	protected Object receivePost(JsonRepresentation json) throws JSONException, WebServiceException {
 		User user = JSONify.deserialize(json.getJsonObject().toString(), User.class);

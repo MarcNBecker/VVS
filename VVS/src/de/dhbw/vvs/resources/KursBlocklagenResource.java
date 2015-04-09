@@ -11,6 +11,9 @@ import de.dhbw.vvs.application.ExceptionStatus;
 import de.dhbw.vvs.application.WebServiceException;
 import de.dhbw.vvs.model.Kurs;
 
+/**
+ * URI: /kurse/{kursID}/blocklagen
+ */
 public class KursBlocklagenResource extends JsonServerResource {
 	
 	private int kursID;

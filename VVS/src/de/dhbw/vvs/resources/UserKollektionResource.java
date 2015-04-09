@@ -10,6 +10,9 @@ import de.dhbw.vvs.model.Studiengangsleiter;
 import de.dhbw.vvs.model.User;
 import de.dhbw.vvs.utility.JSONify;
 
+/**
+ * URI: /user
+ */
 public class UserKollektionResource extends JsonServerResource {
 
 	@Override
@@ -29,6 +32,7 @@ public class UserKollektionResource extends JsonServerResource {
 		JSONObject jO = json.getJsonObject();
 		User user = JSONify.deserialize(jO.toString(), User.class);
 		user.create();
+		//Also create a Studiengangsleiter if the user is a Studiengangsleiter
 		if(jO.has("istStudiengangsleiter") && jO.getBoolean("istStudiengangsleiter")) {
 			new Studiengangsleiter(user.getRepraesentiert()).setIst(user);
 		}

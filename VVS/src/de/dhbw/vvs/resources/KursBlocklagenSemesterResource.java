@@ -15,6 +15,10 @@ import de.dhbw.vvs.model.Blocklage;
 import de.dhbw.vvs.model.Kurs;
 import de.dhbw.vvs.utility.JSONify;
 
+
+/**
+ * URI: /kurse/{kursID}/blocklagen/{semester}
+ */
 public class KursBlocklagenSemesterResource extends JsonServerResource {
 	
 	private int kursID;

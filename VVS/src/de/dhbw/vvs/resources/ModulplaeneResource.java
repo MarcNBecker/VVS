@@ -9,6 +9,9 @@ import de.dhbw.vvs.application.WebServiceException;
 import de.dhbw.vvs.model.Modulplan;
 import de.dhbw.vvs.utility.JSONify;
 
+/**
+ * URI: /modulplaene
+ */
 public class ModulplaeneResource extends JsonServerResource {
 	
 	@Override
@@ -27,6 +30,7 @@ public class ModulplaeneResource extends JsonServerResource {
 	protected Object receivePost(JsonRepresentation json) throws JSONException, WebServiceException {
 		JSONObject jO = json.getJsonObject();
 		Modulplan modulplan = JSONify.deserialize(jO.toString(), Modulplan.class);
+		//Check if Modulplan is based on another Modulplan
 		int vorlageID = jO.optInt("vorlage");
 		if (vorlageID == 0) {
 			return modulplan.create();	

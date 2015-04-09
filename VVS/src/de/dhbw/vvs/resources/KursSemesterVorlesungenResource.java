@@ -16,6 +16,9 @@ import de.dhbw.vvs.model.Vorlesung;
 import de.dhbw.vvs.model.VorlesungsKachel;
 import de.dhbw.vvs.utility.JSONify;
 
+/**
+ * URI: /kurse/{kursID}/{semester}/vorlesungen
+ */
 public class KursSemesterVorlesungenResource extends JsonServerResource {
 	
 	private int kursID;

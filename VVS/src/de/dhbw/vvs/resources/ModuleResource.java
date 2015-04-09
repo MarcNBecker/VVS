@@ -5,6 +5,9 @@ import org.restlet.resource.ResourceException;
 import de.dhbw.vvs.application.WebServiceException;
 import de.dhbw.vvs.model.Modul;
 
+/**
+ * URI: /module
+ */
 public class ModuleResource extends JsonServerResource {
 	
 	@Override

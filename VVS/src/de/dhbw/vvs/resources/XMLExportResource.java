@@ -17,6 +17,9 @@ import de.dhbw.vvs.application.WebServiceException;
 import de.dhbw.vvs.model.Kurs;
 import de.dhbw.vvs.model.XMLExport;
 
+/**
+ * URI: /kurse/{kursID}/{semester}/vorlesungen/xml
+ */
 public class XMLExportResource extends EasyServerResource {
 	
 	private int kursID;
@@ -39,9 +42,12 @@ public class XMLExportResource extends EasyServerResource {
 	@Override
 	protected Representation get() throws ResourceException {
 		try {
+			//Generate file and return a FileRepresentation
 			File xml = XMLExport.getXMLData(new Kurs(getKursID()), getSemester());
 			FileRepresentation representation = new FileRepresentation(xml, new MediaType("text", "xml"));
+			//Auto deletes the file
 			representation.setAutoDeleting(true);
+			//Provides it as a download rather than displaying it natively in the browser
 			representation.getDisposition().setType(Disposition.TYPE_ATTACHMENT);
 			return representation;
 		} catch (WebServiceException e) {

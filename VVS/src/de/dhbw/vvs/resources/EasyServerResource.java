@@ -8,6 +8,9 @@ import org.restlet.resource.ServerResource;
 import de.dhbw.vvs.database.ConnectionPool;
 import de.dhbw.vvs.utility.JSONify;
 
+/**
+ * Handles general settings and transforms exceptions for all ServerResources
+ */
 public class EasyServerResource extends ServerResource {
 	
 	/**

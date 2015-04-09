@@ -13,6 +13,9 @@ import de.dhbw.vvs.application.WebServiceException;
 import de.dhbw.vvs.model.Dozent;
 import de.dhbw.vvs.model.Vorlesung;
 
+/**
+ * URI: /kurse/{kursID}/{semester}/vorlesungen/{vorlesungsID}/dozenten
+ */
 public class KursSemesterVorlesungDozentenResource extends JsonServerResource {
 	
 	private int kursID;
@@ -41,6 +44,7 @@ public class KursSemesterVorlesungDozentenResource extends JsonServerResource {
 		vorlesung.setKursID(getKursID());
 		vorlesung.setSemester(getSemester());
 		ArrayList<Dozent> dozentList = Dozent.getAllForVorlesung(vorlesung);
+		//Get Timestamp when the Dozent last taught the Fach
 		for (Dozent d : dozentList) {
 			d.lastHeld(vorlesung.getFachInstanz().getFach(), false);
 		}

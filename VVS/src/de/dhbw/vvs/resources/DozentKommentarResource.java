@@ -12,6 +12,9 @@ import de.dhbw.vvs.application.WebServiceException;
 import de.dhbw.vvs.model.Dozent;
 import de.dhbw.vvs.model.Kommentar;
 
+/**
+ * URI: /dozenten/{dozentID}/kommentare/{kommentarID}
+ */
 public class DozentKommentarResource extends JsonServerResource {
 	
 	private int dozentID;

@@ -11,6 +11,9 @@ import de.dhbw.vvs.application.ExceptionStatus;
 import de.dhbw.vvs.application.WebServiceException;
 import de.dhbw.vvs.model.Feiertag;
 
+/**
+ * URI: /feiertage/{jahr}
+ */
 public class FeiertageResource extends JsonServerResource {
 	
 	private int jahr;

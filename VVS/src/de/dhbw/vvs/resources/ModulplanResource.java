@@ -14,6 +14,9 @@ import de.dhbw.vvs.application.WebServiceException;
 import de.dhbw.vvs.model.Modulplan;
 import de.dhbw.vvs.utility.JSONify;
 
+/**
+ * URI: /modulplaene/{modulplanID}
+ */
 public class ModulplanResource extends JsonServerResource {
 	
 	private int modulplanID;
