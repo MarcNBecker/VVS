@@ -332,9 +332,9 @@ var model = new function() {
 		var termineDozentURI = "/termine/{datum}/dozenten/{dozentID}";
 		var termineRaumURI = "/termine/{datum}/raeume/{raum}";
 		
-		var kursPlanURI = "/run?__report=Vorlesungsplan_Hochformat.rptdesign&__format=pdf&Kurs={kursID}&Semester={semester}";
-		var kursPlanQuerURI = "/run?__report=Vorlesungsplan_Querformat.rptdesign&__format=pdf&Kurs={kursID}&Semester={semester}";
-		var dozentenPlanURI = "/run?__report=Vorlesungsplan_Dozent.rptdesign&__format=pdf&Vorlesung={vorlesungID}";
+		var kursPlanURI = "/run?__report=Vorlesungsplan_Hochformat.rptdesign&__format=pdf&Kurs={kursID}&Semester={semester}&__locale=de";
+		var kursPlanQuerURI = "/run?__report=Vorlesungsplan_Querformat.rptdesign&__format=pdf&Kurs={kursID}&Semester={semester}&__locale=de";
+		var dozentenPlanURI = "/run?__report=Vorlesungsplan_Dozent.rptdesign&__format=pdf&Vorlesung={vorlesungID}&__locale=de";
 		
 		this.getAllDozenten = function(c) {
 			self.doRequest(dozentenURI, "GET", null, c);
